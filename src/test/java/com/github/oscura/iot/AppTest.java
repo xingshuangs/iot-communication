@@ -1,4 +1,4 @@
-package com.github.oscura;
+package com.github.oscura.iot;
 
 import static org.junit.Assert.assertTrue;
 
