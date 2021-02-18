@@ -19,20 +19,20 @@ public class HexParseTest {
 
     @Test
     public void toBoolean() {
-        List<Boolean> booleans = this.hexParse.toBoolean(3, 0, 1);
-        assertArrayEquals(new Boolean[]{true}, booleans.toArray(new Boolean[0]));
-        booleans = this.hexParse.toBoolean(3, 0, 3);
-        assertArrayEquals(new Boolean[]{true, false, false}, booleans.toArray(new Boolean[0]));
-        booleans = this.hexParse.toBoolean(3, 6, 4);
-        assertArrayEquals(new Boolean[]{false, true, false, false}, booleans.toArray(new Boolean[0]));
+        List<Boolean> list = this.hexParse.toBoolean(3, 0, 1);
+        assertArrayEquals(new Boolean[]{true}, list.toArray(new Boolean[0]));
+        list = this.hexParse.toBoolean(3, 0, 3);
+        assertArrayEquals(new Boolean[]{true, false, false}, list.toArray(new Boolean[0]));
+        list = this.hexParse.toBoolean(3, 6, 4);
+        assertArrayEquals(new Boolean[]{false, true, false, false}, list.toArray(new Boolean[0]));
     }
 
     @Test
     public void toInt8() {
-        List<Byte> bytes = this.hexParse.toInt8(1, 2);
-        assertArrayEquals(new Byte[]{(byte) 0xFF, (byte) 0xFF}, bytes.toArray(new Byte[0]));
-        bytes = this.hexParse.toInt8(2, 3);
-        assertArrayEquals(new Byte[]{(byte) 0xFF, (byte) 0x81, (byte) 0x00}, bytes.toArray(new Byte[0]));
+        List<Byte> list = this.hexParse.toInt8(1, 2);
+        assertArrayEquals(new Byte[]{(byte) 0xFF, (byte) 0xFF}, list.toArray(new Byte[0]));
+        list = this.hexParse.toInt8(2, 3);
+        assertArrayEquals(new Byte[]{(byte) 0xFF, (byte) 0x81, (byte) 0x00}, list.toArray(new Byte[0]));
     }
 
     @Test
@@ -57,5 +57,17 @@ public class HexParseTest {
         assertArrayEquals(new Integer[]{65535, 65409}, list.toArray(new Integer[0]));
         list = this.hexParse.toUInt16(4, 2, false);
         assertArrayEquals(new Integer[]{0, 25689}, list.toArray(new Integer[0]));
+    }
+
+    @Test
+    public void toInt32() {
+        List<Integer> list = this.hexParse.toInt32(0, 1, false);
+        assertArrayEquals(new Integer[]{-127}, list.toArray(new Integer[0]));
+    }
+
+    @Test
+    public void toUInt32() {
+        List<Long> list = this.hexParse.toUInt32(0, 1, false);
+        assertArrayEquals(new Long[]{4294967169L}, list.toArray(new Long[0]));
     }
 }
