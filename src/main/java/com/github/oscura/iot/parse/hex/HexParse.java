@@ -56,10 +56,25 @@ public class HexParse {
         return res;
     }
 
+    /**
+     * 获取Boolean的数据
+     *
+     * @param byteOffset 字节偏移量
+     * @param bitOffset  位偏移量
+     * @return Boolean数据
+     */
     public Boolean toBoolean(int byteOffset, int bitOffset) {
         return this.toBoolean(byteOffset, bitOffset, 1).get(0);
     }
 
+    /**
+     * 获取Boolean的数据列表
+     *
+     * @param byteOffset 字节偏移量
+     * @param bitOffset  位偏移量
+     * @param count      个数
+     * @return Boolean的数据列表
+     */
     public List<Boolean> toBoolean(int byteOffset, int bitOffset, int count) {
         if (bitOffset < 0 || bitOffset > 7) {
             throw new HexParseException("bitOffset位偏移量范围[0,7]");
@@ -72,6 +87,12 @@ public class HexParse {
         });
     }
 
+    /**
+     * 获取Int8数据
+     *
+     * @param byteOffset 字节偏移量
+     * @return Int8数据
+     */
     public Byte toInt8(int byteOffset) {
         return this.toInt8(byteOffset, 1).get(0);
     }
@@ -87,6 +108,12 @@ public class HexParse {
         return this.toHandle(byteOffset, count, 1, i -> this.rdSrc[byteOffset + i]);
     }
 
+    /**
+     * 获取UInt8数据
+     *
+     * @param byteOffset 字节偏移量
+     * @return UInt8数据
+     */
     public Integer toUInt8(int byteOffset) {
         return this.toUInt8(byteOffset, 1).get(0);
     }
@@ -154,6 +181,12 @@ public class HexParse {
         });
     }
 
+    /**
+     * 获取Int32数据
+     *
+     * @param byteOffset 字节偏移量
+     * @return Int32数据
+     */
     public Integer toInt32(int byteOffset) {
         return this.toInt32(byteOffset, 1, false).get(0);
     }
@@ -178,6 +211,12 @@ public class HexParse {
         });
     }
 
+    /**
+     * 获取UInt32数据
+     *
+     * @param byteOffset 字节偏移量
+     * @return UInt32数据
+     */
     public Long toUInt32(int byteOffset) {
         return this.toUInt32(byteOffset, 1, false).get(0);
     }
@@ -199,6 +238,28 @@ public class HexParse {
                     this.rdSrc[byteOffset + i * typeByteLength + b - d * 1] << 16 |
                     this.rdSrc[byteOffset + i * typeByteLength + b - d * 2] << 8 |
                     this.rdSrc[byteOffset + i * typeByteLength + b - d * 3]) & 0xFFFFFFFFL;
+        });
+    }
+
+    public List<Float> toFloat32(int byteOffset, int count, boolean littleEndian) {
+        int typeByteLength = 4;
+        return this.toHandle(byteOffset, count, typeByteLength, i -> {
+            int b = littleEndian ? 3 : 0;
+            int d = littleEndian ? 1 : -1;
+            long res = (this.rdSrc[byteOffset + i * typeByteLength + b - d * 0] << 24 |
+                    this.rdSrc[byteOffset + i * typeByteLength + b - d * 1] << 16 |
+                    this.rdSrc[byteOffset + i * typeByteLength + b - d * 2] << 8 |
+                    this.rdSrc[byteOffset + i * typeByteLength + b - d * 3])& 0xFFFFFFFFL;
+            return Float.intBitsToFloat((int)res);
+//            int l;
+//            l = this.rdSrc[byteOffset + 0];
+//            l &= 0xff;
+//            l |= ((long) this.rdSrc[byteOffset + 1] << 8);
+//            l &= 0xffff;
+//            l |= ((long) this.rdSrc[byteOffset + 2] << 16) &;
+//            l &= 0xffffff;
+//            l |= ((long) this.rdSrc[byteOffset + 3] << 24);
+//            return Float.intBitsToFloat(l);
         });
     }
 }

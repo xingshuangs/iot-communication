@@ -14,7 +14,7 @@ public class HexParseTest {
     @Before
     public void init() {
         this.hexParse = new HexParse(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0x81, (byte) 0x00,
-                (byte) 0x00, (byte) 0x64, (byte) 0x59, (byte) 0xFF, (byte) 0xFF, (byte) 0x9B, (byte) 0xA7});
+                (byte) 0x00, (byte) 0x64, (byte) 0x59, (byte) 0xC1, (byte) 0x79, (byte) 0xEB, (byte) 0x85});
     }
 
     @Test
@@ -69,5 +69,11 @@ public class HexParseTest {
     public void toUInt32() {
         List<Long> list = this.hexParse.toUInt32(0, 1, false);
         assertArrayEquals(new Long[]{4294967169L}, list.toArray(new Long[0]));
+    }
+
+    @Test
+    public void toFloat32() {
+        List<Float> list = this.hexParse.toFloat32(8, 1, false);
+        assertArrayEquals(new Float[]{}, list.toArray(new Float[0]));
     }
 }
