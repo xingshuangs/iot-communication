@@ -13,6 +13,7 @@ package com.github.oscura.iot.parse.hex;
 
 import com.github.oscura.iot.exceptions.HexParseException;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -47,7 +48,7 @@ public class HexParse {
             throw new HexParseException(String.format("获取的数据个数[%d] < 1", count));
         }
         if (byteOffset + count * typeByteLength > this.rdSrc.length) {
-            throw new HexParseException(String.format("字节偏移量[%d] + 数据个数[%d] * 类型字节长度[%f] > 总数据字节长度[%d]", byteOffset, count, 0.125, this.rdSrc.length));
+            throw new HexParseException(String.format("字节偏移量[%d] + 数据个数[%d] * 类型字节长度[%f] > 总数据字节长度[%d]", byteOffset, count, typeByteLength, this.rdSrc.length));
         }
         List<T> res = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -241,25 +242,92 @@ public class HexParse {
         });
     }
 
+    /**
+     * 获取Float32的数据
+     *
+     * @param byteOffset 字节偏移量
+     * @return Float32数据
+     */
+    public Float toFloat32(int byteOffset) {
+        return this.toFloat32(byteOffset, 1, false).get(0);
+    }
+
+    /**
+     * 获取Float32的数据列表
+     *
+     * @param byteOffset   字节偏移量
+     * @param count        个数
+     * @param littleEndian 小端模式
+     * @return Float32的数据列表
+     */
     public List<Float> toFloat32(int byteOffset, int count, boolean littleEndian) {
         int typeByteLength = 4;
         return this.toHandle(byteOffset, count, typeByteLength, i -> {
             int b = littleEndian ? 3 : 0;
             int d = littleEndian ? 1 : -1;
-            long res = (this.rdSrc[byteOffset + i * typeByteLength + b - d * 0] << 24 |
-                    this.rdSrc[byteOffset + i * typeByteLength + b - d * 1] << 16 |
-                    this.rdSrc[byteOffset + i * typeByteLength + b - d * 2] << 8 |
-                    this.rdSrc[byteOffset + i * typeByteLength + b - d * 3])& 0xFFFFFFFFL;
-            return Float.intBitsToFloat((int)res);
-//            int l;
-//            l = this.rdSrc[byteOffset + 0];
-//            l &= 0xff;
-//            l |= ((long) this.rdSrc[byteOffset + 1] << 8);
-//            l &= 0xffff;
-//            l |= ((long) this.rdSrc[byteOffset + 2] << 16) &;
-//            l &= 0xffffff;
-//            l |= ((long) this.rdSrc[byteOffset + 3] << 24);
-//            return Float.intBitsToFloat(l);
+            int l = ((this.rdSrc[byteOffset + b - d * 0] << 24))
+                    | ((this.rdSrc[byteOffset + b - d * 1] << 16) & 0xffffff)
+                    | ((this.rdSrc[byteOffset + b - d * 2] << 8) & 0xffff)
+                    | (this.rdSrc[byteOffset + b - d * 3] & 0xff);
+            return Float.intBitsToFloat(l);
         });
+    }
+
+    /**
+     * 获取Float64的数据
+     *
+     * @param byteOffset 字节偏移量
+     * @return Float64数据
+     */
+    public Double toFloat64(int byteOffset) {
+        return this.toFloat64(byteOffset, 1, false).get(0);
+    }
+
+    /**
+     * 获取Float64的数据列表
+     *
+     * @param byteOffset   字节偏移量
+     * @param count        个数
+     * @param littleEndian 小端模式
+     * @return Float64的数据列表
+     */
+    public List<Double> toFloat64(int byteOffset, int count, boolean littleEndian) {
+        int typeByteLength = 8;
+        return this.toHandle(byteOffset, count, typeByteLength, i -> {
+            int b = littleEndian ? 7 : 0;
+            int d = littleEndian ? 1 : -1;
+            long l = ((long) this.rdSrc[byteOffset + b - d * 0] << 56)
+                    | (((long) this.rdSrc[byteOffset + b - d * 1] << 48) & 0xffffffffffffffL)
+                    | (((long) this.rdSrc[byteOffset + b - d * 2] << 40) & 0xffffffffffffL)
+                    | (((long) this.rdSrc[byteOffset + b - d * 3] << 32) & 0xffffffffffL)
+                    | (((long) this.rdSrc[byteOffset + b - d * 4] << 24) & 0xffffffffL)
+                    | (((long) this.rdSrc[byteOffset + b - d * 5] << 16) & 0xffffffL)
+                    | (((long) this.rdSrc[byteOffset + b - d * 6] << 8) & 0xffffL)
+                    | ((long) this.rdSrc[byteOffset + b - d * 7] & 0xffL);
+            return Double.longBitsToDouble(l);
+        });
+    }
+
+    /**
+     * 获取UTF-8格式的字符串
+     *
+     * @param byteOffset 字节偏移量
+     * @param count      数量
+     * @return UTF-8格式的字符串
+     */
+    public String toStringUtf8(int byteOffset, int count) {
+        int typeByteLength = 1;
+        if (byteOffset < 0 || byteOffset >= this.rdSrc.length) {
+            throw new HexParseException(String.format("字节偏移量[%d] 超过 总数据长度[%d]", byteOffset, this.rdSrc.length));
+        }
+        if (count < 1) {
+            throw new HexParseException(String.format("获取的数据个数[%d] < 1", count));
+        }
+        if (byteOffset + count * typeByteLength > this.rdSrc.length) {
+            throw new HexParseException(String.format("字节偏移量[%d] + 数据个数[%d] * 类型字节长度[%f] > 总数据字节长度[%d]", byteOffset, count, typeByteLength, this.rdSrc.length));
+        }
+        byte[] bs = new byte[count];
+        System.arraycopy(this.rdSrc, byteOffset, bs, 0, count);
+        return new String(bs, StandardCharsets.UTF_8);
     }
 }

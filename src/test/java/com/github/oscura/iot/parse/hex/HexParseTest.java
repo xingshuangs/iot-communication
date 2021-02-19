@@ -14,7 +14,10 @@ public class HexParseTest {
     @Before
     public void init() {
         this.hexParse = new HexParse(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0x81, (byte) 0x00,
-                (byte) 0x00, (byte) 0x64, (byte) 0x59, (byte) 0xC1, (byte) 0x79, (byte) 0xEB, (byte) 0x85});
+                (byte) 0x00, (byte) 0x64, (byte) 0x59, (byte) 0xC1, (byte) 0x79, (byte) 0xEB, (byte) 0x85,
+                (byte) 0xC0, (byte) 0xEB, (byte) 0x98, (byte) 0x95, (byte) 0x55, (byte) 0x1D, (byte) 0x68, (byte) 0xC7,
+                (byte) 0xE5, (byte) 0xA4, (byte) 0xA9, (byte) 0xE6, (byte) 0xB0, (byte) 0x94, (byte) 0xE5, (byte) 0xA5, (byte) 0xBD,
+                (byte) 0x32, (byte) 0x33, (byte) 0x41});
     }
 
     @Test
@@ -46,9 +49,9 @@ public class HexParseTest {
     @Test
     public void toInt16() {
         List<Short> list = this.hexParse.toInt16(0, 2, false);
-        assertArrayEquals(new Short[]{-1, (short)-127}, list.toArray(new Short[0]));
+        assertArrayEquals(new Short[]{-1, (short) -127}, list.toArray(new Short[0]));
         list = this.hexParse.toInt16(4, 2, false);
-        assertArrayEquals(new Short[]{0, (short)25689}, list.toArray(new Short[0]));
+        assertArrayEquals(new Short[]{0, (short) 25689}, list.toArray(new Short[0]));
     }
 
     @Test
@@ -74,6 +77,20 @@ public class HexParseTest {
     @Test
     public void toFloat32() {
         List<Float> list = this.hexParse.toFloat32(8, 1, false);
-        assertArrayEquals(new Float[]{}, list.toArray(new Float[0]));
+        assertArrayEquals(new Float[]{-15.62f}, list.toArray(new Float[0]));
+    }
+
+    @Test
+    public void toFloat64() {
+        List<Double> list = this.hexParse.toFloat64(12, 1, false);
+        assertArrayEquals(new Double[]{-56516.66664}, list.toArray(new Double[0]));
+    }
+
+    @Test
+    public void toStringUtf8() {
+        String actual = this.hexParse.toStringUtf8(20, 9);
+        assertEquals("天气好", actual);
+        actual = this.hexParse.toStringUtf8(29, 3);
+        assertEquals("23A", actual);
     }
 }
