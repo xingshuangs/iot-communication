@@ -330,4 +330,92 @@ public class HexParse {
         System.arraycopy(this.rdSrc, byteOffset, bs, 0, count);
         return new String(bs, StandardCharsets.UTF_8);
     }
+
+    /**
+     * 根据DataUnit类型解析数据
+     *
+     * @param unit 数据单元
+     */
+    @SuppressWarnings("unchecked")
+    public void parseData(DataUnit unit) {
+        switch (unit.getDataType()) {
+            case BOOL:
+                if (unit.getCount() == 1) {
+                    unit.setValue(this.toBoolean(unit.getByteOffset(), unit.getBitOffset()));
+                } else {
+                    unit.setValue(this.toBoolean(unit.getByteOffset(), unit.getBitOffset(), unit.getCount()));
+                }
+                break;
+            case INT8:
+                if (unit.getCount() == 1) {
+                    unit.setValue(this.toInt8(unit.getByteOffset()));
+                } else {
+                    unit.setValue(this.toInt8(unit.getByteOffset(), unit.getCount()));
+                }
+                break;
+            case UINT8:
+                if (unit.getCount() == 1) {
+                    unit.setValue(this.toUInt8(unit.getByteOffset()));
+                } else {
+                    unit.setValue(this.toUInt8(unit.getByteOffset(), unit.getCount()));
+                }
+                break;
+            case INT16:
+                if (unit.getCount() == 1) {
+                    unit.setValue(this.toInt16(unit.getByteOffset()));
+                } else {
+                    unit.setValue(this.toInt16(unit.getByteOffset(), unit.getCount(), unit.getLittleEndian()));
+                }
+                break;
+            case UINT16:
+                if (unit.getCount() == 1) {
+                    unit.setValue(this.toUInt16(unit.getByteOffset()));
+                } else {
+                    unit.setValue(this.toUInt16(unit.getByteOffset(), unit.getCount(), unit.getLittleEndian()));
+                }
+                break;
+            case INT32:
+                if (unit.getCount() == 1) {
+                    unit.setValue(this.toInt32(unit.getByteOffset()));
+                } else {
+                    unit.setValue(this.toInt32(unit.getByteOffset(), unit.getCount(), unit.getLittleEndian()));
+                }
+                break;
+            case UINT32:
+                if (unit.getCount() == 1) {
+                    unit.setValue(this.toUInt32(unit.getByteOffset()));
+                } else {
+                    unit.setValue(this.toUInt32(unit.getByteOffset(), unit.getCount(), unit.getLittleEndian()));
+                }
+                break;
+            case FLOAT32:
+                if (unit.getCount() == 1) {
+                    unit.setValue(this.toFloat32(unit.getByteOffset()));
+                } else {
+                    unit.setValue(this.toFloat32(unit.getByteOffset(), unit.getCount(), unit.getLittleEndian()));
+                }
+                break;
+            case FLOAT64:
+                if (unit.getCount() == 1) {
+                    unit.setValue(this.toFloat64(unit.getByteOffset()));
+                } else {
+                    unit.setValue(this.toFloat64(unit.getByteOffset(), unit.getCount(), unit.getLittleEndian()));
+                }
+                break;
+            case STRING:
+                unit.setValue(this.toStringUtf8(unit.getByteOffset(), unit.getCount()));
+                break;
+            default:
+                throw new HexParseException("无法解析数据，数据类型不存在");
+        }
+    }
+
+    /**
+     * 解析数据列表
+     *
+     * @param list 数据列表
+     */
+    public void parseDataList(List<DataUnit> list) {
+        list.forEach(this::parseData);
+    }
 }

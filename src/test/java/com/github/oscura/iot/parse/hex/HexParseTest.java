@@ -5,7 +5,8 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class HexParseTest {
 
@@ -92,5 +93,68 @@ public class HexParseTest {
         assertEquals("天气好", actual);
         actual = this.hexParse.toStringUtf8(29, 3);
         assertEquals("23A", actual);
+    }
+
+    @Test
+    public void parseData() {
+        DataUnit<Boolean> boolUnit = new DataUnit<>(3, "bool");
+        this.hexParse.parseData(boolUnit);
+        assertEquals(true, boolUnit.getValue());
+
+        DataUnit<List<Boolean>> boolListUnit = new DataUnit<>(3, 6, 4, "bool");
+        this.hexParse.parseData(boolListUnit);
+        assertArrayEquals(new Boolean[]{false, true, false, false}, boolListUnit.getValue().toArray(new Boolean[0]));
+
+        DataUnit<Byte> byteUnit = new DataUnit<>(3, "byte");
+        this.hexParse.parseData(byteUnit);
+        assertEquals((byte) 0x81, byteUnit.getValue().byteValue());
+
+        DataUnit<List<Byte>> byteListUnit = new DataUnit<>(3, 2, "byte");
+        this.hexParse.parseData(byteListUnit);
+        assertArrayEquals(new Byte[]{(byte) 0x81, (byte) 0x00}, byteListUnit.getValue().toArray(new Byte[0]));
+
+        DataUnit<Integer> ubyteUnit = new DataUnit<>(3, "ubyte");
+        this.hexParse.parseData(ubyteUnit);
+        assertEquals(0x81, ubyteUnit.getValue().intValue());
+
+        DataUnit<List<Integer>> ubyteListUnit = new DataUnit<>(3, 2, "ubyte");
+        this.hexParse.parseData(ubyteListUnit);
+        assertArrayEquals(new Integer[]{0x81, 0x00}, ubyteListUnit.getValue().toArray(new Integer[0]));
+
+        DataUnit<Short> shortUnit = new DataUnit<>(6, "short");
+        this.hexParse.parseData(shortUnit);
+        assertEquals((short) 25689, shortUnit.getValue().shortValue());
+
+        DataUnit<List<Short>> shortListUnit = new DataUnit<>(4, 2, "short");
+        this.hexParse.parseData(shortListUnit);
+        assertArrayEquals(new Short[]{0, (short) 25689}, shortListUnit.getValue().toArray(new Short[0]));
+
+        DataUnit<Integer> intUnit = new DataUnit<>(0, "int");
+        this.hexParse.parseData(intUnit);
+        assertEquals(-127, intUnit.getValue().intValue());
+
+        DataUnit<List<Integer>> intListUnit = new DataUnit<>(0, 2, "int");
+        this.hexParse.parseData(intListUnit);
+        assertArrayEquals(new Integer[]{-127, 25689}, intListUnit.getValue().toArray(new Integer[0]));
+
+        DataUnit<Long> longUnit = new DataUnit<>(0, "uint");
+        this.hexParse.parseData(longUnit);
+        assertEquals(4294967169L, longUnit.getValue().longValue());
+
+        DataUnit<List<Long>> longListUnit = new DataUnit<>(0, 2, "uint");
+        this.hexParse.parseData(longListUnit);
+        assertArrayEquals(new Long[]{4294967169L, 25689L}, longListUnit.getValue().toArray(new Long[0]));
+
+        DataUnit<Float> floatUnit = new DataUnit<>(8,"float");
+        this.hexParse.parseData(floatUnit);
+        assertEquals(-15.62f, floatUnit.getValue(), 0.01);
+
+        DataUnit<Double> doubleUnit = new DataUnit<>(12,"double");
+        this.hexParse.parseData(doubleUnit);
+        assertEquals(-56516.66664, doubleUnit.getValue(), 0.00001);
+
+        DataUnit<String> stringUnit = new DataUnit<>(20, 9, "string");
+        this.hexParse.parseData(stringUnit);
+        assertEquals("天气好", stringUnit.getValue());
     }
 }
