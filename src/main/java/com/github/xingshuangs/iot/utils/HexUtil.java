@@ -5,7 +5,6 @@ import com.github.xingshuangs.iot.exceptions.HexParseException;
 
 /**
  * @author xingshuang
- * @date 2021/2/17
  */
 public class HexUtil {
 

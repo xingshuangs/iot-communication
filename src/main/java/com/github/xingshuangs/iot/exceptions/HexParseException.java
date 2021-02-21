@@ -15,7 +15,6 @@ package com.github.xingshuangs.iot.exceptions;
  * 16进制解析异常
  *
  * @author ShuangPC
- * @date 2021/2/18
  */
 
 public class HexParseException extends RuntimeException {

@@ -22,7 +22,6 @@ import java.util.function.Function;
  * 16进制数据解析
  *
  * @author ShuangPC
- * @date 2021/2/18
  */
 
 public class HexParse {

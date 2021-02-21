@@ -20,7 +20,6 @@ import java.util.Objects;
  * 数据单元
  *
  * @author ShuangPC
- * @date 2021/2/18
  */
 
 public class DataUnit<T> {

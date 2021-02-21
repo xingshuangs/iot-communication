@@ -6,7 +6,7 @@
 
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
 
@@ -16,10 +16,11 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <projectUrl>https://github.com/xingshuangs/iot-communication.git</projectUrl>
         <!-- 服务id 也就是setting.xml中的servers.server.id -->
-        <serverId>oss</serverId>
+        <serverId>ossrh</serverId>
     </properties>
 
     <name>iot-communication</name>
+    <description>iot communication tool</description>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/junit/junit -->
@@ -60,105 +61,131 @@
         <developerConnection>${projectUrl}</developerConnection>
         <url>${projectUrl}</url>
     </scm>
-    <!--<distributionManagement>-->
-        <!--<snapshotRepository>-->
-            <!--&lt;!&ndash;这个id和settings.xml中servers.server.id要相同，因为上传jar需要登录才有权限&ndash;&gt;-->
-            <!--<id>${serverId}</id>-->
-            <!--<name>OSS Snapshots Repository</name>-->
-            <!--<url>https://oss.sonatype.org/content/repositories/snapshots/</url>-->
-        <!--</snapshotRepository>-->
-        <!--<repository>-->
-            <!--&lt;!&ndash;这个id和settings.xml中servers.server.id要相同，因为上传jar需要登录才有权限&ndash;&gt;-->
-            <!--<id>${serverId}</id>-->
-            <!--<name>OSS Staging Repository</name>-->
-            <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
-        <!--</repository>-->
-    <!--</distributionManagement>-->
 
-    <distributionManagement>
-        <repository>
+    <profiles>
+        <profile>
+            <id>ossrh</id>
+            <properties>
+                <profileActive>ossrh</profileActive>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- 编译插件，设置源码以及编译的jdk版本 -->
+                    <!--<plugin>-->
+                        <!--<groupId>org.apache.maven.plugins</groupId>-->
+                        <!--<artifactId>maven-compiler-plugin</artifactId>-->
+                        <!--<configuration>-->
+                            <!--<source>8</source>-->
+                            <!--<target>8</target>-->
+                        <!--</configuration>-->
+                    <!--</plugin>-->
+                    <!--打包源码的插件-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Javadoc 文档生成插件-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!--公钥私钥插件，也就是上传需要进行验证用户名和密码过程中需要用到的插件-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!--部署插件-->
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.7</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>${serverId}</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <!--这个id和settings.xml中servers.server.id要相同，因为上传jar需要登录才有权限-->
+                    <id>${serverId}</id>
+                    <name>OSS Snapshots Repository</name>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <!--这个id和settings.xml中servers.server.id要相同，因为上传jar需要登录才有权限-->
+                    <id>${serverId}</id>
+                    <name>OSS Staging Repository</name>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
             <id>github</id>
-            <name>iot-communication</name>
-            <url>https://maven.pkg.github.com/xingshuangs/iot-communication</url>
-        </repository>
-    </distributionManagement>
+            <properties>
+                <profileActive>github</profileActive>
+            </properties>
+            <repositories>
+                <repository>
+                    <id>central</id>
+                    <url>https://repo1.maven.org/maven2</url>
+                    <releases><enabled>true</enabled></releases>
+                    <snapshots><enabled>true</enabled></snapshots>
+                </repository>
+                <repository>
+                    <id>github</id>
+                    <name>iot-communication</name>
+                    <url>https://maven.pkg.github.com/xingshuangs/iot-communication</url>
+                </repository>
+            </repositories>
+            <!--github-->
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <name>iot-communication</name>
+                    <url>https://maven.pkg.github.com/xingshuangs/iot-communication</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 
     <build>
         <pluginManagement>
             <plugins>
-                <!-- 编译插件，设置源码以及编译的jdk版本 -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>11</source>
-                        <target>11</target>
-                    </configuration>
-                </plugin>
-                <!--打包源码的插件-->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.2.1</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <!-- Javadoc 文档生成插件-->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9.1</version>
-                    <configuration>
-                        <!-- 忽略生成文档中的错误 -->
-                        <additionalparam>-Xdoclint:none</additionalparam>
-                        <aggregate>true</aggregate>
-                        <charset>UTF-8</charset><!-- utf-8读取文件 -->
-                        <encoding>UTF-8</encoding><!-- utf-8进行编码代码 -->
-                        <docencoding>UTF-8</docencoding><!-- utf-8进行编码文档 -->
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <!--公钥私钥插件，也就是上传需要进行验证用户名和密码过程中需要用到的插件-->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
-                    <executions>
-                        <execution>
-                            <id>sign-artifacts</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>sign</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <!--部署插件-->
-                <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.7</version>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <serverId>${serverId}</serverId>
-                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                    </configuration>
-                </plugin>
-
                 <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
