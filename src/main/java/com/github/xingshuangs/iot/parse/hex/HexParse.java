@@ -9,9 +9,9 @@
   作者姓名         修改时间           版本号             描述
  */
 
-package com.github.oscura.iot.parse.hex;
+package com.github.xingshuangs.iot.parse.hex;
 
-import com.github.oscura.iot.exceptions.HexParseException;
+import com.github.xingshuangs.iot.exceptions.HexParseException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;

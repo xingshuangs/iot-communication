@@ -1,6 +1,6 @@
-package com.github.oscura.iot.utils;
+package com.github.xingshuangs.iot.utils;
 
-import com.github.oscura.iot.exceptions.HexParseException;
+import com.github.xingshuangs.iot.exceptions.HexParseException;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

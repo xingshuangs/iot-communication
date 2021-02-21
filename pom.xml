@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.oscura.iot</groupId>
+    <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <projectUrl>https://github.com/xingshuang0122/iot-communication.git</projectUrl>
+        <projectUrl>https://github.com/xingshuangs/iot-communication.git</projectUrl>
         <!-- 服务id 也就是setting.xml中的servers.server.id -->
         <serverId>oss</serverId>
     </properties>
@@ -79,7 +79,7 @@
         <repository>
             <id>github</id>
             <name>iot-communication</name>
-            <url>https://github.com/xingshuang0122/iot-communication</url>
+            <url>https://maven.pkg.github.com/xingshuangs/iot-communication</url>
         </repository>
     </distributionManagement>
 

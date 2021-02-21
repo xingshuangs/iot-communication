@@ -9,7 +9,7 @@
   作者姓名         修改时间           版本号             描述
  */
 
-package com.github.oscura.iot.exceptions;
+package com.github.xingshuangs.iot.exceptions;
 
 /**
  * 16进制解析异常

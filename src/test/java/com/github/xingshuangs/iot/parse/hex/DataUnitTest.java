@@ -1,4 +1,4 @@
-package com.github.oscura.iot.parse.hex;
+package com.github.xingshuangs.iot.parse.hex;
 
 import org.junit.Test;
 
