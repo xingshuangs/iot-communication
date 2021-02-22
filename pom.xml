@@ -9,18 +9,16 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
+    <name>iot-communication</name>
+    <description>iot communication tool</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <projectUrl>https://github.com/xingshuangs/iot-communication.git</projectUrl>
         <!-- 服务id 也就是setting.xml中的servers.server.id -->
         <serverId>ossrh</serverId>
     </properties>
-
-    <name>iot-communication</name>
-    <description>iot communication tool</description>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/junit/junit -->
@@ -38,7 +36,7 @@
             <name>oscura</name>
             <id>oscura</id>
             <email>xingshuang_cool@163.com</email>
-            <url>${projectUrl}</url>
+            <url>https://github.com/xingshuangs/iot-communication</url>
             <roles>
                 <role>Developer</role>
             </roles>
@@ -46,8 +44,7 @@
         </developer>
     </developers>
 
-    <!--以下部分内容不需要修改，直接复制咱贴即可-->
-    <url>${projectUrl}</url>
+    <url>https://github.com/xingshuangs/iot-communication</url>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -56,17 +53,16 @@
         </license>
     </licenses>
     <scm>
-        <!-- 采用projectUrl变量代替这个值，方便给重复利用这个配置，也就是上面的标签替换一下值就行 -->
-        <connection>${projectUrl}</connection>
-        <developerConnection>${projectUrl}</developerConnection>
-        <url>${projectUrl}</url>
+        <connection>https://github.com/xingshuangs/iot-communication</connection>
+        <developerConnection>https://github.com/xingshuangs/iot-communication.git</developerConnection>
+        <url>https://github.com/xingshuangs/iot-communication</url>
     </scm>
 
     <profiles>
         <profile>
-            <id>ossrh</id>
+            <id>${serverId}</id>
             <properties>
-                <profileActive>ossrh</profileActive>
+                <profileActive>${serverId}</profileActive>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
