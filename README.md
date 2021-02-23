@@ -1,6 +1,6 @@
 # IOT-COMMUNICATION
 
-![maven-v1.0.0](https://img.shields.io/badge/maven-v1.0.0-brightgreen)
+![maven-v1.0.1](https://img.shields.io/badge/maven-v1.0.1-brightgreen)
 
 ## CopyRight
 

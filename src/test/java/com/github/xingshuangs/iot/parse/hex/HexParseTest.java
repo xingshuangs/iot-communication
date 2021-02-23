@@ -70,12 +70,16 @@ public class HexParseTest {
     public void toInt32() {
         List<Integer> list = this.hexParse.toInt32(0, 1, false);
         assertArrayEquals(new Integer[]{-127}, list.toArray(new Integer[0]));
+        list = this.hexParse.toInt32(0, 2, false);
+        assertArrayEquals(new Integer[]{-127, 25689}, list.toArray(new Integer[0]));
     }
 
     @Test
     public void toUInt32() {
         List<Long> list = this.hexParse.toUInt32(0, 1, false);
         assertArrayEquals(new Long[]{4294967169L}, list.toArray(new Long[0]));
+        list = this.hexParse.toUInt32(0, 2, false);
+        assertArrayEquals(new Long[]{4294967169L, 25689L}, list.toArray(new Long[0]));
     }
 
     @Test
