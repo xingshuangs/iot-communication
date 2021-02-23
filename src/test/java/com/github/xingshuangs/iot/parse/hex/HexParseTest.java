@@ -80,14 +80,17 @@ public class HexParseTest {
 
     @Test
     public void toFloat32() {
-        List<Float> list = this.hexParse.toFloat32(8, 1, false);
-        assertArrayEquals(new Float[]{-15.62f}, list.toArray(new Float[0]));
+        HexParse parse = new HexParse(new byte[]{(byte) 0x42, (byte) 0x04, (byte) 0xA3, (byte) 0xD7, (byte) 0xC1, (byte) 0x79, (byte) 0xEB, (byte) 0x85});
+        List<Float> list = parse.toFloat32(0, 2, false);
+        assertArrayEquals(new Float[]{33.16f, -15.62f}, list.toArray(new Float[0]));
     }
 
     @Test
     public void toFloat64() {
-        List<Double> list = this.hexParse.toFloat64(12, 1, false);
-        assertArrayEquals(new Double[]{-56516.66664}, list.toArray(new Double[0]));
+        HexParse parse = new HexParse(new byte[]{(byte) 0x41, (byte) 0x03, (byte) 0x1F, (byte) 0xCA, (byte) 0xD6, (byte) 0x21,
+                (byte) 0x39, (byte) 0xB7, (byte) 0xC0, (byte) 0xEB, (byte) 0x98, (byte) 0x95, (byte) 0x55, (byte) 0x1D, (byte) 0x68, (byte) 0xC7});
+        List<Double> list = parse.toFloat64(0, 2, false);
+        assertArrayEquals(new Double[]{156665.35455556, -56516.66664}, list.toArray(new Double[0]));
     }
 
     @Test
@@ -148,11 +151,11 @@ public class HexParseTest {
         this.hexParse.parseData(longListUnit);
         assertArrayEquals(new Long[]{4294967169L, 25689L}, longListUnit.getValue().toArray(new Long[0]));
 
-        DataUnit<Float> floatUnit = new DataUnit<>(8,"float");
+        DataUnit<Float> floatUnit = new DataUnit<>(8, "float");
         this.hexParse.parseData(floatUnit);
         assertEquals(-15.62f, floatUnit.getValue(), 0.01);
 
-        DataUnit<Double> doubleUnit = new DataUnit<>(12,"double");
+        DataUnit<Double> doubleUnit = new DataUnit<>(12, "double");
         this.hexParse.parseData(doubleUnit);
         assertEquals(-56516.66664, doubleUnit.getValue(), 0.00001);
 
@@ -172,8 +175,8 @@ public class HexParseTest {
         list.add(new DataUnit<>(6, "short"));
         list.add(new DataUnit<>(0, "int"));
         list.add(new DataUnit<>(0, "uint"));
-        list.add(new DataUnit<>(8,"float"));
-        list.add(new DataUnit<>(12,"double"));
+        list.add(new DataUnit<>(8, "float"));
+        list.add(new DataUnit<>(12, "double"));
         list.add(new DataUnit<>(20, 9, "string"));
         parse.parseDataList(list);
 //        list.forEach(x-> System.out.println(x.getValue()));

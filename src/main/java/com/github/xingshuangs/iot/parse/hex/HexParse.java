@@ -264,10 +264,10 @@ public class HexParse {
         return this.toHandle(byteOffset, count, typeByteLength, i -> {
             int b = littleEndian ? 3 : 0;
             int d = littleEndian ? 1 : -1;
-            int l = ((this.rdSrc[byteOffset + b - d * 0] << 24))
-                    | ((this.rdSrc[byteOffset + b - d * 1] << 16) & 0xffffff)
-                    | ((this.rdSrc[byteOffset + b - d * 2] << 8) & 0xffff)
-                    | (this.rdSrc[byteOffset + b - d * 3] & 0xff);
+            int l = ((this.rdSrc[byteOffset + i * typeByteLength + b - d * 0] << 24))
+                    | ((this.rdSrc[byteOffset + i * typeByteLength + b - d * 1] << 16) & 0xffffff)
+                    | ((this.rdSrc[byteOffset + i * typeByteLength + b - d * 2] << 8) & 0xffff)
+                    | (this.rdSrc[byteOffset + i * typeByteLength + b - d * 3] & 0xff);
             return Float.intBitsToFloat(l);
         });
     }
@@ -295,14 +295,14 @@ public class HexParse {
         return this.toHandle(byteOffset, count, typeByteLength, i -> {
             int b = littleEndian ? 7 : 0;
             int d = littleEndian ? 1 : -1;
-            long l = ((long) this.rdSrc[byteOffset + b - d * 0] << 56)
-                    | (((long) this.rdSrc[byteOffset + b - d * 1] << 48) & 0xffffffffffffffL)
-                    | (((long) this.rdSrc[byteOffset + b - d * 2] << 40) & 0xffffffffffffL)
-                    | (((long) this.rdSrc[byteOffset + b - d * 3] << 32) & 0xffffffffffL)
-                    | (((long) this.rdSrc[byteOffset + b - d * 4] << 24) & 0xffffffffL)
-                    | (((long) this.rdSrc[byteOffset + b - d * 5] << 16) & 0xffffffL)
-                    | (((long) this.rdSrc[byteOffset + b - d * 6] << 8) & 0xffffL)
-                    | ((long) this.rdSrc[byteOffset + b - d * 7] & 0xffL);
+            long l = ((long) this.rdSrc[byteOffset + i * typeByteLength + b - d * 0] << 56)
+                    | (((long) this.rdSrc[byteOffset + i * typeByteLength + b - d * 1] << 48) & 0xffffffffffffffL)
+                    | (((long) this.rdSrc[byteOffset + i * typeByteLength + b - d * 2] << 40) & 0xffffffffffffL)
+                    | (((long) this.rdSrc[byteOffset + i * typeByteLength + b - d * 3] << 32) & 0xffffffffffL)
+                    | (((long) this.rdSrc[byteOffset + i * typeByteLength + b - d * 4] << 24) & 0xffffffffL)
+                    | (((long) this.rdSrc[byteOffset + i * typeByteLength + b - d * 5] << 16) & 0xffffffL)
+                    | (((long) this.rdSrc[byteOffset + i * typeByteLength + b - d * 6] << 8) & 0xffffL)
+                    | ((long) this.rdSrc[byteOffset + i * typeByteLength + b - d * 7] & 0xffL);
             return Double.longBitsToDouble(l);
         });
     }
