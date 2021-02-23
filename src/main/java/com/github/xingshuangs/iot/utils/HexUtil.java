@@ -8,6 +8,10 @@ import com.github.xingshuangs.iot.exceptions.HexParseException;
  */
 public class HexUtil {
 
+    private HexUtil() {
+        // do nothing
+    }
+
     /**
      * 验证16进制字符串的正则表达式
      * ^ = 开始
