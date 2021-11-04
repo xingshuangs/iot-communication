@@ -1,4 +1,4 @@
-package com.github.xingshuangs.iot.net;
+package com.github.xingshuangs.iot.net.netty.client;
 
 /**
  * Socket类型

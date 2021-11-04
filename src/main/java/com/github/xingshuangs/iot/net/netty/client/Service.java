@@ -1,16 +1,14 @@
-package com.github.xingshuangs.iot.net;
+package com.github.xingshuangs.iot.net.netty.client;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleStateHandler;
 import javafx.event.EventDispatcher;
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.concurrent.*;
 
 
 public abstract class Service {
@@ -42,7 +40,7 @@ public abstract class Service {
     /**
      * 设置是否心跳检查
      */
-    protected boolean checkHeartbeat = true;
+    protected boolean checkHeartbeat = false;
 
     /**
      * 心跳检查时的读空闲时间
@@ -60,9 +58,9 @@ public abstract class Service {
     protected int allIdleTimeSeconds = 90;
 
     /**
-     * 超时的处理对象
+     * 空闲的处理对象
      */
-    protected IdleStateHandler timeoutHandler;
+    protected IdleStateHandler idleStateHandler;
 
     /**
      * 心跳的处理对象
@@ -74,6 +72,9 @@ public abstract class Service {
      */
     protected LinkedHashMap<String, ChannelHandler> handlers = new LinkedHashMap<>();
 
+    /**
+     * 监听的处理对象
+     */
     protected List<EventListener> eventListeners = new ArrayList<>();
 
     protected EventDispatcher eventDispatcher;

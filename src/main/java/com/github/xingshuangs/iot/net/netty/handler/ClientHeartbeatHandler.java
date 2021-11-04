@@ -1,23 +1,21 @@
-package com.github.xingshuangs.iot.net.client;
+package com.github.xingshuangs.iot.net.netty.handler;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author daoshenzzg@163.com
- * @date 2018/12/30 16:33
+ * @author xingshuang
  */
+@Slf4j
 @ChannelHandler.Sharable
 public class ClientHeartbeatHandler extends ChannelInboundHandlerAdapter {
-    private static final Logger logger = LoggerFactory.getLogger(ClientHeartbeatHandler.class);
 
     public ClientHeartbeatHandler() {
+        // NOOP
     }
 
     @Override
@@ -25,13 +23,11 @@ public class ClientHeartbeatHandler extends ChannelInboundHandlerAdapter {
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent e = (IdleStateEvent) evt;
             if (e.state() == IdleState.WRITER_IDLE) {
-                Channel channel = ctx.channel();
-                if (channel != null) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("WRITER_IDLE, send Heartbeat...");
-                    }
-                    channel.writeAndFlush("");
-                }
+//                Channel channel = ctx.channel();
+//                if (channel != null) {
+//                    log.debug("WRITER_IDLE, send Heartbeat...");
+//                    channel.writeAndFlush("");
+//                }
             } else if (e.state() == IdleState.READER_IDLE) {
                 // NOOP
             }
