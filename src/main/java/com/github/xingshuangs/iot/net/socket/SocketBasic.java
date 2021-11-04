@@ -1,15 +1,16 @@
 package com.github.xingshuangs.iot.net.socket;
 
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
  * @author xingshuang
  */
+@Slf4j
 public class SocketBasic {
 
     private Socket socket;
@@ -18,8 +19,9 @@ public class SocketBasic {
 
     private InetSocketAddress socketAddress;
 
-    private DataInputStream dataInputStream;
-    private DataOutputStream dataOutputStream;
+    private InputStream in;
+
+    private OutputStream out;
 
     public int getTimeout() {
         return timeout;
@@ -47,26 +49,52 @@ public class SocketBasic {
         if (this.socket != null) {
             this.socket.close();
             this.socket = null;
-            this.dataInputStream.close();
-            this.dataOutputStream.close();
-            this.dataInputStream = null;
-            this.dataOutputStream = null;
+            this.in.close();
+            this.out.close();
+            this.in = null;
+            this.out = null;
         }
 
         // 重新创建对象，并连接
         this.socket = new Socket();
+        this.socket.setSoTimeout(60_000);
         this.socket.connect(this.socketAddress, this.timeout);
-        this.dataInputStream = new DataInputStream(this.socket.getInputStream());
-        this.dataOutputStream = new DataOutputStream(this.socket.getOutputStream());
+        this.in = this.socket.getInputStream();
+        this.out = this.socket.getOutputStream();
         return socket;
     }
 
-    public boolean sendData(byte[] data) throws IOException {
-        if (this.checkConnected()) {
-            this.dataOutputStream.write(data);
-            return true;
-        } else {
-            return false;
+    public void write(final byte[] data) throws IOException {
+        this.out.write(data);
+    }
+
+    public void write(final byte[] data, final int offset, final int length) throws IOException {
+        this.out.write(data, offset, length);
+    }
+
+    public int read(final byte[] b, int offset, int length) {
+        int res = 0;
+        try {
+            int retry = 0;
+            while ((this.in.available() <= 0) && (retry < 1000)) {
+                if (retry > 0) {
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        log.error(e.getMessage(), e);
+                    }
+                }
+                retry++;
+            }
+            while ((this.in.available() > 0) && (length > 0)) {
+                res = this.in.read(b, offset, length);
+                offset += res;
+                length -= res;
+            }
+            return res;
+        } catch (final IOException e) {
+            log.error(e.getMessage(), e);
+            return 0;
         }
     }
 }
