@@ -28,12 +28,6 @@
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.53.Final</version>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
