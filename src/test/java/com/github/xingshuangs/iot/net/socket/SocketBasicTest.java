@@ -24,13 +24,13 @@ public class SocketBasicTest {
     @Test
     public void write() {
         String test = "hello world ";
-        IntStream.range(0, 30).forEach(i -> {
+        IntStream.range(0, 100).forEach(i -> {
             String data = test + i;
-            log.info(data);
             try {
                 TimeUnit.SECONDS.sleep(2);
+                log.info(data);
                 this.socketBasic.write(data.getBytes(StandardCharsets.UTF_8));
-            } catch ( Exception e) {
+            } catch (Exception e) {
                 log.error(e.getMessage());
             }
         });
@@ -51,10 +51,18 @@ public class SocketBasicTest {
 
     @Test
     public void read1() throws IOException {
-        byte[] data = new byte[1024];
-        int read = this.socketBasic.read(data, 30_000);
-        if (read > 0) {
-            System.out.println(new String(data));
-        }
+        IntStream.range(0, 30).forEach(i -> {
+            try {
+                TimeUnit.SECONDS.sleep(2);
+                log.info("第" + i + "次读取数据");
+                byte[] data = new byte[1024];
+                int read = this.socketBasic.read(data);
+                if (read > 0) {
+                    System.out.println(new String(data));
+                }
+            } catch (IOException | InterruptedException e) {
+                log.error(e.getMessage());
+            }
+        });
     }
 }

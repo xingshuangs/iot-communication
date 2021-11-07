@@ -95,21 +95,23 @@ public class SocketBasic {
 
         // 重新创建对象，并连接
         this.socket = new Socket();
+//        this.socket.setTcpNoDelay(true);
         this.socket.setSoTimeout(10_000);
         this.socket.connect(this.socketAddress, this.connectTimeout);
         this.socketError.set(false);
         // socket定时心跳检测
-        this.executorService.execute(() -> {
-            try {
-                while (true) {
-                    TimeUnit.SECONDS.sleep(1);
-                    this.socket.sendUrgentData(0xFF);
-                }
-            } catch (Exception e) {
-                this.socketError.set(true);
-                log.warn("检测到服务器连接断开，服务器IP[{}]，端口号[{}]", this.socketAddress.getHostString(), this.socketAddress.getPort());
-            }
-        });
+//        this.executorService.execute(() -> {
+//            try {
+//                while (true) {
+//                    TimeUnit.SECONDS.sleep(1);
+//                    this.socket.sendUrgentData(0xFF);
+//                }
+//            } catch (Exception e) {
+//                this.socketError.set(true);
+//                log.warn("检测到服务器连接断开，服务器IP[{}]，端口号[{}]，错误消息：{}", this.socketAddress.getHostString(), this.socketAddress.getPort(), e.getMessage());
+//                log.error(e.getMessage(), e);
+//            }
+//        });
         log.debug("实例化一个新的socket对象");
         return socket;
     }
@@ -139,7 +141,12 @@ public class SocketBasic {
     public void write(final byte[] data, int offset, int length) throws IOException {
         Socket availableSocket = this.getAvailableSocket();
         OutputStream out = availableSocket.getOutputStream();
-        out.write(data, offset, length);
+        try {
+            out.write(data, offset, length);
+        } catch (IOException e) {
+            this.socketError.set(true);
+            log.error(e.getMessage(), e);
+        }
     }
 
     /**
@@ -180,7 +187,13 @@ public class SocketBasic {
         // 阻塞不是指read的时间长短，可以理解为没有数据可读，线程一直在这等待
         availableSocket.setSoTimeout(timeout);
         InputStream in = availableSocket.getInputStream();
-        return in.read(data, offset, length);
+        try {
+            return in.read(data, offset, length);
+        } catch (IOException e) {
+            this.socketError.set(true);
+            log.error(e.getMessage(), e);
+            return 0;
+        }
     }
 
     //endregion
