@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.net.socket;
 
 
+import com.github.xingshuangs.iot.exceptions.SocketRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -10,7 +11,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -139,13 +139,13 @@ public class SocketBasic {
      * @throws IOException IO异常
      */
     public void write(final byte[] data, int offset, int length) throws IOException {
-        Socket availableSocket = this.getAvailableSocket();
-        OutputStream out = availableSocket.getOutputStream();
         try {
+            Socket availableSocket = this.getAvailableSocket();
+            OutputStream out = availableSocket.getOutputStream();
             out.write(data, offset, length);
         } catch (IOException e) {
             this.socketError.set(true);
-            log.error(e.getMessage(), e);
+            throw e;
         }
     }
 
@@ -183,16 +183,19 @@ public class SocketBasic {
      * @throws IOException IO异常
      */
     public int read(final byte[] data, int offset, int length, int timeout) throws IOException {
-        Socket availableSocket = this.getAvailableSocket();
-        // 阻塞不是指read的时间长短，可以理解为没有数据可读，线程一直在这等待
-        availableSocket.setSoTimeout(timeout);
-        InputStream in = availableSocket.getInputStream();
         try {
-            return in.read(data, offset, length);
-        } catch (IOException e) {
+            Socket availableSocket = this.getAvailableSocket();
+            // 阻塞不是指read的时间长短，可以理解为没有数据可读，线程一直在这等待
+            availableSocket.setSoTimeout(timeout);
+            InputStream in = availableSocket.getInputStream();
+            int count = in.read(data, offset, length);
+            if (count < 0) {
+                throw new SocketRuntimeException("读取数据异常，未读取到数据");
+            }
+            return count;
+        } catch (Exception e) {
             this.socketError.set(true);
-            log.error(e.getMessage(), e);
-            return 0;
+            throw e;
         }
     }
 

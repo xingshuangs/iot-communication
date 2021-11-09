@@ -1,8 +1,9 @@
 package com.github.xingshuangs.iot.exceptions;
 
 /**
- * @author daoshenzzg@163.com
- * @date 2018/12/30 15:10
+ * socket执行超时异常
+ *
+ * @author xingshuang
  */
 public class SocketTimeoutException extends RuntimeException {
     private static final long serialVersionUID = 1L;
