@@ -50,6 +50,23 @@ public class SocketBasic {
      * 线程池执行对象
      */
     private ExecutorService executorService;
+
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public int getReceiveTimeout() {
+        return receiveTimeout;
+    }
+
+    public void setReceiveTimeout(int receiveTimeout) {
+        this.receiveTimeout = receiveTimeout;
+    }
+
     // endregion
 
     // region 构造方法
@@ -60,7 +77,7 @@ public class SocketBasic {
     public SocketBasic(String host, int port) {
         this.socketError = new AtomicBoolean(false);
         this.socketAddress = new InetSocketAddress(host, port);
-        this.executorService = Executors.newSingleThreadExecutor();
+//        this.executorService = Executors.newSingleThreadExecutor();
     }
     // endregion
 
