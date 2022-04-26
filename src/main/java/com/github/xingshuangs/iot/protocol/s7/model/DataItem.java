@@ -40,7 +40,7 @@ public class DataItem implements IByteArray {
     private byte[] data = new byte[0];
 
     @Override
-    public int getByteArrayLength() {
+    public int byteArrayLength() {
         return 4 + this.data.length;
     }
 

@@ -22,19 +22,19 @@ public class S7Data implements IByteArray {
     private Datum datum;
 
     @Override
-    public int getByteArrayLength() {
+    public int byteArrayLength() {
         int length = 0;
-        length += this.tpkt != null ? this.tpkt.getByteArrayLength() : 0;
-        length += this.cotp != null ? this.cotp.getByteArrayLength() : 0;
-        length += this.header != null ? this.header.getByteArrayLength() : 0;
-        length += this.parameter != null ? this.parameter.getByteArrayLength() : 0;
-        length += this.datum != null ? this.datum.getByteArrayLength() : 0;
+        length += this.tpkt != null ? this.tpkt.byteArrayLength() : 0;
+        length += this.cotp != null ? this.cotp.byteArrayLength() : 0;
+        length += this.header != null ? this.header.byteArrayLength() : 0;
+        length += this.parameter != null ? this.parameter.byteArrayLength() : 0;
+        length += this.datum != null ? this.datum.byteArrayLength() : 0;
         return length;
     }
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[this.getByteArrayLength()];
+        byte[] res = new byte[this.byteArrayLength()];
         int count = 0;
         if (this.tpkt != null) {
             byte[] tpktBytes = this.tpkt.toByteArray();

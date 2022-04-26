@@ -11,7 +11,7 @@ public interface IByteArray {
      *
      * @return 长度结果
      */
-    int getByteArrayLength();
+    int byteArrayLength();
 
     /**
      * 转换为字节数组

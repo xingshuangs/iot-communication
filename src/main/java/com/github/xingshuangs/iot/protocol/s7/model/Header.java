@@ -71,7 +71,7 @@ public class Header implements IByteArray {
     private byte errorCode = 0x00;
 
     @Override
-    public int getByteArrayLength() {
+    public int byteArrayLength() {
         return 12;
     }
 

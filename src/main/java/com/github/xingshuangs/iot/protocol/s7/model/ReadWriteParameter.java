@@ -29,13 +29,13 @@ public class ReadWriteParameter extends Parameter implements IByteArray {
     private List<RequestItem> requestItems = new ArrayList<>();
 
     @Override
-    public int getByteArrayLength() {
-        return 2 + this.requestItems.stream().mapToInt(RequestItem::getByteArrayLength).sum();
+    public int byteArrayLength() {
+        return 2 + this.requestItems.stream().mapToInt(RequestItem::byteArrayLength).sum();
     }
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[this.getByteArrayLength()];
+        byte[] res = new byte[this.byteArrayLength()];
         res[0] = this.getFunctionCode().getCode();
         res[1] = this.itemCount;
         int count = 0;

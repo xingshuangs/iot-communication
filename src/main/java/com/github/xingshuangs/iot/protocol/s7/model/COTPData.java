@@ -29,7 +29,7 @@ public class COTPData extends COTP implements IByteArray {
     private boolean lastDataUnit = true;
 
     @Override
-    public int getByteArrayLength() {
+    public int byteArrayLength() {
         return 3;
     }
 

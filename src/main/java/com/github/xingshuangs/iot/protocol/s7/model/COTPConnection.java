@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
+import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,14 +20,14 @@ public class COTPConnection extends COTP implements IByteArray {
      * 字节大小：2 <br>
      * 字节序数：2-3
      */
-    private int destinationReference = 0x0001;
+    private int destinationReference = 0x0000;
 
     /**
      * 源引用 <br>
      * 字节大小：2 <br>
      * 字节序数：4-5
      */
-    private int sourceReference = 0x0006;
+    private int sourceReference = 0x0001;
 
     /**
      * 扩展格式/流控制  前四位标识Class，  倒数第二位Extended formats，  倒数第一位No explicit flow control <br>
@@ -99,7 +100,7 @@ public class COTPConnection extends COTP implements IByteArray {
     private int destinationTsap = 0x0201;
 
     @Override
-    public int getByteArrayLength() {
+    public int byteArrayLength() {
         return 18;
     }
 
@@ -136,5 +137,32 @@ public class COTPConnection extends COTP implements IByteArray {
         res[16] = destTsapBytes[0];
         res[17] = destTsapBytes[1];
         return res;
+    }
+
+    /**
+     * CRConnect Request 连接请求
+     *
+     * @return COTPConnection对象
+     */
+    public static COTPConnection crConnectRequest() {
+        COTPConnection connection = new COTPConnection();
+        connection.setLength((byte) 0x11);
+        // FIXME:这里到底是0xE0还是0x0E
+        connection.setPduType(EPduType.CONNECT_REQUEST);
+        connection.destinationReference = 0x0000;
+        connection.sourceReference = 0x0001;
+        connection.flags = (byte) 0x00;
+        connection.parameterCodeTpduSize = (byte) 0xC0;
+        connection.parameterLength1 = (byte) 0x01;
+        connection.tpduSize = (byte) 0x0A;
+        connection.parameterCodeSrcTsap = (byte) 0xC1;
+        connection.parameterLength2 = (byte) 0x02;
+        // FIXME:这里到底是0x0201还是0x0102
+        connection.sourceTsap = 0x0201;
+        connection.parameterCodeDstTsap = (byte) 0xC2;
+        connection.parameterLength3 = (byte) 0x02;
+        // FIXME:这里到底是0x0201还是0x0100
+        connection.destinationTsap = 0x0201;
+        return connection;
     }
 }

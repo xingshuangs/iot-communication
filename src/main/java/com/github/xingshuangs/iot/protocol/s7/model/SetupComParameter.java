@@ -26,14 +26,14 @@ public class SetupComParameter extends Parameter implements IByteArray {
      * 字节大小：2 <br>
      * 字节序数：2-3
      */
-    private int maxAmQCaller = 0x0001;
+    private int maxAmqCaller = 0x0001;
 
     /**
      * Ack队列的大小（被叫）（大端）<br>
      * 字节大小：2 <br>
      * 字节序数：4-5
      */
-    private int maxAmQCallee = 0x0001;
+    private int maxAmqCallee = 0x0001;
 
     /**
      * PDU长度（大端）<br>
@@ -43,23 +43,23 @@ public class SetupComParameter extends Parameter implements IByteArray {
     private int pduLength = 0x0000;
 
     @Override
-    public int getByteArrayLength() {
+    public int byteArrayLength() {
         return 8;
     }
 
     @Override
     public byte[] toByteArray() {
         byte[] res = new byte[8];
-        byte[] maxAmQCallerBytes = ShortUtil.toByteArray((short) this.maxAmQCaller);
-        byte[] maxAmQCalleeBytes = ShortUtil.toByteArray((short) this.maxAmQCallee);
+        byte[] maxAmqCallerBytes = ShortUtil.toByteArray((short) this.maxAmqCaller);
+        byte[] maxAmqCalleeBytes = ShortUtil.toByteArray((short) this.maxAmqCallee);
         byte[] pduLengthBytes = ShortUtil.toByteArray((short) this.pduLength);
 
         res[0] = this.getFunctionCode().getCode();
         res[1] = this.reserved;
-        res[2] = maxAmQCallerBytes[0];
-        res[3] = maxAmQCallerBytes[1];
-        res[4] = maxAmQCalleeBytes[0];
-        res[5] = maxAmQCalleeBytes[1];
+        res[2] = maxAmqCallerBytes[0];
+        res[3] = maxAmqCallerBytes[1];
+        res[4] = maxAmqCalleeBytes[0];
+        res[5] = maxAmqCalleeBytes[1];
         res[6] = pduLengthBytes[0];
         res[7] = pduLengthBytes[1];
         return res;

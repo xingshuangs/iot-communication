@@ -20,8 +20,8 @@ public class Datum implements IByteArray {
     private List<DataItem> dataItems = new ArrayList<>();
 
     @Override
-    public int getByteArrayLength() {
-        return this.dataItems.stream().mapToInt(DataItem::getByteArrayLength).sum();
+    public int byteArrayLength() {
+        return this.dataItems.stream().mapToInt(DataItem::byteArrayLength).sum();
     }
 
     @Override
@@ -29,7 +29,7 @@ public class Datum implements IByteArray {
         if (this.dataItems.isEmpty()) {
             return new byte[0];
         }
-        byte[] res = new byte[this.getByteArrayLength()];
+        byte[] res = new byte[this.byteArrayLength()];
         int count = 0;
         for (DataItem item : this.dataItems) {
             byte[] bytes = item.toByteArray();

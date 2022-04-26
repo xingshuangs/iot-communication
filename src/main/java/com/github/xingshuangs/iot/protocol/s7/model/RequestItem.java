@@ -35,7 +35,7 @@ public class RequestItem implements IByteArray {
      * 字节大小：1 <br>
      * 字节序数：2
      */
-    private ESyntaxID syntaxID = ESyntaxID.S7ANY;
+    private ESyntaxID syntaxId = ESyntaxID.S7ANY;
 
     /**
      * 变量的类型和长度BIT，BYTE，WORD，DWORD，COUNTER <br>
@@ -73,7 +73,7 @@ public class RequestItem implements IByteArray {
     private int address = 0x000000;
 
     @Override
-    public int getByteArrayLength() {
+    public int byteArrayLength() {
         return 12;
     }
 
@@ -86,7 +86,7 @@ public class RequestItem implements IByteArray {
 
         res[0] = this.specificationType;
         res[1] = this.lengthOfFollowing;
-        res[2] = this.syntaxID.getCode();
+        res[2] = this.syntaxId.getCode();
         res[3] = this.variableType.getCode();
         res[4] = countBytes[0];
         res[5] = countBytes[1];

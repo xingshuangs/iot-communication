@@ -3,24 +3,25 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
+import lombok.Getter;
 
 /**
  * TPKT协议
  *
  * @author xingshuang
  */
-@Data
+@Getter
 public class TPKT implements IByteArray {
 
     /**
-     * 版本号 <br>
+     * 版本号，常量0x03 <br>
      * 字节大小：1 <br>
      * 字节序数：0
      */
     private byte version = 0x03;
 
     /**
-     * 预留 <br>
+     * 预留，默认值0x00 <br>
      * 字节大小：1 <br>
      * 字节序数：1
      */
@@ -33,8 +34,12 @@ public class TPKT implements IByteArray {
      */
     private int length = 0x0000;
 
+    public void setLength(int length) {
+        this.length = length;
+    }
+
     @Override
-    public int getByteArrayLength() {
+    public int byteArrayLength() {
         return 4;
     }
 

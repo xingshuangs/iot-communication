@@ -27,7 +27,7 @@ public class COTP implements IByteArray {
     private EPduType pduType = EPduType.CONNECT_REQUEST;
 
     @Override
-    public int getByteArrayLength() {
+    public int byteArrayLength() {
         return 2;
     }
 

@@ -20,7 +20,7 @@ public class Parameter implements IByteArray {
     private EFunctionCode functionCode = EFunctionCode.READ_VARIABLE;
 
     @Override
-    public int getByteArrayLength() {
+    public int byteArrayLength() {
         return 1;
     }
 
