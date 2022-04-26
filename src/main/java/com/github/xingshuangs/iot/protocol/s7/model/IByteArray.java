@@ -1,0 +1,22 @@
+package com.github.xingshuangs.iot.protocol.s7.model;
+
+
+/**
+ * @author xingshuang
+ */
+public interface IByteArray {
+
+    /**
+     * 获取字节数组长度
+     *
+     * @return 长度结果
+     */
+    int getByteArrayLength();
+
+    /**
+     * 转换为字节数组
+     *
+     * @return 字节数组
+     */
+    byte[] toByteArray();
+}

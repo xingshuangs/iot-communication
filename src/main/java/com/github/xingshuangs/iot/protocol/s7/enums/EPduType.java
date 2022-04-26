@@ -32,6 +32,11 @@ public enum EPduType {
      * 拒绝
      */
     REJECT((byte)0x05),
+
+    /**
+     * 数据
+     */
+    DT_DATA((byte)0x0f),
     ;
 
     private byte code;
