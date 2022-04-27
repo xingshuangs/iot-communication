@@ -22,7 +22,7 @@ public class BooleanUtil {
         if (bit > 7 || bit < 0) {
             throw new IndexOutOfBoundsException("0<=bit<=7");
         }
-        return res ? (byte) (((data & 0xFF) | (1 << bit)) & 0xFF) : (byte) (data & ~(1 << bit) & 0xFF);
+        return res ? (byte) (((data & 0xFF) | (1 << bit)) & 0xFF) : (byte) ((data & 0xFF) & ~(1 << bit) & 0xFF);
     }
 
     /**

@@ -82,10 +82,10 @@ public class IntegerUtil {
         }
         int b = littleEndian ? 3 : 0;
         int d = littleEndian ? 1 : -1;
-        return (data[offset + b - d * 0] << 24 |
-                data[offset + b - d * 1] << 16 |
-                data[offset + b - d * 2] << 8 |
-                data[offset + b - d * 3]);
+        return (((data[offset + b - d * 0] & 0xFF) << 24)
+                | ((data[offset + b - d * 1] & 0xFF) << 16)
+                | ((data[offset + b - d * 2] & 0xFF) << 8)
+                | ((data[offset + b - d * 3] & 0xFF) << 0));
     }
 
     /**
@@ -126,9 +126,9 @@ public class IntegerUtil {
         }
         int b = littleEndian ? 3 : 0;
         int d = littleEndian ? 1 : -1;
-        return (data[offset + b - d * 0] << 24 |
-                data[offset + b - d * 1] << 16 |
-                data[offset + b - d * 2] << 8 |
-                data[offset + b - d * 3]) & 0xFFFFFFFFL;
+        return (((data[offset + b - d * 0] & 0xFF) << 24)
+                | ((data[offset + b - d * 1] & 0xFF) << 16)
+                | ((data[offset + b - d * 2] & 0xFF) << 8)
+                | ((data[offset + b - d * 3] & 0xFF) << 0)) & 0xFFFFFFFFL;
     }
 }

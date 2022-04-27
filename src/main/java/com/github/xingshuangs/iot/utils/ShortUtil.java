@@ -78,8 +78,8 @@ public class ShortUtil {
         }
         int b = littleEndian ? 1 : 0;
         int d = littleEndian ? 1 : -1;
-        return (short) (data[offset + b - d * 0] << 8 |
-                data[offset + b - d * 1]);
+        return (short) (((data[offset + b - d * 0] & 0xFF) << 8)
+                | ((data[offset + b - d * 1] & 0xFF) << 0));
     }
 
     /**
@@ -120,7 +120,7 @@ public class ShortUtil {
         }
         int b = littleEndian ? 1 : 0;
         int d = littleEndian ? 1 : -1;
-        return (data[offset + b - d * 0] << 8 |
-                data[offset + b - d * 1]) & 0xFFFF;
+        return (((data[offset + b - d * 0] & 0xFF) << 8)
+                | (data[offset + b - d * 1] & 0xFF) << 0);
     }
 }
