@@ -21,7 +21,7 @@ public class COTPTest {
         COTP cotp = new COTP();
         cotp.setLength((byte) 0x03);
         cotp.setPduType(EPduType.CONNECT_CONFIRM);
-        byte[] target = new byte[]{(byte) 0x03, (byte) 0x0D};
+        byte[] target = new byte[]{(byte) 0x03, (byte) 0xD0};
         assertArrayEquals(target, cotp.toByteArray());
     }
 }

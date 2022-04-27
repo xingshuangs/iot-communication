@@ -38,4 +38,12 @@ public class BooleanUtilTest {
     public void setBitException1() {
         BooleanUtil.setBit((byte) 0x70, -1, true);
     }
+
+    @Test
+    public void getValue() {
+        boolean b = BooleanUtil.getValue((byte) 0x80, 7);
+        assertTrue(b);
+        b = BooleanUtil.getValue((byte) 0x80, 6);
+        assertFalse(b);
+    }
 }

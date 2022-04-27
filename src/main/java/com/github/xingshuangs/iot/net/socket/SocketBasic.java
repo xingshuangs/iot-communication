@@ -105,10 +105,7 @@ public class SocketBasic {
             return this.socket;
         }
         // 未连接，表示已断开，需要手动关闭socket，创建新的socket
-        if (this.socket != null) {
-            this.socket.close();
-            this.socket = null;
-        }
+        this.close();
 
         // 重新创建对象，并连接
         this.socket = new Socket();
@@ -116,6 +113,7 @@ public class SocketBasic {
         this.socket.setSoTimeout(10_000);
         this.socket.connect(this.socketAddress, this.connectTimeout);
         this.socketError.set(false);
+        this.doAfterConnected();
         // socket定时心跳检测
 //        this.executorService.execute(() -> {
 //            try {
@@ -133,7 +131,21 @@ public class SocketBasic {
         return socket;
     }
 
+    private void close() throws IOException {
+        if (this.socket != null) {
+            this.socket.close();
+            this.socket = null;
+        }
+    }
+
     //endregion
+
+    /**
+     * 连接成功之后要做的动作
+     */
+    protected void doAfterConnected(){
+        // NOOP
+    }
 
     //region 公有方法
 

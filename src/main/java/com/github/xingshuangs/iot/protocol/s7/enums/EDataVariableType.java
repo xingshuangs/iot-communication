@@ -1,6 +1,9 @@
 package com.github.xingshuangs.iot.protocol.s7.enums;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 数据返回Transport size in data Transport size (variable Type) 变量的类型和长度
  *
@@ -43,6 +46,18 @@ public enum EDataVariableType {
      */
     OCTET_STRING((byte) 0x09),
     ;
+
+    private static final Map<Byte, EDataVariableType> map = new HashMap<>();
+
+    static {
+        for (EDataVariableType item : EDataVariableType.values()) {
+            map.put(item.code, item);
+        }
+    }
+
+    public static EDataVariableType from(byte data) {
+        return map.get(data);
+    }
 
     private byte code;
 

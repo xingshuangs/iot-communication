@@ -4,6 +4,8 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
 import lombok.Data;
 
+import java.util.Arrays;
+
 /**
  * COTP结构
  *
@@ -17,7 +19,7 @@ public class COTP implements IByteArray {
      * 字节大小：1 <br>
      * 字节序数：0
      */
-    private byte length = 0x00;
+    private int length = 0x00;
 
     /**
      * PDU类型（CRConnect Request 连接请求）<br>
@@ -33,6 +35,20 @@ public class COTP implements IByteArray {
 
     @Override
     public byte[] toByteArray() {
-        return new byte[]{this.length, this.pduType.getCode()};
+        byte[] res = new byte[2];
+        res[0] = (byte) (this.getLength() & 0xFF);
+        res[1] = this.pduType.getCode();
+        return res;
+    }
+
+    public static COTP fromBytes(byte[] data) {
+        int length = data[0] & 0xFF;
+        byte[] cotpBytes = Arrays.copyOfRange(data, 0, length + 1);
+        if (cotpBytes[1] == EPduType.DT_DATA.getCode()) {
+            return COTPData.fromBytes(cotpBytes);
+        } else {
+
+        }
+        return null;
     }
 }

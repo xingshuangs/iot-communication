@@ -1,6 +1,9 @@
 package com.github.xingshuangs.iot.protocol.s7.enums;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 功能码 Job request/Ack-Data function codes
  *
@@ -15,58 +18,70 @@ public enum EFunctionCode {
     /**
      * 读变量
      */
-    READ_VARIABLE((byte)0x04),
+    READ_VARIABLE((byte) 0x04),
 
     /**
      * 写变量
      */
-    WRITE_VARIABLE((byte)0x05),
+    WRITE_VARIABLE((byte) 0x05),
 
     /**
      * 开始下载
      */
-    REQUEST_DOWNLOAD((byte)0x1A),
+    REQUEST_DOWNLOAD((byte) 0x1A),
 
     /**
      * 下载阻塞
      */
-    DOWNLOAD_BLOCK((byte)0x1B),
+    DOWNLOAD_BLOCK((byte) 0x1B),
 
     /**
      * 下载结束
      */
-    DOWNLOAD_ENDED((byte)0x1C),
+    DOWNLOAD_ENDED((byte) 0x1C),
 
     /**
      * 开始上传
      */
-    START_UPLOAD((byte)0x1D),
+    START_UPLOAD((byte) 0x1D),
 
     /**
      * 上传
      */
-    UPLOAD((byte)0x1E),
+    UPLOAD((byte) 0x1E),
 
     /**
      * 结束上传
      */
-    END_UPLOAD((byte)0x1F),
+    END_UPLOAD((byte) 0x1F),
 
     /**
      * 控制PLC
      */
-    PLC_CONTROL((byte)0x28),
+    PLC_CONTROL((byte) 0x28),
 
     /**
      * 停止PLC
      */
-    PLC_STOP((byte)0x29),
+    PLC_STOP((byte) 0x29),
 
     /**
      * 设置通信
      */
-    SETUP_COMMUNICATION((byte)0xF0),
+    SETUP_COMMUNICATION((byte) 0xF0),
     ;
+
+    private static final Map<Byte, EFunctionCode> map = new HashMap<>();
+
+    static {
+        for (EFunctionCode item : EFunctionCode.values()) {
+            map.put(item.code, item);
+        }
+    }
+
+    public static EFunctionCode from(byte data) {
+        return map.get(data);
+    }
 
     private byte code;
 

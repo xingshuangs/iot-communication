@@ -1,6 +1,9 @@
 package com.github.xingshuangs.iot.protocol.s7.enums;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 错误类型
  *
@@ -40,10 +43,21 @@ public enum EErrorClass {
 
     /**
      * 访问错误
-     *
      */
     ACCESS_ERROR((byte) 0x87),
     ;
+
+    private static final Map<Byte, EErrorClass> map = new HashMap<>();
+
+    static {
+        for (EErrorClass item : EErrorClass.values()) {
+            map.put(item.code, item);
+        }
+    }
+
+    public static EErrorClass from(byte data) {
+        return map.get(data);
+    }
 
     private byte code;
 

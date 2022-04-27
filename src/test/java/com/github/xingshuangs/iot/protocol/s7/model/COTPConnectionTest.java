@@ -17,7 +17,7 @@ public class COTPConnectionTest {
     public void toByteArray() {
         COTPConnection connection = COTPConnection.crConnectRequest();
         byte[] actual = connection.toByteArray();
-        byte[] expect = {(byte) 0x11, (byte) 0x0E,
+        byte[] expect = {(byte) 0x11, (byte) 0xE0,
                 (byte) 0x00, (byte) 0x00,
                 (byte) 0x00, (byte) 0x01,
                 (byte) 0x00,

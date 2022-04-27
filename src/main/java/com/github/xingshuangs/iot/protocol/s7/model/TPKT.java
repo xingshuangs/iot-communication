@@ -2,7 +2,6 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 
 import com.github.xingshuangs.iot.utils.ShortUtil;
-import lombok.Data;
 import lombok.Getter;
 
 /**
@@ -12,6 +11,12 @@ import lombok.Getter;
  */
 @Getter
 public class TPKT implements IByteArray {
+
+    public static final int BYTE_LENGTH = 4;
+
+    public static final int VERSION_OFFSET = 0;
+    public static final int RESERVED_OFFSET = 1;
+    public static final int LENGTH_OFFSET = 2;
 
     /**
      * 版本号，常量0x03 <br>
@@ -40,12 +45,12 @@ public class TPKT implements IByteArray {
 
     @Override
     public int byteArrayLength() {
-        return 4;
+        return BYTE_LENGTH;
     }
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[4];
+        byte[] res = new byte[BYTE_LENGTH];
         byte[] lenBytes = ShortUtil.toByteArray((short) this.length);
 
         res[0] = this.version;
@@ -53,5 +58,16 @@ public class TPKT implements IByteArray {
         res[2] = lenBytes[0];
         res[3] = lenBytes[1];
         return res;
+    }
+
+    public static TPKT fromBytes(byte[] data) {
+        if (data.length < BYTE_LENGTH) {
+            throw new IndexOutOfBoundsException(String.format("TPKT转换过程中，字节数据长度小于%d", BYTE_LENGTH));
+        }
+        TPKT tpkt = new TPKT();
+        tpkt.version = data[VERSION_OFFSET];
+        tpkt.reserved = data[RESERVED_OFFSET];
+        tpkt.length = ShortUtil.toUInt16(data);
+        return tpkt;
     }
 }

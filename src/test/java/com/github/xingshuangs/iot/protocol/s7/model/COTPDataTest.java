@@ -22,7 +22,7 @@ public class COTPDataTest {
         cotpData.setTpduNumber((byte) 0x01);
         cotpData.setLastDataUnit(true);
         byte[] actual = cotpData.toByteArray();
-        byte[] expect = {(byte) 0x11, (byte)0x0E, (byte)0x81};
+        byte[] expect = {(byte) 0x11, (byte)0xE0, (byte)0x81};
         assertArrayEquals(expect, actual);
     }
 }

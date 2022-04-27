@@ -1,7 +1,10 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
+import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
 import lombok.Data;
+
+import java.util.Arrays;
 
 /**
  * S7数据结构
@@ -41,25 +44,39 @@ public class S7Data implements IByteArray {
             System.arraycopy(tpktBytes, 0, res, count, tpktBytes.length);
             count += tpktBytes.length;
         }
-        if(this.cotp!=null){
+        if (this.cotp != null) {
             byte[] cotpBytes = this.cotp.toByteArray();
             System.arraycopy(cotpBytes, 0, res, count, cotpBytes.length);
             count += cotpBytes.length;
         }
-        if(this.header!=null){
+        if (this.header != null) {
             byte[] headerBytes = this.header.toByteArray();
             System.arraycopy(headerBytes, 0, res, count, headerBytes.length);
             count += headerBytes.length;
         }
-        if(this.parameter!=null){
+        if (this.parameter != null) {
             byte[] parameterBytes = this.parameter.toByteArray();
             System.arraycopy(parameterBytes, 0, res, count, parameterBytes.length);
             count += parameterBytes.length;
         }
-        if(this.datum!=null){
+        if (this.datum != null) {
             byte[] datumBytes = this.datum.toByteArray();
             System.arraycopy(datumBytes, 0, res, count, datumBytes.length);
         }
         return res;
     }
+
+    public void selfCheck() {
+        if (this.datum != null && this.header != null) {
+            this.header.setDataLength(this.datum.byteArrayLength());
+        }
+        if (this.parameter != null && this.header != null) {
+            this.header.setParameterLength(this.parameter.byteArrayLength());
+        }
+        if (this.tpkt != null) {
+            this.tpkt.setLength(this.byteArrayLength());
+        }
+    }
+
+
 }

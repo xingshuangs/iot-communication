@@ -1,13 +1,15 @@
 package com.github.xingshuangs.iot.protocol.s7.enums;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 数据的区域
  *
  * @author xingshuang
  */
 public enum EArea {
-
 
     /**
      * 200系列系统信息
@@ -90,6 +92,18 @@ public enum EArea {
     IEC_TIMERS((byte) 0x1F),
 
     ;
+
+    private static final Map<Byte, EArea> map = new HashMap<>();
+
+    static {
+        for (EArea item : EArea.values()) {
+            map.put(item.code, item);
+        }
+    }
+
+    public static EArea from(byte data) {
+        return map.get(data);
+    }
 
     private byte code;
 

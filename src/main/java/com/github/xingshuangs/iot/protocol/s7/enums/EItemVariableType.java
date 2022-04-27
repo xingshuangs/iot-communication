@@ -1,6 +1,9 @@
 package com.github.xingshuangs.iot.protocol.s7.enums;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Transport size (variable Type) in Item data
  *
@@ -98,6 +101,18 @@ public enum EItemVariableType {
      */
     HS_COUNTER((byte) 0x20),
     ;
+
+    private static final Map<Byte, EItemVariableType> map = new HashMap<>();
+
+    static {
+        for (EItemVariableType item : EItemVariableType.values()) {
+            map.put(item.code, item);
+        }
+    }
+
+    public static EItemVariableType from(byte data) {
+        return map.get(data);
+    }
 
     private byte code;
 
