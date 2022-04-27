@@ -51,7 +51,7 @@ public class COTPConnection extends COTP implements IByteArray {
     private byte parameterLength1 = (byte) 0x01;
 
     /**
-     * TPDU大小 <br>
+     * TPDU大小 TPDU Size (2^10 = 1024) <br>
      * 字节大小：1 <br>
      * 字节序数：9
      */
@@ -72,7 +72,7 @@ public class COTPConnection extends COTP implements IByteArray {
     private byte parameterLength2 = (byte) 0x02;
 
     /**
-     * SourceTSAP <br>
+     * SourceTSAP/Rack <br>
      * 字节大小：2 <br>
      * 字节序数：12-13
      */
@@ -93,7 +93,7 @@ public class COTPConnection extends COTP implements IByteArray {
     private byte parameterLength3 = (byte) 0x02;
 
     /**
-     * DestinationTSAP <br>
+     * DestinationTSAP/slot <br>
      * 字节大小：2 <br>
      * 字节序数：16-17
      */
