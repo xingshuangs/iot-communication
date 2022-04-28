@@ -94,13 +94,13 @@ public class FloatUtil {
         int b = littleEndian ? 7 : 0;
         int d = littleEndian ? 1 : -1;
         long l = ((long) (data[offset + b - d * 0] & 0xFF) << 56)
-                | (((long) (data[offset + b - d * 1] & 0xFF) << 48))
-                | (((long) (data[offset + b - d * 2] & 0xFF) << 40))
-                | (((long) (data[offset + b - d * 3] & 0xFF) << 32))
-                | (((long) (data[offset + b - d * 4] & 0xFF) << 24))
-                | (((long) (data[offset + b - d * 5] & 0xFF) << 16))
-                | (((long) (data[offset + b - d * 6] & 0xFF) << 8))
-                | ((long) (data[offset + b - d * 7] & 0xFF));
+                | ((long) (data[offset + b - d * 1] & 0xFF) << 48)
+                | ((long) (data[offset + b - d * 2] & 0xFF) << 40)
+                | ((long) (data[offset + b - d * 3] & 0xFF) << 32)
+                | ((long) (data[offset + b - d * 4] & 0xFF) << 24)
+                | ((long) (data[offset + b - d * 5] & 0xFF) << 16)
+                | ((long) (data[offset + b - d * 6] & 0xFF) << 8)
+                | (long) (data[offset + b - d * 7] & 0xFF);
         return Double.longBitsToDouble(l);
     }
 }
