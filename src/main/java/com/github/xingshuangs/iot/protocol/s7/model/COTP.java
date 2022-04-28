@@ -47,8 +47,7 @@ public class COTP implements IByteArray {
         if (cotpBytes[1] == EPduType.DT_DATA.getCode()) {
             return COTPData.fromBytes(cotpBytes);
         } else {
-
+            return COTPConnection.fromBytes(cotpBytes);
         }
-        return null;
     }
 }

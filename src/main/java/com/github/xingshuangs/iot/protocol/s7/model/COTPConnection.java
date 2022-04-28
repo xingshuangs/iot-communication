@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 
 import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
+import com.github.xingshuangs.iot.utils.ByteUtil;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -48,14 +49,14 @@ public class COTPConnection extends COTP implements IByteArray {
      * 字节大小：1 <br>
      * 字节序数：8
      */
-    private byte parameterLength1 = (byte) 0x01;
+    private int parameterLength1 = (byte) 0x01;
 
     /**
      * TPDU大小 TPDU Size (2^10 = 1024) <br>
      * 字节大小：1 <br>
      * 字节序数：9
      */
-    private byte tpduSize = (byte) 0x0A;
+    private int tpduSize = (byte) 0x0A;
 
     /**
      * 参数代码SRC-TASP <br>
@@ -69,7 +70,7 @@ public class COTPConnection extends COTP implements IByteArray {
      * 字节大小：1 <br>
      * 字节序数：11
      */
-    private byte parameterLength2 = (byte) 0x02;
+    private int parameterLength2 = (byte) 0x02;
 
     /**
      * SourceTSAP/Rack <br>
@@ -90,7 +91,7 @@ public class COTPConnection extends COTP implements IByteArray {
      * 字节大小：1 <br>
      * 字节序数：15
      */
-    private byte parameterLength3 = (byte) 0x02;
+    private int parameterLength3 = (byte) 0x02;
 
     /**
      * DestinationTSAP/slot <br>
@@ -112,7 +113,7 @@ public class COTPConnection extends COTP implements IByteArray {
         byte[] srcTsapBytes = ShortUtil.toByteArray((short) this.sourceTsap);
         byte[] destTsapBytes = ShortUtil.toByteArray((short) this.destinationTsap);
 
-        res[0] = (byte) (this.getLength() & 0xFF);
+        res[0] = ByteUtil.toByte(this.getLength());
         res[1] = this.getPduType().getCode();
 
         res[2] = destRefBytes[0];
@@ -123,16 +124,16 @@ public class COTPConnection extends COTP implements IByteArray {
 
         res[6] = this.flags;
         res[7] = this.parameterCodeTpduSize;
-        res[8] = this.parameterLength1;
-        res[9] = this.tpduSize;
+        res[8] = ByteUtil.toByte(this.parameterLength1);
+        res[9] = ByteUtil.toByte(this.tpduSize);
         res[10] = this.parameterCodeSrcTsap;
-        res[11] = this.parameterLength2;
+        res[11] = ByteUtil.toByte(this.parameterLength2);
 
         res[12] = srcTsapBytes[0];
         res[13] = srcTsapBytes[1];
 
         res[14] = this.parameterCodeDstTsap;
-        res[15] = this.parameterLength3;
+        res[15] = ByteUtil.toByte(this.parameterLength3);
 
         res[16] = destTsapBytes[0];
         res[17] = destTsapBytes[1];
@@ -163,6 +164,25 @@ public class COTPConnection extends COTP implements IByteArray {
         connection.parameterLength3 = (byte) 0x02;
         // FIXME:这里到底是0x0201还是0x0100
         connection.destinationTsap = 0x0201;
+        return connection;
+    }
+
+    public static COTPConnection fromBytes(byte[] data) {
+        COTPConnection connection = new COTPConnection();
+        connection.setLength(ByteUtil.toUInt8(data[0]));
+        connection.setPduType(EPduType.from(data[1]));
+        connection.destinationReference = ShortUtil.toUInt16(data, 2);
+        connection.sourceReference = ShortUtil.toUInt16(data, 4);
+        connection.flags = data[6];
+        connection.parameterCodeTpduSize = data[7];
+        connection.parameterLength1 = ByteUtil.toUInt8(data[8]);
+        connection.tpduSize = ByteUtil.toUInt8(data[9]);
+        connection.parameterCodeSrcTsap = data[10];
+        connection.parameterLength2 = ByteUtil.toUInt8(data[11]);
+        connection.sourceTsap = ShortUtil.toUInt16(data, 12);
+        connection.parameterCodeDstTsap = data[14];
+        connection.parameterLength3 = ByteUtil.toUInt8(data[15]);
+        connection.destinationTsap = ShortUtil.toUInt16(data, 16);
         return connection;
     }
 }
