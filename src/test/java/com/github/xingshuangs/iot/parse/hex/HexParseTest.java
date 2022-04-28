@@ -56,6 +56,10 @@ public class HexParseTest {
         assertArrayEquals(new Short[]{-1, (short) -127}, list.toArray(new Short[0]));
         list = this.hexParse.toInt16(4, 2, false);
         assertArrayEquals(new Short[]{0, (short) 25689}, list.toArray(new Short[0]));
+
+        HexParse parse = new HexParse(new byte[]{(byte) 0x00, (byte) 0xFF, (byte) 0x00, (byte) 0xAA, (byte) 0xAA, (byte) 0x11});
+        list = parse.toInt16(0, 3, false);
+        assertArrayEquals(new Short[]{(short) 255, (short) 170, (short) -21999}, list.toArray(new Short[0]));
     }
 
     @Test
@@ -64,6 +68,9 @@ public class HexParseTest {
         assertArrayEquals(new Integer[]{65535, 65409}, list.toArray(new Integer[0]));
         list = this.hexParse.toUInt16(4, 2, false);
         assertArrayEquals(new Integer[]{0, 25689}, list.toArray(new Integer[0]));
+        HexParse parse = new HexParse(new byte[]{(byte) 0x00, (byte) 0xFF, (byte) 0x00, (byte) 0xAA, (byte) 0xAA, (byte) 0x11});
+        list = parse.toUInt16(0, 3, false);
+        assertArrayEquals(new Integer[]{255, 170, 43537}, list.toArray(new Integer[0]));
     }
 
     @Test
@@ -72,6 +79,12 @@ public class HexParseTest {
         assertArrayEquals(new Integer[]{-127}, list.toArray(new Integer[0]));
         list = this.hexParse.toInt32(0, 2, false);
         assertArrayEquals(new Integer[]{-127, 25689}, list.toArray(new Integer[0]));
+
+        HexParse parse = new HexParse(new byte[]{(byte) 0x1F, (byte) 0x3B, (byte) 0x3B, (byte) 0xA1});
+        list = parse.toInt32(0, 1, false);
+        assertArrayEquals(new Integer[]{523975585}, list.toArray(new Integer[0]));
+        list = parse.toInt32(0, 1, true);
+        assertArrayEquals(new Integer[]{-1589953761}, list.toArray(new Integer[0]));
     }
 
     @Test
@@ -80,6 +93,12 @@ public class HexParseTest {
         assertArrayEquals(new Long[]{4294967169L}, list.toArray(new Long[0]));
         list = this.hexParse.toUInt32(0, 2, false);
         assertArrayEquals(new Long[]{4294967169L, 25689L}, list.toArray(new Long[0]));
+
+        HexParse parse = new HexParse(new byte[]{(byte) 0x1F, (byte) 0x3B, (byte) 0x3B, (byte) 0xA1});
+        list = parse.toUInt32(0, 1, false);
+        assertArrayEquals(new Long[]{523975585L}, list.toArray(new Long[0]));
+        list = parse.toUInt32(0, 1, true);
+        assertArrayEquals(new Long[]{2705013535L}, list.toArray(new Long[0]));
     }
 
     @Test
