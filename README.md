@@ -1,6 +1,6 @@
 # IOT-COMMUNICATION
 
-![maven-v1.0.1](https://img.shields.io/badge/maven-v1.0.1-brightgreen)
+![maven-v1.0.2](https://img.shields.io/badge/maven-v1.0.2-brightgreen)
 
 ## CopyRight
 
@@ -12,7 +12,7 @@
 <dependency>
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
