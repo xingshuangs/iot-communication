@@ -5,6 +5,7 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EDataVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EReturnCode;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Arrays;
 
@@ -13,15 +14,9 @@ import java.util.Arrays;
  *
  * @author xingshuang
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class DataItem implements IByteArray {
-
-    /**
-     * 返回码 <br>
-     * 字节大小：1 <br>
-     * 字节序数：0
-     */
-    private EReturnCode returnCode = EReturnCode.SUCCESS;
+public class DataItem extends ReturnItem implements IByteArray {
 
     /**
      * 变量类型 <br>
@@ -31,7 +26,7 @@ public class DataItem implements IByteArray {
     private EDataVariableType variableType = EDataVariableType.BYTE_WORD_DWORD;
 
     /**
-     * 数据长度 <br>
+     * 数据长度，按位进行计算的，需要进行 /8 或 *8操作 <br>
      * 字节大小：2 <br>
      * 字节序数：2-3
      */
@@ -50,7 +45,7 @@ public class DataItem implements IByteArray {
     @Override
     public byte[] toByteArray() {
         byte[] res = new byte[4 + this.data.length];
-        byte[] countBytes = ShortUtil.toByteArray((short) this.count);
+        byte[] countBytes = ShortUtil.toByteArray((this.count * 8));
 
         res[0] = this.returnCode.getCode();
         res[1] = this.variableType.getCode();
@@ -67,7 +62,7 @@ public class DataItem implements IByteArray {
         DataItem dataItem = new DataItem();
         dataItem.returnCode = EReturnCode.from(data[0]);
         dataItem.variableType = EDataVariableType.from(data[1]);
-        dataItem.count = ShortUtil.toUInt16(data, 2);
+        dataItem.count = ShortUtil.toUInt16(data, 2) / 8;
         dataItem.data = Arrays.copyOfRange(data, 4, 4 + dataItem.count);
         return dataItem;
     }

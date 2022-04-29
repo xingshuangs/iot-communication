@@ -1,6 +1,8 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
+import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
+import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -18,21 +20,21 @@ public class Datum implements IByteArray {
     /**
      * 数据项
      */
-    private List<DataItem> dataItems = new ArrayList<>();
+    private List<ReturnItem> returnItems = new ArrayList<>();
 
     @Override
     public int byteArrayLength() {
-        return this.dataItems.stream().mapToInt(DataItem::byteArrayLength).sum();
+        return this.returnItems.stream().mapToInt(ReturnItem::byteArrayLength).sum();
     }
 
     @Override
     public byte[] toByteArray() {
-        if (this.dataItems.isEmpty()) {
+        if (this.returnItems.isEmpty()) {
             return new byte[0];
         }
         byte[] res = new byte[this.byteArrayLength()];
         int count = 0;
-        for (DataItem item : this.dataItems) {
+        for (ReturnItem item : this.returnItems) {
             byte[] bytes = item.toByteArray();
             System.arraycopy(bytes, 0, res, count, bytes.length);
             count += bytes.length;
@@ -40,7 +42,7 @@ public class Datum implements IByteArray {
         return res;
     }
 
-    public static Datum fromBytes(final byte[] data) {
+    public static Datum fromBytes(final byte[] data, EMessageType messageType, EFunctionCode functionCode) {
         Datum datum = new Datum();
         if (data.length == 0) {
             return datum;
@@ -48,8 +50,15 @@ public class Datum implements IByteArray {
         int offset = 0;
         byte[] remain = data;
         while (offset < data.length) {
-            DataItem dataItem = DataItem.fromBytes(remain);
-            datum.dataItems.add(dataItem);
+            ReturnItem dataItem;
+            // 对写操作的响应结果进行特殊处理
+            if (EMessageType.ACK_DATA == messageType && EFunctionCode.WRITE_VARIABLE == functionCode) {
+                dataItem = ReturnItem.fromBytes(data);
+            } else {
+                dataItem = DataItem.fromBytes(remain);
+            }
+
+            datum.returnItems.add(dataItem);
             offset += dataItem.byteArrayLength();
             remain = Arrays.copyOfRange(remain, offset, remain.length);
         }

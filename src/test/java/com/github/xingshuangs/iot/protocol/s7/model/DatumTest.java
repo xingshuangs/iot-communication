@@ -13,7 +13,7 @@ public class DatumTest {
     public void byteArrayLength() {
         DataItem dataItem = new DataItem();
         Datum datum = new Datum();
-        datum.getDataItems().add(dataItem);
+        datum.getReturnItems().add(dataItem);
         assertEquals(4, datum.byteArrayLength());
     }
 
@@ -25,9 +25,9 @@ public class DatumTest {
         dataItem.setCount(7);
         dataItem.setData(new byte[1]);
         Datum datum = new Datum();
-        datum.getDataItems().add(dataItem);
+        datum.getReturnItems().add(dataItem);
         byte[] actual = datum.toByteArray();
-        byte[] expect = {(byte) 0xFF, (byte) 0x04, (byte) 0x00, (byte) 0x07, (byte) 0x00};
+        byte[] expect = {(byte) 0xFF, (byte) 0x04, (byte) 0x00, (byte) 0x38, (byte) 0x00};
         assertArrayEquals(expect, actual);
     }
 }

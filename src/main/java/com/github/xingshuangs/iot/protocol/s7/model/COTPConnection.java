@@ -111,10 +111,10 @@ public class COTPConnection extends COTP implements IByteArray {
     @Override
     public byte[] toByteArray() {
         byte[] res = new byte[BYTE_LENGTH];
-        byte[] destRefBytes = ShortUtil.toByteArray((short) this.destinationReference);
-        byte[] srcRefBytes = ShortUtil.toByteArray((short) this.sourceReference);
-        byte[] srcTsapBytes = ShortUtil.toByteArray((short) this.sourceTsap);
-        byte[] destTsapBytes = ShortUtil.toByteArray((short) this.destinationTsap);
+        byte[] destRefBytes = ShortUtil.toByteArray(this.destinationReference);
+        byte[] srcRefBytes = ShortUtil.toByteArray(this.sourceReference);
+        byte[] srcTsapBytes = ShortUtil.toByteArray(this.sourceTsap);
+        byte[] destTsapBytes = ShortUtil.toByteArray(this.destinationTsap);
 
         res[0] = ByteUtil.toByte(this.length);
         res[1] = this.pduType.getCode();

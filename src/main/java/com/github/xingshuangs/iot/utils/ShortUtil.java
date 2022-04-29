@@ -17,7 +17,7 @@ public class ShortUtil {
      * @param littleEndian true:小端，false：大端
      * @return 字节数组
      */
-    public static byte[] toByteArray(short data, boolean littleEndian) {
+    public static byte[] toByteArray(int data, boolean littleEndian) {
         byte[] bytes = new byte[2];
 
         if (littleEndian) {
@@ -36,9 +36,13 @@ public class ShortUtil {
      * @param data short数据
      * @return 字节数组
      */
-    public static byte[] toByteArray(short data) {
+    public static byte[] toByteArray(int data) {
         return toByteArray(data, false);
     }
+
+//    public static byte[] toByteArray(short data) {
+//        return toByteArray(data, false);
+//    }
 
     /**
      * 将字节数组转换为int16

@@ -61,6 +61,10 @@ public class ReadWriteParameter extends Parameter implements IByteArray {
         if (readWriteParameter.itemCount == 0) {
             return readWriteParameter;
         }
+        // 读写返回时，只有功能码和个数
+        if (data.length == 2) {
+            return readWriteParameter;
+        }
         for (int i = 1; i <= readWriteParameter.itemCount; i++) {
             byte[] bytes = Arrays.copyOfRange(data, 2, 2 + i * RequestItem.BYTE_LENGTH);
             readWriteParameter.requestItems.add(RequestItem.fromBytes(bytes));

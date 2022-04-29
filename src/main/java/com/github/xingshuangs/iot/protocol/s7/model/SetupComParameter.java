@@ -52,9 +52,9 @@ public class SetupComParameter extends Parameter implements IByteArray {
     @Override
     public byte[] toByteArray() {
         byte[] res = new byte[BYTE_LENGTH];
-        byte[] maxAmqCallerBytes = ShortUtil.toByteArray((short) this.maxAmqCaller);
-        byte[] maxAmqCalleeBytes = ShortUtil.toByteArray((short) this.maxAmqCallee);
-        byte[] pduLengthBytes = ShortUtil.toByteArray((short) this.pduLength);
+        byte[] maxAmqCallerBytes = ShortUtil.toByteArray(this.maxAmqCaller);
+        byte[] maxAmqCalleeBytes = ShortUtil.toByteArray(this.maxAmqCallee);
+        byte[] pduLengthBytes = ShortUtil.toByteArray(this.pduLength);
 
         res[0] = this.functionCode.getCode();
         res[1] = this.reserved;

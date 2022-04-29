@@ -51,7 +51,7 @@ public class TPKT implements IByteArray {
     @Override
     public byte[] toByteArray() {
         byte[] res = new byte[BYTE_LENGTH];
-        byte[] lenBytes = ShortUtil.toByteArray((short) this.length);
+        byte[] lenBytes = ShortUtil.toByteArray(this.length);
 
         res[0] = this.version;
         res[1] = this.reserved;
@@ -67,7 +67,7 @@ public class TPKT implements IByteArray {
         TPKT tpkt = new TPKT();
         tpkt.version = data[VERSION_OFFSET];
         tpkt.reserved = data[RESERVED_OFFSET];
-        tpkt.length = ShortUtil.toUInt16(data,2);
+        tpkt.length = ShortUtil.toUInt16(data, 2);
         return tpkt;
     }
 }

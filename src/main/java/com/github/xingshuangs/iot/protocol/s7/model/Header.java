@@ -64,10 +64,10 @@ public class Header implements IByteArray {
     @Override
     public byte[] toByteArray() {
         byte[] res = new byte[BYTE_LENGTH];
-        byte[] reservedBytes = ShortUtil.toByteArray((short) this.reserved);
-        byte[] pduReferenceBytes = ShortUtil.toByteArray((short) this.pduReference, true);
-        byte[] parameterLengthBytes = ShortUtil.toByteArray((short) this.parameterLength);
-        byte[] dataLengthBytes = ShortUtil.toByteArray((short) this.dataLength);
+        byte[] reservedBytes = ShortUtil.toByteArray(this.reserved);
+        byte[] pduReferenceBytes = ShortUtil.toByteArray(this.pduReference, true);
+        byte[] parameterLengthBytes = ShortUtil.toByteArray(this.parameterLength);
+        byte[] dataLengthBytes = ShortUtil.toByteArray(this.dataLength);
 
         res[0] = this.protocolId;
         res[1] = this.messageType.getCode();
@@ -90,7 +90,7 @@ public class Header implements IByteArray {
         header.protocolId = data[0];
         header.messageType = EMessageType.from(data[1]);
         header.reserved = ShortUtil.toUInt16(data, 2);
-        header.pduReference = ShortUtil.toUInt16(data, 4, true);
+        header.pduReference = ShortUtil.toUInt16(data, 4);
         header.parameterLength = ShortUtil.toUInt16(data, 6);
         header.dataLength = ShortUtil.toUInt16(data, 8);
         return header;

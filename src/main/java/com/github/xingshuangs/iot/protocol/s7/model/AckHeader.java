@@ -55,7 +55,7 @@ public class AckHeader extends Header {
         header.protocolId = data[0];
         header.messageType = EMessageType.from(data[1]);
         header.reserved = ShortUtil.toUInt16(data, 2);
-        header.pduReference = ShortUtil.toUInt16(data, 4, true);
+        header.pduReference = ShortUtil.toUInt16(data, 4);
         header.parameterLength = ShortUtil.toUInt16(data, 6);
         header.dataLength = ShortUtil.toUInt16(data, 8);
         header.errorClass = EErrorClass.from(data[10]);

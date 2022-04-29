@@ -82,8 +82,8 @@ public class RequestItem implements IByteArray {
     @Override
     public byte[] toByteArray() {
         byte[] res = new byte[BYTE_LENGTH];
-        byte[] countBytes = ShortUtil.toByteArray((short) this.count);
-        byte[] dbNumberBytes = ShortUtil.toByteArray((short) this.dbNumber);
+        byte[] countBytes = ShortUtil.toByteArray(this.count);
+        byte[] dbNumberBytes = ShortUtil.toByteArray(this.dbNumber);
         byte[] addressBytes = IntegerUtil.toByteArray(this.address);
 
         res[0] = this.specificationType;
@@ -107,9 +107,9 @@ public class RequestItem implements IByteArray {
         requestItem.lengthOfFollowing = ByteUtil.toUInt8(data[1]);
         requestItem.syntaxId = ESyntaxID.from(data[2]);
         requestItem.variableType = EItemVariableType.from(data[3]);
-        requestItem.count = ShortUtil.toUInt16(data,4);
-        requestItem.dbNumber = ShortUtil.toUInt16(data,6);
-        requestItem.address = IntegerUtil.toInt32In3Bytes(data,9);
+        requestItem.count = ShortUtil.toUInt16(data, 4);
+        requestItem.dbNumber = ShortUtil.toUInt16(data, 6);
+        requestItem.address = IntegerUtil.toInt32In3Bytes(data, 9);
         return requestItem;
     }
 }

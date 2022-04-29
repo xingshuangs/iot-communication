@@ -98,7 +98,6 @@ public class S7Data implements IByteArray {
         //-----------------------------S7通信部分的内容--------------------------------------------
         byte[] lastBytes = Arrays.copyOfRange(remain, cotp.byteArrayLength(), remain.length);
         // header
-//        byte[] headerBytes = Arrays.copyOfRange(lastBytes, 0, Header.BYTE_LENGTH);
         Header header = HeaderBuilder.fromBytes(lastBytes);
         s7Data.header = header;
         if (header == null) {
@@ -111,8 +110,8 @@ public class S7Data implements IByteArray {
         }
         // datum
         if (header.getDataLength() > 0) {
-            byte[] dataBytes = Arrays.copyOfRange(lastBytes, header.byteArrayLength(), header.byteArrayLength() + header.getParameterLength() + header.getDataLength());
-            s7Data.datum = Datum.fromBytes(dataBytes);
+            byte[] dataBytes = Arrays.copyOfRange(lastBytes, header.byteArrayLength() + header.getParameterLength(), header.byteArrayLength() + header.getParameterLength() + header.getDataLength());
+            s7Data.datum = Datum.fromBytes(dataBytes, s7Data.header.getMessageType(), s7Data.parameter.getFunctionCode());
         }
         return s7Data;
     }
