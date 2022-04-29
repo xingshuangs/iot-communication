@@ -1,14 +1,13 @@
 package com.github.xingshuangs.iot.protocol.s7.service;
 
 
+import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.net.socket.PLCNetwork;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
-import com.github.xingshuangs.iot.protocol.s7.model.COTP;
 import com.github.xingshuangs.iot.protocol.s7.model.S7Data;
 import com.github.xingshuangs.iot.protocol.s7.model.TPKT;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * @author xingshuang
@@ -44,15 +43,16 @@ public class S7Plc extends PLCNetwork {
         this.write(s7Data.toByteArray());
 
         byte[] data = new byte[TPKT.BYTE_LENGTH];
-        this.read(data);
+        int len = this.read(data);
+        if (len < TPKT.BYTE_LENGTH) {
+            throw new S7CommException(" TPKT 无效，长度不一致");
+        }
         TPKT tpkt = TPKT.fromBytes(data);
         byte[] remain = new byte[tpkt.getLength() - TPKT.BYTE_LENGTH];
-        this.read(remain);
-        COTP cotp = COTP.fromBytes(remain);
-        byte[] s7ComBytes = Arrays.copyOfRange(remain, cotp.byteArrayLength(), remain.length);
-        if (s7ComBytes.length > 0) {
-
+        len = this.read(remain);
+        if (len < remain.length) {
+            throw new S7CommException(" TPKT后面的数据长度，长度不一致");
         }
-        return null;
+        return S7Data.fromBytes(tpkt, remain);
     }
 }

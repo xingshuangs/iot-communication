@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
+import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,12 +15,13 @@ import lombok.EqualsAndHashCode;
 @Data
 public class SetupComParameter extends Parameter implements IByteArray {
 
+    public static final int BYTE_LENGTH = 8;
     /**
      * 预留 <br>
      * 字节大小：1 <br>
      * 字节序数：1
      */
-    private byte reserved = (byte)0x00;
+    private byte reserved = (byte) 0x00;
 
     /**
      * Ack队列的大小（主叫）（大端）<br>
@@ -44,17 +46,17 @@ public class SetupComParameter extends Parameter implements IByteArray {
 
     @Override
     public int byteArrayLength() {
-        return 8;
+        return BYTE_LENGTH;
     }
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[8];
+        byte[] res = new byte[BYTE_LENGTH];
         byte[] maxAmqCallerBytes = ShortUtil.toByteArray((short) this.maxAmqCaller);
         byte[] maxAmqCalleeBytes = ShortUtil.toByteArray((short) this.maxAmqCallee);
         byte[] pduLengthBytes = ShortUtil.toByteArray((short) this.pduLength);
 
-        res[0] = this.getFunctionCode().getCode();
+        res[0] = this.functionCode.getCode();
         res[1] = this.reserved;
         res[2] = maxAmqCallerBytes[0];
         res[3] = maxAmqCallerBytes[1];
@@ -63,5 +65,15 @@ public class SetupComParameter extends Parameter implements IByteArray {
         res[6] = pduLengthBytes[0];
         res[7] = pduLengthBytes[1];
         return res;
+    }
+
+    public static SetupComParameter fromBytes(final byte[] data) {
+        SetupComParameter setupComParameter = new SetupComParameter();
+        setupComParameter.functionCode = EFunctionCode.from(data[0]);
+        setupComParameter.reserved = data[1];
+        setupComParameter.maxAmqCaller = ShortUtil.toUInt16(data, 2);
+        setupComParameter.maxAmqCallee = ShortUtil.toUInt16(data, 4);
+        setupComParameter.pduLength = ShortUtil.toUInt16(data, 6);
+        return setupComParameter;
     }
 }

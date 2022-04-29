@@ -18,12 +18,18 @@ public class SetupComParameterTest {
     public void toByteArray() {
         SetupComParameter setupComParameter = new SetupComParameter();
         setupComParameter.setFunctionCode(EFunctionCode.READ_VARIABLE);
-        setupComParameter.setReserved((byte)0x00);
+        setupComParameter.setReserved((byte) 0x00);
         setupComParameter.setMaxAmqCaller(0x0001);
         setupComParameter.setMaxAmqCallee(0x0001);
         setupComParameter.setPduLength(0x0004);
         byte[] actual = setupComParameter.toByteArray();
         byte[] expect = {(byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x04};
         assertArrayEquals(expect, actual);
+    }
+
+    @Test
+    public void parameter() {
+        Parameter parameter = new SetupComParameter();
+        assertEquals(SetupComParameter.BYTE_LENGTH, parameter.byteArrayLength());
     }
 }

@@ -1,10 +1,10 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
-import com.github.xingshuangs.iot.protocol.s7.enums.EErrorClass;
 import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 
 public class HeaderTest {
@@ -24,10 +24,11 @@ public class HeaderTest {
         header.setPduReference(0x0000);
         header.setParameterLength(0x0000);
         header.setDataLength(0x0002);
-        header.setErrorClass(EErrorClass.NO_ERROR);
-        header.setErrorCode((byte) 0x00);
+//        header.setErrorClass(EErrorClass.NO_ERROR);
+//        header.setErrorCode((byte) 0x00);
         byte[] actual = header.toByteArray();
-        byte[] expect = new byte[]{(byte) 0x32, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x00};
+//        byte[] expect = new byte[]{(byte) 0x32, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x00};
+        byte[] expect = new byte[]{(byte) 0x32, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02};
         assertArrayEquals(expect, actual);
     }
 }

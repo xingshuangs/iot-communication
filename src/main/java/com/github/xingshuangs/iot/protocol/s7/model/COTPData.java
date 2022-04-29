@@ -1,9 +1,10 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
+import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
-import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
+import com.github.xingshuangs.iot.utils.ByteUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -16,6 +17,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class COTPData extends COTP implements IByteArray {
 
+    public static final int BYTE_LENGTH = 3;
     /**
      * TPDU编号 <br>
      * 字节大小：1，后面7位 <br>
@@ -32,14 +34,14 @@ public class COTPData extends COTP implements IByteArray {
 
     @Override
     public int byteArrayLength() {
-        return 3;
+        return BYTE_LENGTH;
     }
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[3];
-        res[0] = (byte) (this.getLength() & 0xFF);
-        res[1] = this.getPduType().getCode();
+        byte[] res = new byte[BYTE_LENGTH];
+        res[0] = ByteUtil.toByte(this.length);
+        res[1] = this.pduType.getCode();
         res[2] = (byte) (BooleanUtil.setBit((byte) 0x00, 7, this.lastDataUnit) | (this.tpduNumber & 0xFF));
         return res;
     }
@@ -50,12 +52,15 @@ public class COTPData extends COTP implements IByteArray {
      * @param data 字节数组
      * @return COTPData对象
      */
-    public static COTPData fromBytes(byte[] data) {
+    public static COTPData fromBytes(final byte[] data) {
+        if (data.length < BYTE_LENGTH) {
+            throw new S7CommException("COTPData数据字节长度不够，无法解析");
+        }
         COTPData cotpData = new COTPData();
-        cotpData.setLength(data[0] & 0xFF);
-        cotpData.setPduType(EPduType.from(data[1]));
-        cotpData.setTpduNumber(data[2] & 0x7F);
-        cotpData.setLastDataUnit(BooleanUtil.getValue(data[2], 7));
+        cotpData.length = ByteUtil.toUInt8(data[0]);
+        cotpData.pduType = EPduType.from(data[1]);
+        cotpData.tpduNumber = data[2] & 0x7F;
+        cotpData.lastDataUnit = BooleanUtil.getValue(data[2], 7);
         return cotpData;
     }
 }

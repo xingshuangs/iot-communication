@@ -1,10 +1,14 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
+import com.github.xingshuangs.iot.exceptions.S7CommException;
+import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
+import com.github.xingshuangs.iot.utils.ByteUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,7 +25,7 @@ public class ReadWriteParameter extends Parameter implements IByteArray {
      * 字节大小：1 <br>
      * 字节序数：1
      */
-    private byte itemCount = (byte) 0x01;
+    private int itemCount = 0x01;
 
     /**
      * 可重复的请求项
@@ -36,8 +40,8 @@ public class ReadWriteParameter extends Parameter implements IByteArray {
     @Override
     public byte[] toByteArray() {
         byte[] res = new byte[this.byteArrayLength()];
-        res[0] = this.getFunctionCode().getCode();
-        res[1] = this.itemCount;
+        res[0] = this.functionCode.getCode();
+        res[1] = ByteUtil.toByte(this.itemCount);
         int count = 0;
         for (RequestItem requestItem : this.requestItems) {
             byte[] bytes = requestItem.toByteArray();
@@ -45,5 +49,22 @@ public class ReadWriteParameter extends Parameter implements IByteArray {
             count += bytes.length;
         }
         return res;
+    }
+
+    public static ReadWriteParameter fromBytes(final byte[] data) {
+        if (data.length < 2) {
+            throw new S7CommException("Parameter解析有误，parameter字节数组长度 < 2");
+        }
+        ReadWriteParameter readWriteParameter = new ReadWriteParameter();
+        readWriteParameter.functionCode = EFunctionCode.from(data[0]);
+        readWriteParameter.itemCount = ByteUtil.toUInt8(data[1]);
+        if (readWriteParameter.itemCount == 0) {
+            return readWriteParameter;
+        }
+        for (int i = 1; i <= readWriteParameter.itemCount; i++) {
+            byte[] bytes = Arrays.copyOfRange(data, 2, 2 + i * RequestItem.BYTE_LENGTH);
+            readWriteParameter.requestItems.add(RequestItem.fromBytes(bytes));
+        }
+        return readWriteParameter;
     }
 }

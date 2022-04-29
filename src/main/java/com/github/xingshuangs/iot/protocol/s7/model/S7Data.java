@@ -1,7 +1,6 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
-import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
 import lombok.Data;
 
 import java.util.Arrays;
@@ -78,5 +77,43 @@ public class S7Data implements IByteArray {
         }
     }
 
+    public static S7Data fromBytes(final byte[] data) {
+        byte[] tpktBytes = Arrays.copyOfRange(data, 0, TPKT.BYTE_LENGTH);
+        TPKT tpkt = TPKT.fromBytes(tpktBytes);
+        byte[] remainBytes = Arrays.copyOfRange(data, TPKT.BYTE_LENGTH, data.length);
+        return fromBytes(tpkt, remainBytes);
+    }
 
+    public static S7Data fromBytes(TPKT tpkt, final byte[] remain) {
+        // tpkt
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = tpkt;
+        // cotp
+        COTP cotp = COTPBuilder.fromBytes(remain);
+        s7Data.cotp = cotp;
+        if (cotp == null || remain.length <= cotp.byteArrayLength()) {
+            return s7Data;
+        }
+
+        //-----------------------------S7通信部分的内容--------------------------------------------
+        byte[] lastBytes = Arrays.copyOfRange(remain, cotp.byteArrayLength(), remain.length);
+        // header
+//        byte[] headerBytes = Arrays.copyOfRange(lastBytes, 0, Header.BYTE_LENGTH);
+        Header header = HeaderBuilder.fromBytes(lastBytes);
+        s7Data.header = header;
+        if (header == null) {
+            return s7Data;
+        }
+        // parameter
+        if (header.getParameterLength() > 0) {
+            byte[] parameterBytes = Arrays.copyOfRange(lastBytes, header.byteArrayLength(), header.byteArrayLength() + header.getParameterLength());
+            s7Data.parameter = ParameterBuilder.fromBytes(parameterBytes);
+        }
+        // datum
+        if (header.getDataLength() > 0) {
+            byte[] dataBytes = Arrays.copyOfRange(lastBytes, header.byteArrayLength(), header.byteArrayLength() + header.getParameterLength() + header.getDataLength());
+            s7Data.datum = Datum.fromBytes(dataBytes);
+        }
+        return s7Data;
+    }
 }

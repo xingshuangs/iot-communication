@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -37,5 +38,21 @@ public class Datum implements IByteArray {
             count += bytes.length;
         }
         return res;
+    }
+
+    public static Datum fromBytes(final byte[] data) {
+        Datum datum = new Datum();
+        if (data.length == 0) {
+            return datum;
+        }
+        int offset = 0;
+        byte[] remain = data;
+        while (offset < data.length) {
+            DataItem dataItem = DataItem.fromBytes(remain);
+            datum.dataItems.add(dataItem);
+            offset += dataItem.byteArrayLength();
+            remain = Arrays.copyOfRange(remain, offset, remain.length);
+        }
+        return datum;
     }
 }

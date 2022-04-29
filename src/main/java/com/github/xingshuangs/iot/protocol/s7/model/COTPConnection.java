@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
+import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
 import com.github.xingshuangs.iot.utils.ByteUtil;
 import com.github.xingshuangs.iot.utils.ShortUtil;
@@ -15,6 +16,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class COTPConnection extends COTP implements IByteArray {
+
+    public static final int BYTE_LENGTH = 18;
 
     /**
      * 目标引用，用来唯一标识目标 <br>
@@ -102,19 +105,19 @@ public class COTPConnection extends COTP implements IByteArray {
 
     @Override
     public int byteArrayLength() {
-        return 18;
+        return BYTE_LENGTH;
     }
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[18];
+        byte[] res = new byte[BYTE_LENGTH];
         byte[] destRefBytes = ShortUtil.toByteArray((short) this.destinationReference);
         byte[] srcRefBytes = ShortUtil.toByteArray((short) this.sourceReference);
         byte[] srcTsapBytes = ShortUtil.toByteArray((short) this.sourceTsap);
         byte[] destTsapBytes = ShortUtil.toByteArray((short) this.destinationTsap);
 
-        res[0] = ByteUtil.toByte(this.getLength());
-        res[1] = this.getPduType().getCode();
+        res[0] = ByteUtil.toByte(this.length);
+        res[1] = this.pduType.getCode();
 
         res[2] = destRefBytes[0];
         res[3] = destRefBytes[1];
@@ -147,9 +150,9 @@ public class COTPConnection extends COTP implements IByteArray {
      */
     public static COTPConnection crConnectRequest() {
         COTPConnection connection = new COTPConnection();
-        connection.setLength((byte) 0x11);
+        connection.length = (byte) 0x11;
         // FIXME:这里到底是0xE0还是0x0E
-        connection.setPduType(EPduType.CONNECT_REQUEST);
+        connection.pduType = EPduType.CONNECT_REQUEST;
         connection.destinationReference = 0x0000;
         connection.sourceReference = 0x0001;
         connection.flags = (byte) 0x00;
@@ -167,10 +170,13 @@ public class COTPConnection extends COTP implements IByteArray {
         return connection;
     }
 
-    public static COTPConnection fromBytes(byte[] data) {
+    public static COTPConnection fromBytes(final byte[] data) {
+        if (data.length < BYTE_LENGTH) {
+            throw new S7CommException("COTPConnection数据字节长度不够，无法解析");
+        }
         COTPConnection connection = new COTPConnection();
-        connection.setLength(ByteUtil.toUInt8(data[0]));
-        connection.setPduType(EPduType.from(data[1]));
+        connection.length = ByteUtil.toUInt8(data[0]);
+        connection.pduType = EPduType.from(data[1]);
         connection.destinationReference = ShortUtil.toUInt16(data, 2);
         connection.sourceReference = ShortUtil.toUInt16(data, 4);
         connection.flags = data[6];

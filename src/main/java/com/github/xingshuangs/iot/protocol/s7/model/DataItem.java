@@ -2,8 +2,11 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 
 import com.github.xingshuangs.iot.protocol.s7.enums.EDataVariableType;
+import com.github.xingshuangs.iot.protocol.s7.enums.EReturnCode;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
+
+import java.util.Arrays;
 
 /**
  * 返回数据
@@ -18,7 +21,7 @@ public class DataItem implements IByteArray {
      * 字节大小：1 <br>
      * 字节序数：0
      */
-    private byte returnCode = (byte) 0xFF;
+    private EReturnCode returnCode = EReturnCode.SUCCESS;
 
     /**
      * 变量类型 <br>
@@ -49,7 +52,7 @@ public class DataItem implements IByteArray {
         byte[] res = new byte[4 + this.data.length];
         byte[] countBytes = ShortUtil.toByteArray((short) this.count);
 
-        res[0] = this.returnCode;
+        res[0] = this.returnCode.getCode();
         res[1] = this.variableType.getCode();
         res[2] = countBytes[0];
         res[3] = countBytes[1];
@@ -58,5 +61,14 @@ public class DataItem implements IByteArray {
             System.arraycopy(this.data, 0, res, 4, this.data.length);
         }
         return res;
+    }
+
+    public static DataItem fromBytes(final byte[] data) {
+        DataItem dataItem = new DataItem();
+        dataItem.returnCode = EReturnCode.from(data[0]);
+        dataItem.variableType = EDataVariableType.from(data[1]);
+        dataItem.count = ShortUtil.toUInt16(data, 2);
+        dataItem.data = Arrays.copyOfRange(data, 4, 4 + dataItem.count);
+        return dataItem;
     }
 }

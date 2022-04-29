@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 import com.github.xingshuangs.iot.protocol.s7.enums.EArea;
 import com.github.xingshuangs.iot.protocol.s7.enums.EItemVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.ESyntaxID;
+import com.github.xingshuangs.iot.utils.ByteUtil;
 import com.github.xingshuangs.iot.utils.IntegerUtil;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
@@ -16,6 +17,7 @@ import lombok.Data;
 @Data
 public class RequestItem implements IByteArray {
 
+    public static final int BYTE_LENGTH = 12;
     /**
      * 变量规范，对于读/写消息，它总是具有值0x12 <br>
      * 字节大小：1 <br>
@@ -28,7 +30,7 @@ public class RequestItem implements IByteArray {
      * 字节大小：1 <br>
      * 字节序数：1
      */
-    private byte lengthOfFollowing = (byte) 0x10;
+    private int lengthOfFollowing = 0x10;
 
     /**
      * 寻址模式和项结构其余部分的格式，它具有任意类型寻址的常量值0x10 <br>
@@ -74,18 +76,18 @@ public class RequestItem implements IByteArray {
 
     @Override
     public int byteArrayLength() {
-        return 12;
+        return BYTE_LENGTH;
     }
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[12];
+        byte[] res = new byte[BYTE_LENGTH];
         byte[] countBytes = ShortUtil.toByteArray((short) this.count);
         byte[] dbNumberBytes = ShortUtil.toByteArray((short) this.dbNumber);
         byte[] addressBytes = IntegerUtil.toByteArray(this.address);
 
         res[0] = this.specificationType;
-        res[1] = this.lengthOfFollowing;
+        res[1] = ByteUtil.toByte(this.lengthOfFollowing);
         res[2] = this.syntaxId.getCode();
         res[3] = this.variableType.getCode();
         res[4] = countBytes[0];
@@ -97,5 +99,17 @@ public class RequestItem implements IByteArray {
         res[10] = addressBytes[2];
         res[11] = addressBytes[3];
         return res;
+    }
+
+    public static RequestItem fromBytes(final byte[] data) {
+        RequestItem requestItem = new RequestItem();
+        requestItem.specificationType = data[0];
+        requestItem.lengthOfFollowing = ByteUtil.toUInt8(data[1]);
+        requestItem.syntaxId = ESyntaxID.from(data[2]);
+        requestItem.variableType = EItemVariableType.from(data[3]);
+        requestItem.count = ShortUtil.toUInt16(data,4);
+        requestItem.dbNumber = ShortUtil.toUInt16(data,6);
+        requestItem.address = IntegerUtil.toInt32In3Bytes(data,9);
+        return requestItem;
     }
 }

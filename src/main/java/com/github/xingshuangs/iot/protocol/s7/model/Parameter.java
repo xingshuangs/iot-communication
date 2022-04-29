@@ -17,7 +17,7 @@ public class Parameter implements IByteArray {
      * 字节大小：1 <br>
      * 字节序数：0
      */
-    private EFunctionCode functionCode = EFunctionCode.READ_VARIABLE;
+    protected EFunctionCode functionCode = EFunctionCode.READ_VARIABLE;
 
     @Override
     public int byteArrayLength() {

@@ -60,14 +60,14 @@ public class TPKT implements IByteArray {
         return res;
     }
 
-    public static TPKT fromBytes(byte[] data) {
+    public static TPKT fromBytes(final byte[] data) {
         if (data.length < BYTE_LENGTH) {
             throw new IndexOutOfBoundsException(String.format("TPKT转换过程中，字节数据长度小于%d", BYTE_LENGTH));
         }
         TPKT tpkt = new TPKT();
         tpkt.version = data[VERSION_OFFSET];
         tpkt.reserved = data[RESERVED_OFFSET];
-        tpkt.length = ShortUtil.toUInt16(data);
+        tpkt.length = ShortUtil.toUInt16(data,2);
         return tpkt;
     }
 }
