@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author xingshuang
  */
-public enum EItemVariableType {
+public enum EParamVariableType {
 
     /**
      * 位
@@ -102,21 +102,21 @@ public enum EItemVariableType {
     HS_COUNTER((byte) 0x20),
     ;
 
-    private static final Map<Byte, EItemVariableType> map = new HashMap<>();
+    private static final Map<Byte, EParamVariableType> map = new HashMap<>();
 
     static {
-        for (EItemVariableType item : EItemVariableType.values()) {
+        for (EParamVariableType item : EParamVariableType.values()) {
             map.put(item.code, item);
         }
     }
 
-    public static EItemVariableType from(byte data) {
+    public static EParamVariableType from(byte data) {
         return map.get(data);
     }
 
     private byte code;
 
-    private EItemVariableType(byte code) {
+    private EParamVariableType(byte code) {
         this.code = code;
     }
 

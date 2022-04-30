@@ -197,8 +197,8 @@ public class S7DataTest {
                 (byte) 0x00, (byte) 0x01,
                 // 存储区域 area
                 (byte) 0x84,
-                // 起始地址 address
-                (byte) 0x00, (byte) 0x00, (byte) 0x00
+                // 起始地址 byteAddress
+                (byte) 0x00, (byte) 0x00, (byte) 0x19
         };
 
         S7Data s7Data = S7Data.fromBytes(data);
@@ -225,11 +225,12 @@ public class S7DataTest {
             assertEquals((byte) 0x12, requestItem.getSpecificationType());
             assertEquals(10, requestItem.getLengthOfFollowing());
             assertEquals(ESyntaxID.S7ANY, requestItem.getSyntaxId());
-            assertEquals(EItemVariableType.BYTE, requestItem.getVariableType());
+            assertEquals(EParamVariableType.BYTE, requestItem.getVariableType());
             assertEquals(1, requestItem.getCount());
             assertEquals(1, requestItem.getDbNumber());
             assertEquals(EArea.DATA_BLOCKS, requestItem.getArea());
-            assertEquals(0, requestItem.getAddress());
+            assertEquals(3, requestItem.getByteAddress());
+            assertEquals(1, requestItem.getBitAddress());
         }
     }
 
@@ -253,7 +254,7 @@ public class S7DataTest {
                 (byte) 0x04,
                 // length
                 (byte) 0x00, (byte) 0x08,
-                // 起始地址 address
+                // 起始地址 byteAddress
                 (byte) 0x00
         };
 
@@ -317,8 +318,8 @@ public class S7DataTest {
                 (byte) 0x00, (byte) 0x01,
                 // 存储区域 area
                 (byte) 0x84,
-                // 起始地址 address
-                (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                // 起始地址 byteAddress
+                (byte) 0x00, (byte) 0x00, (byte) 0x19,
                 // 写的内容
                 (byte) 0x00, (byte) 0x04, (byte) 0x00, (byte) 0x08, (byte) 0x00
         };
@@ -347,11 +348,12 @@ public class S7DataTest {
             assertEquals((byte) 0x12, requestItem.getSpecificationType());
             assertEquals(10, requestItem.getLengthOfFollowing());
             assertEquals(ESyntaxID.S7ANY, requestItem.getSyntaxId());
-            assertEquals(EItemVariableType.BYTE, requestItem.getVariableType());
+            assertEquals(EParamVariableType.BYTE, requestItem.getVariableType());
             assertEquals(1, requestItem.getCount());
             assertEquals(1, requestItem.getDbNumber());
             assertEquals(EArea.DATA_BLOCKS, requestItem.getArea());
-            assertEquals(0, requestItem.getAddress());
+            assertEquals(3, requestItem.getByteAddress());
+            assertEquals(1, requestItem.getBitAddress());
         }
         List<ReturnItem> returnItems = s7Data.getDatum().getReturnItems();
         for (ReturnItem returnItem : returnItems) {

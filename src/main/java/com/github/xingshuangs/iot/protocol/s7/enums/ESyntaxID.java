@@ -51,7 +51,7 @@ public enum ESyntaxID {
     DRIVEESANY((byte) 0xA2),
 
     /**
-     * Symbolic address mode of S7-1200
+     * Symbolic byteAddress mode of S7-1200
      */
     S_1200SYM((byte) 0xB2),
 

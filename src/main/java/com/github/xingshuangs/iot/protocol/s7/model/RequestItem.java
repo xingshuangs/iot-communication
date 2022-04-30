@@ -2,7 +2,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 
 import com.github.xingshuangs.iot.protocol.s7.enums.EArea;
-import com.github.xingshuangs.iot.protocol.s7.enums.EItemVariableType;
+import com.github.xingshuangs.iot.protocol.s7.enums.EParamVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.ESyntaxID;
 import com.github.xingshuangs.iot.utils.ByteUtil;
 import com.github.xingshuangs.iot.utils.IntegerUtil;
@@ -18,6 +18,7 @@ import lombok.Data;
 public class RequestItem implements IByteArray {
 
     public static final int BYTE_LENGTH = 12;
+
     /**
      * 变量规范，对于读/写消息，它总是具有值0x12 <br>
      * 字节大小：1 <br>
@@ -44,7 +45,7 @@ public class RequestItem implements IByteArray {
      * 字节大小：1 <br>
      * 字节序数：3
      */
-    private EItemVariableType variableType = EItemVariableType.BYTE;
+    private EParamVariableType variableType = EParamVariableType.BYTE;
 
     /**
      * 读取长度 <br>
@@ -68,11 +69,16 @@ public class RequestItem implements IByteArray {
     private EArea area = EArea.DATA_BLOCKS;
 
     /**
-     * 开始字节地址 <br>
+     * 字节地址，位于开始字节地址address中3个字节，从第4位开始计数 <br>
      * 字节大小：3 <br>
      * 字节序数：9-11
      */
-    private int address = 0x000000;
+    private int byteAddress = 0;
+
+    /**
+     * 位地址，位于开始字节地址address中3个字节的最后3位
+     */
+    private int bitAddress = 0;
 
     @Override
     public int byteArrayLength() {
@@ -84,7 +90,7 @@ public class RequestItem implements IByteArray {
         byte[] res = new byte[BYTE_LENGTH];
         byte[] countBytes = ShortUtil.toByteArray(this.count);
         byte[] dbNumberBytes = ShortUtil.toByteArray(this.dbNumber);
-        byte[] addressBytes = IntegerUtil.toByteArray(this.address);
+        byte[] addressBytes = IntegerUtil.toByteArray((this.byteAddress << 3) + this.bitAddress);
 
         res[0] = this.specificationType;
         res[1] = ByteUtil.toByte(this.lengthOfFollowing);
@@ -95,6 +101,7 @@ public class RequestItem implements IByteArray {
         res[6] = dbNumberBytes[0];
         res[7] = dbNumberBytes[1];
         res[8] = this.area.getCode();
+        // 只有3个字节，因此只取后面的3字节，第一个字节舍弃
         res[9] = addressBytes[1];
         res[10] = addressBytes[2];
         res[11] = addressBytes[3];
@@ -106,10 +113,11 @@ public class RequestItem implements IByteArray {
         requestItem.specificationType = data[0];
         requestItem.lengthOfFollowing = ByteUtil.toUInt8(data[1]);
         requestItem.syntaxId = ESyntaxID.from(data[2]);
-        requestItem.variableType = EItemVariableType.from(data[3]);
+        requestItem.variableType = EParamVariableType.from(data[3]);
         requestItem.count = ShortUtil.toUInt16(data, 4);
         requestItem.dbNumber = ShortUtil.toUInt16(data, 6);
-        requestItem.address = IntegerUtil.toInt32In3Bytes(data, 9);
+        requestItem.byteAddress = IntegerUtil.toInt32In3Bytes(data, 9) >> 3;
+        requestItem.bitAddress = data[11] & 0x07;
         return requestItem;
     }
 }

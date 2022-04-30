@@ -63,7 +63,10 @@ public class DataItem extends ReturnItem implements IByteArray {
         dataItem.returnCode = EReturnCode.from(data[0]);
         dataItem.variableType = EDataVariableType.from(data[1]);
         dataItem.count = ShortUtil.toUInt16(data, 2) / 8;
-        dataItem.data = Arrays.copyOfRange(data, 4, 4 + dataItem.count);
+        // 返回数据类型为null，那就是没有数据
+        if (dataItem.variableType != EDataVariableType.NULL) {
+            dataItem.data = Arrays.copyOfRange(data, 4, 4 + dataItem.count);
+        }
         return dataItem;
     }
 }
