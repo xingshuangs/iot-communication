@@ -32,6 +32,21 @@ public class ReadWriteParameter extends Parameter implements IByteArray {
      */
     private List<RequestItem> requestItems = new ArrayList<>();
 
+    /**
+     * 添加请求项
+     *
+     * @param item 项
+     */
+    public void addItem(RequestItem item) {
+        this.requestItems.add(item);
+        this.itemCount = this.requestItems.size();
+    }
+
+    public void addItem(List<RequestItem> items) {
+        this.requestItems.addAll(items);
+        this.itemCount = this.requestItems.size();
+    }
+
     @Override
     public int byteArrayLength() {
         return 2 + this.requestItems.stream().mapToInt(RequestItem::byteArrayLength).sum();
@@ -70,5 +85,19 @@ public class ReadWriteParameter extends Parameter implements IByteArray {
             readWriteParameter.requestItems.add(RequestItem.fromBytes(bytes));
         }
         return readWriteParameter;
+    }
+
+    public static ReadWriteParameter createReadDefault() {
+        ReadWriteParameter parameter = new ReadWriteParameter();
+        parameter.functionCode = EFunctionCode.READ_VARIABLE;
+        parameter.itemCount = 0;
+        return parameter;
+    }
+
+    public static ReadWriteParameter createWriteDefault() {
+        ReadWriteParameter parameter = new ReadWriteParameter();
+        parameter.functionCode = EFunctionCode.WRITE_VARIABLE;
+        parameter.itemCount = 0;
+        return parameter;
     }
 }

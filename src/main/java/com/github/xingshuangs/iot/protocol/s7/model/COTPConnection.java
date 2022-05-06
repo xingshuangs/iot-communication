@@ -150,8 +150,7 @@ public class COTPConnection extends COTP implements IByteArray {
      */
     public static COTPConnection crConnectRequest() {
         COTPConnection connection = new COTPConnection();
-        connection.length = (byte) 0x11;
-        // FIXME:这里到底是0xE0还是0x0E
+        connection.length = 0x11;
         connection.pduType = EPduType.CONNECT_REQUEST;
         connection.destinationReference = 0x0000;
         connection.sourceReference = 0x0001;
@@ -161,12 +160,10 @@ public class COTPConnection extends COTP implements IByteArray {
         connection.tpduSize = (byte) 0x0A;
         connection.parameterCodeSrcTsap = (byte) 0xC1;
         connection.parameterLength2 = (byte) 0x02;
-        // FIXME:这里到底是0x0201还是0x0102
-        connection.sourceTsap = 0x0201;
+        connection.sourceTsap = 0x0100;
         connection.parameterCodeDstTsap = (byte) 0xC2;
         connection.parameterLength3 = (byte) 0x02;
-        // FIXME:这里到底是0x0201还是0x0100
-        connection.destinationTsap = 0x0201;
+        connection.destinationTsap = 0x0102;
         return connection;
     }
 

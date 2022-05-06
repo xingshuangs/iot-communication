@@ -76,4 +76,14 @@ public class SetupComParameter extends Parameter implements IByteArray {
         setupComParameter.pduLength = ShortUtil.toUInt16(data, 6);
         return setupComParameter;
     }
+
+    public static SetupComParameter createDefault() {
+        SetupComParameter parameter = new SetupComParameter();
+        parameter.functionCode =  EFunctionCode.SETUP_COMMUNICATION;
+        parameter.reserved = (byte)0x00;
+        parameter.maxAmqCaller = 1;
+        parameter.maxAmqCallee = 1;
+        parameter.pduLength = 240;
+        return parameter;
+    }
 }

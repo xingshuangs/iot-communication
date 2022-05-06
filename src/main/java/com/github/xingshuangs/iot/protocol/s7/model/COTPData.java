@@ -63,4 +63,18 @@ public class COTPData extends COTP implements IByteArray {
         cotpData.lastDataUnit = BooleanUtil.getValue(data[2], 7);
         return cotpData;
     }
+
+    /**
+     * Connect DtData 连接请求
+     *
+     * @return COTPData对象
+     */
+    public static COTPData createDefault() {
+        COTPData connection = new COTPData();
+        connection.length = 2;
+        connection.pduType = EPduType.DT_DATA;
+        connection.tpduNumber = 0;
+        connection.lastDataUnit = true;
+        return connection;
+    }
 }

@@ -13,14 +13,29 @@ import java.util.Arrays;
 @Data
 public class S7Data implements IByteArray {
 
+    /**
+     * TPKT
+     */
     private TPKT tpkt;
 
+    /**
+     * COTP
+     */
     private COTP cotp;
 
+    /**
+     * 头
+     */
     private Header header;
 
+    /**
+     * 参数
+     */
     private Parameter parameter;
 
+    /**
+     * 数据
+     */
     private Datum datum;
 
     @Override
@@ -65,11 +80,22 @@ public class S7Data implements IByteArray {
         return res;
     }
 
+    /**
+     * 自我数据校验
+     */
     public void selfCheck() {
+        if (this.header != null) {
+            this.header.setDataLength(0);
+            this.header.setParameterLength(0);
+        }
         if (this.datum != null && this.header != null) {
             this.header.setDataLength(this.datum.byteArrayLength());
         }
         if (this.parameter != null && this.header != null) {
+            if (this.parameter instanceof ReadWriteParameter) {
+                ReadWriteParameter p = (ReadWriteParameter) this.parameter;
+                p.setItemCount(p.getRequestItems().size());
+            }
             this.header.setParameterLength(this.parameter.byteArrayLength());
         }
         if (this.tpkt != null) {
@@ -77,6 +103,12 @@ public class S7Data implements IByteArray {
         }
     }
 
+    /**
+     * 根据字节数据解析S7协议数据
+     *
+     * @param data 数据字节
+     * @return s7数据
+     */
     public static S7Data fromBytes(final byte[] data) {
         byte[] tpktBytes = Arrays.copyOfRange(data, 0, TPKT.BYTE_LENGTH);
         TPKT tpkt = TPKT.fromBytes(tpktBytes);
@@ -84,6 +116,13 @@ public class S7Data implements IByteArray {
         return fromBytes(tpkt, remainBytes);
     }
 
+    /**
+     * 根据字节数据解析S7协议数据
+     *
+     * @param tpkt   tpkt
+     * @param remain 剩余字节数据
+     * @return s7数据
+     */
     public static S7Data fromBytes(TPKT tpkt, final byte[] remain) {
         // tpkt
         S7Data s7Data = new S7Data();
@@ -113,6 +152,64 @@ public class S7Data implements IByteArray {
             byte[] dataBytes = Arrays.copyOfRange(lastBytes, header.byteArrayLength() + header.getParameterLength(), header.byteArrayLength() + header.getParameterLength() + header.getDataLength());
             s7Data.datum = Datum.fromBytes(dataBytes, s7Data.header.getMessageType(), s7Data.parameter.getFunctionCode());
         }
+        return s7Data;
+    }
+
+    /**
+     * 创建连接请求
+     *
+     * @return s7data数据
+     */
+    public static S7Data createConnectRequest() {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPConnection.crConnectRequest();
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    /**
+     * 创建连接setup
+     *
+     * @return s7data数据
+     */
+    public static S7Data createConnectDtData() {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = Header.createDefault();
+        s7Data.parameter = SetupComParameter.createDefault();
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    /**
+     * 创建默认读对象
+     *
+     * @return S7Data
+     */
+    public static S7Data createReadDefault() {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = Header.createDefault();
+        s7Data.parameter = ReadWriteParameter.createReadDefault();
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    /**
+     * 创建默认写对象
+     *
+     * @return S7Data
+     */
+    public static S7Data createWriteDefault() {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = Header.createDefault();
+        s7Data.parameter = ReadWriteParameter.createWriteDefault();
+        s7Data.selfCheck();
         return s7Data;
     }
 }

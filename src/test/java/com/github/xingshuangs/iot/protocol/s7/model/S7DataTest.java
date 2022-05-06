@@ -13,6 +13,19 @@ import static org.junit.Assert.assertTrue;
 @SuppressWarnings("Duplicates")
 public class S7DataTest {
 
+    @Test
+    public void createConnectRequest() {
+        S7Data s7Data = S7Data.createConnectRequest();
+        assertEquals(22, s7Data.byteArrayLength());
+    }
+
+    @Test
+    public void createConnectDtData() {
+        S7Data s7Data = S7Data.createConnectDtData();
+        assertEquals(25, s7Data.byteArrayLength());
+        assertEquals(8, s7Data.getHeader().getParameterLength());
+    }
+
     /**
      * 请求连接0xE0命令的解析
      */

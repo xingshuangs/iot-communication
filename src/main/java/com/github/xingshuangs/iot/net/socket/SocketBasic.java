@@ -143,7 +143,7 @@ public class SocketBasic {
     /**
      * 连接成功之后要做的动作
      */
-    protected void doAfterConnected(){
+    protected void doAfterConnected() throws IOException {
         // NOOP
     }
 
@@ -199,6 +199,19 @@ public class SocketBasic {
      */
     public int read(final byte[] data, int timeout) throws IOException {
         return this.read(data, 0, data.length, timeout);
+    }
+
+    /**
+     * 读取数据
+     *
+     * @param data    字节数组
+     * @param offset  偏移量
+     * @param length  数据长度
+     * @return 读取的数据长度
+     * @throws IOException IO异常
+     */
+    public int read(final byte[] data, int offset, int length) throws IOException {
+        return this.read(data, offset, length, this.receiveTimeout);
     }
 
     /**

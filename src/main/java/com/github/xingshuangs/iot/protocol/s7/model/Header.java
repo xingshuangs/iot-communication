@@ -5,6 +5,8 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * 头部
  *
@@ -12,6 +14,8 @@ import lombok.Data;
  */
 @Data
 public class Header implements IByteArray {
+
+    private static final AtomicInteger index = new AtomicInteger();
 
     public static final int BYTE_LENGTH = 10;
     /**
@@ -36,7 +40,7 @@ public class Header implements IByteArray {
     protected int reserved = 0x0000;
 
     /**
-     * pdu的参考–由主站生成，每次新传输递增，Little-Endian <br>
+     * pdu的参考–由主站生成，每次新传输递增，大端 <br>
      * 字节大小：2 <br>
      * 字节序数：4-5
      */
@@ -55,6 +59,20 @@ public class Header implements IByteArray {
      * 字节序数：8-9
      */
     protected int dataLength = 0x0000;
+
+    /**
+     * 获取新的pduNumber
+     *
+     * @return 编号
+     */
+    public static int getNewPduNumber() {
+        int res = index.getAndIncrement();
+        if (res >= 65536) {
+            index.set(0);
+            res = 0;
+        }
+        return res;
+    }
 
     @Override
     public int byteArrayLength() {
@@ -93,6 +111,22 @@ public class Header implements IByteArray {
         header.pduReference = ShortUtil.toUInt16(data, 4);
         header.parameterLength = ShortUtil.toUInt16(data, 6);
         header.dataLength = ShortUtil.toUInt16(data, 8);
+        return header;
+    }
+
+    /**
+     * 创建默认的头header
+     *
+     * @return Header对象
+     */
+    public static Header createDefault() {
+        Header header = new Header();
+        header.protocolId = (byte) 0x32;
+        header.messageType = EMessageType.JOB;
+        header.reserved = 0x0000;
+        header.pduReference = getNewPduNumber();
+        header.parameterLength = 0;
+        header.dataLength = 0;
         return header;
     }
 }
