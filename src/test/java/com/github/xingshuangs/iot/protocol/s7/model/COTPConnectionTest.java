@@ -26,10 +26,10 @@ public class COTPConnectionTest {
                 (byte) 0x0A,
                 (byte) 0xC1,
                 (byte) 0x02,
-                (byte) 0x02, (byte) 0x01,
+                (byte) 0x01, (byte) 0x00,
                 (byte) 0xC2,
                 (byte) 0x02,
-                (byte) 0x02, (byte) 0x01};
+                (byte) 0x01, (byte) 0x02};
 
         assertArrayEquals(expect, actual);
     }
