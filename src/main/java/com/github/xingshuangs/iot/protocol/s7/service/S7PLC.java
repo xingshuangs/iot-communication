@@ -12,26 +12,26 @@ import java.io.IOException;
 /**
  * @author xingshuang
  */
-public class S7PLC1 extends PLCNetwork {
+public class S7PLC extends PLCNetwork {
 
     public static final int PORT = 102;
     public static final String IP = "127.0.0.1";
 
     private EPlcType plcType = EPlcType.S1200;
 
-    public S7PLC1() {
+    public S7PLC() {
         this(EPlcType.S1200, IP, PORT);
     }
 
-    public S7PLC1(EPlcType plcType) {
+    public S7PLC(EPlcType plcType) {
         this(plcType, IP, PORT);
     }
 
-    public S7PLC1(EPlcType plcType, String ip) {
+    public S7PLC(EPlcType plcType, String ip) {
         this(plcType, ip, PORT);
     }
 
-    public S7PLC1(EPlcType plcType, String ip, int port) {
+    public S7PLC(EPlcType plcType, String ip, int port) {
         super(ip, port);
         this.plcType = plcType;
     }
