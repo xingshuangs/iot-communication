@@ -67,6 +67,12 @@ public class SetupComParameter extends Parameter implements IByteArray {
         return res;
     }
 
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return SetupComParameter
+     */
     public static SetupComParameter fromBytes(final byte[] data) {
         SetupComParameter setupComParameter = new SetupComParameter();
         setupComParameter.functionCode = EFunctionCode.from(data[0]);
@@ -77,10 +83,15 @@ public class SetupComParameter extends Parameter implements IByteArray {
         return setupComParameter;
     }
 
+    /**
+     * 创建默认的设置通信参数
+     *
+     * @return SetupComParameter
+     */
     public static SetupComParameter createDefault() {
         SetupComParameter parameter = new SetupComParameter();
-        parameter.functionCode =  EFunctionCode.SETUP_COMMUNICATION;
-        parameter.reserved = (byte)0x00;
+        parameter.functionCode = EFunctionCode.SETUP_COMMUNICATION;
+        parameter.reserved = (byte) 0x00;
         parameter.maxAmqCaller = 1;
         parameter.maxAmqCallee = 1;
         parameter.pduLength = 240;

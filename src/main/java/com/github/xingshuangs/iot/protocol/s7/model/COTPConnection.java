@@ -167,6 +167,12 @@ public class COTPConnection extends COTP implements IByteArray {
         return connection;
     }
 
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return COTPConnection
+     */
     public static COTPConnection fromBytes(final byte[] data) {
         if (data.length < BYTE_LENGTH) {
             throw new S7CommException("COTPConnection数据字节长度不够，无法解析");

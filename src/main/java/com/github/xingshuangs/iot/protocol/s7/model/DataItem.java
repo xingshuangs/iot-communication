@@ -58,6 +58,12 @@ public class DataItem extends ReturnItem implements IByteArray {
         return res;
     }
 
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return DataItem
+     */
     public static DataItem fromBytes(final byte[] data) {
         DataItem dataItem = new DataItem();
         dataItem.returnCode = EReturnCode.from(data[0]);

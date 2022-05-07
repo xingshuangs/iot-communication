@@ -108,6 +108,12 @@ public class RequestItem implements IByteArray {
         return res;
     }
 
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return RequestItem
+     */
     public static RequestItem fromBytes(final byte[] data) {
         RequestItem requestItem = new RequestItem();
         requestItem.specificationType = data[0];

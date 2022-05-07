@@ -31,6 +31,12 @@ public class ReturnItem implements IByteArray {
         return res;
     }
 
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return ReturnItem
+     */
     public static ReturnItem fromBytes(final byte[] data) {
         ReturnItem returnItem = new ReturnItem();
         returnItem.returnCode = EReturnCode.from(data[0]);

@@ -60,6 +60,12 @@ public class TPKT implements IByteArray {
         return res;
     }
 
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return TPKT
+     */
     public static TPKT fromBytes(final byte[] data) {
         if (data.length < BYTE_LENGTH) {
             throw new IndexOutOfBoundsException(String.format("TPKT转换过程中，字节数据长度小于%d", BYTE_LENGTH));

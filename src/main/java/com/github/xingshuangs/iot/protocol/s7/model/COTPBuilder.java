@@ -12,6 +12,12 @@ import java.util.Arrays;
  */
 public class COTPBuilder {
 
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return COTP
+     */
     public static COTP fromBytes(final byte[] data) {
         int length = ByteUtil.toUInt8(data[0]);
         byte[] cotpBytes = Arrays.copyOfRange(data, 0, length + 1);

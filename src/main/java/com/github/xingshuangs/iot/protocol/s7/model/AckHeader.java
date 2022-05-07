@@ -47,6 +47,12 @@ public class AckHeader extends Header {
         return res;
     }
 
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return AckHeader
+     */
     public static AckHeader fromBytes(final byte[] data) {
         if (data.length < BYTE_LENGTH) {
             throw new IndexOutOfBoundsException("解析header时，字节数组长度不够");

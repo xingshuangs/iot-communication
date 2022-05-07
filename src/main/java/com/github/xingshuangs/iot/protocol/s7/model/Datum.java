@@ -42,6 +42,14 @@ public class Datum implements IByteArray {
         return res;
     }
 
+    /**
+     * 根据消息类型和功能码，对字节数组数据进行解析
+     *
+     * @param data         字节数组数据
+     * @param messageType  头部的消息类型
+     * @param functionCode 参数部分的功能码
+     * @return Datum
+     */
     public static Datum fromBytes(final byte[] data, EMessageType messageType, EFunctionCode functionCode) {
         Datum datum = new Datum();
         if (data.length == 0) {

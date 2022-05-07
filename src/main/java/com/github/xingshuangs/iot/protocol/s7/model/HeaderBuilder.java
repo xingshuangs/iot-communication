@@ -10,6 +10,13 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
  * @author xingshuang
  */
 public class HeaderBuilder {
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return Header
+     */
     public static Header fromBytes(final byte[] data) {
         EMessageType messageType = EMessageType.from(data[1]);
 

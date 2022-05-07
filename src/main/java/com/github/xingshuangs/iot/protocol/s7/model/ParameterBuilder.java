@@ -8,6 +8,13 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
  * @author xingshuang
  */
 public class ParameterBuilder {
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return Parameter
+     */
     public static Parameter fromBytes(final byte[] data) {
         EFunctionCode functionCode = EFunctionCode.from(data[0]);
 

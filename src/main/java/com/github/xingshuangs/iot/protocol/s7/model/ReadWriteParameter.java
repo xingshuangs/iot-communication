@@ -66,6 +66,12 @@ public class ReadWriteParameter extends Parameter implements IByteArray {
         return res;
     }
 
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return ReadWriteParameter
+     */
     public static ReadWriteParameter fromBytes(final byte[] data) {
         if (data.length < 2) {
             throw new S7CommException("Parameter解析有误，parameter字节数组长度 < 2");
@@ -87,6 +93,11 @@ public class ReadWriteParameter extends Parameter implements IByteArray {
         return readWriteParameter;
     }
 
+    /**
+     * 创建默认的读取参数
+     *
+     * @return ReadWriteParameter
+     */
     public static ReadWriteParameter createReadDefault() {
         ReadWriteParameter parameter = new ReadWriteParameter();
         parameter.functionCode = EFunctionCode.READ_VARIABLE;
@@ -94,6 +105,11 @@ public class ReadWriteParameter extends Parameter implements IByteArray {
         return parameter;
     }
 
+    /**
+     * 创建默认的写入参数
+     *
+     * @return ReadWriteParameter
+     */
     public static ReadWriteParameter createWriteDefault() {
         ReadWriteParameter parameter = new ReadWriteParameter();
         parameter.functionCode = EFunctionCode.WRITE_VARIABLE;

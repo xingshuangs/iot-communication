@@ -36,13 +36,23 @@ public class S7PLC extends PLCNetwork {
         this.plcType = plcType;
     }
 
+    public byte[] readBytes() throws IOException {
+        RequestItem item = new RequestItem();
+        item.setCount(2);
+        item.setDbNumber(1);
+        item.setArea(EArea.DATA_BLOCKS);
+        item.setByteAddress(2);
+        DataItem dataItem = this.readS7Data(item);
+        return dataItem.getData();
+    }
+
     public int readUInt16(String var) throws IOException {
         RequestItem item = new RequestItem();
         item.setCount(2);
         item.setDbNumber(1);
         item.setArea(EArea.DATA_BLOCKS);
         item.setByteAddress(2);
-        DataItem dataItem = this.readData(item);
+        DataItem dataItem = this.readS7Data(item);
         return ShortUtil.toUInt16(dataItem.getData());
     }
 

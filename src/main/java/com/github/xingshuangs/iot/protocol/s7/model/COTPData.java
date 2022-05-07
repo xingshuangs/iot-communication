@@ -65,7 +65,7 @@ public class COTPData extends COTP implements IByteArray {
     }
 
     /**
-     * Connect DtData 连接请求
+     * DtData COTP 数据部分
      *
      * @return COTPData对象
      */

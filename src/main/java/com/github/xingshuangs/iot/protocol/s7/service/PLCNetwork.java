@@ -40,16 +40,16 @@ public class PLCNetwork extends SocketBasic {
 
 
     public S7Data readFromServer(S7Data s7Data) throws IOException {
-        this.writeBytes(s7Data.toByteArray());
+        this.writeBaseBytes(s7Data.toByteArray());
 
         byte[] data = new byte[TPKT.BYTE_LENGTH];
-        int len = this.readBytes(data);
+        int len = this.readBaseBytes(data);
         if (len < TPKT.BYTE_LENGTH) {
             throw new S7CommException(" TPKT 无效，长度不一致");
         }
         TPKT tpkt = TPKT.fromBytes(data);
         byte[] remain = new byte[tpkt.getLength() - TPKT.BYTE_LENGTH];
-        len = this.readBytes(remain);
+        len = this.readBaseBytes(remain);
         if (len < remain.length) {
             throw new S7CommException(" TPKT后面的数据长度，长度不一致");
         }
@@ -63,7 +63,7 @@ public class PLCNetwork extends SocketBasic {
      * @return 读取数量
      * @throws IOException 异常
      */
-    private int readBytes(final byte[] data) throws IOException {
+    private int readBaseBytes(final byte[] data) throws IOException {
         int offset = 0;
         while (offset < data.length) {
             int length = this.maxPduLength == 0 ? data.length - offset : Math.min(this.maxPduLength, data.length - offset);
@@ -79,7 +79,7 @@ public class PLCNetwork extends SocketBasic {
      * @param data 字节数组
      * @throws IOException 异常
      */
-    private void writeBytes(final byte[] data) throws IOException {
+    private void writeBaseBytes(final byte[] data) throws IOException {
         int offset = 0;
         while (offset < data.length) {
             int length = this.maxPduLength == 0 ? data.length - offset : Math.min(this.maxPduLength, data.length - offset);
@@ -123,7 +123,14 @@ public class PLCNetwork extends SocketBasic {
         return ((SetupComParameter) ack.getParameter()).getPduLength();
     }
 
-    protected List<DataItem> readData(List<RequestItem> requestItems) throws IOException {
+    /**
+     * 读取S7协议数据
+     *
+     * @param requestItems 请求项列表
+     * @return 数据项列表
+     * @throws IOException 异常
+     */
+    protected List<DataItem> readS7Data(List<RequestItem> requestItems) throws IOException {
         S7Data s7Data = S7Data.createReadDefault();
         ReadWriteParameter parameter = (ReadWriteParameter) s7Data.getParameter();
         parameter.addItem(requestItems);
@@ -143,10 +150,17 @@ public class PLCNetwork extends SocketBasic {
         return returnItems.stream().map(x -> (DataItem) x).collect(Collectors.toList());
     }
 
-    protected DataItem readData(RequestItem item) throws IOException {
+    /**
+     * 读取S7协议数据
+     *
+     * @param item 请求项
+     * @return 数据项
+     * @throws IOException 异常
+     */
+    protected DataItem readS7Data(RequestItem item) throws IOException {
         List<RequestItem> list = new ArrayList<>();
         list.add(item);
-        List<DataItem> dataItems = this.readData(list);
+        List<DataItem> dataItems = this.readS7Data(list);
         return dataItems.get(0);
     }
 }
