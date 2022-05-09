@@ -5,10 +5,11 @@ import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.net.socket.SocketBasic;
 import com.github.xingshuangs.iot.protocol.s7.enums.EErrorClass;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
+import com.github.xingshuangs.iot.protocol.s7.enums.EReturnCode;
 import com.github.xingshuangs.iot.protocol.s7.model.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,9 @@ import java.util.stream.Collectors;
  */
 public class PLCNetwork extends SocketBasic {
 
+    /**
+     * 最大的PDU长度
+     */
     private int maxPduLength = 0;
 
     public PLCNetwork() {
@@ -94,8 +98,8 @@ public class PLCNetwork extends SocketBasic {
      * @throws IOException 异常
      */
     private void connectionRequest() throws IOException {
-        S7Data request = S7Data.createConnectRequest();
-        S7Data ack = this.readFromServer(request);
+        S7Data req = S7Data.createConnectRequest();
+        S7Data ack = this.readFromServer(req);
         if (ack.getCotp().getPduType() != EPduType.CONNECT_CONFIRM) {
             throw new S7CommException("连接请求被拒绝");
         }
@@ -108,8 +112,8 @@ public class PLCNetwork extends SocketBasic {
      * @throws IOException 异常
      */
     private int connectDtData() throws IOException {
-        S7Data request = S7Data.createConnectDtData();
-        S7Data ack = this.readFromServer(request);
+        S7Data req = S7Data.createConnectDtData();
+        S7Data ack = this.readFromServer(req);
         if (ack.getCotp().getPduType() != EPduType.DT_DATA) {
             throw new S7CommException("连接Setup响应错误");
         }
@@ -135,9 +139,7 @@ public class PLCNetwork extends SocketBasic {
         ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
         parameter.addItem(requestItems);
         req.selfCheck();
-        System.out.println("发送：" + req.getHeader().getPduReference());
         S7Data ack = this.readFromServer(req);
-        System.out.println("返回：" + ack.getHeader().getPduReference());
         AckHeader ackHeader = (AckHeader) ack.getHeader();
         if (ackHeader.getErrorClass() != EErrorClass.NO_ERROR) {
             throw new S7CommException("读取异常");
@@ -149,6 +151,11 @@ public class PLCNetwork extends SocketBasic {
         if (returnItems.size() != parameter.getItemCount()) {
             throw new S7CommException("返回的数据个数不一致");
         }
+        returnItems.forEach(x -> {
+            if (x.getReturnCode() != EReturnCode.SUCCESS) {
+                throw new S7CommException(x.getReturnCode().getDescription());
+            }
+        });
         return returnItems.stream().map(x -> (DataItem) x).collect(Collectors.toList());
     }
 
@@ -160,9 +167,6 @@ public class PLCNetwork extends SocketBasic {
      * @throws IOException 异常
      */
     protected DataItem readS7Data(RequestItem item) throws IOException {
-        List<RequestItem> list = new ArrayList<>();
-        list.add(item);
-        List<DataItem> dataItems = this.readS7Data(list);
-        return dataItems.get(0);
+        return this.readS7Data(Collections.singletonList(item)).get(0);
     }
 }

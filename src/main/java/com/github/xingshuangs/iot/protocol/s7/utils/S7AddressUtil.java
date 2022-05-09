@@ -12,17 +12,30 @@ import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
  */
 public class S7AddressUtil {
 
-    public static RequestItem parseByte(String address, int length) {
-        return parse(address, length, EParamVariableType.BYTE);
+    /**
+     * 字节地址解析
+     *
+     * @param address 地址
+     * @param count   个数
+     * @return 请求项
+     */
+    public static RequestItem parseByte(String address, int count) {
+        return parse(address, count, EParamVariableType.BYTE);
     }
 
+    /**
+     * 位地址解析
+     *
+     * @param address 地址
+     * @return 请求项
+     */
     public static RequestItem parseBit(String address) {
         return parse(address, 1, EParamVariableType.BIT);
     }
 
-    public static RequestItem parse(String address, int length, EParamVariableType variableType) {
-        if (length <= 0) {
-            throw new IllegalArgumentException("length长度必须为正数");
+    public static RequestItem parse(String address, int count, EParamVariableType variableType) {
+        if (count <= 0) {
+            throw new IllegalArgumentException("count个数必须为正数");
         }
         // 转换为大写
         address = address.toUpperCase();
@@ -34,7 +47,7 @@ public class S7AddressUtil {
 
         item.setVariableType(variableType);
         item.setArea(parseArea(addList[0].substring(0, 1)));
-        item.setCount(length);
+        item.setCount(count);
         item.setByteAddress(Integer.valueOf(addList[1]));
 
         // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0
@@ -52,8 +65,14 @@ public class S7AddressUtil {
         return item;
     }
 
-    private static EArea parseArea(String str) {
-        switch (str) {
+    /**
+     * 区域解析
+     *
+     * @param area 区域
+     * @return 区域地址，枚举类型
+     */
+    private static EArea parseArea(String area) {
+        switch (area) {
             case "I":
                 return EArea.INPUTS;
             case "Q":
