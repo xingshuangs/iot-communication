@@ -26,7 +26,7 @@ public class DataItem extends ReturnItem implements IByteArray {
     private EDataVariableType variableType = EDataVariableType.BYTE_WORD_DWORD;
 
     /**
-     * 数据长度，按位进行计算的，需要进行 /8 或 *8操作 <br>
+     * 数据长度，按位进行计算的，如果是字节数据读取需要进行 /8 或 *8操作，如果是位数据，不需要任何额外操作 <br>
      * 字节大小：2 <br>
      * 字节序数：2-3
      */
@@ -68,7 +68,11 @@ public class DataItem extends ReturnItem implements IByteArray {
         DataItem dataItem = new DataItem();
         dataItem.returnCode = EReturnCode.from(data[0]);
         dataItem.variableType = EDataVariableType.from(data[1]);
-        dataItem.count = ShortUtil.toUInt16(data, 2) / 8;
+        if (dataItem.variableType == EDataVariableType.BIT) {
+            dataItem.count = ShortUtil.toUInt16(data, 2);
+        } else {
+            dataItem.count = ShortUtil.toUInt16(data, 2) / 8;
+        }
         // 返回数据类型为null，那就是没有数据
         if (dataItem.variableType != EDataVariableType.NULL) {
             dataItem.data = Arrays.copyOfRange(data, 4, 4 + dataItem.count);

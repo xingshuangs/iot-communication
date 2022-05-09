@@ -14,42 +14,42 @@ public enum EReturnCode {
     /**
      * 未定义，预留
      */
-    RESERVED((byte) 0x00),
+    RESERVED((byte) 0x00, "未定义，预留"),
 
     /**
      * 硬件错误
      */
-    HARDWARE_ERROR((byte) 0x01),
+    HARDWARE_ERROR((byte) 0x01, "硬件错误"),
 
     /**
      * 对象不允许访问
      */
-    ACCESSING_THE_OBJECT_NOT_ALLOWED((byte) 0x03),
+    ACCESSING_THE_OBJECT_NOT_ALLOWED((byte) 0x03, "对象不允许访问"),
 
     /**
      * 无效地址，所需的地址超出此PLC的极限
      */
-    INVALID_ADDRESS((byte) 0x05),
+    INVALID_ADDRESS((byte) 0x05, "无效地址，所需的地址超出此PLC的极限"),
 
     /**
      * 数据类型不支持
      */
-    DATA_TYPE_NOT_SUPPORTED((byte) 0x06),
+    DATA_TYPE_NOT_SUPPORTED((byte) 0x06, "数据类型不支持"),
 
     /**
      * 日期类型不一致
      */
-    DATA_TYPE_INCONSISTENT((byte) 0x07),
+    DATA_TYPE_INCONSISTENT((byte) 0x07, "日期类型不一致"),
 
     /**
      * 对象不存在
      */
-    OBJECT_DOES_NOT_EXIST((byte) 0x0A),
+    OBJECT_DOES_NOT_EXIST((byte) 0x0A, "对象不存在"),
 
     /**
      * 成功
      */
-    SUCCESS((byte) 0xFF),
+    SUCCESS((byte) 0xFF, "成功"),
 
     ;
 
@@ -67,12 +67,18 @@ public enum EReturnCode {
 
     private byte code;
 
-    private EReturnCode(byte code) {
+    private String description;
+
+    private EReturnCode(byte code, String description) {
         this.code = code;
+        this.description = description;
     }
 
     public byte getCode() {
         return code;
     }
 
+    public String getDescription() {
+        return description;
+    }
 }

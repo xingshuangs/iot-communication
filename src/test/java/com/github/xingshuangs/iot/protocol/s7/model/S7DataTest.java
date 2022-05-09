@@ -423,4 +423,63 @@ public class S7DataTest {
             assertEquals(EReturnCode.SUCCESS, returnItem.getReturnCode());
         }
     }
+
+    /**
+     * 响应多读取数据
+     */
+    @Test
+    public void ackMultiReadData() {
+        byte[] data = new byte[]{
+                // tpkt
+                (byte) 0x03, (byte) 0x00, (byte) 0x00, (byte) 0x2f,
+                // cotp DT Data
+                (byte) 0x02, (byte) 0xF0, (byte) 0x80,
+                // header + 12长度
+                (byte) 0x32, (byte) 0x03, (byte) 0x00, (byte) 0x00, (byte) 0x09, (byte) 0x00, (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x1A, (byte) 0x00, (byte) 0x00,
+                // parameter：读功能 + 个数
+                (byte) 0x04, (byte) 0x05,
+                // data item
+                (byte) 0xFF, (byte) 0x04, (byte) 0x00, (byte) 0x10, (byte) 0x00, (byte) 0x01,
+                (byte) 0xFF, (byte) 0x04, (byte) 0x00, (byte) 0x10, (byte) 0x00, (byte) 0x05,
+                (byte) 0xFF, (byte) 0x04, (byte) 0x00, (byte) 0x10, (byte) 0x00, (byte) 0x00,
+                (byte) 0x0A, (byte) 0x00, (byte) 0x00, (byte) 0x04,
+                (byte) 0x0A, (byte) 0x00, (byte) 0x00, (byte) 0x04
+        };
+
+        S7Data s7Data = S7Data.fromBytes(data);
+
+        assertEquals((byte) 0x03, s7Data.getTpkt().getVersion());
+        assertEquals(47, s7Data.getTpkt().getLength());
+        COTPData cotp = (COTPData) s7Data.getCotp();
+        assertEquals(2, cotp.getLength());
+        assertEquals(EPduType.DT_DATA, cotp.getPduType());
+        assertEquals(0, cotp.getTpduNumber());
+        assertTrue(cotp.isLastDataUnit());
+        AckHeader header = (AckHeader) s7Data.getHeader();
+        assertEquals((byte) 0x32, header.getProtocolId());
+        assertEquals(EMessageType.ACK_DATA, header.getMessageType());
+        assertEquals(0, header.getReserved());
+        assertEquals(2304, header.getPduReference());
+        assertEquals(2, header.getParameterLength());
+        assertEquals(26, header.getDataLength());
+        assertEquals(EErrorClass.NO_ERROR, header.getErrorClass());
+        assertEquals((byte) 0x00, header.getErrorCode());
+        ReadWriteParameter parameter = (ReadWriteParameter) s7Data.getParameter();
+        assertEquals(EFunctionCode.READ_VARIABLE, parameter.getFunctionCode());
+        assertEquals(5, parameter.getItemCount());
+        assertEquals(0, parameter.getRequestItems().size());
+        List<ReturnItem> returnItems = s7Data.getDatum().getReturnItems();
+        for (int i = 0; i < returnItems.size(); i++) {
+            DataItem item = (DataItem) returnItems.get(i);
+            if(i<3){
+                assertEquals(EReturnCode.SUCCESS, item.getReturnCode());
+                assertEquals(EDataVariableType.BYTE_WORD_DWORD, item.getVariableType());
+                assertEquals(2, item.getCount());
+            }else {
+                assertEquals(EReturnCode.OBJECT_DOES_NOT_EXIST, item.getReturnCode());
+                assertEquals(EDataVariableType.NULL, item.getVariableType());
+                assertEquals(0, item.getCount());
+            }
+        }
+    }
 }

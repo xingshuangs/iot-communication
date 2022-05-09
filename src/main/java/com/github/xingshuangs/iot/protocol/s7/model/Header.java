@@ -83,7 +83,7 @@ public class Header implements IByteArray {
     public byte[] toByteArray() {
         byte[] res = new byte[BYTE_LENGTH];
         byte[] reservedBytes = ShortUtil.toByteArray(this.reserved);
-        byte[] pduReferenceBytes = ShortUtil.toByteArray(this.pduReference, true);
+        byte[] pduReferenceBytes = ShortUtil.toByteArray(this.pduReference);
         byte[] parameterLengthBytes = ShortUtil.toByteArray(this.parameterLength);
         byte[] dataLengthBytes = ShortUtil.toByteArray(this.dataLength);
 

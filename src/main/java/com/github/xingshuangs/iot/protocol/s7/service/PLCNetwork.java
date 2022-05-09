@@ -40,16 +40,16 @@ public class PLCNetwork extends SocketBasic {
 
 
     public S7Data readFromServer(S7Data s7Data) throws IOException {
-        this.writeBaseBytes(s7Data.toByteArray());
+        this.writeWrapper(s7Data.toByteArray());
 
         byte[] data = new byte[TPKT.BYTE_LENGTH];
-        int len = this.readBaseBytes(data);
+        int len = this.readWrapper(data);
         if (len < TPKT.BYTE_LENGTH) {
             throw new S7CommException(" TPKT 无效，长度不一致");
         }
         TPKT tpkt = TPKT.fromBytes(data);
         byte[] remain = new byte[tpkt.getLength() - TPKT.BYTE_LENGTH];
-        len = this.readBaseBytes(remain);
+        len = this.readWrapper(remain);
         if (len < remain.length) {
             throw new S7CommException(" TPKT后面的数据长度，长度不一致");
         }
@@ -63,7 +63,7 @@ public class PLCNetwork extends SocketBasic {
      * @return 读取数量
      * @throws IOException 异常
      */
-    private int readBaseBytes(final byte[] data) throws IOException {
+    private int readWrapper(final byte[] data) throws IOException {
         int offset = 0;
         while (offset < data.length) {
             int length = this.maxPduLength == 0 ? data.length - offset : Math.min(this.maxPduLength, data.length - offset);
@@ -79,7 +79,7 @@ public class PLCNetwork extends SocketBasic {
      * @param data 字节数组
      * @throws IOException 异常
      */
-    private void writeBaseBytes(final byte[] data) throws IOException {
+    private void writeWrapper(final byte[] data) throws IOException {
         int offset = 0;
         while (offset < data.length) {
             int length = this.maxPduLength == 0 ? data.length - offset : Math.min(this.maxPduLength, data.length - offset);
@@ -131,16 +131,18 @@ public class PLCNetwork extends SocketBasic {
      * @throws IOException 异常
      */
     protected List<DataItem> readS7Data(List<RequestItem> requestItems) throws IOException {
-        S7Data s7Data = S7Data.createReadDefault();
-        ReadWriteParameter parameter = (ReadWriteParameter) s7Data.getParameter();
+        S7Data req = S7Data.createReadDefault();
+        ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
         parameter.addItem(requestItems);
-        s7Data.selfCheck();
-        S7Data ack = this.readFromServer(s7Data);
+        req.selfCheck();
+        System.out.println("发送：" + req.getHeader().getPduReference());
+        S7Data ack = this.readFromServer(req);
+        System.out.println("返回：" + ack.getHeader().getPduReference());
         AckHeader ackHeader = (AckHeader) ack.getHeader();
         if (ackHeader.getErrorClass() != EErrorClass.NO_ERROR) {
             throw new S7CommException("读取异常");
         }
-        if (ackHeader.getPduReference() != s7Data.getHeader().getPduReference()) {
+        if (ackHeader.getPduReference() != req.getHeader().getPduReference()) {
             throw new S7CommException("pdu应用编号不一致，数据有误");
         }
         List<ReturnItem> returnItems = ack.getDatum().getReturnItems();

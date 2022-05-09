@@ -68,7 +68,7 @@ public class Datum implements IByteArray {
 
             datum.returnItems.add(dataItem);
             offset += dataItem.byteArrayLength();
-            remain = Arrays.copyOfRange(remain, offset, remain.length);
+            remain = Arrays.copyOfRange(data, offset, data.length);
         }
         return datum;
     }

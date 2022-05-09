@@ -31,7 +31,7 @@ public class RequestItem implements IByteArray {
      * 字节大小：1 <br>
      * 字节序数：1
      */
-    private int lengthOfFollowing = 0x10;
+    private int lengthOfFollowing = 0x0A;
 
     /**
      * 寻址模式和项结构其余部分的格式，它具有任意类型寻址的常量值0x10 <br>
