@@ -10,6 +10,10 @@ public class BooleanUtil {
         // NOOP
     }
 
+    public static byte toByte(boolean data) {
+        return setBit((byte) 0x00, 0, data);
+    }
+
     /**
      * 对字节的指定位设置1或0
      *
@@ -27,8 +31,9 @@ public class BooleanUtil {
 
     /**
      * 获取字节指定位的状态
+     *
      * @param data 字节数据
-     * @param bit 位数 0-7
+     * @param bit  位数 0-7
      * @return 结果状态，true，false
      */
     public static boolean getValue(byte data, int bit) {

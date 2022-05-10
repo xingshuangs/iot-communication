@@ -116,7 +116,7 @@ public enum EParamVariableType {
 
     private byte code;
 
-    private EParamVariableType(byte code) {
+    EParamVariableType(byte code) {
         this.code = code;
     }
 

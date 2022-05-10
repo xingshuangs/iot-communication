@@ -94,7 +94,8 @@ public class SetupComParameter extends Parameter implements IByteArray {
         parameter.reserved = (byte) 0x00;
         parameter.maxAmqCaller = 1;
         parameter.maxAmqCallee = 1;
-        parameter.pduLength = 240;
+        // 默认最大PDU长度480
+        parameter.pduLength = 480;
         return parameter;
     }
 }

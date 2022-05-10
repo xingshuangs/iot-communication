@@ -11,6 +11,26 @@ public class FloatUtil {
     }
 
     /**
+     * 将float转换为字节数组，默认采用大端模式
+     *
+     * @param data float数据
+     * @return 字节数组
+     */
+    public static byte[] toByteArray(double data) {
+        return LongUtil.toByteArray(Double.doubleToLongBits(data), false);
+    }
+
+    /**
+     * 将float转换为字节数组，默认采用大端模式
+     *
+     * @param data float数据
+     * @return 字节数组
+     */
+    public static byte[] toByteArray(float data) {
+        return IntegerUtil.toByteArray(Float.floatToIntBits(data), false);
+    }
+
+    /**
      * 将字节数组转换为float32
      *
      * @param data 字节数组

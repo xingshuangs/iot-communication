@@ -45,6 +45,16 @@ public class IntegerUtil {
     }
 
     /**
+     * 将short转换为字节数组，默认采用大端模式
+     *
+     * @param data short数据
+     * @return 字节数组
+     */
+    public static byte[] toByteArray(long data) {
+        return toByteArray((int) data, false);
+    }
+
+    /**
      * 将字节数组转换为int32
      *
      * @param data 字节数组

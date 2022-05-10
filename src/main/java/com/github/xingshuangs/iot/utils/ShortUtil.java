@@ -31,18 +31,24 @@ public class ShortUtil {
     }
 
     /**
-     * 将short转换为字节数组，默认采用大端模式
+     * 将int转换为字节数组，默认采用大端模式
      *
-     * @param data short数据
+     * @param data int数据
      * @return 字节数组
      */
     public static byte[] toByteArray(int data) {
         return toByteArray(data, false);
     }
 
-//    public static byte[] toByteArray(short data) {
-//        return toByteArray(data, false);
-//    }
+    /**
+     * 将short转换为字节数组，默认采用大端模式
+     *
+     * @param data short数据
+     * @return 字节数组
+     */
+    public static byte[] toByteArray(short data) {
+        return toByteArray(data, false);
+    }
 
     /**
      * 将字节数组转换为int16

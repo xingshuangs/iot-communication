@@ -85,7 +85,7 @@ public enum EFunctionCode {
 
     private byte code;
 
-    private EFunctionCode(byte code) {
+    EFunctionCode(byte code) {
         this.code = code;
     }
 

@@ -80,7 +80,7 @@ public enum ESyntaxID {
 
     private byte code;
 
-    private ESyntaxID(byte code) {
+    ESyntaxID(byte code) {
         this.code = code;
     }
 

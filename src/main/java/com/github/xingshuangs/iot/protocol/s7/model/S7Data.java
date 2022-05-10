@@ -88,15 +88,15 @@ public class S7Data implements IByteArray {
             this.header.setDataLength(0);
             this.header.setParameterLength(0);
         }
-        if (this.datum != null && this.header != null) {
-            this.header.setDataLength(this.datum.byteArrayLength());
-        }
         if (this.parameter != null && this.header != null) {
             if (this.parameter instanceof ReadWriteParameter) {
                 ReadWriteParameter p = (ReadWriteParameter) this.parameter;
                 p.setItemCount(p.getRequestItems().size());
             }
             this.header.setParameterLength(this.parameter.byteArrayLength());
+        }
+        if (this.datum != null && this.header != null) {
+            this.header.setDataLength(this.datum.byteArrayLength());
         }
         if (this.tpkt != null) {
             this.tpkt.setLength(this.byteArrayLength());
@@ -209,6 +209,7 @@ public class S7Data implements IByteArray {
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = Header.createDefault();
         s7Data.parameter = ReadWriteParameter.createWriteDefault();
+        s7Data.datum = new Datum();
         s7Data.selfCheck();
         return s7Data;
     }

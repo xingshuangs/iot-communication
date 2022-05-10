@@ -107,7 +107,7 @@ public enum EArea {
 
     private byte code;
 
-    private EArea(byte code) {
+    EArea(byte code) {
         this.code = code;
     }
 

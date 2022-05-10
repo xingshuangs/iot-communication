@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.protocol.s7.enums.EDataVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EReturnCode;
+import com.github.xingshuangs.iot.utils.BooleanUtil;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -45,7 +46,8 @@ public class DataItem extends ReturnItem implements IByteArray {
     @Override
     public byte[] toByteArray() {
         byte[] res = new byte[4 + this.data.length];
-        byte[] countBytes = ShortUtil.toByteArray((this.count * 8));
+        // 如果数据类型是位，不需要 * 8，如果是其他类型，需要 * 8
+        byte[] countBytes = ShortUtil.toByteArray((this.count * (this.variableType == EDataVariableType.BIT ? 1 : 8)));
 
         res[0] = this.returnCode.getCode();
         res[1] = this.variableType.getCode();
@@ -68,15 +70,37 @@ public class DataItem extends ReturnItem implements IByteArray {
         DataItem dataItem = new DataItem();
         dataItem.returnCode = EReturnCode.from(data[0]);
         dataItem.variableType = EDataVariableType.from(data[1]);
-        if (dataItem.variableType == EDataVariableType.BIT) {
-            dataItem.count = ShortUtil.toUInt16(data, 2);
-        } else {
-            dataItem.count = ShortUtil.toUInt16(data, 2) / 8;
-        }
+        // 如果是bit，正常解析，如果是字节，则需要除8操作
+        dataItem.count = ShortUtil.toUInt16(data, 2) / (dataItem.variableType == EDataVariableType.BIT ? 1 : 8);
         // 返回数据类型为null，那就是没有数据
         if (dataItem.variableType != EDataVariableType.NULL) {
             dataItem.data = Arrays.copyOfRange(data, 4, 4 + dataItem.count);
         }
+        return dataItem;
+    }
+
+    public static DataItem byByte(byte data) {
+        return byByte(new byte[]{data});
+    }
+
+    public static DataItem byByte(byte[] data) {
+        if (data == null) {
+            throw new IllegalArgumentException("data数据不能为null");
+        }
+        DataItem dataItem = new DataItem();
+        dataItem.setReturnCode(EReturnCode.RESERVED);
+        dataItem.setVariableType(EDataVariableType.BYTE_WORD_DWORD);
+        dataItem.setCount(data.length);
+        dataItem.setData(data);
+        return dataItem;
+    }
+
+    public static DataItem byBoolean(boolean data) {
+        DataItem dataItem = new DataItem();
+        dataItem.setReturnCode(EReturnCode.RESERVED);
+        dataItem.setVariableType(EDataVariableType.BIT);
+        dataItem.setCount(1);
+        dataItem.setData(new byte[]{BooleanUtil.toByte(data)});
         return dataItem;
     }
 }

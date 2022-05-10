@@ -37,9 +37,9 @@ public enum EReturnCode {
     DATA_TYPE_NOT_SUPPORTED((byte) 0x06, "数据类型不支持"),
 
     /**
-     * 日期类型不一致
+     * 数据类型不一致
      */
-    DATA_TYPE_INCONSISTENT((byte) 0x07, "日期类型不一致"),
+    DATA_TYPE_INCONSISTENT((byte) 0x07, "数据类型不一致"),
 
     /**
      * 对象不存在
@@ -69,7 +69,7 @@ public enum EReturnCode {
 
     private String description;
 
-    private EReturnCode(byte code, String description) {
+    EReturnCode(byte code, String description) {
         this.code = code;
         this.description = description;
     }

@@ -24,7 +24,21 @@ public class Datum implements IByteArray {
 
     @Override
     public int byteArrayLength() {
-        return this.returnItems.stream().mapToInt(ReturnItem::byteArrayLength).sum();
+        if (this.returnItems.isEmpty()) {
+            return 0;
+        }
+        int sum = 0;
+        for (int i = 0; i < this.returnItems.size(); i++) {
+            sum += this.returnItems.get(i).byteArrayLength();
+            if (this.returnItems.get(i) instanceof DataItem) {
+                DataItem dataItem = (DataItem) this.returnItems.get(i);
+                // 如果数据长度为奇数，S7协议会多填充一个字节，使其保持为偶数（最后一个奇数长度数据不需要填充）
+                if (dataItem.getCount() % 2 != 0 && i != this.returnItems.size() - 1) {
+                    sum++;
+                }
+            }
+        }
+        return sum;
     }
 
     @Override
@@ -34,12 +48,33 @@ public class Datum implements IByteArray {
         }
         byte[] res = new byte[this.byteArrayLength()];
         int count = 0;
-        for (ReturnItem item : this.returnItems) {
-            byte[] bytes = item.toByteArray();
+        for (int i = 0; i < this.returnItems.size(); i++) {
+            byte[] bytes = this.returnItems.get(i).toByteArray();
             System.arraycopy(bytes, 0, res, count, bytes.length);
             count += bytes.length;
+
+            if (this.returnItems.get(i) instanceof DataItem) {
+                DataItem dataItem = (DataItem) this.returnItems.get(i);
+                // 如果数据长度为奇数，S7协议会多填充一个字节，使其保持为偶数（最后一个奇数长度数据不需要填充）
+                if (dataItem.getCount() % 2 != 0 && i != this.returnItems.size() - 1) {
+                    count++;
+                }
+            }
         }
         return res;
+    }
+
+    /**
+     * 添加请求项
+     *
+     * @param item 项
+     */
+    public void addItem(DataItem item) {
+        this.returnItems.add(item);
+    }
+
+    public void addItem(List<DataItem> items) {
+        this.returnItems.addAll(items);
     }
 
     /**
@@ -57,17 +92,25 @@ public class Datum implements IByteArray {
         }
         int offset = 0;
         byte[] remain = data;
-        while (offset < data.length) {
+        while (true) {
             ReturnItem dataItem;
             // 对写操作的响应结果进行特殊处理
             if (EMessageType.ACK_DATA == messageType && EFunctionCode.WRITE_VARIABLE == functionCode) {
                 dataItem = ReturnItem.fromBytes(data);
             } else {
-                dataItem = DataItem.fromBytes(remain);
+                DataItem item = DataItem.fromBytes(remain);
+                dataItem = item;
+                // 如果数据长度为奇数，S7协议会多填充一个字节，使其保持为偶数，需要跳过这个字节
+                if (item.getCount() % 2 != 0) {
+                    offset++;
+                }
             }
 
             datum.returnItems.add(dataItem);
             offset += dataItem.byteArrayLength();
+            if (offset >= data.length) {
+                break;
+            }
             remain = Arrays.copyOfRange(data, offset, data.length);
         }
         return datum;

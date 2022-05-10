@@ -46,7 +46,7 @@ public enum EMessageType {
 
     private byte code;
 
-    private EMessageType(byte code) {
+    EMessageType(byte code) {
         this.code = code;
     }
 

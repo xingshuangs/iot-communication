@@ -160,10 +160,10 @@ public class COTPConnection extends COTP implements IByteArray {
         connection.tpduSize = (byte) 0x0A;
         connection.parameterCodeSrcTsap = (byte) 0xC1;
         connection.parameterLength2 = (byte) 0x02;
-        connection.sourceTsap = 0x0100;
+        connection.sourceTsap = 0x0102;
         connection.parameterCodeDstTsap = (byte) 0xC2;
         connection.parameterLength3 = (byte) 0x02;
-        connection.destinationTsap = 0x0102;
+        connection.destinationTsap = 0x0100;
         return connection;
     }
 

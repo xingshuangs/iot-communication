@@ -56,7 +56,7 @@ public enum EPduType {
 
     private byte code;
 
-    private EPduType(byte code) {
+    EPduType(byte code) {
         this.code = code;
     }
 

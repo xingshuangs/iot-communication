@@ -61,7 +61,7 @@ public enum EDataVariableType {
 
     private byte code;
 
-    private EDataVariableType(byte code) {
+    EDataVariableType(byte code) {
         this.code = code;
     }
 
