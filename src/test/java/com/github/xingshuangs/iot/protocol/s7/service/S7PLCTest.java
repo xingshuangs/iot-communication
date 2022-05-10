@@ -5,14 +5,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.sql.SQLOutput;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-//@Ignore
+@Ignore
 public class S7PLCTest {
-    private S7PLC s7PLC = new S7PLC(EPlcType.S1200,"192.168.3.98");
+    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
 
     @Test
     public void readMultiByte() throws IOException {
@@ -125,9 +125,9 @@ public class S7PLCTest {
     @Test
     public void writeMultiData() throws IOException {
         MultiAddressWrite addressWrite = new MultiAddressWrite();
-        addressWrite.addByte("DB2.0", (byte) 0x11);
-        addressWrite.addUInt16("DB2.2", 88);
-        addressWrite.addBoolean("DB2.1.0", true);
+        addressWrite.addByte("DB2.0", (byte) 0x11)
+                .addUInt16("DB2.2", 88)
+                .addBoolean("DB2.1.0", true);
         s7PLC.writeMultiData(addressWrite);
         boolean actual = s7PLC.readBoolean("DB2.1.0");
         assertTrue(actual);

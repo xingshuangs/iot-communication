@@ -80,7 +80,7 @@ public class COTPConnection extends COTP implements IByteArray {
      * 字节大小：2 <br>
      * 字节序数：12-13
      */
-    private int sourceTsap = 0x0201;
+    private int sourceTsap = 0x0100;
 
     /**
      * 参数代码DST-TASP <br>
@@ -101,7 +101,7 @@ public class COTPConnection extends COTP implements IByteArray {
      * 字节大小：2 <br>
      * 字节序数：16-17
      */
-    private int destinationTsap = 0x0201;
+    private int destinationTsap = 0x0100;
 
     @Override
     public int byteArrayLength() {
@@ -148,7 +148,7 @@ public class COTPConnection extends COTP implements IByteArray {
      *
      * @return COTPConnection对象
      */
-    public static COTPConnection crConnectRequest() {
+    public static COTPConnection crConnectRequest(int local, int remote) {
         COTPConnection connection = new COTPConnection();
         connection.length = 0x11;
         connection.pduType = EPduType.CONNECT_REQUEST;
@@ -160,10 +160,10 @@ public class COTPConnection extends COTP implements IByteArray {
         connection.tpduSize = (byte) 0x0A;
         connection.parameterCodeSrcTsap = (byte) 0xC1;
         connection.parameterLength2 = (byte) 0x02;
-        connection.sourceTsap = 0x0102;
+        connection.sourceTsap = local;
         connection.parameterCodeDstTsap = (byte) 0xC2;
         connection.parameterLength3 = (byte) 0x02;
-        connection.destinationTsap = 0x0100;
+        connection.destinationTsap = remote;
         return connection;
     }
 

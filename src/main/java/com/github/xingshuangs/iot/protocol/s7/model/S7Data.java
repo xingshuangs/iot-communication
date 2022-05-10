@@ -160,10 +160,10 @@ public class S7Data implements IByteArray {
      *
      * @return s7data数据
      */
-    public static S7Data createConnectRequest() {
+    public static S7Data createConnectRequest(int local,int remote) {
         S7Data s7Data = new S7Data();
         s7Data.tpkt = new TPKT();
-        s7Data.cotp = COTPConnection.crConnectRequest();
+        s7Data.cotp = COTPConnection.crConnectRequest( local, remote);
         s7Data.selfCheck();
         return s7Data;
     }

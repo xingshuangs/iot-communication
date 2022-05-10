@@ -15,7 +15,7 @@ public class S7DataTest {
 
     @Test
     public void createConnectRequest() {
-        S7Data s7Data = S7Data.createConnectRequest();
+        S7Data s7Data = S7Data.createConnectRequest(0x0100,0x0100);
         assertEquals(22, s7Data.byteArrayLength());
     }
 

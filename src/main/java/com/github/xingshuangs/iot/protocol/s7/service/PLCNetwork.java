@@ -5,6 +5,7 @@ import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.net.socket.SocketBasic;
 import com.github.xingshuangs.iot.protocol.s7.enums.EErrorClass;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
+import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EReturnCode;
 import com.github.xingshuangs.iot.protocol.s7.model.*;
 
@@ -20,7 +21,25 @@ import java.util.stream.Collectors;
  */
 public class PLCNetwork extends SocketBasic {
 
+    /**
+     * 锁
+     */
     private final Object objLock = new Object();
+
+    /**
+     * PLC的类型
+     */
+    protected EPlcType plcType = EPlcType.S1200;
+
+    /**
+     * PLC机架号
+     */
+    protected int rack = 0;
+
+    /**
+     * PLC槽号
+     */
+    protected int slot = 0;
 
     /**
      * 最大的PDU长度
@@ -53,7 +72,22 @@ public class PLCNetwork extends SocketBasic {
      * @throws IOException 异常
      */
     private void connectionRequest() throws IOException {
-        S7Data req = S7Data.createConnectRequest();
+        int local = 0x0100;
+        int remote = 0x0100;
+        switch (this.plcType) {
+            case S200:
+                local = 0x1000;
+                remote = 0x1001;
+                break;
+            case S200_SMART:
+            case S300:
+            case S400:
+            case S1200:
+            case S1500:
+                remote += 0x20 * this.rack + this.slot;
+                break;
+        }
+        S7Data req = S7Data.createConnectRequest(local, remote);
         S7Data ack = this.readFromServer(req);
         if (ack.getCotp().getPduType() != EPduType.CONNECT_CONFIRM) {
             throw new S7CommException("连接请求被拒绝");
@@ -178,10 +212,24 @@ public class PLCNetwork extends SocketBasic {
         return this.readS7Data(Collections.singletonList(item)).get(0);
     }
 
+    /**
+     * 写S7协议数据
+     *
+     * @param requestItem 请求项
+     * @param dataItem    数据项
+     * @throws IOException IO异常
+     */
     protected void writeS7Data(RequestItem requestItem, DataItem dataItem) throws IOException {
         this.writeS7Data(Collections.singletonList(requestItem), Collections.singletonList(dataItem));
     }
 
+    /**
+     * 写S7协议
+     *
+     * @param requestItems 请求项列表
+     * @param dataItems    数据项列表
+     * @throws IOException IO异常
+     */
     protected void writeS7Data(List<RequestItem> requestItems, List<DataItem> dataItems) throws IOException {
         if (requestItems.size() != dataItems.size()) {
             throw new S7CommException("写操作过程中，requestItems和dataItems数据个数不一致");
