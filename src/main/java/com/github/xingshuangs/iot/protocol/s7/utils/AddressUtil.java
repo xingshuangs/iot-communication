@@ -61,11 +61,8 @@ public class AddressUtil {
                 throw new IllegalArgumentException("address地址信息格式错误，位索引只能[0-7]");
             }
         }
-        if (addList[0].contains("DB")) {
-            item.setDbNumber(Integer.valueOf(addList[0].substring(2)));
-        } else {
-            item.setDbNumber(Integer.valueOf(addList[0].substring(1)));
-        }
+        int dbNumber = addList[0].contains("DB") ? Integer.valueOf(addList[0].substring(2)) : Integer.valueOf(addList[0].substring(1));
+        item.setDbNumber(dbNumber);
         return item;
     }
 

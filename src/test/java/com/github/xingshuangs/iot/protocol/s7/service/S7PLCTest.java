@@ -10,7 +10,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Ignore
+//@Ignore
 public class S7PLCTest {
     private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
 
@@ -28,9 +28,19 @@ public class S7PLCTest {
 
     @Test
     public void readByte() throws IOException {
-        byte[] actual = s7PLC.readByte("DB14.2", 3);
-        assertEquals(3, actual.length);
-        byte b = s7PLC.readByte("DB1.1");
+        byte[] actual = s7PLC.readByte("DB14.0", 2);
+        assertEquals(2, actual.length);
+//        byte b = s7PLC.readByte("DB1.1");
+
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 10000; i++) {
+            try {
+                s7PLC.readBoolean("DB14.2.0");
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        System.out.println(System.currentTimeMillis() - start);
     }
 
     @Test
@@ -131,5 +141,10 @@ public class S7PLCTest {
         s7PLC.writeMultiData(addressWrite);
         boolean actual = s7PLC.readBoolean("DB2.1.0");
         assertTrue(actual);
+    }
+
+    @Test
+    public void read() throws IOException {
+
     }
 }
