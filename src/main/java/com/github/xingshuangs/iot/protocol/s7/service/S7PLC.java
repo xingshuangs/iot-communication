@@ -10,7 +10,6 @@ import com.github.xingshuangs.iot.utils.FloatUtil;
 import com.github.xingshuangs.iot.utils.IntegerUtil;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,9 +50,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param addressRead 地址包装列表
      * @return 字节数组列表
-     * @throws IOException IO异常
      */
-    public List<byte[]> readMultiByte(MultiAddressRead addressRead) throws IOException {
+    public List<byte[]> readMultiByte(MultiAddressRead addressRead) {
         List<DataItem> dataItems = this.readS7Data(addressRead.getRequestItems());
         return dataItems.stream().map(DataItem::getData).collect(Collectors.toList());
     }
@@ -64,9 +62,8 @@ public class S7PLC extends PLCNetwork {
      * @param address 地址
      * @param count   字节个数
      * @return 字节数组
-     * @throws IOException IO异常
      */
-    public byte[] readByte(String address, int count) throws IOException {
+    public byte[] readByte(String address, int count) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, count));
         return dataItem.getData();
     }
@@ -76,9 +73,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @return 一个字节
-     * @throws IOException IO异常
      */
-    public byte readByte(String address) throws IOException {
+    public byte readByte(String address) {
         return this.readByte(address, 1)[0];
     }
 
@@ -87,9 +83,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @return 一个boolean值
-     * @throws IOException IO异常
      */
-    public boolean readBoolean(String address) throws IOException {
+    public boolean readBoolean(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseBit(address));
         return BooleanUtil.getValue(dataItem.getData()[0], 0);
     }
@@ -99,9 +94,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @return 多个boolean值
-     * @throws IOException IO异常
      */
-    public List<Boolean> readBoolean(String... address) throws IOException {
+    public List<Boolean> readBoolean(String... address) {
         return this.readBoolean(Arrays.asList(address));
     }
 
@@ -110,9 +104,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param addresses 地址列表
      * @return boolean列表
-     * @throws IOException IO异常
      */
-    public List<Boolean> readBoolean(List<String> addresses) throws IOException {
+    public List<Boolean> readBoolean(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(AddressUtil::parseBit).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
         return dataItems.stream().map(x -> BooleanUtil.getValue(x.getData()[0], 0)).collect(Collectors.toList());
@@ -123,9 +116,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @return 一个Int16 2字节数据
-     * @throws IOException IO异常
      */
-    public short readInt16(String address) throws IOException {
+    public short readInt16(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 2));
         return ShortUtil.toInt16(dataItem.getData());
     }
@@ -135,9 +127,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @return Int16 2字节数据列表
-     * @throws IOException IO异常
      */
-    public List<Short> readInt16(String... address) throws IOException {
+    public List<Short> readInt16(String... address) {
         return this.readInt16(Arrays.asList(address));
     }
 
@@ -146,9 +137,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param addresses 地址列表
      * @return Int16 2字节数据列表
-     * @throws IOException IO异常
      */
-    public List<Short> readInt16(List<String> addresses) throws IOException {
+    public List<Short> readInt16(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 2)).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
         return dataItems.stream().map(x -> ShortUtil.toInt16(x.getData())).collect(Collectors.toList());
@@ -159,9 +149,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @return 一个UInt16 2字节数据
-     * @throws IOException IO异常
      */
-    public int readUInt16(String address) throws IOException {
+    public int readUInt16(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 2));
         return ShortUtil.toUInt16(dataItem.getData());
     }
@@ -171,9 +160,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @return UInt16 2字节数据列表
-     * @throws IOException IO异常
      */
-    public List<Integer> readUInt16(String... address) throws IOException {
+    public List<Integer> readUInt16(String... address) {
         return this.readUInt16(Arrays.asList(address));
     }
 
@@ -182,9 +170,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param addresses 地址列表
      * @return UInt16 2字节数据列表
-     * @throws IOException IO异常
      */
-    public List<Integer> readUInt16(List<String> addresses) throws IOException {
+    public List<Integer> readUInt16(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 2)).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
         return dataItems.stream().map(x -> ShortUtil.toUInt16(x.getData())).collect(Collectors.toList());
@@ -195,9 +182,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @return 一个UInt32 4字节数据
-     * @throws IOException IO异常
      */
-    public int readInt32(String address) throws IOException {
+    public int readInt32(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 4));
         return IntegerUtil.toInt32(dataItem.getData());
     }
@@ -207,9 +193,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @return UInt32 4字节数据列表
-     * @throws IOException IO异常
      */
-    public List<Integer> readInt32(String... address) throws IOException {
+    public List<Integer> readInt32(String... address) {
         return this.readInt32(Arrays.asList(address));
     }
 
@@ -218,9 +203,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param addresses 地址列表
      * @return UInt32 4字节数据列表
-     * @throws IOException IO异常
      */
-    public List<Integer> readInt32(List<String> addresses) throws IOException {
+    public List<Integer> readInt32(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 4)).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
         return dataItems.stream().map(x -> IntegerUtil.toInt32(x.getData())).collect(Collectors.toList());
@@ -231,9 +215,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @return 一个UInt32 4字节数据
-     * @throws IOException IO异常
      */
-    public long readUInt32(String address) throws IOException {
+    public long readUInt32(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 4));
         return IntegerUtil.toUInt32(dataItem.getData());
     }
@@ -243,9 +226,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @return UInt32 4字节数据列表
-     * @throws IOException IO异常
      */
-    public List<Long> readUInt32(String... address) throws IOException {
+    public List<Long> readUInt32(String... address) {
         return this.readUInt32(Arrays.asList(address));
     }
 
@@ -254,9 +236,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param addresses 地址列表
      * @return UInt32 4字节数据列表
-     * @throws IOException IO异常
      */
-    public List<Long> readUInt32(List<String> addresses) throws IOException {
+    public List<Long> readUInt32(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 4)).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
         return dataItems.stream().map(x -> IntegerUtil.toUInt32(x.getData())).collect(Collectors.toList());
@@ -267,9 +248,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @return 一个Float32的数据
-     * @throws IOException IO异常
      */
-    public float readFloat32(String address) throws IOException {
+    public float readFloat32(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 4));
         return FloatUtil.toFloat32(dataItem.getData());
     }
@@ -279,9 +259,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @return 多个Float32的数据
-     * @throws IOException IO异常
      */
-    public List<Float> readFloat32(String... address) throws IOException {
+    public List<Float> readFloat32(String... address) {
         return this.readFloat32(Arrays.asList(address));
     }
 
@@ -290,9 +269,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param addresses 地址列表
      * @return 多个Float32的数据
-     * @throws IOException IO异常
      */
-    public List<Float> readFloat32(List<String> addresses) throws IOException {
+    public List<Float> readFloat32(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 4)).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
         return dataItems.stream().map(x -> FloatUtil.toFloat32(x.getData())).collect(Collectors.toList());
@@ -303,9 +281,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @return 一个Float32的数据
-     * @throws IOException
      */
-    public double readFloat64(String address) throws IOException {
+    public double readFloat64(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 8));
         return FloatUtil.toFloat64(dataItem.getData());
     }
@@ -315,9 +292,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 多个地址
      * @return 多个Float32的数据
-     * @throws IOException IO异常
      */
-    public List<Double> readFloat64(String... address) throws IOException {
+    public List<Double> readFloat64(String... address) {
         return this.readFloat64(Arrays.asList(address));
     }
 
@@ -326,9 +302,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param addresses 地址列表
      * @return 多个Float32的数据
-     * @throws IOException IO异常
      */
-    public List<Double> readFloat64(List<String> addresses) throws IOException {
+    public List<Double> readFloat64(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 8)).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
         return dataItems.stream().map(x -> FloatUtil.toFloat64(x.getData())).collect(Collectors.toList());
@@ -343,9 +318,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @param data    boolean数据
-     * @throws IOException IO异常
      */
-    public void writeBoolean(String address, boolean data) throws IOException {
+    public void writeBoolean(String address, boolean data) {
         this.writeS7Data(AddressUtil.parseBit(address), DataItem.byBoolean(data));
     }
 
@@ -354,9 +328,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @param data    字节数据
-     * @throws IOException IO异常
      */
-    public void writeByte(String address, byte data) throws IOException {
+    public void writeByte(String address, byte data) {
         this.writeS7Data(AddressUtil.parseByte(address, 1), DataItem.byByte(data));
     }
 
@@ -365,9 +338,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @param data    字节列表数据
-     * @throws IOException IO异常
      */
-    public void writeByte(String address, byte[] data) throws IOException {
+    public void writeByte(String address, byte[] data) {
         this.writeS7Data(AddressUtil.parseByte(address, data.length), DataItem.byByte(data));
     }
 
@@ -376,9 +348,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @param data    UInt16数据
-     * @throws IOException IO异常
      */
-    public void writeUInt16(String address, int data) throws IOException {
+    public void writeUInt16(String address, int data) {
         this.writeByte(address, ShortUtil.toByteArray(data));
     }
 
@@ -387,9 +358,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @param data    Int16数据
-     * @throws IOException IO异常
      */
-    public void writeInt16(String address, short data) throws IOException {
+    public void writeInt16(String address, short data) {
         this.writeByte(address, ShortUtil.toByteArray(data));
     }
 
@@ -398,9 +368,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @param data    UInt32数据
-     * @throws IOException IO异常
      */
-    public void writeUInt32(String address, long data) throws IOException {
+    public void writeUInt32(String address, long data) {
         this.writeByte(address, IntegerUtil.toByteArray(data));
     }
 
@@ -409,9 +378,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @param data    Int32数据
-     * @throws IOException IO异常
      */
-    public void writeInt32(String address, int data) throws IOException {
+    public void writeInt32(String address, int data) {
         this.writeByte(address, IntegerUtil.toByteArray(data));
     }
 
@@ -420,9 +388,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @param data    Float32数据
-     * @throws IOException IO异常
      */
-    public void writeFloat32(String address, float data) throws IOException {
+    public void writeFloat32(String address, float data) {
         this.writeByte(address, FloatUtil.toByteArray(data));
     }
 
@@ -431,9 +398,8 @@ public class S7PLC extends PLCNetwork {
      *
      * @param address 地址
      * @param data    Float64数据
-     * @throws IOException IO异常
      */
-    public void writeFloat64(String address, double data) throws IOException {
+    public void writeFloat64(String address, double data) {
         this.writeByte(address, FloatUtil.toByteArray(data));
     }
 
@@ -441,9 +407,8 @@ public class S7PLC extends PLCNetwork {
      * 多地址写入数据
      *
      * @param addressWrite 数据
-     * @throws IOException IO异常
      */
-    public void writeMultiData(MultiAddressWrite addressWrite) throws IOException {
+    public void writeMultiData(MultiAddressWrite addressWrite) {
         this.writeS7Data(addressWrite.getRequestItems(), addressWrite.getDataItems());
     }
 

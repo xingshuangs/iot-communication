@@ -43,7 +43,7 @@ public class SocketBasicTest {
     }
 
     @Test
-    public void read() throws IOException {
+    public void read() {
         byte[] data = new byte[1024];
         int read = this.socketBasic.read(data);
         if (read > 0) {
@@ -52,7 +52,7 @@ public class SocketBasicTest {
     }
 
     @Test
-    public void read1() throws IOException {
+    public void read1() {
         IntStream.range(0, 30).forEach(i -> {
             try {
                 TimeUnit.SECONDS.sleep(2);
@@ -62,7 +62,7 @@ public class SocketBasicTest {
                 if (read > 0) {
                     System.out.println(new String(data));
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (InterruptedException e) {
                 log.error(e.getMessage());
             }
         });

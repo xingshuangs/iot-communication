@@ -9,7 +9,6 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EReturnCode;
 import com.github.xingshuangs.iot.protocol.s7.model.*;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,7 +59,7 @@ public class PLCNetwork extends SocketBasic {
      * 连接成功之后要做的动作
      */
     @Override
-    protected void doAfterConnected() throws IOException {
+    protected void doAfterConnected() {
         this.connectionRequest();
         // 减去前部的字节，留下pdu
         this.maxPduLength = this.connectDtData() - 20;
@@ -68,10 +67,8 @@ public class PLCNetwork extends SocketBasic {
 
     /**
      * 连接请求
-     *
-     * @throws IOException 异常
      */
-    private void connectionRequest() throws IOException {
+    private void connectionRequest() {
         int local = 0x0100;
         int remote = 0x0100;
         switch (this.plcType) {
@@ -98,9 +95,8 @@ public class PLCNetwork extends SocketBasic {
      * 连接setup
      *
      * @return pduLength pdu长度
-     * @throws IOException 异常
      */
-    private int connectDtData() throws IOException {
+    private int connectDtData() {
         S7Data req = S7Data.createConnectDtData();
         S7Data ack = this.readFromServer(req);
         if (ack.getCotp().getPduType() != EPduType.DT_DATA) {
@@ -123,7 +119,13 @@ public class PLCNetwork extends SocketBasic {
 
     //region 底层数据通信部分
 
-    public S7Data readFromServer(S7Data s7Data) throws IOException {
+    /**
+     * 从服务器读取数据
+     *
+     * @param s7Data S7协议数据
+     * @return S7协议数据
+     */
+    public S7Data readFromServer(S7Data s7Data) {
         byte[] sendData = s7Data.toByteArray();
         if (this.maxPduLength > 0 && sendData.length > this.maxPduLength) {
             throw new S7CommException("发送请求的字节数过长，已经大于最大的PDU长度");
@@ -154,9 +156,8 @@ public class PLCNetwork extends SocketBasic {
      *
      * @param data 字节数组
      * @return 读取数量
-     * @throws IOException 异常
      */
-    private int readWrapper(final byte[] data) throws IOException {
+    private int readWrapper(final byte[] data) {
         int offset = 0;
         while (offset < data.length) {
             int length = this.maxPduLength <= 0 ? data.length - offset : Math.min(this.maxPduLength, data.length - offset);
@@ -170,9 +171,8 @@ public class PLCNetwork extends SocketBasic {
      * 写入字节
      *
      * @param data 字节数组
-     * @throws IOException 异常
      */
-    private void writeWrapper(final byte[] data) throws IOException {
+    private void writeWrapper(final byte[] data) {
         int offset = 0;
         while (offset < data.length) {
             int length = this.maxPduLength <= 0 ? data.length - offset : Math.min(this.maxPduLength, data.length - offset);
@@ -189,9 +189,8 @@ public class PLCNetwork extends SocketBasic {
      *
      * @param requestItems 请求项列表
      * @return 数据项列表
-     * @throws IOException 异常
      */
-    protected List<DataItem> readS7Data(List<RequestItem> requestItems) throws IOException {
+    protected List<DataItem> readS7Data(List<RequestItem> requestItems) {
         S7Data req = S7Data.createReadDefault();
         ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
         parameter.addItem(requestItems);
@@ -206,9 +205,8 @@ public class PLCNetwork extends SocketBasic {
      *
      * @param item 请求项
      * @return 数据项
-     * @throws IOException 异常
      */
-    protected DataItem readS7Data(RequestItem item) throws IOException {
+    protected DataItem readS7Data(RequestItem item) {
         return this.readS7Data(Collections.singletonList(item)).get(0);
     }
 
@@ -217,9 +215,8 @@ public class PLCNetwork extends SocketBasic {
      *
      * @param requestItem 请求项
      * @param dataItem    数据项
-     * @throws IOException IO异常
      */
-    protected void writeS7Data(RequestItem requestItem, DataItem dataItem) throws IOException {
+    protected void writeS7Data(RequestItem requestItem, DataItem dataItem) {
         this.writeS7Data(Collections.singletonList(requestItem), Collections.singletonList(dataItem));
     }
 
@@ -228,9 +225,8 @@ public class PLCNetwork extends SocketBasic {
      *
      * @param requestItems 请求项列表
      * @param dataItems    数据项列表
-     * @throws IOException IO异常
      */
-    protected void writeS7Data(List<RequestItem> requestItems, List<DataItem> dataItems) throws IOException {
+    protected void writeS7Data(List<RequestItem> requestItems, List<DataItem> dataItems) {
         if (requestItems.size() != dataItems.size()) {
             throw new S7CommException("写操作过程中，requestItems和dataItems数据个数不一致");
         }

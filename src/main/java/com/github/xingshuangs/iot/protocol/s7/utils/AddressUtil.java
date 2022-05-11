@@ -13,6 +13,10 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class AddressUtil {
 
+    private AddressUtil() {
+        // NOOP
+    }
+
     /**
      * 字节地址解析
      *
@@ -34,6 +38,14 @@ public class AddressUtil {
         return parse(address, 1, EParamVariableType.BIT);
     }
 
+    /**
+     * 解析请求内容
+     *
+     * @param address      地址
+     * @param count        个数
+     * @param variableType 参数类型
+     * @return RequestItem请求项
+     */
     public static RequestItem parse(String address, int count, EParamVariableType variableType) {
         if (StringUtils.isEmpty(address)) {
             throw new IllegalArgumentException("address不能为空");
@@ -43,26 +55,29 @@ public class AddressUtil {
         }
         // 转换为大写
         address = address.toUpperCase();
-        RequestItem item = new RequestItem();
         String[] addList = address.split("\\.");
-        if (addList.length < 2) {
-            throw new IllegalArgumentException("address地址信息格式错误");
-        }
 
+        RequestItem item = new RequestItem();
         item.setVariableType(variableType);
-        item.setArea(parseArea(addList[0].substring(0, 1)));
         item.setCount(count);
-        item.setByteAddress(Integer.valueOf(addList[1]));
+        item.setArea(parseArea(addList[0].substring(0, 1)));
 
-        // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0
-        if (addList.length == 3 && variableType == EParamVariableType.BIT) {
-            item.setBitAddress(Integer.valueOf(addList[2]));
-            if (item.getBitAddress() > 7) {
-                throw new IllegalArgumentException("address地址信息格式错误，位索引只能[0-7]");
-            }
+        if (addList[0].contains("DB") || addList[0].contains("D")) {
+            int dbNumber = addList[0].contains("DB") ? Integer.valueOf(addList[0].substring(2)) : Integer.valueOf(addList[0].substring(1));
+            item.setDbNumber(dbNumber);
+            item.setByteAddress(addList.length >= 2 ? Integer.valueOf(addList[1]) : 0);
+            // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0
+            int bitAddress = addList.length >= 3 && variableType == EParamVariableType.BIT ? Integer.valueOf(addList[2]) : 0;
+            item.setBitAddress(bitAddress);
+        } else {
+            item.setByteAddress(Integer.valueOf(addList[0].substring(1)));
+            // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0
+            int bitAddress = addList.length >= 2 && variableType == EParamVariableType.BIT ? Integer.valueOf(addList[1]) : 0;
+            item.setBitAddress(bitAddress);
         }
-        int dbNumber = addList[0].contains("DB") ? Integer.valueOf(addList[0].substring(2)) : Integer.valueOf(addList[0].substring(1));
-        item.setDbNumber(dbNumber);
+        if (item.getBitAddress() > 7) {
+            throw new IllegalArgumentException("address地址信息格式错误，位索引只能[0-7]");
+        }
         return item;
     }
 

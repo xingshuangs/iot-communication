@@ -4,7 +4,6 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -15,7 +14,7 @@ public class S7PLCTest {
     private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
 
     @Test
-    public void readMultiByte() throws IOException {
+    public void readMultiByte() {
         MultiAddressRead addressRead = new MultiAddressRead();
         addressRead.addData("DB1.0", 1)
                 .addData("DB1.2", 3)
@@ -27,7 +26,7 @@ public class S7PLCTest {
     }
 
     @Test
-    public void readByte() throws IOException {
+    public void readByte() {
         byte[] actual = s7PLC.readByte("DB14.0", 2);
         assertEquals(2, actual.length);
 //        byte b = s7PLC.readByte("DB1.1");
@@ -36,7 +35,7 @@ public class S7PLCTest {
         for (int i = 0; i < 10000; i++) {
             try {
                 s7PLC.readBoolean("DB14.2.0");
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
@@ -44,13 +43,13 @@ public class S7PLCTest {
     }
 
     @Test
-    public void readBoolean() throws IOException {
+    public void readBoolean() {
         List<Boolean> actual = s7PLC.readBoolean("DB1.2.0", "DB1.2.1", "DB1.2.7");
         assertEquals(3, actual.size());
     }
 
     @Test
-    public void readUInt16() throws IOException {
+    public void readUInt16() {
         int i = s7PLC.readUInt16("DB1.0");
         System.out.println(i);
         List<Integer> actual = s7PLC.readUInt16("DB1.0", "DB1.2");
@@ -58,7 +57,7 @@ public class S7PLCTest {
     }
 
     @Test
-    public void readUInt32() throws IOException {
+    public void readUInt32() {
         long l = s7PLC.readUInt32("DB1.0");
         System.out.println(l);
         List<Long> actual = s7PLC.readUInt32("DB1.0", "DB1.4");
@@ -67,7 +66,7 @@ public class S7PLCTest {
 
 
     @Test
-    public void readFloat32() throws IOException {
+    public void readFloat32() {
         float actual = s7PLC.readFloat32("DB1.0");
         assertEquals(12, actual, 0.00001);
 
@@ -77,63 +76,63 @@ public class S7PLCTest {
     }
 
     @Test
-    public void readFloat64() throws IOException {
+    public void readFloat64() {
         double actual = s7PLC.readFloat64("DB1.0");
         assertEquals(33, actual, 0.00001);
     }
 
     @Test
-    public void writeBoolean() throws IOException {
+    public void writeBoolean() {
         s7PLC.writeBoolean("DB2.0.7", true);
     }
 
     @Test
-    public void writeByte() throws IOException {
+    public void writeByte() {
         s7PLC.writeByte("DB2.1", (byte) 0x11);
         byte actual = s7PLC.readByte("DB2.1");
         assertEquals((byte) 0x11, actual);
     }
 
     @Test
-    public void writeUInt16() throws IOException {
+    public void writeUInt16() {
         s7PLC.writeUInt16("DB2.0", 0x2222);
         int actual = s7PLC.readUInt16("DB2.0");
         assertEquals(0x2222, actual);
     }
 
     @Test
-    public void writeInt16() throws IOException {
+    public void writeInt16() {
         s7PLC.writeInt16("DB2.0", (short) 0x1111);
     }
 
     @Test
-    public void writeUInt32() throws IOException {
+    public void writeUInt32() {
         s7PLC.writeUInt32("DB2.0", 0x11111122);
         long actual = s7PLC.readUInt32("DB2.0");
         assertEquals(0x11111122L, actual);
     }
 
     @Test
-    public void writeInt32() throws IOException {
+    public void writeInt32() {
         s7PLC.writeInt32("DB2.0", 0x11113322);
     }
 
     @Test
-    public void writeFloat32() throws IOException {
+    public void writeFloat32() {
         s7PLC.writeFloat32("DB2.0", 12);
         float actual = s7PLC.readFloat32("DB2.0");
         assertEquals(12, actual, 0.00001);
     }
 
     @Test
-    public void writeFloat64() throws IOException {
+    public void writeFloat64() {
         s7PLC.writeFloat64("DB2.0", 12.02);
         double actual = s7PLC.readFloat64("DB2.0");
         assertEquals(12.02, actual, 0.00001);
     }
 
     @Test
-    public void writeMultiData() throws IOException {
+    public void writeMultiData() {
         MultiAddressWrite addressWrite = new MultiAddressWrite();
         addressWrite.addByte("DB2.0", (byte) 0x11)
                 .addUInt16("DB2.2", 88)
@@ -144,7 +143,7 @@ public class S7PLCTest {
     }
 
     @Test
-    public void read() throws IOException {
+    public void read() {
 
     }
 }
