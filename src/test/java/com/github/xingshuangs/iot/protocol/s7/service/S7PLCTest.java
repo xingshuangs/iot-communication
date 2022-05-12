@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 //@Ignore
@@ -27,12 +28,12 @@ public class S7PLCTest {
 
     @Test
     public void readByte() {
-        byte[] actual = s7PLC.readByte("DB14.0", 2);
+        byte[] actual = s7PLC.readByte("DB14.0.1", 2);
         assertEquals(2, actual.length);
 //        byte b = s7PLC.readByte("DB1.1");
 
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 1000; i++) {
             try {
                 s7PLC.readBoolean("DB14.2.0");
             } catch (Exception e) {
@@ -102,7 +103,7 @@ public class S7PLCTest {
 
     @Test
     public void writeInt16() {
-        s7PLC.writeInt16("DB2.0", (short) 0x1111);
+        s7PLC.writeInt16("DB14.0", (short) 15);
     }
 
     @Test
@@ -144,6 +145,51 @@ public class S7PLCTest {
 
     @Test
     public void read() {
+        boolean b = s7PLC.readBoolean("M1.3");
+        assertFalse(b);
+        b = s7PLC.readBoolean("M1.2");
+        assertTrue(b);
+        b = s7PLC.readBoolean("Q0.1");
+        assertTrue(b);
+        byte q0 = s7PLC.readByte("Q0");
+        assertEquals((byte) 0x03, q0);
+        byte m1 = s7PLC.readByte("M1");
+        System.out.println(m1);
+    }
 
+    @Test
+    public void readI() {
+        List<Boolean> booleans = s7PLC.readBoolean("I0.0", "I0.1", "I0.2", "I0.3", "I0.4", "I0.5");
+        System.out.println(booleans);
+    }
+
+    @Test
+    public void writeI() {
+        s7PLC.writeBoolean("I0.5", true);
+        System.out.println("结果");
+    }
+
+    @Test
+    public void readQ() {
+        List<Boolean> booleans = s7PLC.readBoolean("Q0.0", "Q0.1", "Q0.2", "Q0.3", "Q0.4", "Q0.5", "Q0.6", "Q0.7", "Q1.0", "Q1.1");
+        System.out.println(booleans);
+    }
+
+    @Test
+    public void writeQ() {
+        s7PLC.writeBoolean("Q0.7", true);
+        System.out.println();
+    }
+
+    @Test
+    public void readM() {
+        List<Boolean> booleans = s7PLC.readBoolean("M1.0", "M1.1", "M1.2", "M1.3", "M1.4", "M1.5", "M1.6", "M1.7");
+        System.out.println(booleans);
+    }
+
+    @Test
+    public void writeM() {
+        s7PLC.writeBoolean("M1.4", true);
+        System.out.println();
     }
 }

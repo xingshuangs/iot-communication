@@ -62,16 +62,16 @@ public class AddressUtil {
         item.setCount(count);
         item.setArea(parseArea(addList[0].substring(0, 1)));
 
-        if (addList[0].contains("DB") || addList[0].contains("D")) {
+        if (item.getArea() == EArea.DATA_BLOCKS) {
             int dbNumber = addList[0].contains("DB") ? Integer.valueOf(addList[0].substring(2)) : Integer.valueOf(addList[0].substring(1));
             item.setDbNumber(dbNumber);
             item.setByteAddress(addList.length >= 2 ? Integer.valueOf(addList[1]) : 0);
-            // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0
+            // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0；本质上不是bit时，位索引是不是0都不受影响的
             int bitAddress = addList.length >= 3 && variableType == EParamVariableType.BIT ? Integer.valueOf(addList[2]) : 0;
             item.setBitAddress(bitAddress);
         } else {
             item.setByteAddress(Integer.valueOf(addList[0].substring(1)));
-            // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0
+            // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0；本质上不是bit时，位索引是不是0都不受影响的
             int bitAddress = addList.length >= 2 && variableType == EParamVariableType.BIT ? Integer.valueOf(addList[1]) : 0;
             item.setBitAddress(bitAddress);
         }
