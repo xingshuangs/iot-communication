@@ -38,9 +38,9 @@ public class ParameterBuilder {
             case END_UPLOAD:
                 return null;
             case PLC_CONTROL:
-                return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.PLC_CONTROL) : StartParameter.fromBytes(data);
+                return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.PLC_CONTROL) : PlcControlParameter.fromBytes(data);
             case PLC_STOP:
-                return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.PLC_STOP) : StopParameter.fromBytes(data);
+                return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.PLC_STOP) : PlcStopParameter.fromBytes(data);
             case SETUP_COMMUNICATION:
                 return SetupComParameter.fromBytes(data);
             default:

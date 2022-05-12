@@ -226,7 +226,7 @@ public class S7Data implements IByteArray {
         s7Data.tpkt = new TPKT();
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = Header.createDefault();
-        s7Data.parameter = StartParameter.hotRestart();
+        s7Data.parameter = PlcControlParameter.hotRestart();
         s7Data.selfCheck();
         return s7Data;
     }
@@ -241,7 +241,7 @@ public class S7Data implements IByteArray {
         s7Data.tpkt = new TPKT();
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = Header.createDefault();
-        s7Data.parameter = StartParameter.coldRestart();
+        s7Data.parameter = PlcControlParameter.coldRestart();
         s7Data.selfCheck();
         return s7Data;
     }
@@ -256,7 +256,7 @@ public class S7Data implements IByteArray {
         s7Data.tpkt = new TPKT();
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = Header.createDefault();
-        s7Data.parameter = StopParameter.createDefault();
+        s7Data.parameter = PlcStopParameter.createDefault();
         s7Data.selfCheck();
         return s7Data;
     }

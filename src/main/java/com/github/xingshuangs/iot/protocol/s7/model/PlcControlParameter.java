@@ -18,7 +18,7 @@ import java.util.Arrays;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class StartParameter extends Parameter implements IByteArray {
+public class PlcControlParameter extends Parameter implements IByteArray {
 
     public static final String P_PROGRAM = "P_PROGRAM";
 
@@ -63,7 +63,7 @@ public class StartParameter extends Parameter implements IByteArray {
         this.lengthPart = this.piService.length();
     }
 
-    public StartParameter() {
+    public PlcControlParameter() {
         this.functionCode = EFunctionCode.PLC_CONTROL;
     }
 
@@ -101,14 +101,14 @@ public class StartParameter extends Parameter implements IByteArray {
      * 字节数组数据解析
      *
      * @param data 字节数组数据
-     * @return StopParameter
+     * @return PlcStopParameter
      */
-    public static StartParameter fromBytes(final byte[] data) {
+    public static PlcControlParameter fromBytes(final byte[] data) {
         if (data.length < 11) {
             throw new S7CommException("StopParameter解析有误，StopParameter字节数组长度 < 7");
         }
         int offset = 0;
-        StartParameter parameter = new StartParameter();
+        PlcControlParameter parameter = new PlcControlParameter();
         parameter.functionCode = EFunctionCode.from(data[0]);
         parameter.unknownBytes = Arrays.copyOfRange(data, 1, 8);
         parameter.parameterBlockLength = ShortUtil.toUInt16(data, 8);
@@ -124,8 +124,8 @@ public class StartParameter extends Parameter implements IByteArray {
      *
      * @return startParameter
      */
-    public static StartParameter hotRestart() {
-        StartParameter parameter = new StartParameter();
+    public static PlcControlParameter hotRestart() {
+        PlcControlParameter parameter = new PlcControlParameter();
         parameter.setParameterBlock("");
         parameter.setPiService(P_PROGRAM);
         return parameter;
@@ -136,8 +136,8 @@ public class StartParameter extends Parameter implements IByteArray {
      *
      * @return startParameter
      */
-    public static StartParameter coldRestart() {
-        StartParameter parameter = new StartParameter();
+    public static PlcControlParameter coldRestart() {
+        PlcControlParameter parameter = new PlcControlParameter();
         parameter.setParameterBlock("C ");
         parameter.setPiService(P_PROGRAM);
         return parameter;

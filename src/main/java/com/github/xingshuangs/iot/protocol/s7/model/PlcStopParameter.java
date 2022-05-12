@@ -17,7 +17,7 @@ import java.util.Arrays;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class StopParameter extends Parameter implements IByteArray {
+public class PlcStopParameter extends Parameter implements IByteArray {
 
     /**
      * 未知字节，固定参数 <br>
@@ -43,7 +43,7 @@ public class StopParameter extends Parameter implements IByteArray {
         this.lengthPart = this.piService.length();
     }
 
-    public StopParameter() {
+    public PlcStopParameter() {
         this.functionCode = EFunctionCode.PLC_STOP;
     }
 
@@ -67,13 +67,13 @@ public class StopParameter extends Parameter implements IByteArray {
      * 字节数组数据解析
      *
      * @param data 字节数组数据
-     * @return StopParameter
+     * @return PlcStopParameter
      */
-    public static StopParameter fromBytes(final byte[] data) {
+    public static PlcStopParameter fromBytes(final byte[] data) {
         if (data.length < 7) {
             throw new S7CommException("StopParameter解析有误，StopParameter字节数组长度 < 7");
         }
-        StopParameter parameter = new StopParameter();
+        PlcStopParameter parameter = new PlcStopParameter();
         parameter.functionCode = EFunctionCode.from(data[0]);
         parameter.unknownBytes = Arrays.copyOfRange(data, 1, 6);
         parameter.lengthPart = ByteUtil.toUInt8(data[6]);
@@ -81,8 +81,8 @@ public class StopParameter extends Parameter implements IByteArray {
         return parameter;
     }
 
-    public static StopParameter createDefault(){
-        StopParameter parameter = new StopParameter();
+    public static PlcStopParameter createDefault(){
+        PlcStopParameter parameter = new PlcStopParameter();
         parameter.setPiService("P_PROGRAM");
         return parameter;
     }
