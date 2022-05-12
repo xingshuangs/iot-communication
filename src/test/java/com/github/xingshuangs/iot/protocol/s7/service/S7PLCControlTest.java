@@ -2,11 +2,7 @@ package com.github.xingshuangs.iot.protocol.s7.service;
 
 
 import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -20,16 +16,16 @@ public class S7PLCControlTest {
 
     @Test
     public void hotRestart() {
-        s7PLC.HotRestart();
+        s7PLC.hotRestart();
     }
 
     @Test
     public void coldRestart() {
-        s7PLC.ColdRestart();
+        s7PLC.coldRestart();
     }
 
     @Test
     public void plcStop() {
-        s7PLC.PlcStop();
+        s7PLC.plcStop();
     }
 }

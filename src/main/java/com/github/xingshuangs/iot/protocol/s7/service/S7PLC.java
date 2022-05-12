@@ -415,24 +415,28 @@ public class S7PLC extends PLCNetwork {
 
     //endregion
 
+    //region 控制部分
+
     /**
      * 热重启
      */
-    public void HotRestart() {
+    public void hotRestart() {
         this.readFromServer(S7Data.createHotRestart());
     }
 
     /**
      * 冷重启
      */
-    public void ColdRestart() {
+    public void coldRestart() {
         this.readFromServer(S7Data.createColdRestart());
     }
 
     /**
      * PLC停止
      */
-    public void PlcStop() {
+    public void plcStop() {
         this.readFromServer(S7Data.createPlcStop());
     }
+
+    //endregion
 }
