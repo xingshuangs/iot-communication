@@ -146,6 +146,8 @@ public class COTPConnection extends COTP implements IByteArray {
     /**
      * CRConnect Request 连接请求
      *
+     * @param local  本地参数
+     * @param remote 远程参数
      * @return COTPConnection对象
      */
     public static COTPConnection crConnectRequest(int local, int remote) {

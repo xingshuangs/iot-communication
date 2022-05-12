@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.s7.service;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import com.github.xingshuangs.iot.protocol.s7.model.DataItem;
 import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
+import com.github.xingshuangs.iot.protocol.s7.model.S7Data;
 import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
 import com.github.xingshuangs.iot.utils.FloatUtil;
@@ -413,4 +414,25 @@ public class S7PLC extends PLCNetwork {
     }
 
     //endregion
+
+    /**
+     * 热重启
+     */
+    public void HotRestart() {
+        this.readFromServer(S7Data.createHotRestart());
+    }
+
+    /**
+     * 冷重启
+     */
+    public void ColdRestart() {
+        this.readFromServer(S7Data.createColdRestart());
+    }
+
+    /**
+     * PLC停止
+     */
+    public void PlcStop() {
+        this.readFromServer(S7Data.createPlcStop());
+    }
 }

@@ -103,7 +103,6 @@ public class IntegerUtil {
      *
      * @param data         字节数组
      * @param offset       偏移量
-     * @param littleEndian true：小端模式，false：大端模式
      * @return int32数据
      */
     public static int toInt32In3Bytes(byte[] data, int offset) {

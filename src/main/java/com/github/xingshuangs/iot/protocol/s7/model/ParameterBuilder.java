@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
+import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
 
 /**
  * @author xingshuang
@@ -15,7 +16,7 @@ public class ParameterBuilder {
      * @param data 字节数组数据
      * @return Parameter
      */
-    public static Parameter fromBytes(final byte[] data) {
+    public static Parameter fromBytes(final byte[] data, EMessageType messageType) {
         EFunctionCode functionCode = EFunctionCode.from(data[0]);
 
         switch (functionCode) {
@@ -37,9 +38,9 @@ public class ParameterBuilder {
             case END_UPLOAD:
                 return null;
             case PLC_CONTROL:
-                return null;
+                return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.PLC_CONTROL) : StartParameter.fromBytes(data);
             case PLC_STOP:
-                return null;
+                return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.PLC_STOP) : StopParameter.fromBytes(data);
             case SETUP_COMMUNICATION:
                 return SetupComParameter.fromBytes(data);
             default:

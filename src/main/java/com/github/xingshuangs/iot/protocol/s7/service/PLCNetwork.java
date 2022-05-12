@@ -122,11 +122,11 @@ public class PLCNetwork extends SocketBasic {
     /**
      * 从服务器读取数据
      *
-     * @param s7Data S7协议数据
+     * @param req S7协议数据
      * @return S7协议数据
      */
-    public S7Data readFromServer(S7Data s7Data) {
-        byte[] sendData = s7Data.toByteArray();
+    public S7Data readFromServer(S7Data req) {
+        byte[] sendData = req.toByteArray();
         if (this.maxPduLength > 0 && sendData.length > this.maxPduLength) {
             throw new S7CommException("发送请求的字节数过长，已经大于最大的PDU长度");
         }
@@ -148,7 +148,45 @@ public class PLCNetwork extends SocketBasic {
         if (len < remain.length) {
             throw new S7CommException(" TPKT后面的数据长度，长度不一致");
         }
-        return S7Data.fromBytes(tpkt, remain);
+        S7Data ack = S7Data.fromBytes(tpkt, remain);
+        this.checkResult(req, ack);
+        return ack;
+    }
+
+    /**
+     * 对请求和响应数据进行一次校验
+     *
+     * @param req 请求数据
+     * @param ack 响应属于
+     */
+    private void checkResult(S7Data req, S7Data ack) {
+        if (ack.getHeader() == null) {
+            return;
+        }
+        // 响应头正确
+        AckHeader ackHeader = (AckHeader) ack.getHeader();
+        if (ackHeader.getErrorClass() != EErrorClass.NO_ERROR) {
+            throw new S7CommException(String.format("响应异常，原因：%s", ackHeader.getErrorClass().getDescription()));
+        }
+        // 发送和接收的PDU编号一致
+        if (ackHeader.getPduReference() != req.getHeader().getPduReference()) {
+            throw new S7CommException("pdu应用编号不一致，数据有误");
+        }
+        if (ack.getDatum() == null) {
+            return;
+        }
+        // 请求的数据个数一致
+        List<ReturnItem> returnItems = ack.getDatum().getReturnItems();
+        ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
+        if (returnItems.size() != parameter.getItemCount()) {
+            throw new S7CommException("返回的数据个数和请求的数据个数不一致");
+        }
+        // 返回结果校验
+        returnItems.forEach(x -> {
+            if (x.getReturnCode() != EReturnCode.SUCCESS) {
+                throw new S7CommException(String.format("返回结果异常，原因：%s", x.getReturnCode().getDescription()));
+            }
+        });
     }
 
     /**
@@ -196,7 +234,6 @@ public class PLCNetwork extends SocketBasic {
         parameter.addItem(requestItems);
         req.selfCheck();
         S7Data ack = this.readFromServer(req);
-        this.checkReqAndAck(req, ack);
         return ack.getDatum().getReturnItems().stream().map(x -> (DataItem) x).collect(Collectors.toList());
     }
 
@@ -235,38 +272,9 @@ public class PLCNetwork extends SocketBasic {
         parameter.addItem(requestItems);
         req.getDatum().addItem(dataItems);
         req.selfCheck();
-        S7Data ack = this.readFromServer(req);
-        this.checkReqAndAck(req, ack);
+        this.readFromServer(req);
     }
 
-    /**
-     * 对请求和响应数据进行一次校验
-     *
-     * @param req 请求数据
-     * @param ack 响应属于
-     */
-    private void checkReqAndAck(S7Data req, S7Data ack) {
-        // 响应头正确
-        AckHeader ackHeader = (AckHeader) ack.getHeader();
-        if (ackHeader.getErrorClass() != EErrorClass.NO_ERROR) {
-            throw new S7CommException(String.format("响应异常，原因：%s", ackHeader.getErrorClass().getDescription()));
-        }
-        // 发送和接收的PDU编号一致
-        if (ackHeader.getPduReference() != req.getHeader().getPduReference()) {
-            throw new S7CommException("pdu应用编号不一致，数据有误");
-        }
-        // 请求的数据个数一致
-        List<ReturnItem> returnItems = ack.getDatum().getReturnItems();
-        ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
-        if (returnItems.size() != parameter.getItemCount()) {
-            throw new S7CommException("返回的数据个数和请求的数据个数不一致");
-        }
-        // 返回结果校验
-        returnItems.forEach(x -> {
-            if (x.getReturnCode() != EReturnCode.SUCCESS) {
-                throw new S7CommException(String.format("返回结果异常，原因：%s", x.getReturnCode().getDescription()));
-            }
-        });
-    }
+
     //endregion
 }

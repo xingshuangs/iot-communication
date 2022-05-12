@@ -19,6 +19,13 @@ public class Parameter implements IByteArray {
      */
     protected EFunctionCode functionCode = EFunctionCode.READ_VARIABLE;
 
+    public Parameter() {
+    }
+
+    public Parameter(EFunctionCode functionCode) {
+        this.functionCode = functionCode;
+    }
+
     @Override
     public int byteArrayLength() {
         return 1;

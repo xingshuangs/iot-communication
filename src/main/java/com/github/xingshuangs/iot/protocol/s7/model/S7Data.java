@@ -145,7 +145,7 @@ public class S7Data implements IByteArray {
         // parameter
         if (header.getParameterLength() > 0) {
             byte[] parameterBytes = Arrays.copyOfRange(lastBytes, header.byteArrayLength(), header.byteArrayLength() + header.getParameterLength());
-            s7Data.parameter = ParameterBuilder.fromBytes(parameterBytes);
+            s7Data.parameter = ParameterBuilder.fromBytes(parameterBytes, s7Data.header.getMessageType());
         }
         // datum
         if (header.getDataLength() > 0) {
@@ -158,12 +158,14 @@ public class S7Data implements IByteArray {
     /**
      * 创建连接请求
      *
+     * @param local  本地参数
+     * @param remote 远程参数
      * @return s7data数据
      */
-    public static S7Data createConnectRequest(int local,int remote) {
+    public static S7Data createConnectRequest(int local, int remote) {
         S7Data s7Data = new S7Data();
         s7Data.tpkt = new TPKT();
-        s7Data.cotp = COTPConnection.crConnectRequest( local, remote);
+        s7Data.cotp = COTPConnection.crConnectRequest(local, remote);
         s7Data.selfCheck();
         return s7Data;
     }
@@ -210,6 +212,51 @@ public class S7Data implements IByteArray {
         s7Data.header = Header.createDefault();
         s7Data.parameter = ReadWriteParameter.createWriteDefault();
         s7Data.datum = new Datum();
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    /**
+     * 创建热启动
+     *
+     * @return S7Data
+     */
+    public static S7Data createHotRestart() {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = Header.createDefault();
+        s7Data.parameter = StartParameter.hotRestart();
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    /**
+     * 创建冷启动
+     *
+     * @return S7Data
+     */
+    public static S7Data createColdRestart() {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = Header.createDefault();
+        s7Data.parameter = StartParameter.coldRestart();
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    /**
+     * 创建PLC停止
+     *
+     * @return S7Data
+     */
+    public static S7Data createPlcStop() {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = Header.createDefault();
+        s7Data.parameter = StopParameter.createDefault();
         s7Data.selfCheck();
         return s7Data;
     }

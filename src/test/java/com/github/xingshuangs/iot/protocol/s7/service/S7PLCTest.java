@@ -12,7 +12,8 @@ import static org.junit.Assert.assertTrue;
 
 //@Ignore
 public class S7PLCTest {
-    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
+//    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
+    private S7PLC s7PLC = new S7PLC(EPlcType.S1200);
 
     @Test
     public void readMultiByte() {
