@@ -112,10 +112,10 @@ public class PlcControlParameter extends Parameter implements IByteArray {
         parameter.functionCode = EFunctionCode.from(data[0]);
         parameter.unknownBytes = Arrays.copyOfRange(data, 1, 8);
         parameter.parameterBlockLength = ShortUtil.toUInt16(data, 8);
-        parameter.parameterBlock = parameter.parameterBlockLength == 0 ? "" : new String(data, 10, parameter.parameterBlockLength, StandardCharsets.US_ASCII);
+        parameter.parameterBlock = parameter.parameterBlockLength == 0 ? "" : ByteUtil.toStr(data, 10, parameter.parameterBlockLength);
         offset = offset + 10 + parameter.parameterBlockLength;
         parameter.lengthPart = ByteUtil.toUInt8(data[offset++]);
-        parameter.piService = parameter.lengthPart == 0 ? "" : new String(data, offset, parameter.lengthPart, StandardCharsets.US_ASCII);
+        parameter.piService = parameter.lengthPart == 0 ? "" : ByteUtil.toStr(data, offset, parameter.lengthPart);
         return parameter;
     }
 

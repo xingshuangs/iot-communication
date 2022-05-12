@@ -77,11 +77,11 @@ public class PlcStopParameter extends Parameter implements IByteArray {
         parameter.functionCode = EFunctionCode.from(data[0]);
         parameter.unknownBytes = Arrays.copyOfRange(data, 1, 6);
         parameter.lengthPart = ByteUtil.toUInt8(data[6]);
-        parameter.piService = parameter.lengthPart == 0 ? "" : new String(data, 7, parameter.lengthPart, StandardCharsets.US_ASCII);
+        parameter.piService = parameter.lengthPart == 0 ? "" : ByteUtil.toStr(data, 7, parameter.lengthPart);
         return parameter;
     }
 
-    public static PlcStopParameter createDefault(){
+    public static PlcStopParameter createDefault() {
         PlcStopParameter parameter = new PlcStopParameter();
         parameter.setPiService("P_PROGRAM");
         return parameter;

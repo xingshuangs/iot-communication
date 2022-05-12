@@ -105,10 +105,6 @@ public class PLCNetwork extends SocketBasic {
         if (ack.getHeader() == null || ack.getHeader().byteArrayLength() != AckHeader.BYTE_LENGTH) {
             throw new S7CommException("连接Setup响应错误，缺失响应头header或响应头长度不够[12]");
         }
-        AckHeader ackHeader = (AckHeader) ack.getHeader();
-        if (ackHeader.getErrorClass() != EErrorClass.NO_ERROR) {
-            throw new S7CommException("连接Setup响应错误，原因：" + ackHeader.getErrorClass());
-        }
         int length = ((SetupComParameter) ack.getParameter()).getPduLength();
         if (length <= 0) {
             throw new S7CommException("PDU的最大长度小于0");

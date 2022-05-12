@@ -1,15 +1,13 @@
 package com.github.xingshuangs.iot.protocol.s7.service;
 
 
+import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import com.github.xingshuangs.iot.protocol.s7.model.DataItem;
 import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
 import com.github.xingshuangs.iot.protocol.s7.model.S7Data;
 import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
-import com.github.xingshuangs.iot.utils.BooleanUtil;
-import com.github.xingshuangs.iot.utils.FloatUtil;
-import com.github.xingshuangs.iot.utils.IntegerUtil;
-import com.github.xingshuangs.iot.utils.ShortUtil;
+import com.github.xingshuangs.iot.utils.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -308,6 +306,23 @@ public class S7PLC extends PLCNetwork {
         List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 8)).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
         return dataItems.stream().map(x -> FloatUtil.toFloat64(x.getData())).collect(Collectors.toList());
+    }
+
+    /**
+     * 读取字符串
+     *
+     * @param address 地址
+     * @return 字符串
+     */
+    public String readString(String address) {
+        DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 2));
+        int type = ByteUtil.toUInt8(dataItem.getData(), 0);
+        if (type == 0 || type == 255) {
+            throw new S7CommException("该地址的值不是字符串类型");
+        }
+        int length = ByteUtil.toUInt8(dataItem.getData(), 1);
+        dataItem = this.readS7Data(AddressUtil.parseByte(address, 2 + length));
+        return ByteUtil.toStr(dataItem.getData(), 2);
     }
 
     //endregion
