@@ -9,6 +9,7 @@ import com.github.xingshuangs.iot.protocol.s7.model.S7Data;
 import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
 import com.github.xingshuangs.iot.utils.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -310,6 +311,8 @@ public class S7PLC extends PLCNetwork {
 
     /**
      * 读取字符串
+     * String（字符串）数据类型存储一串单字节字符，
+     * String提供了多大256个字节，前两个字节分别表示字节中最大的字符数和当前的字符数，定义字符串的最大长度可以减少它的占用存储空间
      *
      * @param address 地址
      * @return 字符串
@@ -324,6 +327,25 @@ public class S7PLC extends PLCNetwork {
         dataItem = this.readS7Data(AddressUtil.parseByte(address, 2 + length));
         return ByteUtil.toStr(dataItem.getData(), 2);
     }
+
+//    /**
+//     * 读取字符串
+//     * Wsting数据类型与sting数据类型接近，支持单字值的较长字符串，
+//     * 第一个字包含最大总字符数，下一个字包含的是当前的总字符数，接下来的字符串可含最多65534个字
+//     *
+//     * @param address 地址
+//     * @return 字符串
+//     */
+//    public String readWString(String address) {
+//        DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 4));
+//        int type = ShortUtil.toUInt16(dataItem.getData());
+//        if (type == 0 || type == 65535) {
+//            throw new S7CommException("该地址的值不是字符串WString类型");
+//        }
+//        int length = ShortUtil.toUInt16(dataItem.getData(), 2);
+//        dataItem = this.readS7Data(AddressUtil.parseByte(address, 4 + length * 2));
+//        return ByteUtil.toStr(dataItem.getData(), 4);
+//    }
 
     //endregion
 
@@ -428,6 +450,49 @@ public class S7PLC extends PLCNetwork {
         this.writeS7Data(addressWrite.getRequestItems(), addressWrite.getDataItems());
     }
 
+    /**
+     * 写入字符串数据
+     * String（字符串）数据类型存储一串单字节字符，
+     * String提供了多大256个字节，前两个字节分别表示字节中最大的字符数和当前的字符数，定义字符串的最大长度可以减少它的占用存储空间
+     *
+     * @param address 地址
+     * @param data    字符串数据
+     */
+    public void writeString(String address, String data) {
+        if (data.length() > 253) {
+            throw new IllegalArgumentException("data字符串参数过长，超过253");
+        }
+        byte[] dataBytes = data.getBytes(StandardCharsets.US_ASCII);
+        byte[] tmp = new byte[2 + dataBytes.length];
+        tmp[0] = (byte) 0xFE;
+        tmp[1] = ByteUtil.toByte(dataBytes.length);
+        System.arraycopy(dataBytes, 0, tmp, 2, dataBytes.length);
+        this.writeByte(address, tmp);
+    }
+
+//    /**
+//     * 写入字符串数据
+//     * Wsting数据类型与sting数据类型接近，支持单字值的较长字符串，
+//     * 第一个字包含最大总字符数，下一个字包含的是当前的总字符数，接下来的字符串可含最多65534个字
+//     *
+//     * @param address 地址
+//     * @param data    字符串数据
+//     */
+//    public void writeWString(String address, String data) {
+//        if (data.length() > (65534*2-4)) {
+//            throw new IllegalArgumentException("data字符串参数过长");
+//        }
+//        byte[] dataBytes = data.getBytes(StandardCharsets.US_ASCII);
+//        byte[] tmp = new byte[2 + dataBytes.length];
+//        byte[] lengthBytes = ShortUtil.toByteArray(dataBytes.length / 2);
+//        tmp[0] = (byte) 0xFF;
+//        tmp[1] = (byte) 0xFE;
+//        tmp[2] = lengthBytes[0];
+//        tmp[3] = lengthBytes[1];
+//        System.arraycopy(dataBytes, 0, tmp, 4, dataBytes.length);
+//        this.writeByte(address, tmp);
+//    }
+
     //endregion
 
     //region 控制部分
@@ -451,6 +516,20 @@ public class S7PLC extends PLCNetwork {
      */
     public void plcStop() {
         this.readFromServer(S7Data.createPlcStop());
+    }
+
+    /**
+     * 将ram复制到rom
+     */
+    public void copyRamToRom() {
+        this.readFromServer(S7Data.createCopyRamToRom());
+    }
+
+    /**
+     * 压缩
+     */
+    public void compress() {
+        this.readFromServer(S7Data.createCompress());
     }
 
     //endregion

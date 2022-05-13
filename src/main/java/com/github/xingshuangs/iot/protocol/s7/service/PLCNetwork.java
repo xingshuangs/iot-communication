@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.s7.service;
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.net.socket.SocketBasic;
+import com.github.xingshuangs.iot.protocol.s7.constant.ErrorCode;
 import com.github.xingshuangs.iot.protocol.s7.enums.EErrorClass;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
@@ -61,7 +62,7 @@ public class PLCNetwork extends SocketBasic {
     @Override
     protected void doAfterConnected() {
         this.connectionRequest();
-        // 减去前部的字节，留下pdu
+        // 减去前部的字节tpkt+cotp，留下pdu
         this.maxPduLength = this.connectDtData() - 20;
     }
 
@@ -121,7 +122,7 @@ public class PLCNetwork extends SocketBasic {
      * @param req S7协议数据
      * @return S7协议数据
      */
-    public S7Data readFromServer(S7Data req) {
+    protected S7Data readFromServer(S7Data req) {
         byte[] sendData = req.toByteArray();
         if (this.maxPduLength > 0 && sendData.length > this.maxPduLength) {
             throw new S7CommException("发送请求的字节数过长，已经大于最大的PDU长度");
@@ -162,7 +163,7 @@ public class PLCNetwork extends SocketBasic {
         // 响应头正确
         AckHeader ackHeader = (AckHeader) ack.getHeader();
         if (ackHeader.getErrorClass() != EErrorClass.NO_ERROR) {
-            throw new S7CommException(String.format("响应异常，原因：%s", ackHeader.getErrorClass().getDescription()));
+            throw new S7CommException(String.format("响应异常，错误类型：%s，错误原因：%s", ackHeader.getErrorClass().getDescription(), ErrorCode.MAP.get(ackHeader.getErrorCode())));
         }
         // 发送和接收的PDU编号一致
         if (ackHeader.getPduReference() != req.getHeader().getPduReference()) {
@@ -270,7 +271,6 @@ public class PLCNetwork extends SocketBasic {
         req.selfCheck();
         this.readFromServer(req);
     }
-
 
     //endregion
 }

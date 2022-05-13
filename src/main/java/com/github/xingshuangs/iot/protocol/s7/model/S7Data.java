@@ -232,7 +232,7 @@ public class S7Data implements IByteArray {
     }
 
     /**
-     * 创建冷启动
+     * 创建冷启动命令
      *
      * @return S7Data
      */
@@ -247,7 +247,7 @@ public class S7Data implements IByteArray {
     }
 
     /**
-     * 创建PLC停止
+     * 创建PLC停止命令
      *
      * @return S7Data
      */
@@ -257,6 +257,36 @@ public class S7Data implements IByteArray {
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = Header.createDefault();
         s7Data.parameter = PlcStopParameter.createDefault();
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    /**
+     * 创建复制Ram到Rom的命令
+     *
+     * @return S7Data
+     */
+    public static S7Data createCopyRamToRom() {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = Header.createDefault();
+        s7Data.parameter = PlcControlParameter.copyRamToRom();
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    /**
+     * 创建压缩命令
+     *
+     * @return S7Data
+     */
+    public static S7Data createCompress() {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = Header.createDefault();
+        s7Data.parameter = PlcControlParameter.compress();
         s7Data.selfCheck();
         return s7Data;
     }

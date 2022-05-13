@@ -142,4 +142,28 @@ public class PlcControlParameter extends Parameter implements IByteArray {
         parameter.setPiService(P_PROGRAM);
         return parameter;
     }
+
+    /**
+     * 将ram复制到rom中
+     *
+     * @return startParameter
+     */
+    public static PlcControlParameter copyRamToRom() {
+        PlcControlParameter parameter = new PlcControlParameter();
+        parameter.setParameterBlock("EP");
+        parameter.setPiService("_MODU");
+        return parameter;
+    }
+
+    /**
+     * 将ram复制到rom中
+     *
+     * @return startParameter
+     */
+    public static PlcControlParameter compress() {
+        PlcControlParameter parameter = new PlcControlParameter();
+        parameter.setParameterBlock("");
+        parameter.setPiService("_GARB");
+        return parameter;
+    }
 }

@@ -12,8 +12,8 @@ import static org.junit.Assert.assertTrue;
 
 //@Ignore
 public class S7PLCTest {
-//    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
-    private S7PLC s7PLC = new S7PLC(EPlcType.S1200);
+    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
+//    private S7PLC s7PLC = new S7PLC(EPlcType.S1200);
 
     @Test
     public void readMultiByte() {
@@ -52,7 +52,7 @@ public class S7PLCTest {
 
     @Test
     public void readUInt16() {
-        int i = s7PLC.readUInt16("DB1.0");
+        int i = s7PLC.readUInt16("DB14.0");
         System.out.println(i);
         List<Integer> actual = s7PLC.readUInt16("DB1.0", "DB1.2");
         assertEquals(2, actual.size());
@@ -81,6 +81,19 @@ public class S7PLCTest {
     public void readFloat64() {
         double actual = s7PLC.readFloat64("DB1.0");
         assertEquals(33, actual, 0.00001);
+    }
+
+    @Test
+    public void readString() {
+        String str = s7PLC.readString("DB14.4");
+        assertEquals("hello", str);
+    }
+
+    @Test
+    public void writeString() {
+        s7PLC.writeString("DB14.4","demo");
+        String str = s7PLC.readString("DB14.4");
+        assertEquals("demo", str);
     }
 
     @Test

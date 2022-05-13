@@ -79,10 +79,22 @@ public class DataItem extends ReturnItem implements IByteArray {
         return dataItem;
     }
 
+    /**
+     * 通过字节数据类型转换为DataItem数据
+     *
+     * @param data 字节数据
+     * @return DataItem数据
+     */
     public static DataItem byByte(byte data) {
         return byByte(new byte[]{data});
     }
 
+    /**
+     * 通过字节数组数据类型转换为DataItem数据
+     *
+     * @param data 字节数组
+     * @return DataItem数据
+     */
     public static DataItem byByte(byte[] data) {
         if (data == null) {
             throw new IllegalArgumentException("data数据不能为null");
@@ -95,6 +107,12 @@ public class DataItem extends ReturnItem implements IByteArray {
         return dataItem;
     }
 
+    /**
+     * 通过boolean数据类型转换为DataItem数据
+     *
+     * @param data boolean数据
+     * @return DataItem数据
+     */
     public static DataItem byBoolean(boolean data) {
         DataItem dataItem = new DataItem();
         dataItem.setReturnCode(EReturnCode.RESERVED);

@@ -26,11 +26,11 @@ public class AckHeader extends Header {
     private EErrorClass errorClass = EErrorClass.NO_ERROR;
 
     /**
-     * 错误码 <br>
-     * 字节大小：1 <br>
-     * 字节序数：11
+     * 错误码，本来是1个字节的，但本质上errorCode（真正） = errorClass + errorCode（原） <br>
+     * 字节大小：2 <br>
+     * 字节序数：10-11
      */
-    private byte errorCode = 0x00;
+    private int errorCode = 0x0000;
 
     @Override
     public int byteArrayLength() {
@@ -43,7 +43,7 @@ public class AckHeader extends Header {
         byte[] headerBytes = super.toByteArray();
         System.arraycopy(headerBytes, 0, res, 0, headerBytes.length);
         res[10] = errorClass.getCode();
-        res[11] = errorCode;
+        res[11] = (byte) (errorCode & 0xFF);
         return res;
     }
 
@@ -65,7 +65,7 @@ public class AckHeader extends Header {
         header.parameterLength = ShortUtil.toUInt16(data, 6);
         header.dataLength = ShortUtil.toUInt16(data, 8);
         header.errorClass = EErrorClass.from(data[10]);
-        header.errorCode = data[11];
+        header.errorCode = ShortUtil.toUInt16(data, 10);
         return header;
     }
 }

@@ -24,7 +24,6 @@ public class HeaderBuilder {
             case JOB:
                 return Header.fromBytes(data);
             case ACK:
-                return null;
             case ACK_DATA:
                 return AckHeader.fromBytes(data);
             case USER_DATA:
