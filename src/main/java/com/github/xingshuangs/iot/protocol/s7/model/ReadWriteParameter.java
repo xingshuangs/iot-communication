@@ -55,13 +55,13 @@ public class ReadWriteParameter extends Parameter implements IByteArray {
     @Override
     public byte[] toByteArray() {
         byte[] res = new byte[this.byteArrayLength()];
-        res[0] = this.functionCode.getCode();
-        res[1] = ByteUtil.toByte(this.itemCount);
-        int count = 0;
+        int offset = 0;
+        res[offset++] = this.functionCode.getCode();
+        res[offset++] = ByteUtil.toByte(this.itemCount);
         for (RequestItem requestItem : this.requestItems) {
             byte[] bytes = requestItem.toByteArray();
-            System.arraycopy(bytes, 0, res, 2 + count, bytes.length);
-            count += bytes.length;
+            System.arraycopy(bytes, 0, res, offset, bytes.length);
+            offset += bytes.length;
         }
         return res;
     }

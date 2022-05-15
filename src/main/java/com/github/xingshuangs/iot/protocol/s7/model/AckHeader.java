@@ -42,8 +42,9 @@ public class AckHeader extends Header {
         byte[] res = new byte[BYTE_LENGTH];
         byte[] headerBytes = super.toByteArray();
         System.arraycopy(headerBytes, 0, res, 0, headerBytes.length);
-        res[10] = errorClass.getCode();
-        res[11] = (byte) (errorCode & 0xFF);
+        int offset = headerBytes.length;
+        res[offset++] = errorClass.getCode();
+        res[offset] = (byte) (errorCode & 0xFF);
         return res;
     }
 

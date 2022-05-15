@@ -12,6 +12,9 @@
 package com.github.xingshuangs.iot.parse.hex;
 
 import com.github.xingshuangs.iot.exceptions.HexParseException;
+import com.github.xingshuangs.iot.utils.FloatUtil;
+import com.github.xingshuangs.iot.utils.IntegerUtil;
+import com.github.xingshuangs.iot.utils.ShortUtil;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -149,12 +152,7 @@ public class HexParse {
      */
     public List<Short> toInt16(int byteOffset, int count, boolean littleEndian) {
         int typeByteLength = 2;
-        return this.toHandle(byteOffset, count, typeByteLength, i -> {
-            int b = littleEndian ? 1 : 0;
-            int d = littleEndian ? 1 : -1;
-            return (short) (((this.rdSrc[byteOffset + i * typeByteLength + b - d * 0] & 0xFF) << 8)
-                    | ((this.rdSrc[byteOffset + i * typeByteLength + b - d * 1] & 0xFF) << 0));
-        });
+        return this.toHandle(byteOffset, count, typeByteLength, i -> ShortUtil.toInt16(this.rdSrc, byteOffset + i * typeByteLength, littleEndian));
     }
 
     /**
@@ -177,12 +175,7 @@ public class HexParse {
      */
     public List<Integer> toUInt16(int byteOffset, int count, boolean littleEndian) {
         int typeByteLength = 2;
-        return this.toHandle(byteOffset, count, typeByteLength, i -> {
-            int b = littleEndian ? 1 : 0;
-            int d = littleEndian ? 1 : -1;
-            return ((this.rdSrc[byteOffset + i * typeByteLength + b - d * 0] & 0xFF) << 8)
-                    | ((this.rdSrc[byteOffset + i * typeByteLength + b - d * 1] & 0xFF) << 0);
-        });
+        return this.toHandle(byteOffset, count, typeByteLength, i -> ShortUtil.toUInt16(this.rdSrc, byteOffset + i * typeByteLength, littleEndian));
     }
 
     /**
@@ -205,14 +198,7 @@ public class HexParse {
      */
     public List<Integer> toInt32(int byteOffset, int count, boolean littleEndian) {
         int typeByteLength = 4;
-        return this.toHandle(byteOffset, count, typeByteLength, i -> {
-            int b = littleEndian ? 3 : 0;
-            int d = littleEndian ? 1 : -1;
-            return (((this.rdSrc[byteOffset + i * typeByteLength + b - d * 0] & 0xFF) << 24)
-                    | ((this.rdSrc[byteOffset + i * typeByteLength + b - d * 1] & 0xFF) << 16)
-                    | ((this.rdSrc[byteOffset + i * typeByteLength + b - d * 2] & 0xFF) << 8)
-                    | ((this.rdSrc[byteOffset + i * typeByteLength + b - d * 3] & 0xFF)) << 0);
-        });
+        return this.toHandle(byteOffset, count, typeByteLength, i -> IntegerUtil.toInt32(this.rdSrc, byteOffset + i * typeByteLength, littleEndian));
     }
 
     /**
@@ -235,14 +221,7 @@ public class HexParse {
      */
     public List<Long> toUInt32(int byteOffset, int count, boolean littleEndian) {
         int typeByteLength = 4;
-        return this.toHandle(byteOffset, count, typeByteLength, i -> {
-            int b = littleEndian ? 3 : 0;
-            int d = littleEndian ? 1 : -1;
-            return (((this.rdSrc[byteOffset + i * typeByteLength + b - d * 0] & 0xFF) << 24)
-                    | ((this.rdSrc[byteOffset + i * typeByteLength + b - d * 1] & 0xFF) << 16)
-                    | ((this.rdSrc[byteOffset + i * typeByteLength + b - d * 2] & 0xFF) << 8)
-                    | ((this.rdSrc[byteOffset + i * typeByteLength + b - d * 3] & 0xFF)) << 0) & 0xFFFFFFFFL;
-        });
+        return this.toHandle(byteOffset, count, typeByteLength, i -> IntegerUtil.toUInt32(this.rdSrc, byteOffset + i * typeByteLength, littleEndian));
     }
 
     /**
@@ -265,15 +244,7 @@ public class HexParse {
      */
     public List<Float> toFloat32(int byteOffset, int count, boolean littleEndian) {
         int typeByteLength = 4;
-        return this.toHandle(byteOffset, count, typeByteLength, i -> {
-            int b = littleEndian ? 3 : 0;
-            int d = littleEndian ? 1 : -1;
-            int l = (((this.rdSrc[byteOffset + i * typeByteLength + b - d * 0] & 0xFF) << 24)
-                    | ((this.rdSrc[byteOffset + i * typeByteLength + b - d * 1] & 0xFF) << 16)
-                    | ((this.rdSrc[byteOffset + i * typeByteLength + b - d * 2] & 0xFF) << 8)
-                    | ((this.rdSrc[byteOffset + i * typeByteLength + b - d * 3] & 0xFF) << 0));
-            return Float.intBitsToFloat(l);
-        });
+        return this.toHandle(byteOffset, count, typeByteLength, i -> FloatUtil.toFloat32(this.rdSrc, byteOffset + i * typeByteLength, littleEndian));
     }
 
     /**
@@ -296,19 +267,7 @@ public class HexParse {
      */
     public List<Double> toFloat64(int byteOffset, int count, boolean littleEndian) {
         int typeByteLength = 8;
-        return this.toHandle(byteOffset, count, typeByteLength, i -> {
-            int b = littleEndian ? 7 : 0;
-            int d = littleEndian ? 1 : -1;
-            long l = ((long) (this.rdSrc[byteOffset + i * typeByteLength + b - d * 0] & 0xFF) << 56)
-                    | ((long) (this.rdSrc[byteOffset + i * typeByteLength + b - d * 1] & 0xFF) << 48)
-                    | ((long) (this.rdSrc[byteOffset + i * typeByteLength + b - d * 2] & 0xFF) << 40)
-                    | ((long) (this.rdSrc[byteOffset + i * typeByteLength + b - d * 3] & 0xFF) << 32)
-                    | ((long) (this.rdSrc[byteOffset + i * typeByteLength + b - d * 4] & 0xFF) << 24)
-                    | ((long) (this.rdSrc[byteOffset + i * typeByteLength + b - d * 5] & 0xFF) << 16)
-                    | ((long) (this.rdSrc[byteOffset + i * typeByteLength + b - d * 6] & 0xFF) << 8)
-                    | ((long) (this.rdSrc[byteOffset + i * typeByteLength + b - d * 7] & 0xFF) << 0);
-            return Double.longBitsToDouble(l);
-        });
+        return this.toHandle(byteOffset, count, typeByteLength, i -> FloatUtil.toFloat64(this.rdSrc, byteOffset + i * typeByteLength, littleEndian));
     }
 
     /**

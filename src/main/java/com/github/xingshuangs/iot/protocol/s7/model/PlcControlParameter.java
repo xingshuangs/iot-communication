@@ -77,23 +77,23 @@ public class PlcControlParameter extends Parameter implements IByteArray {
         byte[] parameterLengthBytes = ShortUtil.toByteArray(this.parameterBlockLength);
 
         byte[] res = new byte[this.byteArrayLength()];
-        int index = 0;
-        res[index++] = this.functionCode.getCode();
+        int offset = 0;
+        res[offset++] = this.functionCode.getCode();
 
         System.arraycopy(this.unknownBytes, 0, res, 1, this.unknownBytes.length);
-        index += this.unknownBytes.length;
+        offset += this.unknownBytes.length;
 
-        res[index++] = parameterLengthBytes[0];
-        res[index++] = parameterLengthBytes[1];
+        res[offset++] = parameterLengthBytes[0];
+        res[offset++] = parameterLengthBytes[1];
 
         byte[] blockBytes = this.parameterBlock.getBytes(StandardCharsets.US_ASCII);
-        System.arraycopy(blockBytes, 0, res, index, blockBytes.length);
-        index += blockBytes.length;
+        System.arraycopy(blockBytes, 0, res, offset, blockBytes.length);
+        offset += blockBytes.length;
 
-        res[index++] = ByteUtil.toByte(this.lengthPart);
+        res[offset++] = ByteUtil.toByte(this.lengthPart);
 
         byte[] piServiceBytes = this.piService.getBytes(StandardCharsets.US_ASCII);
-        System.arraycopy(piServiceBytes, 0, res, index, piServiceBytes.length);
+        System.arraycopy(piServiceBytes, 0, res, offset, piServiceBytes.length);
         return res;
     }
 

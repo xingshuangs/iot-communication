@@ -55,11 +55,16 @@ public class PlcStopParameter extends Parameter implements IByteArray {
     @Override
     public byte[] toByteArray() {
         byte[] res = new byte[this.byteArrayLength()];
-        res[0] = this.functionCode.getCode();
-        System.arraycopy(this.unknownBytes, 0, res, 1, this.unknownBytes.length);
-        res[6] = ByteUtil.toByte(this.lengthPart);
+        int offset = 0;
+        res[offset++] = this.functionCode.getCode();
+
+        System.arraycopy(this.unknownBytes, 0, res, offset, this.unknownBytes.length);
+        offset += this.unknownBytes.length;
+
+        res[offset++] = ByteUtil.toByte(this.lengthPart);
+
         byte[] piServiceBytes = this.piService.getBytes(StandardCharsets.US_ASCII);
-        System.arraycopy(piServiceBytes, 0, res, 7, piServiceBytes.length);
+        System.arraycopy(piServiceBytes, 0, res, offset, piServiceBytes.length);
         return res;
     }
 

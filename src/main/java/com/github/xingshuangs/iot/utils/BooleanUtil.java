@@ -17,6 +17,17 @@ public class BooleanUtil {
     /**
      * 对字节的指定位设置1或0
      *
+     * @param bit 位数
+     * @param res true：1，false：0
+     * @return 新的字节
+     */
+    public static byte setBit(int bit, boolean res) {
+        return setBit((byte) 0x00, bit, res);
+    }
+
+    /**
+     * 对字节的指定位设置1或0
+     *
      * @param data 字节数据
      * @param bit  位数
      * @param res  true：1，false：0

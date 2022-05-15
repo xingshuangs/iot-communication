@@ -47,17 +47,17 @@ public class Datum implements IByteArray {
             return new byte[0];
         }
         byte[] res = new byte[this.byteArrayLength()];
-        int count = 0;
+        int offset = 0;
         for (int i = 0; i < this.returnItems.size(); i++) {
             byte[] bytes = this.returnItems.get(i).toByteArray();
-            System.arraycopy(bytes, 0, res, count, bytes.length);
-            count += bytes.length;
+            System.arraycopy(bytes, 0, res, offset, bytes.length);
+            offset += bytes.length;
 
             if (this.returnItems.get(i) instanceof DataItem) {
                 DataItem dataItem = (DataItem) this.returnItems.get(i);
                 // 如果数据长度为奇数，S7协议会多填充一个字节，使其保持为偶数（最后一个奇数长度数据不需要填充）
                 if (dataItem.getCount() % 2 != 0 && i != this.returnItems.size() - 1) {
-                    count++;
+                    offset++;
                 }
             }
         }

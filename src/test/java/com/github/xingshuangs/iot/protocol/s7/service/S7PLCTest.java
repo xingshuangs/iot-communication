@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-//@Ignore
+@Ignore
 public class S7PLCTest {
     private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
 //    private S7PLC s7PLC = new S7PLC(EPlcType.S1200);
