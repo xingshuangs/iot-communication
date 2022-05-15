@@ -33,7 +33,7 @@ public class TPKT implements IByteArray {
     private byte reserved = 0x00;
 
     /**
-     * 长度 <br>
+     * 长度，包括后面负载payload+版本号+预留+长度 <br>
      * 字节大小：2 <br>
      * 字节序数：2-3
      */

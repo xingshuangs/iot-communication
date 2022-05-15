@@ -97,7 +97,7 @@ public class COTPConnection extends COTP implements IByteArray {
     private int parameterLength3 = (byte) 0x02;
 
     /**
-     * DestinationTSAP/slot <br>
+     * DestinationTSAP/Slot <br>
      * 字节大小：2 <br>
      * 字节序数：16-17
      */
