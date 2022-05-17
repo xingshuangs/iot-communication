@@ -13,7 +13,8 @@ public class ParameterBuilder {
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data        字节数组数据
+     * @param messageType 消息类型
      * @return Parameter
      */
     public static Parameter fromBytes(final byte[] data, EMessageType messageType) {

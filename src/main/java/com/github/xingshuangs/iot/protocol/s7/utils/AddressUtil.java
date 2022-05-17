@@ -4,7 +4,6 @@ package com.github.xingshuangs.iot.protocol.s7.utils;
 import com.github.xingshuangs.iot.protocol.s7.enums.EArea;
 import com.github.xingshuangs.iot.protocol.s7.enums.EParamVariableType;
 import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * S7协议地址解析工具  DB15.20.1
@@ -47,7 +46,7 @@ public class AddressUtil {
      * @return RequestItem请求项
      */
     public static RequestItem parse(String address, int count, EParamVariableType variableType) {
-        if (StringUtils.isEmpty(address)) {
+        if (address == null || address.length() == 0) {
             throw new IllegalArgumentException("address不能为空");
         }
         if (count <= 0) {
