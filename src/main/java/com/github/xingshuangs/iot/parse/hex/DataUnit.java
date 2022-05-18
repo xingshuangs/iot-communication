@@ -1,14 +1,3 @@
-/*
-  Copyright (C), 2009-2021, 江苏汇博机器人技术股份有限公司
-  FileName: DataUnit
-  Author:   ShuangPC
-  Date:     2021/2/18
-  Description: 数据单元
-  History:
-  <author>         <time>          <version>          <desc>
-  作者姓名         修改时间           版本号             描述
- */
-
 package com.github.xingshuangs.iot.parse.hex;
 
 import java.util.Arrays;
@@ -97,7 +86,7 @@ public class DataUnit<T> {
         this.dataType = DataTypeEm.valueFrom(dataType);
     }
 
-    public DataUnit(int byteOffset,int bitOffset, int count, String dataType) {
+    public DataUnit(int byteOffset, int bitOffset, int count, String dataType) {
         this.byteOffset = byteOffset;
         this.bitOffset = bitOffset;
         this.count = count;

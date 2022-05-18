@@ -1,14 +1,3 @@
-/*
-  Copyright (C), 2009-2021, 江苏汇博机器人技术股份有限公司
-  FileName: HexParse
-  Author:   ShuangPC
-  Date:     2021/2/18
-  Description: 16进制数据解析
-  History:
-  <author>         <time>          <version>          <desc>
-  作者姓名         修改时间           版本号             描述
- */
-
 package com.github.xingshuangs.iot.parse.hex;
 
 import com.github.xingshuangs.iot.exceptions.HexParseException;
