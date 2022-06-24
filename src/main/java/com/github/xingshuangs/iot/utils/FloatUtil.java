@@ -23,11 +23,33 @@ public class FloatUtil {
     /**
      * 将float转换为字节数组，默认采用大端模式
      *
+     * @param data         float数据
+     * @param littleEndian 是否小端模式
+     * @return 字节数组
+     */
+    public static byte[] toByteArray(double data, boolean littleEndian) {
+        return LongUtil.toByteArray(Double.doubleToLongBits(data), littleEndian);
+    }
+
+    /**
+     * 将float转换为字节数组，默认采用大端模式
+     *
      * @param data float数据
      * @return 字节数组
      */
     public static byte[] toByteArray(float data) {
         return IntegerUtil.toByteArray(Float.floatToIntBits(data), false);
+    }
+
+    /**
+     * 将float转换为字节数组，默认采用大端模式
+     *
+     * @param data         float数据
+     * @param littleEndian 是否小端模式
+     * @return 字节数组
+     */
+    public static byte[] toByteArray(float data, boolean littleEndian) {
+        return IntegerUtil.toByteArray(Float.floatToIntBits(data), littleEndian);
     }
 
     /**
