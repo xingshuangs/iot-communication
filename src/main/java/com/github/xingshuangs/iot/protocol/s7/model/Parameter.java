@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import lombok.Data;
 
 /**
@@ -33,6 +34,8 @@ public class Parameter implements IByteArray {
 
     @Override
     public byte[] toByteArray() {
-        return new byte[]{this.functionCode.getCode()};
+        return ByteWriteBuff.newInstance(1)
+                .putByte(this.functionCode.getCode())
+                .getData();
     }
 }

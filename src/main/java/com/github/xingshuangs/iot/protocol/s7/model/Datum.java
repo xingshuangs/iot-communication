@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
 import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -46,22 +47,18 @@ public class Datum implements IByteArray {
         if (this.returnItems.isEmpty()) {
             return new byte[0];
         }
-        byte[] res = new byte[this.byteArrayLength()];
-        int offset = 0;
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(this.byteArrayLength());
         for (int i = 0; i < this.returnItems.size(); i++) {
-            byte[] bytes = this.returnItems.get(i).toByteArray();
-            System.arraycopy(bytes, 0, res, offset, bytes.length);
-            offset += bytes.length;
-
+            buff.putBytes(this.returnItems.get(i).toByteArray());
             if (this.returnItems.get(i) instanceof DataItem) {
                 DataItem dataItem = (DataItem) this.returnItems.get(i);
                 // 如果数据长度为奇数，S7协议会多填充一个字节，使其保持为偶数（最后一个奇数长度数据不需要填充）
                 if (dataItem.getCount() % 2 != 0 && i != this.returnItems.size() - 1) {
-                    offset++;
+                    buff.putByte((byte)0x00);
                 }
             }
         }
-        return res;
+        return buff.getData();
     }
 
     /**

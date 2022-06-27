@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.protocol.s7.enums.EErrorClass;
 import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,13 +40,11 @@ public class AckHeader extends Header {
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[BYTE_LENGTH];
-        byte[] headerBytes = super.toByteArray();
-        System.arraycopy(headerBytes, 0, res, 0, headerBytes.length);
-        int offset = headerBytes.length;
-        res[offset++] = errorClass.getCode();
-        res[offset] = (byte) (errorCode & 0xFF);
-        return res;
+        return ByteWriteBuff.newInstance(BYTE_LENGTH)
+                .putBytes(super.toByteArray())
+                .putByte(errorClass.getCode())
+                .putByte(this.errorCode)
+                .getData();
     }
 
     /**

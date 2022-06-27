@@ -3,11 +3,11 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import com.github.xingshuangs.iot.utils.ByteUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -27,7 +27,7 @@ public class PlcStopParameter extends Parameter implements IByteArray {
     private byte[] unknownBytes = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
 
     /**
-     * 服务名长度 <br>
+     * 服务名长度，后续字节长度，不包含自身 <br>
      * 字节大小：1 <br>
      * 字节序数：6
      */
@@ -54,18 +54,12 @@ public class PlcStopParameter extends Parameter implements IByteArray {
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[this.byteArrayLength()];
-        int offset = 0;
-        res[offset++] = this.functionCode.getCode();
-
-        System.arraycopy(this.unknownBytes, 0, res, offset, this.unknownBytes.length);
-        offset += this.unknownBytes.length;
-
-        res[offset++] = ByteUtil.toByte(this.lengthPart);
-
-        byte[] piServiceBytes = this.piService.getBytes(StandardCharsets.US_ASCII);
-        System.arraycopy(piServiceBytes, 0, res, offset, piServiceBytes.length);
-        return res;
+        return ByteWriteBuff.newInstance(7 + this.lengthPart)
+                .putByte(this.functionCode.getCode())
+                .putBytes(this.unknownBytes)
+                .putByte(this.lengthPart)
+                .putString(this.piService)
+                .getData();
     }
 
     /**

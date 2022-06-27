@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 
 import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import lombok.Data;
 
 /**
@@ -33,9 +34,9 @@ public class COTP implements IByteArray {
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[2];
-        res[0] = (byte) (this.getLength() & 0xFF);
-        res[1] = this.pduType.getCode();
-        return res;
+        return ByteWriteBuff.newInstance(2)
+                .putByte(this.length)
+                .putByte(this.pduType.getCode())
+                .getData();
     }
 }

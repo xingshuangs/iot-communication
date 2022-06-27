@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import com.github.xingshuangs.iot.utils.ByteUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,11 +40,12 @@ public class COTPData extends COTP implements IByteArray {
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[BYTE_LENGTH];
-        res[0] = ByteUtil.toByte(this.length);
-        res[1] = this.pduType.getCode();
-        res[2] = (byte) (BooleanUtil.setBit((byte) 0x00, 7, this.lastDataUnit) | (this.tpduNumber & 0xFF));
-        return res;
+        return ByteWriteBuff.newInstance(BYTE_LENGTH)
+                .putByte(this.length)
+                .putByte(this.pduType.getCode())
+                // TPDU编号和是否最后一个数据单元组合成一个字节，最高位表示是否最后一个
+                .putByte((byte) (BooleanUtil.setBit((byte) 0x00, 7, this.lastDataUnit) | (this.tpduNumber & 0xFF)))
+                .getData();
     }
 
     /**

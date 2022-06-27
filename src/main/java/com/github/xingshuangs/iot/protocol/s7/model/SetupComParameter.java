@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -51,20 +52,13 @@ public class SetupComParameter extends Parameter implements IByteArray {
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[BYTE_LENGTH];
-        byte[] maxAmqCallerBytes = ShortUtil.toByteArray(this.maxAmqCaller);
-        byte[] maxAmqCalleeBytes = ShortUtil.toByteArray(this.maxAmqCallee);
-        byte[] pduLengthBytes = ShortUtil.toByteArray(this.pduLength);
-
-        res[0] = this.functionCode.getCode();
-        res[1] = this.reserved;
-        res[2] = maxAmqCallerBytes[0];
-        res[3] = maxAmqCallerBytes[1];
-        res[4] = maxAmqCalleeBytes[0];
-        res[5] = maxAmqCalleeBytes[1];
-        res[6] = pduLengthBytes[0];
-        res[7] = pduLengthBytes[1];
-        return res;
+        return ByteWriteBuff.newInstance(BYTE_LENGTH)
+                .putByte(this.functionCode.getCode())
+                .putByte(this.reserved)
+                .putShort(this.maxAmqCaller)
+                .putShort(this.maxAmqCallee)
+                .putShort(this.pduLength)
+                .getData();
     }
 
     /**

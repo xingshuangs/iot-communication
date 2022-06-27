@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 import com.github.xingshuangs.iot.protocol.s7.enums.EDataVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EReturnCode;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -45,19 +46,13 @@ public class DataItem extends ReturnItem implements IByteArray {
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[4 + this.data.length];
-        // 如果数据类型是位，不需要 * 8，如果是其他类型，需要 * 8
-        byte[] countBytes = ShortUtil.toByteArray((this.count * (this.variableType == EDataVariableType.BIT ? 1 : 8)));
-
-        res[0] = this.returnCode.getCode();
-        res[1] = this.variableType.getCode();
-        res[2] = countBytes[0];
-        res[3] = countBytes[1];
-
-        if (this.data.length > 0) {
-            System.arraycopy(this.data, 0, res, 4, this.data.length);
-        }
-        return res;
+        return ByteWriteBuff.newInstance(4 + this.data.length)
+                .putByte(this.returnCode.getCode())
+                .putByte(this.variableType.getCode())
+                // 如果数据类型是位，不需要 * 8，如果是其他类型，需要 * 8
+                .putShort((this.count * (this.variableType == EDataVariableType.BIT ? 1 : 8)))
+                .putBytes(this.data)
+                .getData();
     }
 
     /**

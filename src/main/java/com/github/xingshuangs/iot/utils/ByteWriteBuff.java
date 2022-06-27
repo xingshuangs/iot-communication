@@ -7,12 +7,12 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 字节缓存
+ * 写字节缓存
  *
  * @author xingshuang
  */
 @Getter
-public class ByteBuff {
+public class ByteWriteBuff {
 
     /**
      * 数据
@@ -29,12 +29,12 @@ public class ByteBuff {
      *
      * @param capacity 容量
      */
-    public ByteBuff(int capacity) {
+    public ByteWriteBuff(int capacity) {
         this.data = new byte[capacity];
     }
 
-    public static ByteBuff newInstance(int capacity) {
-        return new ByteBuff(capacity);
+    public static ByteWriteBuff newInstance(int capacity) {
+        return new ByteWriteBuff(capacity);
     }
 
     /**
@@ -54,11 +54,22 @@ public class ByteBuff {
      * @param src 数据源
      * @return 对象本身
      */
-    public ByteBuff putByte(byte src) {
+    public ByteWriteBuff putByte(byte src) {
         this.checkCondition(1);
         this.data[this.offset] = src;
         this.offset++;
         return this;
+    }
+
+    /**
+     * 添加int类型单字节数据
+     *
+     * @param src 数据源
+     * @return 对象本身
+     */
+    public ByteWriteBuff putByte(int src) {
+        this.checkCondition(1);
+        return this.putByte(ByteUtil.toByte(src));
     }
 
     /**
@@ -67,8 +78,29 @@ public class ByteBuff {
      * @param src 数据源
      * @return 对象本身
      */
-    public ByteBuff putBytes(byte[] src) {
+    public ByteWriteBuff putBytes(byte[] src) {
+        if (src == null) {
+            throw new NullPointerException("src");
+        }
+        this.checkCondition(src.length);
         System.arraycopy(src, 0, this.data, this.offset, src.length);
+        this.offset += src.length;
+        return this;
+    }
+
+    /**
+     * 添加字节数组数据
+     *
+     * @param src        数据源
+     * @param startIndex 起始索引
+     * @return 对象本身
+     */
+    public ByteWriteBuff putBytes(byte[] src, int startIndex) {
+        if (src == null) {
+            throw new NullPointerException("src");
+        }
+        this.checkCondition(src.length - startIndex);
+        System.arraycopy(src, startIndex, this.data, this.offset, src.length - startIndex);
         this.offset += src.length;
         return this;
     }
@@ -79,7 +111,7 @@ public class ByteBuff {
      * @param src 数据源
      * @return 对象本身
      */
-    public ByteBuff putShort(short src) {
+    public ByteWriteBuff putShort(short src) {
         return this.putShort(src, false);
     }
 
@@ -89,8 +121,7 @@ public class ByteBuff {
      * @param src 数据源
      * @return 对象本身
      */
-    public ByteBuff putShort(int src) {
-        this.checkCondition(2);
+    public ByteWriteBuff putShort(int src) {
         return this.putBytes(ShortUtil.toByteArray(src, false));
     }
 
@@ -100,7 +131,7 @@ public class ByteBuff {
      * @param src 数据源
      * @return 对象本身
      */
-    public ByteBuff putInteger(int src) {
+    public ByteWriteBuff putInteger(int src) {
         return this.putInteger(src, false);
     }
 
@@ -110,7 +141,7 @@ public class ByteBuff {
      * @param src 数据源
      * @return 对象本身
      */
-    public ByteBuff putInteger(long src) {
+    public ByteWriteBuff putInteger(long src) {
         return this.putInteger(src, false);
     }
 
@@ -120,7 +151,7 @@ public class ByteBuff {
      * @param src 数据源
      * @return 对象本身
      */
-    public ByteBuff putLong(long src) {
+    public ByteWriteBuff putLong(long src) {
         return this.putLong(src, false);
     }
 
@@ -130,7 +161,7 @@ public class ByteBuff {
      * @param src 数据源
      * @return 对象本身
      */
-    public ByteBuff putFloat(float src) {
+    public ByteWriteBuff putFloat(float src) {
         return this.putFloat(src, false);
     }
 
@@ -140,7 +171,7 @@ public class ByteBuff {
      * @param src 数据源
      * @return 对象本身
      */
-    public ByteBuff putDouble(double src) {
+    public ByteWriteBuff putDouble(double src) {
         return this.putDouble(src, false);
     }
 
@@ -150,7 +181,7 @@ public class ByteBuff {
      * @param src 数据源
      * @return 对象本身
      */
-    public ByteBuff putString(String src) {
+    public ByteWriteBuff putString(String src) {
         return this.putString(src, StandardCharsets.US_ASCII);
     }
 
@@ -161,8 +192,7 @@ public class ByteBuff {
      * @param littleEndian 是否小端模式
      * @return 对象本身
      */
-    public ByteBuff putShort(short src, boolean littleEndian) {
-        this.checkCondition(2);
+    public ByteWriteBuff putShort(short src, boolean littleEndian) {
         return this.putBytes(ShortUtil.toByteArray(src, littleEndian));
     }
 
@@ -173,8 +203,7 @@ public class ByteBuff {
      * @param littleEndian 是否小端模式
      * @return 对象本身
      */
-    public ByteBuff putShort(int src, boolean littleEndian) {
-        this.checkCondition(2);
+    public ByteWriteBuff putShort(int src, boolean littleEndian) {
         return this.putBytes(ShortUtil.toByteArray(src, littleEndian));
     }
 
@@ -185,8 +214,7 @@ public class ByteBuff {
      * @param littleEndian 是否小端模式
      * @return 对象本身
      */
-    public ByteBuff putInteger(int src, boolean littleEndian) {
-        this.checkCondition(4);
+    public ByteWriteBuff putInteger(int src, boolean littleEndian) {
         return this.putBytes(IntegerUtil.toByteArray(src, littleEndian));
     }
 
@@ -197,8 +225,7 @@ public class ByteBuff {
      * @param littleEndian 是否小端模式
      * @return 对象本身
      */
-    public ByteBuff putInteger(long src, boolean littleEndian) {
-        this.checkCondition(4);
+    public ByteWriteBuff putInteger(long src, boolean littleEndian) {
         return this.putBytes(IntegerUtil.toByteArray((int) src, littleEndian));
     }
 
@@ -209,8 +236,7 @@ public class ByteBuff {
      * @param littleEndian 是否小端模式
      * @return 对象本身
      */
-    public ByteBuff putLong(long src, boolean littleEndian) {
-        this.checkCondition(8);
+    public ByteWriteBuff putLong(long src, boolean littleEndian) {
         return this.putBytes(LongUtil.toByteArray(src, littleEndian));
     }
 
@@ -221,8 +247,7 @@ public class ByteBuff {
      * @param littleEndian 是否小端模式
      * @return 对象本身
      */
-    public ByteBuff putFloat(float src, boolean littleEndian) {
-        this.checkCondition(4);
+    public ByteWriteBuff putFloat(float src, boolean littleEndian) {
         return this.putBytes(FloatUtil.toByteArray(src, littleEndian));
     }
 
@@ -233,8 +258,7 @@ public class ByteBuff {
      * @param littleEndian 是否小端模式
      * @return 对象本身
      */
-    public ByteBuff putDouble(double src, boolean littleEndian) {
-        this.checkCondition(8);
+    public ByteWriteBuff putDouble(double src, boolean littleEndian) {
         return this.putBytes(FloatUtil.toByteArray(src, littleEndian));
     }
 
@@ -245,8 +269,7 @@ public class ByteBuff {
      * @param charsets 字符集类型
      * @return 对象本身
      */
-    public ByteBuff putString(String src, Charset charsets) {
-        this.checkCondition(src.length());
+    public ByteWriteBuff putString(String src, Charset charsets) {
         return this.putBytes(src.getBytes(charsets));
     }
 }

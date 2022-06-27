@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import lombok.Data;
 
 import java.util.Arrays;
@@ -51,33 +52,23 @@ public class S7Data implements IByteArray {
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[this.byteArrayLength()];
-        int count = 0;
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(this.byteArrayLength());
         if (this.tpkt != null) {
-            byte[] tpktBytes = this.tpkt.toByteArray();
-            System.arraycopy(tpktBytes, 0, res, count, tpktBytes.length);
-            count += tpktBytes.length;
+            buff.putBytes(this.tpkt.toByteArray());
         }
         if (this.cotp != null) {
-            byte[] cotpBytes = this.cotp.toByteArray();
-            System.arraycopy(cotpBytes, 0, res, count, cotpBytes.length);
-            count += cotpBytes.length;
+            buff.putBytes(this.cotp.toByteArray());
         }
         if (this.header != null) {
-            byte[] headerBytes = this.header.toByteArray();
-            System.arraycopy(headerBytes, 0, res, count, headerBytes.length);
-            count += headerBytes.length;
+            buff.putBytes(this.header.toByteArray());
         }
         if (this.parameter != null) {
-            byte[] parameterBytes = this.parameter.toByteArray();
-            System.arraycopy(parameterBytes, 0, res, count, parameterBytes.length);
-            count += parameterBytes.length;
+            buff.putBytes(this.parameter.toByteArray());
         }
         if (this.datum != null) {
-            byte[] datumBytes = this.datum.toByteArray();
-            System.arraycopy(datumBytes, 0, res, count, datumBytes.length);
+            buff.putBytes( this.datum.toByteArray());
         }
-        return res;
+        return buff.getData();
     }
 
     /**

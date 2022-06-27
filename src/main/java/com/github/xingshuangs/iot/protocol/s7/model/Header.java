@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 
 import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 
@@ -81,23 +82,14 @@ public class Header implements IByteArray {
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[BYTE_LENGTH];
-        byte[] reservedBytes = ShortUtil.toByteArray(this.reserved);
-        byte[] pduReferenceBytes = ShortUtil.toByteArray(this.pduReference);
-        byte[] parameterLengthBytes = ShortUtil.toByteArray(this.parameterLength);
-        byte[] dataLengthBytes = ShortUtil.toByteArray(this.dataLength);
-
-        res[0] = this.protocolId;
-        res[1] = this.messageType.getCode();
-        res[2] = reservedBytes[0];
-        res[3] = reservedBytes[1];
-        res[4] = pduReferenceBytes[0];
-        res[5] = pduReferenceBytes[1];
-        res[6] = parameterLengthBytes[0];
-        res[7] = parameterLengthBytes[1];
-        res[8] = dataLengthBytes[0];
-        res[9] = dataLengthBytes[1];
-        return res;
+        return ByteWriteBuff.newInstance(BYTE_LENGTH)
+                .putByte(this.protocolId)
+                .putByte(this.messageType.getCode())
+                .putShort(this.reserved)
+                .putShort(this.pduReference)
+                .putShort(this.parameterLength)
+                .putShort(this.dataLength)
+                .getData();
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Getter;
 
@@ -50,14 +51,11 @@ public class TPKT implements IByteArray {
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[BYTE_LENGTH];
-        byte[] lenBytes = ShortUtil.toByteArray(this.length);
-
-        res[0] = this.version;
-        res[1] = this.reserved;
-        res[2] = lenBytes[0];
-        res[3] = lenBytes[1];
-        return res;
+        return ByteWriteBuff.newInstance(BYTE_LENGTH)
+                .putByte(this.version)
+                .putByte(this.reserved)
+                .putShort(this.length)
+                .getData();
     }
 
     /**

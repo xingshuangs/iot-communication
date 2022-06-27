@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 
 import com.github.xingshuangs.iot.protocol.s7.enums.EReturnCode;
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import lombok.Data;
 
 /**
@@ -26,9 +27,9 @@ public class ReturnItem implements IByteArray {
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[1];
-        res[0] = returnCode.getCode();
-        return res;
+        return ByteWriteBuff.newInstance(this.byteArrayLength())
+                .putByte(returnCode.getCode())
+                .getData();
     }
 
     /**

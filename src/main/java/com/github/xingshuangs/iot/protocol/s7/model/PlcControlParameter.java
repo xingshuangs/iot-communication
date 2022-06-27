@@ -3,12 +3,12 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import com.github.xingshuangs.iot.utils.ByteUtil;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -42,7 +42,7 @@ public class PlcControlParameter extends Parameter implements IByteArray {
     private String parameterBlock = "";
 
     /**
-     * 服务名长度 <br>
+     * 服务名长度，后续字节长度，不包含自身 <br>
      * 字节大小：1 <br>
      * 字节序数：不定
      */
@@ -74,27 +74,14 @@ public class PlcControlParameter extends Parameter implements IByteArray {
 
     @Override
     public byte[] toByteArray() {
-        byte[] parameterLengthBytes = ShortUtil.toByteArray(this.parameterBlockLength);
-
-        byte[] res = new byte[this.byteArrayLength()];
-        int offset = 0;
-        res[offset++] = this.functionCode.getCode();
-
-        System.arraycopy(this.unknownBytes, 0, res, 1, this.unknownBytes.length);
-        offset += this.unknownBytes.length;
-
-        res[offset++] = parameterLengthBytes[0];
-        res[offset++] = parameterLengthBytes[1];
-
-        byte[] blockBytes = this.parameterBlock.getBytes(StandardCharsets.US_ASCII);
-        System.arraycopy(blockBytes, 0, res, offset, blockBytes.length);
-        offset += blockBytes.length;
-
-        res[offset++] = ByteUtil.toByte(this.lengthPart);
-
-        byte[] piServiceBytes = this.piService.getBytes(StandardCharsets.US_ASCII);
-        System.arraycopy(piServiceBytes, 0, res, offset, piServiceBytes.length);
-        return res;
+        return ByteWriteBuff.newInstance(1 + 7 + 2 + this.parameterBlockLength + 1 + this.lengthPart)
+                .putByte(this.functionCode.getCode())
+                .putBytes(this.unknownBytes)
+                .putShort(this.parameterBlockLength)
+                .putString(this.parameterBlock)
+                .putByte(this.lengthPart)
+                .putString(this.piService)
+                .getData();
     }
 
     /**

@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import com.github.xingshuangs.iot.utils.ByteUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -54,16 +55,14 @@ public class ReadWriteParameter extends Parameter implements IByteArray {
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[this.byteArrayLength()];
-        int offset = 0;
-        res[offset++] = this.functionCode.getCode();
-        res[offset++] = ByteUtil.toByte(this.itemCount);
+        int length = 2 + this.requestItems.stream().mapToInt(RequestItem::byteArrayLength).sum();
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(length)
+                .putByte(this.functionCode.getCode())
+                .putByte(this.itemCount);
         for (RequestItem requestItem : this.requestItems) {
-            byte[] bytes = requestItem.toByteArray();
-            System.arraycopy(bytes, 0, res, offset, bytes.length);
-            offset += bytes.length;
+            buff.putBytes(requestItem.toByteArray());
         }
-        return res;
+        return buff.getData();
     }
 
     /**

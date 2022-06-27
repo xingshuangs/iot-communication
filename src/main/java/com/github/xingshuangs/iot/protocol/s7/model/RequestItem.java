@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 import com.github.xingshuangs.iot.protocol.s7.enums.EArea;
 import com.github.xingshuangs.iot.protocol.s7.enums.EParamVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.ESyntaxID;
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import com.github.xingshuangs.iot.utils.ByteUtil;
 import com.github.xingshuangs.iot.utils.IntegerUtil;
 import com.github.xingshuangs.iot.utils.ShortUtil;
@@ -87,25 +88,17 @@ public class RequestItem implements IByteArray {
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[BYTE_LENGTH];
-        byte[] countBytes = ShortUtil.toByteArray(this.count);
-        byte[] dbNumberBytes = ShortUtil.toByteArray(this.dbNumber);
-        byte[] addressBytes = IntegerUtil.toByteArray((this.byteAddress << 3) + this.bitAddress);
-
-        res[0] = this.specificationType;
-        res[1] = ByteUtil.toByte(this.lengthOfFollowing);
-        res[2] = this.syntaxId.getCode();
-        res[3] = this.variableType.getCode();
-        res[4] = countBytes[0];
-        res[5] = countBytes[1];
-        res[6] = dbNumberBytes[0];
-        res[7] = dbNumberBytes[1];
-        res[8] = this.area.getCode();
-        // 只有3个字节，因此只取后面的3字节，第一个字节舍弃
-        res[9] = addressBytes[1];
-        res[10] = addressBytes[2];
-        res[11] = addressBytes[3];
-        return res;
+        return ByteWriteBuff.newInstance(BYTE_LENGTH)
+                .putByte(this.specificationType)
+                .putByte(this.lengthOfFollowing)
+                .putByte(this.syntaxId.getCode())
+                .putByte(this.variableType.getCode())
+                .putShort(this.count)
+                .putShort(this.dbNumber)
+                .putByte(this.area.getCode())
+                // 只有3个字节，因此只取后面的3字节，第一个字节舍弃
+                .putBytes(IntegerUtil.toByteArray((this.byteAddress << 3) + this.bitAddress),1)
+                .getData();
     }
 
     /**

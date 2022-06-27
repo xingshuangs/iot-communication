@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
+import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import com.github.xingshuangs.iot.utils.ByteUtil;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
@@ -110,37 +111,22 @@ public class COTPConnection extends COTP implements IByteArray {
 
     @Override
     public byte[] toByteArray() {
-        byte[] res = new byte[BYTE_LENGTH];
-        byte[] destRefBytes = ShortUtil.toByteArray(this.destinationReference);
-        byte[] srcRefBytes = ShortUtil.toByteArray(this.sourceReference);
-        byte[] srcTsapBytes = ShortUtil.toByteArray(this.sourceTsap);
-        byte[] destTsapBytes = ShortUtil.toByteArray(this.destinationTsap);
-
-        res[0] = ByteUtil.toByte(this.length);
-        res[1] = this.pduType.getCode();
-
-        res[2] = destRefBytes[0];
-        res[3] = destRefBytes[1];
-
-        res[4] = srcRefBytes[0];
-        res[5] = srcRefBytes[1];
-
-        res[6] = this.flags;
-        res[7] = this.parameterCodeTpduSize;
-        res[8] = ByteUtil.toByte(this.parameterLength1);
-        res[9] = ByteUtil.toByte(this.tpduSize);
-        res[10] = this.parameterCodeSrcTsap;
-        res[11] = ByteUtil.toByte(this.parameterLength2);
-
-        res[12] = srcTsapBytes[0];
-        res[13] = srcTsapBytes[1];
-
-        res[14] = this.parameterCodeDstTsap;
-        res[15] = ByteUtil.toByte(this.parameterLength3);
-
-        res[16] = destTsapBytes[0];
-        res[17] = destTsapBytes[1];
-        return res;
+        return ByteWriteBuff.newInstance(BYTE_LENGTH)
+                .putByte(this.length)
+                .putByte(this.pduType.getCode())
+                .putShort(this.destinationReference)
+                .putShort(this.sourceReference)
+                .putByte(this.flags)
+                .putByte(this.parameterCodeTpduSize)
+                .putByte(this.parameterLength1)
+                .putByte(this.tpduSize)
+                .putByte(this.parameterCodeSrcTsap)
+                .putByte(this.parameterLength2)
+                .putShort(this.sourceTsap)
+                .putByte(this.parameterCodeDstTsap)
+                .putByte(this.parameterLength3)
+                .putShort(this.destinationTsap)
+                .getData();
     }
 
     /**
