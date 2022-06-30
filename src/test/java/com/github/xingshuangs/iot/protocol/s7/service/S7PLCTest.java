@@ -145,7 +145,7 @@ public class S7PLCTest {
 
     @Test
     public void writeInt16() {
-        s7PLC.writeInt16("DB14.0", (short) 15);
+        s7PLC.writeInt16("DB14.0", (short) 16);
     }
 
     @Test
@@ -184,11 +184,11 @@ public class S7PLCTest {
     @Test
     public void writeMultiData() {
         MultiAddressWrite addressWrite = new MultiAddressWrite();
-        addressWrite.addByte("DB2.0", (byte) 0x11)
-                .addUInt16("DB2.2", 88)
-                .addBoolean("DB2.1.0", true);
+        addressWrite.addUInt16("DB14.0", (byte) 0x11)
+                .addUInt16("DB14.4", 88)
+                .addBoolean("DB14.2.0", true);
         s7PLC.writeMultiData(addressWrite);
-        boolean actual = s7PLC.readBoolean("DB2.1.0");
+        boolean actual = s7PLC.readBoolean("DB14.2.0");
         assertTrue(actual);
     }
 

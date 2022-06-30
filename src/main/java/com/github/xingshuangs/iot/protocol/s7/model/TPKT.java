@@ -1,8 +1,8 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
+import com.github.xingshuangs.iot.utils.ByteReadBuff;
 import com.github.xingshuangs.iot.utils.ByteWriteBuff;
-import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Getter;
 
 /**
@@ -68,10 +68,11 @@ public class TPKT implements IByteArray {
         if (data.length < BYTE_LENGTH) {
             throw new IndexOutOfBoundsException(String.format("TPKT转换过程中，字节数据长度小于%d", BYTE_LENGTH));
         }
+        ByteReadBuff buff = new ByteReadBuff(data);
         TPKT tpkt = new TPKT();
-        tpkt.version = data[VERSION_OFFSET];
-        tpkt.reserved = data[RESERVED_OFFSET];
-        tpkt.length = ShortUtil.toUInt16(data, 2);
+        tpkt.version = buff.getByte();
+        tpkt.reserved = buff.getByte();
+        tpkt.length = buff.getUInt16();
         return tpkt;
     }
 }

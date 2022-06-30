@@ -3,13 +3,12 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
+import com.github.xingshuangs.iot.utils.ByteReadBuff;
 import com.github.xingshuangs.iot.utils.ByteWriteBuff;
-import com.github.xingshuangs.iot.utils.ByteUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -75,9 +74,10 @@ public class ReadWriteParameter extends Parameter implements IByteArray {
         if (data.length < 2) {
             throw new S7CommException("Parameter解析有误，parameter字节数组长度 < 2");
         }
+        ByteReadBuff buff = new ByteReadBuff(data);
         ReadWriteParameter readWriteParameter = new ReadWriteParameter();
-        readWriteParameter.functionCode = EFunctionCode.from(data[0]);
-        readWriteParameter.itemCount = ByteUtil.toUInt8(data[1]);
+        readWriteParameter.functionCode = EFunctionCode.from(buff.getByte());
+        readWriteParameter.itemCount = buff.getByteToInt();
         if (readWriteParameter.itemCount == 0) {
             return readWriteParameter;
         }
@@ -86,7 +86,7 @@ public class ReadWriteParameter extends Parameter implements IByteArray {
             return readWriteParameter;
         }
         for (int i = 1; i <= readWriteParameter.itemCount; i++) {
-            byte[] bytes = Arrays.copyOfRange(data, 2, 2 + i * RequestItem.BYTE_LENGTH);
+            byte[] bytes = buff.getBytes(RequestItem.BYTE_LENGTH);
             readWriteParameter.requestItems.add(RequestItem.fromBytes(bytes));
         }
         return readWriteParameter;

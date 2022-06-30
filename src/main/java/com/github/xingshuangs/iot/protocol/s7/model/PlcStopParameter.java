@@ -3,12 +3,10 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
+import com.github.xingshuangs.iot.utils.ByteReadBuff;
 import com.github.xingshuangs.iot.utils.ByteWriteBuff;
-import com.github.xingshuangs.iot.utils.ByteUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.util.Arrays;
 
 /**
  * 停止参数
@@ -72,11 +70,12 @@ public class PlcStopParameter extends Parameter implements IByteArray {
         if (data.length < 7) {
             throw new S7CommException("StopParameter解析有误，StopParameter字节数组长度 < 7");
         }
+        ByteReadBuff buff = new ByteReadBuff(data);
         PlcStopParameter parameter = new PlcStopParameter();
-        parameter.functionCode = EFunctionCode.from(data[0]);
-        parameter.unknownBytes = Arrays.copyOfRange(data, 1, 6);
-        parameter.lengthPart = ByteUtil.toUInt8(data[6]);
-        parameter.piService = parameter.lengthPart == 0 ? "" : ByteUtil.toStr(data, 7, parameter.lengthPart);
+        parameter.functionCode = EFunctionCode.from(buff.getByte());
+        parameter.unknownBytes = buff.getBytes(5);
+        parameter.lengthPart = buff.getByteToInt();
+        parameter.piService = parameter.lengthPart == 0 ? "" : buff.getString(parameter.lengthPart);
         return parameter;
     }
 

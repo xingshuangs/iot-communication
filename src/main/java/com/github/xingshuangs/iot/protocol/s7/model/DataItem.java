@@ -4,12 +4,10 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 import com.github.xingshuangs.iot.protocol.s7.enums.EDataVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EReturnCode;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
+import com.github.xingshuangs.iot.utils.ByteReadBuff;
 import com.github.xingshuangs.iot.utils.ByteWriteBuff;
-import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.util.Arrays;
 
 /**
  * 返回数据
@@ -62,14 +60,15 @@ public class DataItem extends ReturnItem implements IByteArray {
      * @return DataItem
      */
     public static DataItem fromBytes(final byte[] data) {
+        ByteReadBuff buff = new ByteReadBuff(data);
         DataItem dataItem = new DataItem();
-        dataItem.returnCode = EReturnCode.from(data[0]);
-        dataItem.variableType = EDataVariableType.from(data[1]);
+        dataItem.returnCode = EReturnCode.from(buff.getByte());
+        dataItem.variableType = EDataVariableType.from(buff.getByte());
         // 如果是bit，正常解析，如果是字节，则需要除8操作
-        dataItem.count = ShortUtil.toUInt16(data, 2) / (dataItem.variableType == EDataVariableType.BIT ? 1 : 8);
+        dataItem.count = buff.getUInt16() / (dataItem.variableType == EDataVariableType.BIT ? 1 : 8);
         // 返回数据类型为null，那就是没有数据
         if (dataItem.variableType != EDataVariableType.NULL) {
-            dataItem.data = Arrays.copyOfRange(data, 4, 4 + dataItem.count);
+            dataItem.data = buff.getBytes(dataItem.count);
         }
         return dataItem;
     }

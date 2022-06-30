@@ -4,10 +4,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 import com.github.xingshuangs.iot.protocol.s7.enums.EArea;
 import com.github.xingshuangs.iot.protocol.s7.enums.EParamVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.ESyntaxID;
-import com.github.xingshuangs.iot.utils.ByteWriteBuff;
-import com.github.xingshuangs.iot.utils.ByteUtil;
-import com.github.xingshuangs.iot.utils.IntegerUtil;
-import com.github.xingshuangs.iot.utils.ShortUtil;
+import com.github.xingshuangs.iot.utils.*;
 import lombok.Data;
 
 /**
@@ -108,15 +105,16 @@ public class RequestItem implements IByteArray {
      * @return RequestItem
      */
     public static RequestItem fromBytes(final byte[] data) {
+        ByteReadBuff buff = new ByteReadBuff(data);
         RequestItem requestItem = new RequestItem();
-        requestItem.specificationType = data[0];
-        requestItem.lengthOfFollowing = ByteUtil.toUInt8(data[1]);
-        requestItem.syntaxId = ESyntaxID.from(data[2]);
-        requestItem.variableType = EParamVariableType.from(data[3]);
-        requestItem.count = ShortUtil.toUInt16(data, 4);
-        requestItem.dbNumber = ShortUtil.toUInt16(data, 6);
+        requestItem.specificationType = buff.getByte();
+        requestItem.lengthOfFollowing = buff.getByteToInt();
+        requestItem.syntaxId = ESyntaxID.from(buff.getByte());
+        requestItem.variableType = EParamVariableType.from(buff.getByte());
+        requestItem.count = buff.getUInt16();
+        requestItem.dbNumber = buff.getUInt16();
         requestItem.byteAddress = IntegerUtil.toInt32In3Bytes(data, 9) >> 3;
-        requestItem.bitAddress = data[11] & 0x07;
+        requestItem.bitAddress = buff.getByte(11) & 0x07;
         return requestItem;
     }
 }

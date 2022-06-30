@@ -2,8 +2,8 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
+import com.github.xingshuangs.iot.utils.ByteReadBuff;
 import com.github.xingshuangs.iot.utils.ByteWriteBuff;
-import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -68,12 +68,13 @@ public class SetupComParameter extends Parameter implements IByteArray {
      * @return SetupComParameter
      */
     public static SetupComParameter fromBytes(final byte[] data) {
+        ByteReadBuff buff = new ByteReadBuff(data);
         SetupComParameter setupComParameter = new SetupComParameter();
-        setupComParameter.functionCode = EFunctionCode.from(data[0]);
-        setupComParameter.reserved = data[1];
-        setupComParameter.maxAmqCaller = ShortUtil.toUInt16(data, 2);
-        setupComParameter.maxAmqCallee = ShortUtil.toUInt16(data, 4);
-        setupComParameter.pduLength = ShortUtil.toUInt16(data, 6);
+        setupComParameter.functionCode = EFunctionCode.from(buff.getByte());
+        setupComParameter.reserved = buff.getByte();
+        setupComParameter.maxAmqCaller = buff.getUInt16();
+        setupComParameter.maxAmqCallee = buff.getUInt16();
+        setupComParameter.pduLength = buff.getUInt16();
         return setupComParameter;
     }
 

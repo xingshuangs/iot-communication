@@ -3,9 +3,8 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
+import com.github.xingshuangs.iot.utils.ByteReadBuff;
 import com.github.xingshuangs.iot.utils.ByteWriteBuff;
-import com.github.xingshuangs.iot.utils.ByteUtil;
-import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -165,21 +164,22 @@ public class COTPConnection extends COTP implements IByteArray {
         if (data.length < BYTE_LENGTH) {
             throw new S7CommException("COTPConnection数据字节长度不够，无法解析");
         }
+        ByteReadBuff buff = new ByteReadBuff(data);
         COTPConnection connection = new COTPConnection();
-        connection.length = ByteUtil.toUInt8(data[0]);
-        connection.pduType = EPduType.from(data[1]);
-        connection.destinationReference = ShortUtil.toUInt16(data, 2);
-        connection.sourceReference = ShortUtil.toUInt16(data, 4);
-        connection.flags = data[6];
-        connection.parameterCodeTpduSize = data[7];
-        connection.parameterLength1 = ByteUtil.toUInt8(data[8]);
-        connection.tpduSize = ByteUtil.toUInt8(data[9]);
-        connection.parameterCodeSrcTsap = data[10];
-        connection.parameterLength2 = ByteUtil.toUInt8(data[11]);
-        connection.sourceTsap = ShortUtil.toUInt16(data, 12);
-        connection.parameterCodeDstTsap = data[14];
-        connection.parameterLength3 = ByteUtil.toUInt8(data[15]);
-        connection.destinationTsap = ShortUtil.toUInt16(data, 16);
+        connection.length = buff.getByteToInt();
+        connection.pduType = EPduType.from(buff.getByte());
+        connection.destinationReference = buff.getUInt16();
+        connection.sourceReference = buff.getUInt16();
+        connection.flags = buff.getByte();
+        connection.parameterCodeTpduSize = buff.getByte();
+        connection.parameterLength1 = buff.getByteToInt();
+        connection.tpduSize = buff.getByteToInt();
+        connection.parameterCodeSrcTsap = buff.getByte();
+        connection.parameterLength2 = buff.getByteToInt();
+        connection.sourceTsap = buff.getUInt16();
+        connection.parameterCodeDstTsap = buff.getByte();
+        connection.parameterLength3 = buff.getByteToInt();
+        connection.destinationTsap = buff.getUInt16();
         return connection;
     }
 }

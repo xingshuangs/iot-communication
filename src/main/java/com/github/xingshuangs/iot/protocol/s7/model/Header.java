@@ -2,8 +2,8 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 
 import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
+import com.github.xingshuangs.iot.utils.ByteReadBuff;
 import com.github.xingshuangs.iot.utils.ByteWriteBuff;
-import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -102,13 +102,14 @@ public class Header implements IByteArray {
         if (data.length < BYTE_LENGTH) {
             throw new IndexOutOfBoundsException("解析header时，字节数组长度不够");
         }
+        ByteReadBuff buff = new ByteReadBuff(data);
         Header header = new Header();
-        header.protocolId = data[0];
-        header.messageType = EMessageType.from(data[1]);
-        header.reserved = ShortUtil.toUInt16(data, 2);
-        header.pduReference = ShortUtil.toUInt16(data, 4);
-        header.parameterLength = ShortUtil.toUInt16(data, 6);
-        header.dataLength = ShortUtil.toUInt16(data, 8);
+        header.protocolId = buff.getByte();
+        header.messageType = EMessageType.from(buff.getByte());
+        header.reserved = buff.getUInt16();
+        header.pduReference = buff.getUInt16();
+        header.parameterLength = buff.getUInt16();
+        header.dataLength = buff.getUInt16();
         return header;
     }
 

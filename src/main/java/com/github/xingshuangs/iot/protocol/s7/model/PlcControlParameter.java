@@ -3,13 +3,10 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
+import com.github.xingshuangs.iot.utils.ByteReadBuff;
 import com.github.xingshuangs.iot.utils.ByteWriteBuff;
-import com.github.xingshuangs.iot.utils.ByteUtil;
-import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.util.Arrays;
 
 /**
  * 启动参数
@@ -94,15 +91,14 @@ public class PlcControlParameter extends Parameter implements IByteArray {
         if (data.length < 11) {
             throw new S7CommException("StopParameter解析有误，StopParameter字节数组长度 < 7");
         }
-        int offset = 0;
+        ByteReadBuff buff = new ByteReadBuff(data);
         PlcControlParameter parameter = new PlcControlParameter();
-        parameter.functionCode = EFunctionCode.from(data[0]);
-        parameter.unknownBytes = Arrays.copyOfRange(data, 1, 8);
-        parameter.parameterBlockLength = ShortUtil.toUInt16(data, 8);
-        parameter.parameterBlock = parameter.parameterBlockLength == 0 ? "" : ByteUtil.toStr(data, 10, parameter.parameterBlockLength);
-        offset = offset + 10 + parameter.parameterBlockLength;
-        parameter.lengthPart = ByteUtil.toUInt8(data[offset++]);
-        parameter.piService = parameter.lengthPart == 0 ? "" : ByteUtil.toStr(data, offset, parameter.lengthPart);
+        parameter.functionCode = EFunctionCode.from(buff.getByte());
+        parameter.unknownBytes = buff.getBytes(7);
+        parameter.parameterBlockLength = buff.getUInt16();
+        parameter.parameterBlock = parameter.parameterBlockLength == 0 ? "" : buff.getString(parameter.parameterBlockLength);
+        parameter.lengthPart = buff.getByteToInt();
+        parameter.piService = parameter.lengthPart == 0 ? "" : buff.getString(parameter.lengthPart);
         return parameter;
     }
 

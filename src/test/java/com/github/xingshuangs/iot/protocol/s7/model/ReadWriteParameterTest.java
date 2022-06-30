@@ -39,4 +39,54 @@ public class ReadWriteParameterTest {
         byte[] expect = new byte[]{(byte) 0x04, (byte) 0x01, (byte) 0x12, (byte) 0x10, (byte) 0x10, (byte) 0x02, (byte) 0x00, (byte) 0x07, (byte) 0x00, (byte) 0x07, (byte) 0x84, (byte) 0x00, (byte) 0x00, (byte) 0x19};
         assertArrayEquals(expect, actual);
     }
+
+    @Test
+    public void fromBytes() {
+        byte[] data = new byte[]{
+                // parameter：功能 + 个数
+                (byte) 0x05, (byte) 0x02,
+                // request item
+                (byte) 0x12,
+                // 剩余长度
+                (byte) 0x0A,
+                // 寻址方式
+                (byte) 0x10,
+                // 数据类型
+                (byte) 0x02,
+                // 读取长度 count
+                (byte) 0x00, (byte) 0x01,
+                // db编号 dbNumber
+                (byte) 0x00, (byte) 0x01,
+                // 存储区域 area
+                (byte) 0x84,
+                // 起始地址 byteAddress
+                (byte) 0x00, (byte) 0x00, (byte) 0x19,
+                // request item-------------------------------
+                (byte) 0x12,
+                // 剩余长度
+                (byte) 0x0A,
+                // 寻址方式
+                (byte) 0x10,
+                // 数据类型
+                (byte) 0x04,
+                // 读取长度 count
+                (byte) 0x00, (byte) 0x01,
+                // db编号 dbNumber
+                (byte) 0x00, (byte) 0x03,
+                // 存储区域 area
+                (byte) 0x84,
+                // 起始地址 byteAddress
+                (byte) 0x00, (byte) 0x00, (byte) 0x08
+        };
+
+        ReadWriteParameter parameter = ReadWriteParameter.fromBytes(data);
+        assertEquals(EParamVariableType.BYTE, parameter.getRequestItems().get(0).getVariableType());
+        assertEquals(1, parameter.getRequestItems().get(0).getBitAddress());
+        assertEquals(3, parameter.getRequestItems().get(0).getByteAddress());
+        assertEquals(1, parameter.getRequestItems().get(0).getDbNumber());
+        assertEquals(EParamVariableType.WORD, parameter.getRequestItems().get(1).getVariableType());
+        assertEquals(0, parameter.getRequestItems().get(1).getBitAddress());
+        assertEquals(1, parameter.getRequestItems().get(1).getByteAddress());
+        assertEquals(3, parameter.getRequestItems().get(1).getDbNumber());
+    }
 }

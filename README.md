@@ -82,7 +82,6 @@ class Demo{
       S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
       // write boolean
       s7PLC.writeBoolean("DB2.0.7", true);
-      s7PLC.writeBoolean("I0.5", true);
       s7PLC.writeBoolean("Q0.7", true);
       s7PLC.writeBoolean("M1.4", true);
       
