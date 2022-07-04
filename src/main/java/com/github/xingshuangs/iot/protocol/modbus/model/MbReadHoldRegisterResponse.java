@@ -1,0 +1,22 @@
+package com.github.xingshuangs.iot.protocol.modbus.model;
+
+
+/**
+ * 响应读取线圈
+ *
+ * @author xingshuang
+ */
+public class MbReadHoldRegisterResponse extends MbPdu {
+
+    /**
+     * 字节数<br>
+     * 字节大小：1个字节
+     */
+    private int count;
+
+    /**
+     * 寄存器值，N＝寄存器的数量，N*×2 个字节
+     * 字节大小：N*×2 个字节
+     */
+    private byte[] register;
+}
