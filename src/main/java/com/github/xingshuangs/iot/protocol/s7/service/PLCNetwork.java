@@ -131,16 +131,16 @@ public class PLCNetwork extends SocketBasic {
         int len;
         byte[] remain;
         synchronized (this.objLock) {
-            this.writeWrapper(sendData);
+            this.writeCycle(sendData, this.maxPduLength);
 
             byte[] data = new byte[TPKT.BYTE_LENGTH];
-            len = this.readWrapper(data);
+            len = this.readCycle(data, this.maxPduLength);
             if (len < TPKT.BYTE_LENGTH) {
                 throw new S7CommException(" TPKT 无效，长度不一致");
             }
             tpkt = TPKT.fromBytes(data);
             remain = new byte[tpkt.getLength() - TPKT.BYTE_LENGTH];
-            len = this.readWrapper(remain);
+            len = this.readCycle(remain, this.maxPduLength);
         }
         if (len < remain.length) {
             throw new S7CommException(" TPKT后面的数据长度，长度不一致");
@@ -186,35 +186,6 @@ public class PLCNetwork extends SocketBasic {
         });
     }
 
-    /**
-     * 读取字节
-     *
-     * @param data 字节数组
-     * @return 读取数量
-     */
-    private int readWrapper(final byte[] data) {
-        int offset = 0;
-        while (offset < data.length) {
-            int length = this.maxPduLength <= 0 ? data.length - offset : Math.min(this.maxPduLength, data.length - offset);
-            this.read(data, offset, length);
-            offset += length;
-        }
-        return offset;
-    }
-
-    /**
-     * 写入字节
-     *
-     * @param data 字节数组
-     */
-    private void writeWrapper(final byte[] data) {
-        int offset = 0;
-        while (offset < data.length) {
-            int length = this.maxPduLength <= 0 ? data.length - offset : Math.min(this.maxPduLength, data.length - offset);
-            this.write(data, offset, length);
-            offset += length;
-        }
-    }
     //endregion
 
     //region S7数据读写部分

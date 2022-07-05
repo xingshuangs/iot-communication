@@ -165,6 +165,21 @@ public class SocketBasic {
     }
 
     /**
+     * 写入字节
+     *
+     * @param data      字节数组
+     * @param maxLength 最大允许写入长度
+     */
+    public void writeCycle(final byte[] data, int maxLength) {
+        int offset = 0;
+        while (offset < data.length) {
+            int length = maxLength <= 0 ? data.length - offset : Math.min(maxLength, data.length - offset);
+            this.write(data, offset, length);
+            offset += length;
+        }
+    }
+
+    /**
      * 读取数据
      *
      * @param data 字节数组
@@ -222,6 +237,24 @@ public class SocketBasic {
             throw new SocketRuntimeException(e);
         }
     }
+
+    /**
+     * 读取字节
+     *
+     * @param data      字节数组
+     * @param maxLength 最大允许读取长度
+     * @return 读取数量
+     */
+    public int readCycle(final byte[] data, int maxLength) {
+        int offset = 0;
+        while (offset < data.length) {
+            int length = maxLength <= 0 ? data.length - offset : Math.min(maxLength, data.length - offset);
+            this.read(data, offset, length);
+            offset += length;
+        }
+        return offset;
+    }
+
 
     //endregion
 }

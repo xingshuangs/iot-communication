@@ -7,24 +7,24 @@ import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import lombok.Data;
 
 /**
- * 请求读输入寄存器
+ * 请求写单个寄存器
  *
  * @author xingshuang
  */
 @Data
-public final class MbReadInputRegisterRequest extends MbPdu {
+public final class MbWriteSingleRegisterRequest extends MbPdu {
 
     /**
-     * 起始地址 说是从0x0000 至 0xFFFF，但对应实际却只是0001-9999，对应0x0000-0x270F <br>
+     * 输出地址 说是从0x0000 至 0xFFFF，但对应实际却只是0001-9999，对应0x0000-0x270F <br>
      * 字节大小：2个字节
      */
     private int address;
 
     /**
-     * 输入寄存器数量，该功能码读取线圈的 1 至 2000 连续状态，1 至 2000（0x7D0）
+     * 寄存器值，0x0000 至 0xFFFF
      * 字节大小：2个字节
      */
-    private int quantity;
+    private byte[] value;
 
     @Override
     public int byteArrayLength() {
@@ -36,20 +36,20 @@ public final class MbReadInputRegisterRequest extends MbPdu {
         return ByteWriteBuff.newInstance(this.byteArrayLength())
                 .putByte(this.functionCode.getCode())
                 .putShort(this.address)
-                .putShort(this.quantity)
+                .putBytes(this.value)
                 .getData();
     }
 
-    public static MbReadInputRegisterRequest fromBytes(final byte[] data) {
-        return fromBytes(data, 0);
+    public static MbWriteSingleRegisterRequest fromBytes(final byte[] data) {
+        return fromBytes(data,0);
     }
 
-    public static MbReadInputRegisterRequest fromBytes(final byte[] data, final int offset) {
+    public static MbWriteSingleRegisterRequest fromBytes(final byte[] data, final int offset) {
         ByteReadBuff buff = new ByteReadBuff(data, offset);
-        MbReadInputRegisterRequest res = new MbReadInputRegisterRequest();
+        MbWriteSingleRegisterRequest res = new MbWriteSingleRegisterRequest();
         res.functionCode = EMbFunctionCode.from(buff.getByte());
         res.address = buff.getUInt16();
-        res.quantity = buff.getUInt16();
+        res.value = buff.getBytes(2);
         return res;
     }
 }

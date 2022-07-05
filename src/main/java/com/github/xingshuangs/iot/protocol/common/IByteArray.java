@@ -1,4 +1,4 @@
-package com.github.xingshuangs.iot.protocol.s7.model;
+package com.github.xingshuangs.iot.protocol.common;
 
 
 /**

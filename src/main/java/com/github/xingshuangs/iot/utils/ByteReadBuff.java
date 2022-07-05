@@ -31,6 +31,11 @@ public class ByteReadBuff {
         this.data = data;
     }
 
+    public ByteReadBuff(byte[] data, int offset) {
+        this.data = data;
+        this.offset = offset;
+    }
+
     public static ByteReadBuff newInstance(byte[] data) {
         return new ByteReadBuff(data);
     }

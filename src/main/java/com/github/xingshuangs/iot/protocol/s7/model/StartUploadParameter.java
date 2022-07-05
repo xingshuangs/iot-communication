@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
+import com.github.xingshuangs.iot.protocol.common.IByteArray;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
 import com.github.xingshuangs.iot.utils.ByteWriteBuff;

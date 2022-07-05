@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
+import com.github.xingshuangs.iot.protocol.common.IByteArray;
 import com.github.xingshuangs.iot.protocol.s7.enums.EArea;
 import com.github.xingshuangs.iot.protocol.s7.enums.EParamVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.ESyntaxID;
