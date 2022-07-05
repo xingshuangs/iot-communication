@@ -1,10 +1,12 @@
 package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
-import com.github.xingshuangs.iot.exceptions.S7CommException;
+import com.github.xingshuangs.iot.exceptions.ModbusCommException;
 import com.github.xingshuangs.iot.net.socket.SocketBasic;
-import com.github.xingshuangs.iot.protocol.s7.model.S7Data;
-import com.github.xingshuangs.iot.protocol.s7.model.TPKT;
+import com.github.xingshuangs.iot.protocol.modbus.model.MbErrorResponse;
+import com.github.xingshuangs.iot.protocol.modbus.model.MbTcpRequest;
+import com.github.xingshuangs.iot.protocol.modbus.model.MbTcpResponse;
+import com.github.xingshuangs.iot.protocol.modbus.model.MbapHeader;
 
 /**
  * plc的网络通信
@@ -28,11 +30,6 @@ public class ModbusNetwork extends SocketBasic {
      */
     protected int slot = 0;
 
-    /**
-     * 最大的PDU长度
-     */
-    private int maxPduLength = 0;
-
     public ModbusNetwork() {
         super();
     }
@@ -46,65 +43,44 @@ public class ModbusNetwork extends SocketBasic {
     /**
      * 从服务器读取数据
      *
-     * @param req S7协议数据
-     * @return S7协议数据
+     * @param req modbus协议数据
+     * @return modbus协议数据
      */
-    protected S7Data readFromServer(S7Data req) {
+    protected MbTcpResponse readFromServer(MbTcpRequest req) {
         byte[] sendData = req.toByteArray();
-        if (this.maxPduLength > 0 && sendData.length > this.maxPduLength) {
-            throw new S7CommException("发送请求的字节数过长，已经大于最大的PDU长度");
-        }
-        TPKT tpkt;
+        MbapHeader header;
         int len;
         byte[] remain;
         synchronized (this.objLock) {
-            this.writeWrapper(sendData);
+            this.writeCycle(sendData);
 
-            byte[] data = new byte[TPKT.BYTE_LENGTH];
-            len = this.readWrapper(data);
-            if (len < TPKT.BYTE_LENGTH) {
-                throw new S7CommException(" TPKT 无效，长度不一致");
+            byte[] data = new byte[MbapHeader.BYTE_LENGTH];
+            len = this.readCycle(data);
+            if (len < MbapHeader.BYTE_LENGTH) {
+                throw new ModbusCommException(" MbapHeader 无效，读取长度不一致");
             }
-            tpkt = TPKT.fromBytes(data);
-            remain = new byte[tpkt.getLength() - TPKT.BYTE_LENGTH];
-            len = this.readWrapper(remain);
+            header = MbapHeader.fromBytes(data);
+            remain = new byte[header.getLength() - 1];
+            len = this.readCycle(remain);
         }
         if (len < remain.length) {
-            throw new S7CommException(" TPKT后面的数据长度，长度不一致");
+            throw new ModbusCommException(" MbapHeader后面的数据长度，长度不一致");
         }
-        S7Data ack = S7Data.fromBytes(tpkt, remain);
-//        this.checkResult(req, ack);
+        MbTcpResponse ack = MbTcpResponse.fromBytes(header, remain);
+        this.checkResult(req, ack);
         return ack;
     }
 
-
-    /**
-     * 读取字节
-     *
-     * @param data 字节数组
-     * @return 读取数量
-     */
-    private int readWrapper(final byte[] data) {
-        int offset = 0;
-        while (offset < data.length) {
-            int length = this.maxPduLength <= 0 ? data.length - offset : Math.min(this.maxPduLength, data.length - offset);
-            this.read(data, offset, length);
-            offset += length;
+    private void checkResult(MbTcpRequest req, MbTcpResponse ack) {
+        if (ack.getPdu() == null) {
+            throw new ModbusCommException("PDU数据为null");
         }
-        return offset;
-    }
-
-    /**
-     * 写入字节
-     *
-     * @param data 字节数组
-     */
-    private void writeWrapper(final byte[] data) {
-        int offset = 0;
-        while (offset < data.length) {
-            int length = this.maxPduLength <= 0 ? data.length - offset : Math.min(this.maxPduLength, data.length - offset);
-            this.write(data, offset, length);
-            offset += length;
+        if (req.getHeader().getTransactionId() != ack.getHeader().getTransactionId()) {
+            throw new ModbusCommException("事务元标识符Id不一致");
+        }
+        if (ack.getPdu().getFunctionCode().getCode() == req.getPdu().getFunctionCode().getCode() + 0x80) {
+            MbErrorResponse response = (MbErrorResponse) ack.getPdu();
+            throw new ModbusCommException("响应返回异常，异常码:" + response.getErrorCode());
         }
     }
     //endregion

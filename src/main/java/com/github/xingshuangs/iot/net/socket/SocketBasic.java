@@ -180,6 +180,15 @@ public class SocketBasic {
     }
 
     /**
+     * 写入字节
+     *
+     * @param data 字节数组
+     */
+    public void writeCycle(final byte[] data) {
+        this.writeCycle(data, -1);
+    }
+
+    /**
      * 读取数据
      *
      * @param data 字节数组
@@ -253,6 +262,16 @@ public class SocketBasic {
             offset += length;
         }
         return offset;
+    }
+
+    /**
+     * 读取字节
+     *
+     * @param data 字节数组
+     * @return 读取数量
+     */
+    public int readCycle(final byte[] data) {
+        return this.readCycle(data, -1);
     }
 
 

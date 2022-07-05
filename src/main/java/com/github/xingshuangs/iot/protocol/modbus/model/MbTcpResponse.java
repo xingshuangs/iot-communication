@@ -35,4 +35,11 @@ public class MbTcpResponse implements IByteArray {
                 .putBytes(this.pdu.toByteArray())
                 .getData();
     }
+
+    public static MbTcpResponse fromBytes(MbapHeader header, byte[] pduBytes) {
+        MbTcpResponse response = new MbTcpResponse();
+        response.header = header;
+        response.pdu = MbPdu.fromBytes(pduBytes);
+        return response;
+    }
 }

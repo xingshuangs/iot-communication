@@ -33,30 +33,48 @@ public class MbPdu implements IByteArray {
                 .getData();
     }
 
+    public static MbPdu fromBytes(final byte[] data) {
+        return fromBytes(data, 0);
+    }
+
     /**
      * 字节数组数据解析
      *
      * @param data 字节数组数据
-     * @return COTP
+     * @return mbpdu
      */
     public static MbPdu fromBytes(final byte[] data, final int offset) {
         ByteReadBuff buff = new ByteReadBuff(data, offset);
-
         EMbFunctionCode functionCode = EMbFunctionCode.from(buff.getByte());
 
         switch (functionCode) {
             case READ_COIL:
-                break;
+                return MbReadCoilResponse.fromBytes(data, offset);
             case READ_DISCRETE_INPUT:
+                return MbReadDiscreteInputResponse.fromBytes(data, offset);
             case READ_HOLD_REGISTER:
+                return MbReadHoldRegisterResponse.fromBytes(data, offset);
             case READ_INPUT_REGISTER:
+                return MbReadInputRegisterResponse.fromBytes(data, offset);
             case WRITE_SINGLE_COIL:
+                return MbWriteSingleCoilResponse.fromBytes(data, offset);
             case WRITE_SINGLE_REGISTER:
+                return MbWriteSingleRegisterResponse.fromBytes(data, offset);
             case WRITE_MULTIPLE_COIL:
+                return MbWriteMultipleCoilResponse.fromBytes(data, offset);
             case WRITE_MULTIPLE_REGISTER:
+                return MbWriteMultipleRegisterResponse.fromBytes(data, offset);
+            case ERROR_READ_COIL:
+            case ERROR_READ_DISCRETE_INPUT:
+            case ERROR_READ_HOLD_REGISTER:
+            case ERROR_READ_INPUT_REGISTER:
+            case ERROR_WRITE_SINGLE_COIL:
+            case ERROR_WRITE_SINGLE_REGISTER:
+            case ERROR_WRITE_MULTIPLE_COIL:
+            case ERROR_WRITE_MULTIPLE_REGISTER:
+                return MbErrorResponse.fromBytes(data, offset);
             default:
                 throw new ModbusCommException("无法识别功能码：" + functionCode.getDescription());
         }
-        return null;
     }
 }

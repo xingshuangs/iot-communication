@@ -16,10 +16,6 @@ public class TPKT implements IByteArray {
 
     public static final int BYTE_LENGTH = 4;
 
-    public static final int VERSION_OFFSET = 0;
-    public static final int RESERVED_OFFSET = 1;
-    public static final int LENGTH_OFFSET = 2;
-
     /**
      * 版本号，常量0x03 <br>
      * 字节大小：1 <br>
