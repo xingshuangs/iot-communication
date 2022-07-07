@@ -13,7 +13,7 @@ public class MbWriteSingleCoilRequestTest {
         MbWriteSingleCoilRequest mb = new MbWriteSingleCoilRequest();
         mb.setFunctionCode(EMbFunctionCode.WRITE_SINGLE_COIL);
         mb.setAddress(172);
-        mb.setValue(new byte[]{(byte) 0xFF, (byte) 0x00});
+        mb.setValue(true);
         assertEquals(5, mb.byteArrayLength());
         assertArrayEquals(actual, mb.toByteArray());
     }
@@ -24,6 +24,6 @@ public class MbWriteSingleCoilRequestTest {
         MbWriteSingleCoilRequest mb = MbWriteSingleCoilRequest.fromBytes(data);
         assertEquals(EMbFunctionCode.WRITE_SINGLE_COIL, mb.functionCode);
         assertEquals(172, mb.getAddress());
-        assertArrayEquals(new byte[]{(byte) 0xFF, (byte) 0x00}, mb.getValue());
+        assertTrue( mb.isValue());
     }
 }

@@ -26,6 +26,16 @@ public final class MbReadCoilRequest extends MbPdu {
      */
     private int quantity;
 
+    public MbReadCoilRequest() {
+        this.functionCode = EMbFunctionCode.READ_COIL;
+    }
+
+    public MbReadCoilRequest(int address, int quantity) {
+        this.functionCode = EMbFunctionCode.READ_COIL;
+        this.address = address;
+        this.quantity = quantity;
+    }
+
     @Override
     public int byteArrayLength() {
         return super.byteArrayLength() + 4;

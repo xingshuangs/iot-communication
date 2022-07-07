@@ -38,6 +38,18 @@ public final class MbWriteMultipleRegisterRequest extends MbPdu {
      */
     private byte[] value;
 
+    public MbWriteMultipleRegisterRequest() {
+        this.functionCode = EMbFunctionCode.WRITE_MULTIPLE_REGISTER;
+    }
+
+    public MbWriteMultipleRegisterRequest(int address, int quantity, byte[] value) {
+        this.functionCode = EMbFunctionCode.WRITE_MULTIPLE_REGISTER;
+        this.address = address;
+        this.quantity = quantity;
+        this.count = value.length;
+        this.value = value;
+    }
+
     @Override
     public int byteArrayLength() {
         return super.byteArrayLength() + 5 + this.value.length;

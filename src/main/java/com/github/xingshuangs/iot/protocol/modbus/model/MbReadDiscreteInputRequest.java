@@ -26,6 +26,16 @@ public final class MbReadDiscreteInputRequest extends MbPdu {
      */
     private int quantity;
 
+    public MbReadDiscreteInputRequest() {
+        this.functionCode = EMbFunctionCode.READ_DISCRETE_INPUT;
+    }
+
+    public MbReadDiscreteInputRequest(int address, int quantity) {
+        this.functionCode = EMbFunctionCode.READ_DISCRETE_INPUT;
+        this.address = address;
+        this.quantity = quantity;
+    }
+
     @Override
     public int byteArrayLength() {
         return super.byteArrayLength() + 4;

@@ -26,6 +26,16 @@ public final class MbReadInputRegisterRequest extends MbPdu {
      */
     private int quantity;
 
+    public MbReadInputRegisterRequest() {
+        this.functionCode = EMbFunctionCode.READ_INPUT_REGISTER;
+    }
+
+    public MbReadInputRegisterRequest(int address, int quantity) {
+        this.functionCode = EMbFunctionCode.READ_INPUT_REGISTER;
+        this.address = address;
+        this.quantity = quantity;
+    }
+
     @Override
     public int byteArrayLength() {
         return super.byteArrayLength() + 4;

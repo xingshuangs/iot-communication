@@ -38,6 +38,18 @@ public final class MbWriteMultipleCoilRequest extends MbPdu {
      */
     private byte[] value;
 
+    public MbWriteMultipleCoilRequest() {
+        this.functionCode = EMbFunctionCode.WRITE_MULTIPLE_COIL;
+    }
+
+    public MbWriteMultipleCoilRequest(int address, int quantity, byte[] value) {
+        this.functionCode = EMbFunctionCode.WRITE_MULTIPLE_COIL;
+        this.address = address;
+        this.quantity = quantity;
+        this.count = value.length;
+        this.value = value;
+    }
+
     @Override
     public int byteArrayLength() {
         return super.byteArrayLength() + 5 + this.value.length;

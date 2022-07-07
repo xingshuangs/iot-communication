@@ -24,7 +24,17 @@ public final class MbWriteSingleRegisterRequest extends MbPdu {
      * 寄存器值，0x0000 至 0xFFFF
      * 字节大小：2个字节
      */
-    private byte[] value;
+    private int value;
+
+    public MbWriteSingleRegisterRequest() {
+        this.functionCode = EMbFunctionCode.WRITE_SINGLE_REGISTER;
+    }
+
+    public MbWriteSingleRegisterRequest(int address, int value) {
+        this.functionCode = EMbFunctionCode.WRITE_SINGLE_REGISTER;
+        this.address = address;
+        this.value = value;
+    }
 
     @Override
     public int byteArrayLength() {
@@ -36,7 +46,7 @@ public final class MbWriteSingleRegisterRequest extends MbPdu {
         return ByteWriteBuff.newInstance(this.byteArrayLength())
                 .putByte(this.functionCode.getCode())
                 .putShort(this.address)
-                .putBytes(this.value)
+                .putShort(this.value)
                 .getData();
     }
 
@@ -49,7 +59,7 @@ public final class MbWriteSingleRegisterRequest extends MbPdu {
         MbWriteSingleRegisterRequest res = new MbWriteSingleRegisterRequest();
         res.functionCode = EMbFunctionCode.from(buff.getByte());
         res.address = buff.getUInt16();
-        res.value = buff.getBytes(2);
+        res.value = buff.getUInt16();
         return res;
     }
 }

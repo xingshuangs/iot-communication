@@ -3,10 +3,7 @@ package com.github.xingshuangs.iot.protocol.modbus.service;
 
 import com.github.xingshuangs.iot.exceptions.ModbusCommException;
 import com.github.xingshuangs.iot.net.socket.SocketBasic;
-import com.github.xingshuangs.iot.protocol.modbus.model.MbErrorResponse;
-import com.github.xingshuangs.iot.protocol.modbus.model.MbTcpRequest;
-import com.github.xingshuangs.iot.protocol.modbus.model.MbTcpResponse;
-import com.github.xingshuangs.iot.protocol.modbus.model.MbapHeader;
+import com.github.xingshuangs.iot.protocol.modbus.model.*;
 
 /**
  * plc的网络通信
@@ -16,26 +13,22 @@ import com.github.xingshuangs.iot.protocol.modbus.model.MbapHeader;
 public class ModbusNetwork extends SocketBasic {
 
     /**
+     * 从站编号
+     */
+    private int unitId = 0;
+
+    /**
      * 锁
      */
     private final Object objLock = new Object();
-
-    /**
-     * PLC机架号
-     */
-    protected int rack = 0;
-
-    /**
-     * PLC槽号
-     */
-    protected int slot = 0;
 
     public ModbusNetwork() {
         super();
     }
 
-    public ModbusNetwork(String host, int port) {
+    public ModbusNetwork(int unitId, String host, int port) {
         super(host, port);
+        this.unitId = unitId;
     }
 
     //region 底层数据通信部分
@@ -47,12 +40,11 @@ public class ModbusNetwork extends SocketBasic {
      * @return modbus协议数据
      */
     protected MbTcpResponse readFromServer(MbTcpRequest req) {
-        byte[] sendData = req.toByteArray();
         MbapHeader header;
         int len;
         byte[] remain;
         synchronized (this.objLock) {
-            this.writeCycle(sendData);
+            this.writeCycle(req.toByteArray());
 
             byte[] data = new byte[MbapHeader.BYTE_LENGTH];
             len = this.readCycle(data);
@@ -78,10 +70,24 @@ public class ModbusNetwork extends SocketBasic {
         if (req.getHeader().getTransactionId() != ack.getHeader().getTransactionId()) {
             throw new ModbusCommException("事务元标识符Id不一致");
         }
-        if (ack.getPdu().getFunctionCode().getCode() == req.getPdu().getFunctionCode().getCode() + 0x80) {
+        if (ack.getPdu().getFunctionCode().getCode() == (req.getPdu().getFunctionCode().getCode() | (byte) 0x80)) {
             MbErrorResponse response = (MbErrorResponse) ack.getPdu();
-            throw new ModbusCommException("响应返回异常，异常码:" + response.getErrorCode());
+            throw new ModbusCommException("响应返回异常，异常码:" + response.getErrorCode().getDescription());
+        }
+        if (ack.getPdu().getFunctionCode().getCode() != req.getPdu().getFunctionCode().getCode()) {
+            MbErrorResponse response = (MbErrorResponse) ack.getPdu();
+            throw new ModbusCommException("返回功能码和发送功能码不一致，异常码:" + response.getErrorCode().getDescription());
         }
     }
+
     //endregion
+
+    protected MbPdu readModbusData(MbPdu reqPdu) {
+        MbTcpRequest request = MbTcpRequest.createDefault();
+        request.getHeader().setUnitId(this.unitId);
+        request.setPdu(reqPdu);
+        request.selfCheck();
+        MbTcpResponse response = this.readFromServer(request);
+        return response.getPdu();
+    }
 }

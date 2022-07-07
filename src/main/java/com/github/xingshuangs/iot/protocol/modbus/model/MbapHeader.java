@@ -25,28 +25,32 @@ public class MbapHeader implements IByteArray {
      * 字节大小：2个字节
      * 字节序数：0-1
      */
-    private int transactionId;
+    private int transactionId = 0;
 
     /**
      * 协议标识符<br>
      * 字节大小：2个字节
      * 字节序数：2-3
      */
-    private int protocolId;
+    private int protocolId = 0;
 
     /**
      * 长度<br>
      * 字节大小：2个字节
      * 字节序数：4-5
      */
-    private int length;
+    private int length = 0;
 
     /**
      * 单元标识符<br>
      * 字节大小：1个字节
      * 字节序数：6
      */
-    private int unitId;
+    private int unitId = 0;
+
+    public MbapHeader() {
+        this.transactionId = getNewNumber();
+    }
 
     @Override
     public int byteArrayLength() {
@@ -68,7 +72,7 @@ public class MbapHeader implements IByteArray {
      *
      * @return 编号
      */
-    public static int getNewPduNumber() {
+    public static int getNewNumber() {
         int res = index.getAndIncrement();
         if (res >= 65536) {
             index.set(0);

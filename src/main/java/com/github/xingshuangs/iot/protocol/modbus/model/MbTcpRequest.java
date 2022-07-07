@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.modbus.model;
 
 
+import com.github.xingshuangs.iot.exceptions.ModbusCommException;
 import com.github.xingshuangs.iot.protocol.common.IByteArray;
 import com.github.xingshuangs.iot.utils.ByteWriteBuff;
 import lombok.Data;
@@ -34,5 +35,24 @@ public class MbTcpRequest implements IByteArray {
                 .putBytes(this.header.toByteArray())
                 .putBytes(this.pdu.toByteArray())
                 .getData();
+    }
+
+    /**
+     * 自我数据校验
+     */
+    public void selfCheck() {
+        if (this.header == null) {
+            throw new ModbusCommException("header不能为null");
+        }
+        if (this.pdu == null) {
+            throw new ModbusCommException("pdu不能为null");
+        }
+        this.header.setLength(this.pdu.byteArrayLength() + 1);
+    }
+
+    public static MbTcpRequest createDefault() {
+        MbTcpRequest request = new MbTcpRequest();
+        request.header = new MbapHeader();
+        return request;
     }
 }

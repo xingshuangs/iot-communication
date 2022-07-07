@@ -14,7 +14,7 @@ public class MbWriteSingleRegisterRequestTest {
         MbWriteSingleRegisterRequest mb = new MbWriteSingleRegisterRequest();
         mb.setFunctionCode(EMbFunctionCode.WRITE_SINGLE_REGISTER);
         mb.setAddress(1);
-        mb.setValue(new byte[]{(byte) 0x00, (byte) 0x03});
+        mb.setValue(3);
         assertEquals(5, mb.byteArrayLength());
         assertArrayEquals(actual, mb.toByteArray());
     }
@@ -25,7 +25,7 @@ public class MbWriteSingleRegisterRequestTest {
         MbWriteSingleRegisterRequest mb = MbWriteSingleRegisterRequest.fromBytes(data);
         assertEquals(EMbFunctionCode.WRITE_SINGLE_REGISTER, mb.functionCode);
         assertEquals(1, mb.getAddress());
-        assertArrayEquals(new byte[]{(byte) 0x00, (byte) 0x03}, mb.getValue());
+        assertEquals(3, mb.getValue());
     }
 
 }
