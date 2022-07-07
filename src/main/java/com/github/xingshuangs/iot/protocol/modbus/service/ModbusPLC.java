@@ -2,9 +2,9 @@ package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
 import com.github.xingshuangs.iot.protocol.modbus.model.*;
-import com.github.xingshuangs.iot.utils.BooleanUtil;
-import com.github.xingshuangs.iot.utils.ShortUtil;
+import com.github.xingshuangs.iot.utils.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -34,13 +34,14 @@ public class ModbusPLC extends ModbusNetwork {
         super(unitId, ip, port);
     }
 
+    //region 线圈和寄存器的读取
 
     /**
      * 读取线圈， modbus 1个寄存器占2个字节
      *
      * @param address  地址
-     * @param quantity 字节个数
-     * @return 字节数组
+     * @param quantity 线圈数量
+     * @return boolean列表
      */
     public List<Boolean> readCoil(int address, int quantity) {
         if (address < 0) {
@@ -55,10 +56,10 @@ public class ModbusPLC extends ModbusNetwork {
     }
 
     /**
-     * 读取线圈， modbus 1个寄存器占2个字节
+     * 单写线圈， modbus 1个寄存器占2个字节
      *
      * @param address    地址
-     * @param coilStatus 线圈状态列表
+     * @param coilStatus 线圈状态
      */
     public void writeCoil(int address, boolean coilStatus) {
         if (address < 0) {
@@ -70,7 +71,7 @@ public class ModbusPLC extends ModbusNetwork {
     }
 
     /**
-     * 读取线圈， modbus 1个寄存器占2个字节
+     * 多写线圈， modbus 1个寄存器占2个字节
      *
      * @param address    地址
      * @param coilStatus 线圈状态列表
@@ -88,11 +89,11 @@ public class ModbusPLC extends ModbusNetwork {
     }
 
     /**
-     * 读取线圈， modbus 1个寄存器占2个字节
+     * 读取离散输入， modbus 1个寄存器占2个字节
      *
      * @param address  地址
-     * @param quantity 字节个数
-     * @return 字节数组
+     * @param quantity 线圈数量
+     * @return boolean列表
      */
     public List<Boolean> readDiscreteInput(int address, int quantity) {
         if (address < 0) {
@@ -106,12 +107,11 @@ public class ModbusPLC extends ModbusNetwork {
         return BooleanUtil.byteArrayToList(quantity, resPdu.getInputStatus());
     }
 
-
     /**
      * 读取保持寄存器， modbus 1个寄存器占2个字节
      *
      * @param address  地址
-     * @param quantity 字节个数
+     * @param quantity 寄存器数量
      * @return 字节数组
      */
     public byte[] readHoldRegister(int address, int quantity) {
@@ -147,8 +147,24 @@ public class ModbusPLC extends ModbusNetwork {
      * 读取保持寄存器， modbus 1个寄存器占2个字节
      *
      * @param address 地址
-     * @param values  数据列表
-     * @return 字节数组
+     * @param values  数据值列表
+     */
+    public void writeHoldRegister(int address, byte[] values) {
+        if (address < 0) {
+            throw new IllegalArgumentException("address<0");
+        }
+        if (values.length % 2 != 0) {
+            throw new IllegalArgumentException("values长度必须是偶数");
+        }
+        MbWriteMultipleRegisterRequest reqPdu = new MbWriteMultipleRegisterRequest(address, values.length / 2, values);
+        this.readModbusData(reqPdu);
+    }
+
+    /**
+     * 读取保持寄存器， modbus 1个寄存器占2个字节
+     *
+     * @param address 地址
+     * @param values  数据值列表
      */
     public void writeHoldRegister(int address, List<Integer> values) {
         if (address < 0) {
@@ -168,7 +184,7 @@ public class ModbusPLC extends ModbusNetwork {
      * 读取输入寄存器， modbus 1个寄存器占2个字节
      *
      * @param address  地址
-     * @param quantity 字节个数
+     * @param quantity 寄存器数量
      * @return 字节数组
      */
     public byte[] readInputRegister(int address, int quantity) {
@@ -182,6 +198,9 @@ public class ModbusPLC extends ModbusNetwork {
         MbReadInputRegisterResponse resPdu = (MbReadInputRegisterResponse) this.readModbusData(reqPdu);
         return resPdu.getRegister();
     }
+    //endregion
+
+    //region 读取数据
 
     /**
      * 读取一个Int16 2字节数据
@@ -205,50 +224,140 @@ public class ModbusPLC extends ModbusNetwork {
         return ShortUtil.toUInt16(res);
     }
 
+    /**
+     * 读取一个UInt32 4字节数据
+     *
+     * @param address 地址
+     * @return 一个UInt32 4字节数据
+     */
+    public int readInt32(int address) {
+        byte[] res = this.readHoldRegister(address, 2);
+        return IntegerUtil.toInt32(res);
+    }
 
-//    /**
-//     * 读取一个UInt32 4字节数据
-//     *
-//     * @param address 地址
-//     * @return 一个UInt32 4字节数据
-//     */
-//    public long readUInt32(int address) {
-//        DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 4));
-//        return IntegerUtil.toUInt32(dataItem.getData());
-//    }
-//
-//    /**
-//     * 读取一个Float32的数据
-//     *
-//     * @param address 地址
-//     * @return 一个Float32的数据
-//     */
-//    public float readFloat32(String address) {
-//        DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 4));
-//        return FloatUtil.toFloat32(dataItem.getData());
-//    }
+    /**
+     * 读取一个UInt32 4字节数据
+     *
+     * @param address 地址
+     * @return 一个UInt32 4字节数据
+     */
+    public long readUInt32(int address) {
+        byte[] res = this.readHoldRegister(address, 2);
+        return IntegerUtil.toUInt32(res);
+    }
 
+    /**
+     * 读取一个Float32的数据
+     *
+     * @param address 地址
+     * @return 一个Float32的数据
+     */
+    public float readFloat32(int address) {
+        byte[] res = this.readHoldRegister(address, 2);
+        return FloatUtil.toFloat32(res);
+    }
 
-//    /**
-//     * 读取一个Float32的数据
-//     *
-//     * @param address 地址
-//     * @return 一个Float32的数据
-//     */
-//    public double readFloat64(String address) {
-//        DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 8));
-//        return FloatUtil.toFloat64(dataItem.getData());
-//    }
+    /**
+     * 读取一个Float32的数据
+     *
+     * @param address 地址
+     * @return 一个Float32的数据
+     */
+    public double readFloat64(int address) {
+        byte[] res = this.readHoldRegister(address, 4);
+        return FloatUtil.toFloat64(res);
+    }
 
     /**
      * 读取字符串
      * String（字符串）数据类型存储一串单字节字符，
-     * String提供了多大256个字节，前两个字节分别表示字节中最大的字符数和当前的字符数，定义字符串的最大长度可以减少它的占用存储空间
      *
      * @param address 地址
      * @return 字符串
      */
-    public String readString(String address) {
-        return "";
+    public String readString(int address, int length) {
+        byte[] res = this.readHoldRegister(address, length / 2);
+        return ByteUtil.toStr(res);
     }
+    //endregion
+
+    //region 写入数据
+
+    /**
+     * 写入一个Int16 2字节数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeInt16(int address, short data) {
+        byte[] bytes = ShortUtil.toByteArray(data);
+        this.writeHoldRegister(address, bytes);
+    }
+
+    /**
+     * 写入一个UInt16 2字节数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeUInt16(int address, int data) {
+        byte[] bytes = ShortUtil.toByteArray(data);
+        this.writeHoldRegister(address, bytes);
+    }
+
+    /**
+     * 写入一个Int32 4字节数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeInt32(int address, int data) {
+        byte[] bytes = IntegerUtil.toByteArray(data);
+        this.writeHoldRegister(address, bytes);
+    }
+
+    /**
+     * 写入一个UInt32 4字节数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeUInt32(int address, long data) {
+        byte[] bytes = IntegerUtil.toByteArray(data);
+        this.writeHoldRegister(address, bytes);
+    }
+
+    /**
+     * 写入一个Float32 4字节数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeFloat32(int address, float data) {
+        byte[] bytes = FloatUtil.toByteArray(data);
+        this.writeHoldRegister(address, bytes);
+    }
+
+    /**
+     * 写入一个Float64 8字节数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeFloat64(int address, double data) {
+        byte[] bytes = FloatUtil.toByteArray(data);
+        this.writeHoldRegister(address, bytes);
+    }
+
+    /**
+     * 写入一个String数据
+     *
+     * @param address 地址
+     * @param data    数据字符串
+     */
+    public void writeString(int address, String data) {
+        byte[] bytes = data.getBytes(StandardCharsets.US_ASCII);
+        this.writeHoldRegister(address, bytes);
+    }
+    //endregion
 }

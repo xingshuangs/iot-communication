@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-//@Ignore
+@Ignore
 public class ModbusPLCTest {
 
     private ModbusPLC plc = new ModbusPLC(1);
@@ -37,7 +37,7 @@ public class ModbusPLCTest {
     }
 
     @Test
-    public void readDiscreteInput(){
+    public void readDiscreteInput() {
         List<Boolean> booleans = plc.readDiscreteInput(0, 4);
         assertEquals(4, booleans.size());
         assertArrayEquals(new Boolean[]{true, true, true, false}, booleans.toArray(new Boolean[0]));
@@ -74,5 +74,37 @@ public class ModbusPLCTest {
         list.add(13);
         list.add(14);
         plc.writeHoldRegister(3, list);
+    }
+
+
+    @Test
+    public void readWriteData() {
+        plc.writeInt16(4, (short) 10);
+        short data = plc.readInt16(4);
+        assertEquals(10, data);
+
+        plc.writeUInt16(4, 20);
+        int i = plc.readUInt16(4);
+        assertEquals(20, i);
+
+        plc.writeInt32(4, 32);
+        int i1 = plc.readInt32(4);
+        assertEquals(32, i1);
+
+        plc.writeUInt32(4, 32L);
+        long l = plc.readUInt32(4);
+        assertEquals(32L, l);
+
+        plc.writeFloat32(4, 12.12f);
+        float v = plc.readFloat32(4);
+        assertEquals(12.12f, v, 0.0001);
+
+        plc.writeFloat64(4, 33.21);
+        double v1 = plc.readFloat64(4);
+        assertEquals(33.21, v1, 0.0001);
+
+        plc.writeString(4, "pppp");
+        String s = plc.readString(4, 4);
+        assertEquals("pppp", s);
     }
 }
