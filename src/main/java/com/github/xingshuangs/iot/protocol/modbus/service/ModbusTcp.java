@@ -12,25 +12,25 @@ import java.util.List;
  *
  * @author xingshuang
  */
-public class ModbusPLC extends ModbusNetwork {
+public class ModbusTcp extends ModbusNetwork {
 
     public static final int PORT = 502;
 
     public static final String IP = "127.0.0.1";
 
-    public ModbusPLC() {
+    public ModbusTcp() {
         this(0, IP, PORT);
     }
 
-    public ModbusPLC(int unitId) {
+    public ModbusTcp(int unitId) {
         this(unitId, IP, PORT);
     }
 
-    public ModbusPLC(int unitId, String ip) {
+    public ModbusTcp(int unitId, String ip) {
         this(unitId, ip, PORT);
     }
 
-    public ModbusPLC(int unitId, String ip, int port) {
+    public ModbusTcp(int unitId, String ip, int port) {
         super(unitId, ip, port);
     }
 
@@ -200,7 +200,7 @@ public class ModbusPLC extends ModbusNetwork {
     }
     //endregion
 
-    //region 读取数据
+    //region 通用保持寄存器 读取数据
 
     /**
      * 读取一个Int16 2字节数据
@@ -281,7 +281,7 @@ public class ModbusPLC extends ModbusNetwork {
     }
     //endregion
 
-    //region 写入数据
+    //region 通用保持寄存器 写入数据
 
     /**
      * 写入一个Int16 2字节数据

@@ -107,14 +107,14 @@ public class SocketBasic {
             this.socket.connect(this.socketAddress, this.connectTimeout);
             this.socketError.set(false);
             this.doAfterConnected();
-            log.debug("实例化一个新的socket对象");
+//            log.debug("实例化一个新的socket对象");
             return socket;
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
         }
     }
 
-    private void close() {
+    public void close() {
         try {
             if (this.socket != null) {
                 this.socket.close();
