@@ -70,12 +70,14 @@ public class PLCNetwork extends SocketBasic {
      * 连接请求
      */
     private void connectionRequest() {
+        // 对应0xC1
         int local = 0x0100;
+        // 对应0xC2
         int remote = 0x0100;
         switch (this.plcType) {
             case S200:
-                local = 0x1000;
-                remote = 0x1001;
+                local = 0x4D57;
+                remote = 0x4D57;
                 break;
             case S200_SMART:
             case S300:

@@ -67,7 +67,7 @@ public class S7Data implements IByteArray {
             buff.putBytes(this.parameter.toByteArray());
         }
         if (this.datum != null) {
-            buff.putBytes( this.datum.toByteArray());
+            buff.putBytes(this.datum.toByteArray());
         }
         return buff.getData();
     }
