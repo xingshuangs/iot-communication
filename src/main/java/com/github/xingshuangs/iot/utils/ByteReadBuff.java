@@ -25,7 +25,7 @@ public class ByteReadBuff {
     /**
      * 构造方法
      *
-     * @param capacity 容量
+     * @param data 字节数组
      */
     public ByteReadBuff(byte[] data) {
         this.data = data;

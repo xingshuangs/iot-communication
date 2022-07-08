@@ -40,8 +40,9 @@ public class MbPdu implements IByteArray {
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
-     * @return mbpdu
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return mbpdu对象
      */
     public static MbPdu fromBytes(final byte[] data, final int offset) {
         ByteReadBuff buff = new ByteReadBuff(data, offset);

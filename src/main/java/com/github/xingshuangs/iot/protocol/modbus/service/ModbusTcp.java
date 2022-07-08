@@ -270,9 +270,10 @@ public class ModbusTcp extends ModbusNetwork {
 
     /**
      * 读取字符串
-     * String（字符串）数据类型存储一串单字节字符，
+     * String（字符串）数据类型存储一串单字节字符
      *
      * @param address 地址
+     * @param length  字符串长度
      * @return 字符串
      */
     public String readString(int address, int length) {
