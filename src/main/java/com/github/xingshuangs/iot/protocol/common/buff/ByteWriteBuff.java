@@ -1,6 +1,7 @@
-package com.github.xingshuangs.iot.utils;
+package com.github.xingshuangs.iot.protocol.common.buff;
 
 
+import com.github.xingshuangs.iot.utils.*;
 import lombok.Getter;
 
 import java.nio.charset.Charset;
@@ -12,7 +13,7 @@ import java.nio.charset.StandardCharsets;
  * @author xingshuang
  */
 @Getter
-public class ByteWriteBuff {
+public class ByteWriteBuff extends ByteBuffBase {
 
     /**
      * 数据

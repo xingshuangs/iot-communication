@@ -2,15 +2,17 @@ package com.github.xingshuangs.iot.protocol.modbus.model;
 
 
 import com.github.xingshuangs.iot.protocol.modbus.enums.EMbFunctionCode;
-import com.github.xingshuangs.iot.utils.ByteReadBuff;
-import com.github.xingshuangs.iot.utils.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 响应读取线圈
  *
  * @author xingshuang
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public final class MbReadCoilResponse extends MbPdu {
 

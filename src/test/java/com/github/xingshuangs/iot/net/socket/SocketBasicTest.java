@@ -1,19 +1,14 @@
 package com.github.xingshuangs.iot.net.socket;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.*;
-
 @Ignore
-@Slf4j
 public class SocketBasicTest {
 
     private SocketBasic socketBasic;
@@ -30,10 +25,10 @@ public class SocketBasicTest {
             String data = test + i;
             try {
                 TimeUnit.SECONDS.sleep(2);
-                log.info(data);
+                System.out.println(data);
                 this.socketBasic.write(data.getBytes(StandardCharsets.UTF_8));
             } catch (Exception e) {
-                log.error(e.getMessage());
+                System.out.println(e.getMessage());
             }
         });
     }
@@ -56,14 +51,14 @@ public class SocketBasicTest {
         IntStream.range(0, 30).forEach(i -> {
             try {
                 TimeUnit.SECONDS.sleep(2);
-                log.info("第" + i + "次读取数据");
+                System.out.println("第" + i + "次读取数据");
                 byte[] data = new byte[1024];
                 int read = this.socketBasic.read(data);
                 if (read > 0) {
                     System.out.println(new String(data));
                 }
             } catch (InterruptedException e) {
-                log.error(e.getMessage());
+                System.out.println(e.getMessage());
             }
         });
     }

@@ -5,8 +5,8 @@ import com.github.xingshuangs.iot.protocol.common.IByteArray;
 import com.github.xingshuangs.iot.protocol.s7.enums.EDataVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EReturnCode;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
-import com.github.xingshuangs.iot.utils.ByteReadBuff;
-import com.github.xingshuangs.iot.utils.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -3,15 +3,17 @@ package com.github.xingshuangs.iot.protocol.modbus.model;
 
 import com.github.xingshuangs.iot.protocol.modbus.enums.EMbExceptionCode;
 import com.github.xingshuangs.iot.protocol.modbus.enums.EMbFunctionCode;
-import com.github.xingshuangs.iot.utils.ByteReadBuff;
-import com.github.xingshuangs.iot.utils.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 响应错误
  *
  * @author xingshuang
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class MbErrorResponse extends MbPdu {
 

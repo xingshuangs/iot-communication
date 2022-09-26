@@ -2,7 +2,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 
 import com.github.xingshuangs.iot.protocol.common.IByteArray;
-import com.github.xingshuangs.iot.utils.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
 
 import java.util.Arrays;

@@ -1,5 +1,6 @@
 package com.github.xingshuangs.iot.utils;
 
+import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
