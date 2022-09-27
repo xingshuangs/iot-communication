@@ -1,9 +1,9 @@
-package com.github.xingshuangs.iot.utils;
+package com.github.xingshuangs.iot.protocol.common.buff;
 
-import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 
 public class ByteWriteBuffTest {
@@ -41,11 +41,31 @@ public class ByteWriteBuffTest {
     }
 
     @Test
+    public void putShort2() {
+        ByteWriteBuff buff = new ByteWriteBuff(2);
+        buff.putShort(11000);
+        assertArrayEquals(new byte[]{(byte) 0x2A, (byte) 0xF8}, buff.getData());
+        assertEquals(2, buff.getOffset());
+    }
+
+    @Test
     public void putInteger() {
         ByteWriteBuff buff = new ByteWriteBuff(4);
         buff.putInteger(2111286);
         assertArrayEquals(new byte[]{(byte) 0x00, (byte) 0x20, (byte) 0x37, (byte) 0x36}, buff.getData());
         assertEquals(4, buff.getOffset());
+
+        buff = new ByteWriteBuff(4, EByteBuffFormat.CD_AB);
+        buff.putInteger(2111286);
+        assertArrayEquals(new byte[]{(byte) 0x20, (byte) 0x00, (byte) 0x36, (byte) 0x37}, buff.getData());
+
+        buff = new ByteWriteBuff(4, EByteBuffFormat.BA_DC);
+        buff.putInteger(2111286);
+        assertArrayEquals(new byte[]{(byte) 0x37, (byte) 0x36, (byte) 0x00, (byte) 0x20}, buff.getData());
+
+        buff = new ByteWriteBuff(4, EByteBuffFormat.AB_CD);
+        buff.putInteger(2111286);
+        assertArrayEquals(new byte[]{(byte) 0x36, (byte) 0x37, (byte) 0x20, (byte) 0x00}, buff.getData());
     }
 
     @Test
@@ -53,6 +73,14 @@ public class ByteWriteBuffTest {
         ByteWriteBuff buff = new ByteWriteBuff(4);
         buff.putInteger(2111286L);
         assertArrayEquals(new byte[]{(byte) 0x00, (byte) 0x20, (byte) 0x37, (byte) 0x36}, buff.getData());
+        assertEquals(4, buff.getOffset());
+    }
+
+    @Test
+    public void putInteger2() {
+        ByteWriteBuff buff = new ByteWriteBuff(4, EByteBuffFormat.BA_DC);
+        buff.putInteger(11000);
+        assertArrayEquals(new byte[]{(byte) 0x2A, (byte) 0xF8, (byte) 0x00, (byte) 0x00}, buff.getData());
         assertEquals(4, buff.getOffset());
     }
 

@@ -31,11 +31,20 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @param capacity 容量
      */
     public ByteWriteBuff(int capacity) {
+        this(capacity, EByteBuffFormat.DC_BA);
+    }
+
+    public ByteWriteBuff(int capacity, EByteBuffFormat format) {
+        super(format);
         this.data = new byte[capacity];
     }
 
     public static ByteWriteBuff newInstance(int capacity) {
         return new ByteWriteBuff(capacity);
+    }
+
+    public static ByteWriteBuff newInstance(int capacity, EByteBuffFormat format) {
+        return new ByteWriteBuff(capacity, format);
     }
 
     /**
@@ -216,7 +225,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putInteger(int src, boolean littleEndian) {
-        return this.putBytes(IntegerUtil.toByteArray(src, littleEndian));
+        return this.putBytes(this.reorderByFormatIn4Bytes(IntegerUtil.toByteArray(src, littleEndian)));
     }
 
     /**
@@ -227,7 +236,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putInteger(long src, boolean littleEndian) {
-        return this.putBytes(IntegerUtil.toByteArray((int) src, littleEndian));
+        return this.putBytes(this.reorderByFormatIn4Bytes(IntegerUtil.toByteArray((int) src, littleEndian)));
     }
 
     /**
@@ -238,7 +247,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putLong(long src, boolean littleEndian) {
-        return this.putBytes(LongUtil.toByteArray(src, littleEndian));
+        return this.putBytes(this.reorderByFormatIn8Bytes(LongUtil.toByteArray(src, littleEndian)));
     }
 
     /**
@@ -249,7 +258,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putFloat(float src, boolean littleEndian) {
-        return this.putBytes(FloatUtil.toByteArray(src, littleEndian));
+        return this.putBytes(this.reorderByFormatIn4Bytes(FloatUtil.toByteArray(src, littleEndian)));
     }
 
     /**
@@ -260,7 +269,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putDouble(double src, boolean littleEndian) {
-        return this.putBytes(FloatUtil.toByteArray(src, littleEndian));
+        return this.putBytes(this.reorderByFormatIn8Bytes(FloatUtil.toByteArray(src, littleEndian)));
     }
 
     /**

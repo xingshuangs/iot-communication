@@ -1,6 +1,5 @@
-package com.github.xingshuangs.iot.utils;
+package com.github.xingshuangs.iot.protocol.common.buff;
 
-import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -58,6 +57,22 @@ public class ByteReadBuffTest {
         ByteReadBuff buff = new ByteReadBuff(new byte[]{(byte) 0x00, (byte) 0x20, (byte) 0x37, (byte) 0x36});
         int actual = buff.getInt32();
         assertEquals(2111286, actual);
+
+        buff = new ByteReadBuff(new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x2A, (byte) 0xF8}, EByteBuffFormat.DC_BA);
+        actual = buff.getInt32();
+        assertEquals(11000, actual);
+
+        buff = new ByteReadBuff(new byte[]{(byte) 0x2A, (byte) 0xF8, (byte) 0x00, (byte) 0x00}, EByteBuffFormat.BA_DC);
+        actual = buff.getInt32();
+        assertEquals(11000, actual);
+
+        buff = new ByteReadBuff(new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0xF8, (byte) 0x2A}, EByteBuffFormat.CD_AB);
+        actual = buff.getInt32();
+        assertEquals(11000, actual);
+
+        buff = new ByteReadBuff(new byte[]{(byte) 0xF8, (byte) 0x2A, (byte) 0x00, (byte) 0x00}, EByteBuffFormat.AB_CD);
+        actual = buff.getInt32();
+        assertEquals(11000, actual);
     }
 
     @Test
@@ -78,6 +93,18 @@ public class ByteReadBuffTest {
     public void getFloat64() {
         ByteReadBuff buff = new ByteReadBuff(new byte[]{(byte) 0x41, (byte) 0x03, (byte) 0x1F, (byte) 0xCA, (byte) 0xD6, (byte) 0x21, (byte) 0x39, (byte) 0xB7});
         double actual = buff.getFloat64();
+        assertEquals(156665.35455556, actual, 0.001);
+
+        buff = new ByteReadBuff(new byte[]{(byte) 0x03, (byte) 0x41, (byte) 0xCA, (byte) 0x1F, (byte) 0x21, (byte) 0xD6, (byte) 0xB7, (byte) 0x39}, EByteBuffFormat.CD_AB);
+        actual = buff.getFloat64();
+        assertEquals(156665.35455556, actual, 0.001);
+
+        buff = new ByteReadBuff(new byte[]{(byte) 0x39, (byte) 0xB7, (byte) 0xD6, (byte) 0x21, (byte) 0x1F, (byte) 0xCA, (byte) 0x41, (byte) 0x03}, EByteBuffFormat.BA_DC);
+        actual = buff.getFloat64();
+        assertEquals(156665.35455556, actual, 0.001);
+
+        buff = new ByteReadBuff(new byte[]{(byte) 0xB7, (byte) 0x39, (byte) 0x21, (byte) 0xD6, (byte) 0xCA, (byte) 0x1F, (byte) 0x03, (byte) 0x41}, EByteBuffFormat.AB_CD);
+        actual = buff.getFloat64();
         assertEquals(156665.35455556, actual, 0.001);
     }
 

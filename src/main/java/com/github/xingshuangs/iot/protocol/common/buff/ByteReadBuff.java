@@ -30,16 +30,37 @@ public class ByteReadBuff extends ByteBuffBase {
      * @param data 字节数组
      */
     public ByteReadBuff(byte[] data) {
-        this.data = data;
+        this(data, 0, EByteBuffFormat.DC_BA);
     }
 
     public ByteReadBuff(byte[] data, int offset) {
+        this(data, offset, EByteBuffFormat.DC_BA);
+    }
+
+    public ByteReadBuff(byte[] data, EByteBuffFormat format) {
+        this(data, 0, format);
+    }
+
+    public ByteReadBuff(byte[] data, int offset, EByteBuffFormat format) {
+        super(format);
         this.data = data;
         this.offset = offset;
     }
 
     public static ByteReadBuff newInstance(byte[] data) {
         return new ByteReadBuff(data);
+    }
+
+    public static ByteReadBuff newInstance(byte[] data, int offset) {
+        return new ByteReadBuff(data, offset);
+    }
+
+    public static ByteReadBuff newInstance(byte[] data, EByteBuffFormat format) {
+        return new ByteReadBuff(data, format);
+    }
+
+    public static ByteReadBuff newInstance(byte[] data, int offset, EByteBuffFormat format) {
+        return new ByteReadBuff(data, offset, format);
     }
 
     /**
@@ -266,7 +287,7 @@ public class ByteReadBuff extends ByteBuffBase {
      */
     public int getInt32(int index) {
         this.checkCondition(index);
-        return IntegerUtil.toInt32(this.data, index);
+        return IntegerUtil.toInt32(this.reorderByFormatIn4Bytes(this.data, index));
     }
 
     /**
@@ -277,7 +298,7 @@ public class ByteReadBuff extends ByteBuffBase {
      */
     public long getUInt32(int index) {
         this.checkCondition(index);
-        return IntegerUtil.toUInt32(this.data, index);
+        return IntegerUtil.toUInt32(this.reorderByFormatIn4Bytes(this.data, index));
     }
 
     /**
@@ -288,7 +309,7 @@ public class ByteReadBuff extends ByteBuffBase {
      */
     public float getFloat32(int index) {
         this.checkCondition(index);
-        return FloatUtil.toFloat32(this.data, index);
+        return FloatUtil.toFloat32(this.reorderByFormatIn4Bytes(this.data, index));
     }
 
     /**
@@ -299,7 +320,7 @@ public class ByteReadBuff extends ByteBuffBase {
      */
     public double getFloat64(int index) {
         this.checkCondition(index);
-        return FloatUtil.toFloat64(this.data, index);
+        return FloatUtil.toFloat64(this.reorderByFormatIn8Bytes(this.data, index));
     }
 
     /**

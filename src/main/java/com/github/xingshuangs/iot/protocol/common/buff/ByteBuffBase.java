@@ -25,6 +25,16 @@ public class ByteBuffBase {
     /**
      * 4字节数据根据格式重新排序
      *
+     * @param data 字节数组数据
+     * @return 4字节数组重排结果
+     */
+    protected byte[] reorderByFormatIn4Bytes(byte[] data) {
+        return this.reorderByFormatIn4Bytes(data, 0);
+    }
+
+    /**
+     * 4字节数据根据格式重新排序
+     *
      * @param data  字节数组数据
      * @param index 索引
      * @return 4字节数组重排结果
@@ -60,7 +70,16 @@ public class ByteBuffBase {
                 throw new HexParseException("未实现该数据格式");
         }
         return res;
+    }
 
+    /**
+     * 8字节数据根据格式重新排序
+     *
+     * @param data 字节数组数据
+     * @return 8字节数组重排结果
+     */
+    protected byte[] reorderByFormatIn8Bytes(byte[] data) {
+        return this.reorderByFormatIn8Bytes(data, 0);
     }
 
     /**

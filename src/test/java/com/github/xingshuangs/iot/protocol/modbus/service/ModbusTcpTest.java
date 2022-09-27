@@ -83,28 +83,28 @@ public class ModbusTcpTest {
         short data = plc.readInt16(2);
         assertEquals(10, data);
 
-        plc.writeUInt16(2, 20);
-        int i = plc.readUInt16(2);
+        plc.writeUInt16(3, 20);
+        int i = plc.readUInt16(3);
         assertEquals(20, i);
 
-        plc.writeInt32(2, 32);
-        int i1 = plc.readInt32(2);
+        plc.writeInt32(4, 32);
+        int i1 = plc.readInt32(4);
         assertEquals(32, i1);
 
-        plc.writeUInt32(2, 32L);
-        long l = plc.readUInt32(2);
+        plc.writeUInt32(6, 32L);
+        long l = plc.readUInt32(6);
         assertEquals(32L, l);
 
-        plc.writeFloat32(2, 12.12f);
-        float v = plc.readFloat32(2);
+        plc.writeFloat32(8, 12.12f);
+        float v = plc.readFloat32(8);
         assertEquals(12.12f, v, 0.0001);
 
-        plc.writeFloat64(2, 33.21);
-        double v1 = plc.readFloat64(2);
+        plc.writeFloat64(10, 33.21);
+        double v1 = plc.readFloat64(10);
         assertEquals(33.21, v1, 0.0001);
 
-        plc.writeString(2, "pppp");
-        String s = plc.readString(2, 4);
+        plc.writeString(14, "pppp");
+        String s = plc.readString(14, 4);
         assertEquals("pppp", s);
     }
 

@@ -1,6 +1,9 @@
 package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.EByteBuffFormat;
 import com.github.xingshuangs.iot.protocol.modbus.model.*;
 import com.github.xingshuangs.iot.utils.*;
 
@@ -56,7 +59,7 @@ public class ModbusTcp extends ModbusNetwork {
     }
 
     /**
-     * 单写线圈， modbus 1个寄存器占2个字节
+     * 写单线圈， modbus 1个寄存器占2个字节
      *
      * @param address    地址
      * @param coilStatus 线圈状态
@@ -71,7 +74,7 @@ public class ModbusTcp extends ModbusNetwork {
     }
 
     /**
-     * 多写线圈， modbus 1个寄存器占2个字节
+     * 写多线圈， modbus 1个寄存器占2个字节
      *
      * @param address    地址
      * @param coilStatus 线圈状态列表
@@ -127,7 +130,7 @@ public class ModbusTcp extends ModbusNetwork {
     }
 
     /**
-     * 读取保持寄存器， modbus 1个寄存器占2个字节
+     * 以数值形式写入保持寄存器， modbus 1个寄存器占2个字节
      *
      * @param address 地址
      * @param value   数值，占2个字节
@@ -144,7 +147,7 @@ public class ModbusTcp extends ModbusNetwork {
     }
 
     /**
-     * 读取保持寄存器， modbus 1个寄存器占2个字节
+     * 以字节数组形式写入保持寄存器， modbus 1个寄存器占2个字节
      *
      * @param address 地址
      * @param values  数据值列表
@@ -161,7 +164,7 @@ public class ModbusTcp extends ModbusNetwork {
     }
 
     /**
-     * 读取保持寄存器， modbus 1个寄存器占2个字节
+     * 以数值数组形式写入保持寄存器， modbus 1个寄存器占2个字节
      *
      * @param address 地址
      * @param values  数据值列表
@@ -210,7 +213,7 @@ public class ModbusTcp extends ModbusNetwork {
      */
     public short readInt16(int address) {
         byte[] res = this.readHoldRegister(address, 1);
-        return ShortUtil.toInt16(res);
+        return ByteReadBuff.newInstance(res, EByteBuffFormat.BA_DC).getInt16();
     }
 
     /**
@@ -221,7 +224,7 @@ public class ModbusTcp extends ModbusNetwork {
      */
     public int readUInt16(int address) {
         byte[] res = this.readHoldRegister(address, 1);
-        return ShortUtil.toUInt16(res);
+        return ByteReadBuff.newInstance(res, EByteBuffFormat.BA_DC).getUInt16();
     }
 
     /**
@@ -232,7 +235,7 @@ public class ModbusTcp extends ModbusNetwork {
      */
     public int readInt32(int address) {
         byte[] res = this.readHoldRegister(address, 2);
-        return IntegerUtil.toInt32(res);
+        return ByteReadBuff.newInstance(res, EByteBuffFormat.BA_DC).getInt32();
     }
 
     /**
@@ -243,7 +246,7 @@ public class ModbusTcp extends ModbusNetwork {
      */
     public long readUInt32(int address) {
         byte[] res = this.readHoldRegister(address, 2);
-        return IntegerUtil.toUInt32(res);
+        return ByteReadBuff.newInstance(res, EByteBuffFormat.BA_DC).getUInt32();
     }
 
     /**
@@ -254,7 +257,7 @@ public class ModbusTcp extends ModbusNetwork {
      */
     public float readFloat32(int address) {
         byte[] res = this.readHoldRegister(address, 2);
-        return FloatUtil.toFloat32(res);
+        return ByteReadBuff.newInstance(res, EByteBuffFormat.BA_DC).getFloat32();
     }
 
     /**
@@ -265,7 +268,7 @@ public class ModbusTcp extends ModbusNetwork {
      */
     public double readFloat64(int address) {
         byte[] res = this.readHoldRegister(address, 4);
-        return FloatUtil.toFloat64(res);
+        return ByteReadBuff.newInstance(res, EByteBuffFormat.BA_DC).getFloat64();
     }
 
     /**
@@ -291,7 +294,9 @@ public class ModbusTcp extends ModbusNetwork {
      * @param data    数据
      */
     public void writeInt16(int address, short data) {
-        byte[] bytes = ShortUtil.toByteArray(data);
+        byte[] bytes = ByteWriteBuff.newInstance(2, EByteBuffFormat.BA_DC)
+                .putShort(data)
+                .getData();
         this.writeHoldRegister(address, bytes);
     }
 
@@ -302,7 +307,9 @@ public class ModbusTcp extends ModbusNetwork {
      * @param data    数据
      */
     public void writeUInt16(int address, int data) {
-        byte[] bytes = ShortUtil.toByteArray(data);
+        byte[] bytes = ByteWriteBuff.newInstance(2, EByteBuffFormat.BA_DC)
+                .putShort(data)
+                .getData();
         this.writeHoldRegister(address, bytes);
     }
 
@@ -313,7 +320,9 @@ public class ModbusTcp extends ModbusNetwork {
      * @param data    数据
      */
     public void writeInt32(int address, int data) {
-        byte[] bytes = IntegerUtil.toByteArray(data);
+        byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.BA_DC)
+                .putInteger(data)
+                .getData();
         this.writeHoldRegister(address, bytes);
     }
 
@@ -324,7 +333,9 @@ public class ModbusTcp extends ModbusNetwork {
      * @param data    数据
      */
     public void writeUInt32(int address, long data) {
-        byte[] bytes = IntegerUtil.toByteArray(data);
+        byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.BA_DC)
+                .putInteger(data)
+                .getData();
         this.writeHoldRegister(address, bytes);
     }
 
@@ -335,7 +346,9 @@ public class ModbusTcp extends ModbusNetwork {
      * @param data    数据
      */
     public void writeFloat32(int address, float data) {
-        byte[] bytes = FloatUtil.toByteArray(data);
+        byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.BA_DC)
+                .putFloat(data)
+                .getData();
         this.writeHoldRegister(address, bytes);
     }
 
@@ -346,7 +359,9 @@ public class ModbusTcp extends ModbusNetwork {
      * @param data    数据
      */
     public void writeFloat64(int address, double data) {
-        byte[] bytes = FloatUtil.toByteArray(data);
+        byte[] bytes = ByteWriteBuff.newInstance(8, EByteBuffFormat.BA_DC)
+                .putDouble(data)
+                .getData();
         this.writeHoldRegister(address, bytes);
     }
 
