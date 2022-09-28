@@ -218,4 +218,35 @@ public class AddressUtilTest {
         assertEquals(1, requestItem.getByteAddress());
         assertEquals(0, requestItem.getBitAddress());
     }
+
+    @Test
+    public void parseV() {
+        RequestItem requestItem = AddressUtil.parseByte("V1.1", 3);
+        assertEquals(3, requestItem.getCount());
+        assertEquals(EArea.DATA_BLOCKS, requestItem.getArea());
+        assertEquals(1, requestItem.getDbNumber());
+        assertEquals(1, requestItem.getByteAddress());
+        assertEquals(0, requestItem.getBitAddress());
+
+        requestItem = AddressUtil.parseByte("V2", 3);
+        assertEquals(3, requestItem.getCount());
+        assertEquals(EArea.DATA_BLOCKS, requestItem.getArea());
+        assertEquals(1, requestItem.getDbNumber());
+        assertEquals(2, requestItem.getByteAddress());
+        assertEquals(0, requestItem.getBitAddress());
+
+        requestItem = AddressUtil.parseByte("V100", 3);
+        assertEquals(3, requestItem.getCount());
+        assertEquals(EArea.DATA_BLOCKS, requestItem.getArea());
+        assertEquals(1, requestItem.getDbNumber());
+        assertEquals(100, requestItem.getByteAddress());
+        assertEquals(0, requestItem.getBitAddress());
+
+        requestItem = AddressUtil.parseBit("V6.5");
+        assertEquals(1, requestItem.getCount());
+        assertEquals(EArea.DATA_BLOCKS, requestItem.getArea());
+        assertEquals(1, requestItem.getDbNumber());
+        assertEquals(6, requestItem.getByteAddress());
+        assertEquals(5, requestItem.getBitAddress());
+    }
 }

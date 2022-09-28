@@ -6,7 +6,12 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EParamVariableType;
 import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
 
 /**
- * S7协议地址解析工具  DB15.20.1
+ * S7协议地址解析工具
+ * DB1.0.1、DB1.1
+ * M1.1、M1
+ * V1.1、V1
+ * I0.1、I0
+ * Q0.1、Q0
  *
  * @author xingshuang
  */
@@ -59,21 +64,10 @@ public class AddressUtil {
         RequestItem item = new RequestItem();
         item.setVariableType(variableType);
         item.setCount(count);
-        item.setArea(parseArea(addList[0].substring(0, 1)));
-
-        if (item.getArea() == EArea.DATA_BLOCKS) {
-            int dbNumber = addList[0].contains("DB") ? Integer.valueOf(addList[0].substring(2)) : Integer.valueOf(addList[0].substring(1));
-            item.setDbNumber(dbNumber);
-            item.setByteAddress(addList.length >= 2 ? Integer.valueOf(addList[1]) : 0);
-            // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0；本质上不是bit时，位索引是不是0都不受影响的
-            int bitAddress = addList.length >= 3 && variableType == EParamVariableType.BIT ? Integer.valueOf(addList[2]) : 0;
-            item.setBitAddress(bitAddress);
-        } else {
-            item.setByteAddress(Integer.valueOf(addList[0].substring(1)));
-            // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0；本质上不是bit时，位索引是不是0都不受影响的
-            int bitAddress = addList.length >= 2 && variableType == EParamVariableType.BIT ? Integer.valueOf(addList[1]) : 0;
-            item.setBitAddress(bitAddress);
-        }
+        item.setArea(parseArea(addList));
+        item.setDbNumber(parseDB(addList));
+        item.setByteAddress(parseByteAddress(addList));
+        item.setBitAddress(parseBitAddress(addList, variableType));
         if (item.getBitAddress() > 7) {
             throw new IllegalArgumentException("address地址信息格式错误，位索引只能[0-7]");
         }
@@ -83,11 +77,11 @@ public class AddressUtil {
     /**
      * 区域解析
      *
-     * @param area 区域
+     * @param addList 地址信息
      * @return 区域地址，枚举类型
      */
-    private static EArea parseArea(String area) {
-        switch (area) {
+    private static EArea parseArea(String[] addList) {
+        switch (addList[0].substring(0, 1)) {
             case "I":
                 return EArea.INPUTS;
             case "Q":
@@ -95,7 +89,9 @@ public class AddressUtil {
             case "M":
                 return EArea.FLAGS;
             case "D":
-            case "DB":
+                return EArea.DATA_BLOCKS;
+            case "V":
+                //****************** 对于200smartPLC的V区，就是DB1.X，例如，V1=DB1.1，V100=DB1.100 **********************/
                 return EArea.DATA_BLOCKS;
             case "T":
                 return EArea.S7_TIMERS;
@@ -103,6 +99,58 @@ public class AddressUtil {
                 return EArea.S7_COUNTERS;
             default:
                 throw new IllegalArgumentException("传入的参数有误，无法解析Area");
+        }
+    }
+
+    /**
+     * DB块索引解析
+     *
+     * @param addList 地址信息
+     * @return DB块索引
+     */
+    private static int parseDB(String[] addList) {
+        switch (addList[0].substring(0, 1)) {
+            case "D":
+                return addList[0].contains("DB") ?
+                        Integer.valueOf(addList[0].substring(2))
+                        : Integer.valueOf(addList[0].substring(1));
+            case "V":
+                //****************** 对于200smartPLC的V区，就是DB1.X，例如，V1=DB1.1，V100=DB1.100 **********************/
+                return 1;
+            default:
+                return 0;
+        }
+    }
+
+    /**
+     * 字节索引解析
+     *
+     * @param addList 地址信息
+     * @return 字节索引
+     */
+    private static int parseByteAddress(String[] addList) {
+        switch (addList[0].substring(0, 1)) {
+            case "D":
+                return addList.length >= 2 ? Integer.valueOf(addList[1]) : 0;
+            default:
+                return Integer.valueOf(addList[0].substring(1));
+        }
+    }
+
+    /**
+     * 位索引解析
+     *
+     * @param addList 地址信息
+     * @return 位索引
+     */
+    private static int parseBitAddress(String[] addList, EParamVariableType variableType) {
+        switch (addList[0].substring(0, 1)) {
+            case "D":
+                // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0；本质上不是bit时，位索引是不是0都不受影响的
+                return addList.length >= 3 && variableType == EParamVariableType.BIT ? Integer.valueOf(addList[2]) : 0;
+            default:
+                // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0；本质上不是bit时，位索引是不是0都不受影响的
+                return addList.length >= 2 && variableType == EParamVariableType.BIT ? Integer.valueOf(addList[1]) : 0;
         }
     }
 }

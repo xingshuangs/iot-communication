@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <name>iot-communication</name>
-    <description>iot communication tool</description>
+    <description>iot communication tool 目前支持S7、ModbusTCP通信协议</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
