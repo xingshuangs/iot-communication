@@ -47,4 +47,21 @@ public class HexUtil {
         }
         return out;
     }
+
+    /**
+     * 将字节数组转换为16进制字符串，并且按空格隔开
+     *
+     * @param src 字节数组
+     * @return 字符串
+     */
+    public static String toHexString(byte[] src) {
+        if (src == null || src.length == 0) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (byte b : src) {
+            sb.append(String.format("%02X", b)).append(" ");
+        }
+        return sb.toString().trim();
+    }
 }
