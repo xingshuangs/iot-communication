@@ -7,7 +7,10 @@
 
 ## CopyRight
 
-@2019-2022 Oscura, All Rights Reserved
+@2019-2022 Oscura, All Rights Reserved <br>
+You can add QQ(759101350) if you have questions, the author will give answers in his spare time.<br>
+如果有任何问题，可以添加QQ(759101350)，作者在空余时间会做解答。<br>
+
 
 ## How to get（如何获取）
 
