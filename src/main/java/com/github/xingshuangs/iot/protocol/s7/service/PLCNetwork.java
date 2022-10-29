@@ -199,7 +199,7 @@ public class PLCNetwork extends SocketBasic {
      * @param requestItems 请求项列表
      * @return 数据项列表
      */
-    protected List<DataItem> readS7Data(List<RequestItem> requestItems) {
+    public List<DataItem> readS7Data(List<RequestItem> requestItems) {
         S7Data req = S7Data.createReadDefault();
         ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
         parameter.addItem(requestItems);
@@ -214,7 +214,7 @@ public class PLCNetwork extends SocketBasic {
      * @param item 请求项
      * @return 数据项
      */
-    protected DataItem readS7Data(RequestItem item) {
+    public DataItem readS7Data(RequestItem item) {
         return this.readS7Data(Collections.singletonList(item)).get(0);
     }
 
@@ -224,7 +224,7 @@ public class PLCNetwork extends SocketBasic {
      * @param requestItem 请求项
      * @param dataItem    数据项
      */
-    protected void writeS7Data(RequestItem requestItem, DataItem dataItem) {
+    public void writeS7Data(RequestItem requestItem, DataItem dataItem) {
         this.writeS7Data(Collections.singletonList(requestItem), Collections.singletonList(dataItem));
     }
 
@@ -234,7 +234,7 @@ public class PLCNetwork extends SocketBasic {
      * @param requestItems 请求项列表
      * @param dataItems    数据项列表
      */
-    protected void writeS7Data(List<RequestItem> requestItems, List<DataItem> dataItems) {
+    public void writeS7Data(List<RequestItem> requestItems, List<DataItem> dataItems) {
         if (requestItems.size() != dataItems.size()) {
             throw new S7CommException("写操作过程中，requestItems和dataItems数据个数不一致");
         }

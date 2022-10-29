@@ -98,6 +98,16 @@ public class ByteReadBuff extends ByteBuffBase {
     }
 
     /**
+     * 获取剩余所有字节
+     *
+     * @return 字节数组
+     */
+    public byte[] getBytes() {
+        int length = this.data.length - this.offset;
+        return this.getBytes(length);
+    }
+
+    /**
      * 获取字节数组数据
      *
      * @param length 长度

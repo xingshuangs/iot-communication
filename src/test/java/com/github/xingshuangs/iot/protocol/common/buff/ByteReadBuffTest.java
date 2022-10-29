@@ -29,6 +29,11 @@ public class ByteReadBuffTest {
         buff.getByte();
         byte[] actual = buff.getBytes(2);
         assertArrayEquals(new byte[]{(byte) 0x33, (byte) 0x22}, actual);
+
+        buff = new ByteReadBuff(new byte[]{(byte) 0x55, (byte) 0x33, (byte) 0x22});
+        buff.getByte();
+        actual = buff.getBytes();
+        assertArrayEquals(new byte[]{(byte) 0x33, (byte) 0x22}, actual);
     }
 
     @Test
