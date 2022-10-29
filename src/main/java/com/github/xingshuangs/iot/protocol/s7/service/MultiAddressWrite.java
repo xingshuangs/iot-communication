@@ -32,19 +32,19 @@ public class MultiAddressWrite {
 
     public MultiAddressWrite addBoolean(String address, boolean data) {
         this.requestItems.add(AddressUtil.parseBit(address));
-        this.dataItems.add(DataItem.byBoolean(data));
+        this.dataItems.add(DataItem.createByBoolean(data));
         return this;
     }
 
     public MultiAddressWrite addByte(String address, byte data) {
         this.requestItems.add(AddressUtil.parseByte(address, 1));
-        this.dataItems.add(DataItem.byByte(data));
+        this.dataItems.add(DataItem.createByByte(data));
         return this;
     }
 
     public MultiAddressWrite addByte(String address, byte[] data) {
         this.requestItems.add(AddressUtil.parseByte(address, data.length));
-        this.dataItems.add(DataItem.byByte(data));
+        this.dataItems.add(DataItem.createByByte(data));
         return this;
     }
 

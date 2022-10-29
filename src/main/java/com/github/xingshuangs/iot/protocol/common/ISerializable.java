@@ -1,4 +1,4 @@
-package com.github.xingshuangs.iot.protocol.s7.serializer;
+package com.github.xingshuangs.iot.protocol.common;
 
 
 /**
@@ -11,17 +11,17 @@ public interface ISerializable {
     /**
      * 读数据
      *
-     * @param targetClass
-     * @param <T>
-     * @return
+     * @param targetClass 目标类
+     * @param <T>         类型
+     * @return 类型对象
      */
     <T> T read(Class<T> targetClass);
 
     /**
      * 写数据
      *
-     * @param targetBean
-     * @param <T>
+     * @param targetBean 目标对象
+     * @param <T>        类型
      */
     <T> void write(T targetBean);
 }

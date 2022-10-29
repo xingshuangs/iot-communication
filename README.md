@@ -148,6 +148,54 @@ class Demo {
     }
 }
 ```
+
+> serializer(序列化的方式)
+```java
+@Data
+public class DemoBean {
+
+    @S7Variable(address = "DB1.0.1", type = EDataType.BOOL)
+    private boolean bitData;
+
+    @S7Variable(address = "DB1.1", type = EDataType.BYTE, count = 3)
+    private byte[] byteData;
+
+    @S7Variable(address = "DB1.4", type = EDataType.UINT16)
+    private int uint16Data;
+
+    @S7Variable(address = "DB1.6", type = EDataType.INT16)
+    private short int16Data;
+
+    @S7Variable(address = "DB1.8", type = EDataType.UINT32)
+    private long uint32Data;
+
+    @S7Variable(address = "DB1.12", type = EDataType.INT32)
+    private int int32Data;
+
+    @S7Variable(address = "DB1.16", type = EDataType.FLOAT32)
+    private float float32Data;
+
+    @S7Variable(address = "DB1.20", type = EDataType.FLOAT64)
+    private double float64Data;
+}
+
+class Demo {
+    public static void main(String[] args) {
+        S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+        S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
+        DemoBean bean = s7Serializer.read(DemoBean.class);
+        bean.setBitData(true);
+        bean.setByteData(new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03});
+        bean.setUint16Data(42767);
+        bean.setInt16Data((short) 32767);
+        bean.setUint32Data(3147483647L);
+        bean.setInt32Data(2147483647);
+        bean.setFloat32Data(3.14f);
+        bean.setFloat64Data(4.15);
+        s7Serializer.write(bean);
+    }
+}
+```
 ---
 
 ## 2、ModbusTCP protocol（ModbusTCP协议）

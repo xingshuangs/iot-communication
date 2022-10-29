@@ -23,7 +23,6 @@ public class S7PLC extends PLCNetwork {
 
     public static final String IP = "127.0.0.1";
 
-
     public S7PLC() {
         this(EPlcType.S1200, IP, PORT, 0, 0);
     }
@@ -358,7 +357,7 @@ public class S7PLC extends PLCNetwork {
      * @param data    boolean数据
      */
     public void writeBoolean(String address, boolean data) {
-        this.writeS7Data(AddressUtil.parseBit(address), DataItem.byBoolean(data));
+        this.writeS7Data(AddressUtil.parseBit(address), DataItem.createByBoolean(data));
     }
 
     /**
@@ -368,7 +367,7 @@ public class S7PLC extends PLCNetwork {
      * @param data    字节数据
      */
     public void writeByte(String address, byte data) {
-        this.writeS7Data(AddressUtil.parseByte(address, 1), DataItem.byByte(data));
+        this.writeS7Data(AddressUtil.parseByte(address, 1), DataItem.createByByte(data));
     }
 
     /**
@@ -378,7 +377,7 @@ public class S7PLC extends PLCNetwork {
      * @param data    字节列表数据
      */
     public void writeByte(String address, byte[] data) {
-        this.writeS7Data(AddressUtil.parseByte(address, data.length), DataItem.byByte(data));
+        this.writeS7Data(AddressUtil.parseByte(address, data.length), DataItem.createByByte(data));
     }
 
     /**

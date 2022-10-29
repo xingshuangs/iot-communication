@@ -80,8 +80,8 @@ public class DataItem extends ReturnItem implements IByteArray {
      * @param data 字节数据
      * @return DataItem数据
      */
-    public static DataItem byByte(byte data) {
-        return byByte(new byte[]{data});
+    public static DataItem createByByte(byte data) {
+        return createByByte(new byte[]{data});
     }
 
     /**
@@ -90,7 +90,7 @@ public class DataItem extends ReturnItem implements IByteArray {
      * @param data 字节数组
      * @return DataItem数据
      */
-    public static DataItem byByte(byte[] data) {
+    public static DataItem createByByte(byte[] data) {
         if (data == null) {
             throw new IllegalArgumentException("data数据不能为null");
         }
@@ -108,7 +108,7 @@ public class DataItem extends ReturnItem implements IByteArray {
      * @param data boolean数据
      * @return DataItem数据
      */
-    public static DataItem byBoolean(boolean data) {
+    public static DataItem createByBoolean(boolean data) {
         DataItem dataItem = new DataItem();
         dataItem.setReturnCode(EReturnCode.RESERVED);
         dataItem.setVariableType(EDataVariableType.BIT);

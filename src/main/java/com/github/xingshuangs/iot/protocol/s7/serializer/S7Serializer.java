@@ -2,7 +2,9 @@ package com.github.xingshuangs.iot.protocol.s7.serializer;
 
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
+import com.github.xingshuangs.iot.protocol.common.ISerializable;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.common.enums.EDataType;
 import com.github.xingshuangs.iot.protocol.s7.model.DataItem;
 import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
@@ -25,6 +27,16 @@ public class S7Serializer implements ISerializable {
 
     public S7Serializer(S7PLC s7PLC) {
         this.s7PLC = s7PLC;
+    }
+
+    /**
+     * 静态方法实例对象
+     *
+     * @param s7PLC plc对象
+     * @return 对象实例
+     */
+    public static S7Serializer newInstance(S7PLC s7PLC) {
+        return new S7Serializer(s7PLC);
     }
 
     @Override
@@ -53,7 +65,16 @@ public class S7Serializer implements ISerializable {
 
     @Override
     public <T> void write(T targetBean) {
+        // 解析参数
+        List<S7ParseData> s7ParseDataList = this.parseBean(targetBean.getClass());
 
+        // 填充字节数据
+        s7ParseDataList = this.fillData(targetBean, s7ParseDataList);
+
+        // 写入PLC
+        List<RequestItem> requestItems = s7ParseDataList.stream().map(S7ParseData::getRequestItem).collect(Collectors.toList());
+        List<DataItem> dataItems = s7ParseDataList.stream().map(S7ParseData::getDataItem).collect(Collectors.toList());
+        this.s7PLC.writeS7Data(requestItems, dataItems);
     }
 
     /**
@@ -155,6 +176,63 @@ public class S7Serializer implements ISerializable {
 
         } catch (Exception e) {
             throw new S7CommException("序列化提取数据错误:" + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 填充数据
+     *
+     * @param targetBean      目标对象
+     * @param s7ParseDataList 解析后的数据列表
+     * @param <T>             类型
+     * @return 有效的解析后的数据列表
+     */
+    private <T> List<S7ParseData> fillData(T targetBean, List<S7ParseData> s7ParseDataList) {
+        try {
+            for (S7ParseData item : s7ParseDataList) {
+                item.getField().setAccessible(true);
+                Object data = item.getField().get(targetBean);
+                if (data == null) {
+                    continue;
+                }
+                switch (item.getDataType()) {
+                    case BOOL:
+                        item.setDataItem(DataItem.createByBoolean((Boolean) data));
+                        break;
+                    case BYTE:
+                        item.setDataItem(DataItem.createByByte((byte[]) data));
+                        break;
+                    case UINT16:
+                        item.setDataItem(DataItem.createByByte(ByteWriteBuff.newInstance(2)
+                                .putShort((Integer) data).getData()));
+                        break;
+                    case INT16:
+                        item.setDataItem(DataItem.createByByte(ByteWriteBuff.newInstance(2)
+                                .putShort((Short) data).getData()));
+                        break;
+                    case UINT32:
+                        item.setDataItem(DataItem.createByByte(ByteWriteBuff.newInstance(4)
+                                .putInteger((Long) data).getData()));
+                        break;
+                    case INT32:
+                        item.setDataItem(DataItem.createByByte(ByteWriteBuff.newInstance(4)
+                                .putInteger((Integer) data).getData()));
+                        break;
+                    case FLOAT32:
+                        item.setDataItem(DataItem.createByByte(ByteWriteBuff.newInstance(4)
+                                .putFloat((Float) data).getData()));
+                        break;
+                    case FLOAT64:
+                        item.setDataItem(DataItem.createByByte(ByteWriteBuff.newInstance(8)
+                                .putDouble((Double) data).getData()));
+                        break;
+                    default:
+                        throw new S7CommException("无法识别数据类型");
+                }
+            }
+            return s7ParseDataList.stream().filter(x -> x.getDataItem() != null).collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new S7CommException("序列化填充字节数据错误:" + e.getMessage(), e);
         }
     }
 }

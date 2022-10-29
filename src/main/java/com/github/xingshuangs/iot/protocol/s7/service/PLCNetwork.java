@@ -12,6 +12,7 @@ import com.github.xingshuangs.iot.protocol.s7.model.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -45,6 +46,15 @@ public class PLCNetwork extends SocketBasic {
      * 最大的PDU长度
      */
     private int maxPduLength = 0;
+
+    /**
+     * 通信回调
+     */
+    private Consumer<byte[]> comCallback;
+
+    public void setComCallback(Consumer<byte[]> comCallback) {
+        this.comCallback = comCallback;
+    }
 
     public PLCNetwork() {
         super();
@@ -127,9 +137,13 @@ public class PLCNetwork extends SocketBasic {
      */
     protected S7Data readFromServer(S7Data req) {
         byte[] sendData = req.toByteArray();
-        if (this.maxPduLength > 0 && sendData.length > this.maxPduLength) {
-            throw new S7CommException("发送请求的字节数过长，已经大于最大的PDU长度");
+        if (this.comCallback != null) {
+            this.comCallback.accept(sendData);
         }
+//        if (this.maxPduLength > 0 && sendData.length > this.maxPduLength) {
+//            throw new S7CommException("发送请求的字节数过长，已经大于最大的PDU长度");
+//        }
+
         TPKT tpkt;
         int len;
         byte[] remain;
@@ -149,6 +163,10 @@ public class PLCNetwork extends SocketBasic {
             throw new S7CommException(" TPKT后面的数据长度，长度不一致");
         }
         S7Data ack = S7Data.fromBytes(tpkt, remain);
+
+        if (this.comCallback != null) {
+            this.comCallback.accept(ack.toByteArray());
+        }
         this.checkResult(req, ack);
         return ack;
     }
