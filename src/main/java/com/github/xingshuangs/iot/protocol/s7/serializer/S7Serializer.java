@@ -2,7 +2,7 @@ package com.github.xingshuangs.iot.protocol.s7.serializer;
 
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
-import com.github.xingshuangs.iot.protocol.common.ISerializable;
+import com.github.xingshuangs.iot.protocol.common.IPLCSerializable;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.common.enums.EDataType;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  *
  * @author xingshuang
  */
-public class S7Serializer implements ISerializable {
+public class S7Serializer implements IPLCSerializable {
 
     private S7PLC s7PLC;
 

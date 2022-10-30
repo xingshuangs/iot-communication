@@ -2,9 +2,11 @@ package com.github.xingshuangs.iot.protocol.common;
 
 
 /**
+ * 一个对象字节相关的接口
+ *
  * @author xingshuang
  */
-public interface IByteArray {
+public interface IObjectByteArray {
 
     /**
      * 获取字节数组长度

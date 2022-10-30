@@ -2,7 +2,7 @@ package com.github.xingshuangs.iot.protocol.modbus.model;
 
 
 import com.github.xingshuangs.iot.exceptions.ModbusCommException;
-import com.github.xingshuangs.iot.protocol.common.IByteArray;
+import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.modbus.enums.EMbFunctionCode;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
@@ -14,7 +14,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
-public class MbPdu implements IByteArray {
+public class MbPdu implements IObjectByteArray {
 
     /**
      * 功能码

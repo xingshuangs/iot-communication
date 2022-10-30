@@ -25,10 +25,10 @@ public enum EDataType {
 
     FLOAT32("float32", 4),
 
-    FLOAT64("float64", 8);
+    FLOAT64("float64", 8),
 
-// 字符串比较特殊，暂不实现
-//    STRING("string", 1),
+    // S7协议字符串比较特殊，暂不实现
+    STRING("string", 1);
 
 //    UNKNOWN("unknown", 0);
 

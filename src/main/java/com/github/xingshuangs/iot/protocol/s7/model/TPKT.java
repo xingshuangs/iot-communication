@@ -1,7 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IByteArray;
+import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import lombok.Getter;
  * @author xingshuang
  */
 @Getter
-public class TPKT implements IByteArray {
+public class TPKT implements IObjectByteArray {
 
     public static final int BYTE_LENGTH = 4;
 

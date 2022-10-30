@@ -2,7 +2,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
-import com.github.xingshuangs.iot.protocol.common.IByteArray;
+import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
@@ -16,7 +16,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PlcControlParameter extends Parameter implements IByteArray {
+public class PlcControlParameter extends Parameter implements IObjectByteArray {
 
     public static final String P_PROGRAM = "P_PROGRAM";
 

@@ -1,7 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IByteArray;
+import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author xingshuang
  */
 @Data
-public class Header implements IByteArray {
+public class Header implements IObjectByteArray {
 
     private static final AtomicInteger index = new AtomicInteger();
 

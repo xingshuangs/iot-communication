@@ -1,7 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IByteArray;
+import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.s7.enums.EReturnCode;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
@@ -12,7 +12,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
-public class ReturnItem implements IByteArray {
+public class ReturnItem implements IObjectByteArray {
 
     /**
      * 返回码 <br>

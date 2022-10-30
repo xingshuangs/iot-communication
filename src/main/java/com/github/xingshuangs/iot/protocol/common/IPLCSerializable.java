@@ -2,11 +2,11 @@ package com.github.xingshuangs.iot.protocol.common;
 
 
 /**
- * S7序列化接口
+ * PLC序列化接口
  *
  * @author xingshuang
  */
-public interface ISerializable {
+public interface IPLCSerializable {
 
     /**
      * 读数据

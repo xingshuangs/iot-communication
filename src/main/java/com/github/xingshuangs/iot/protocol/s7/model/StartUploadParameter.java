@@ -1,7 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IByteArray;
+import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class StartUploadParameter extends Parameter implements IByteArray {
+public class StartUploadParameter extends Parameter implements IObjectByteArray {
 
     /**
      * 后续是否还有更多数据

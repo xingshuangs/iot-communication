@@ -1,7 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IByteArray;
+import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
@@ -12,7 +12,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
-public class COTP implements IByteArray {
+public class COTP implements IObjectByteArray {
 
     /**
      * 长度（但并不包含length这个字段）<br>

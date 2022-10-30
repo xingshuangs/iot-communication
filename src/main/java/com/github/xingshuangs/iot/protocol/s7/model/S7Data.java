@@ -1,7 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IByteArray;
+import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
 
@@ -13,7 +13,7 @@ import java.util.Arrays;
  * @author xingshuang
  */
 @Data
-public class S7Data implements IByteArray {
+public class S7Data implements IObjectByteArray {
 
     /**
      * TPKT

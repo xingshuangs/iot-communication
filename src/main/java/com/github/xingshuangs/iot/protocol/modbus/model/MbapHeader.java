@@ -1,7 +1,7 @@
 package com.github.xingshuangs.iot.protocol.modbus.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IByteArray;
+import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author xingshuang
  */
 @Data
-public class MbapHeader implements IByteArray {
+public class MbapHeader implements IObjectByteArray {
 
     private static final AtomicInteger index = new AtomicInteger();
 

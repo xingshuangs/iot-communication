@@ -1,7 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IByteArray;
+import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.s7.enums.EArea;
@@ -16,7 +16,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
-public class RequestItem implements IByteArray {
+public class RequestItem implements IObjectByteArray {
 
     public static final int BYTE_LENGTH = 12;
 

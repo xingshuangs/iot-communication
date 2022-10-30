@@ -1,7 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IByteArray;
+import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
 import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
@@ -17,7 +17,7 @@ import java.util.List;
  * @author xingshuang
  */
 @Data
-public class Datum implements IByteArray {
+public class Datum implements IObjectByteArray {
 
     /**
      * 数据项
