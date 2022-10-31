@@ -68,7 +68,6 @@ public class SocketBasic {
     public SocketBasic(String host, int port) {
         this.socketError = new AtomicBoolean(false);
         this.socketAddress = new InetSocketAddress(host, port);
-//        this.executorService = Executors.newSingleThreadExecutor();
     }
     // endregion
 
@@ -105,7 +104,6 @@ public class SocketBasic {
             this.socket.connect(this.socketAddress, this.connectTimeout);
             this.socketError.set(false);
             this.doAfterConnected();
-//            log.debug("实例化一个新的socket对象");
             return socket;
         } catch (IOException e) {
             throw new SocketRuntimeException(e);

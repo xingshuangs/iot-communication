@@ -93,6 +93,14 @@ public class DataUnit<T> {
         this.dataType = DataTypeEm.valueFrom(dataType);
     }
 
+    public DataUnit(int byteOffset, int bitOffset, int count, String dataType, String name) {
+        this.byteOffset = byteOffset;
+        this.bitOffset = bitOffset;
+        this.count = count;
+        this.dataType = DataTypeEm.valueFrom(dataType);
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }

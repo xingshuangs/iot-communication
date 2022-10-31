@@ -33,7 +33,6 @@ public class ByteArraySerializer implements IByteArraySerializable {
                 }
 
                 this.checkByteArrayVariable(variable);
-                field.setAccessible(true);
                 this.extractData(buff, result, field, variable);
             }
             return result;
@@ -43,6 +42,7 @@ public class ByteArraySerializer implements IByteArraySerializable {
     }
 
     private <T> void extractData(ByteReadBuff buff, T result, Field field, ByteArrayVariable variable) throws IllegalAccessException {
+        field.setAccessible(true);
         switch (variable.type()) {
             case BOOL:
                 List<Boolean> booleans = IntStream.range(0, variable.count()).boxed()

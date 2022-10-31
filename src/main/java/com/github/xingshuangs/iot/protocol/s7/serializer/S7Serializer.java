@@ -45,7 +45,7 @@ public class S7Serializer implements IPLCSerializable {
         List<S7ParseData> s7ParseDataList = this.parseBean(targetClass);
 
         if (s7ParseDataList.isEmpty()) {
-            throw new S7CommException("解析出的数据个数为空，无法读取数据");
+            throw new S7CommException("解析出的注解数据个数为空，无法读取数据");
         }
 
         // 读取PLC数据
@@ -67,6 +67,10 @@ public class S7Serializer implements IPLCSerializable {
     public <T> void write(T targetBean) {
         // 解析参数
         List<S7ParseData> s7ParseDataList = this.parseBean(targetBean.getClass());
+
+        if (s7ParseDataList.isEmpty()) {
+            throw new S7CommException("解析出的注解数据个数为空，无法读取数据");
+        }
 
         // 填充字节数据
         s7ParseDataList = this.fillData(targetBean, s7ParseDataList);
