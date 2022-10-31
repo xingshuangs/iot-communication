@@ -1,4 +1,4 @@
-package com.github.xingshuangs.iot.protocol.common;
+package com.github.xingshuangs.iot.protocol.common.serializer;
 
 
 /**

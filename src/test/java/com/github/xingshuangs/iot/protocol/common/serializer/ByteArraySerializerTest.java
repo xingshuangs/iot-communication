@@ -7,8 +7,6 @@ import static org.junit.Assert.*;
 
 public class ByteArraySerializerTest {
 
-    private ByteArraySerializer serializer = new ByteArraySerializer();
-
     @Test
     public void toObject() {
         byte[] src = new byte[]{(byte) 0x81,
@@ -25,6 +23,7 @@ public class ByteArraySerializerTest {
                 // 23A
                 (byte) 0x32, (byte) 0x33, (byte) 0x41};
 
+        ByteArraySerializer serializer = ByteArraySerializer.newInstance();
         ByteArrayBean bean = serializer.toObject(ByteArrayBean.class, src);
 //        System.out.println(bean.toString());
         assertTrue(bean.getBoolData());
@@ -47,7 +46,7 @@ public class ByteArraySerializerTest {
         assertArrayEquals(new Integer[]{523975585, 523975585}, listBean.getInt32Data().toArray(new Integer[0]));
         assertArrayEquals(new Float[]{33.16f, -15.62f}, listBean.getFloat32Data().toArray(new Float[0]));
         assertArrayEquals(new Double[]{156665.35455556, -56516.66664}, listBean.getFloat64Data().toArray(new Double[0]));
-        assertEquals("23A", bean.getStringData());
+        assertEquals("23A", listBean.getStringData());
     }
 
     @Test
@@ -66,6 +65,7 @@ public class ByteArraySerializerTest {
                 // 23A
                 (byte) 0x32, (byte) 0x33, (byte) 0x41};
 
+        ByteArraySerializer serializer = ByteArraySerializer.newInstance();
         ByteArrayListBean listBean = serializer.toObject(ByteArrayListBean.class, expect);
         byte[] actual = serializer.toByteArray(listBean);
         assertArrayEquals(expect, actual);
@@ -73,6 +73,7 @@ public class ByteArraySerializerTest {
 
     @Test
     public void toByteArray() {
+        ByteArraySerializer serializer = ByteArraySerializer.newInstance();
         byte[] expect = new byte[]{(byte) 0x01,
                 // 0, 25689
                 (byte) 0x00, (byte) 0x00, (byte) 0x64, (byte) 0x59,
@@ -87,8 +88,26 @@ public class ByteArraySerializerTest {
                 // 23A
                 (byte) 0x32, (byte) 0x33, (byte) 0x41};
 
-        ByteArrayBean listBean = serializer.toObject(ByteArrayBean.class, expect);
-        byte[] actual = serializer.toByteArray(listBean);
+        ByteArrayBean bean = serializer.toObject(ByteArrayBean.class, expect);
+        byte[] actual = serializer.toByteArray(bean);
+        assertArrayEquals(expect, actual);
+
+        expect = new byte[]{(byte) 0x81,
+                // 0, 25689
+                (byte) 0x00, (byte) 0x00, (byte) 0x64, (byte) 0x59,
+                // 523975585
+                (byte) 0x1F, (byte) 0x3B, (byte) 0x3B, (byte) 0xA1, (byte) 0x1F, (byte) 0x3B, (byte) 0x3B, (byte) 0xA1,
+                // 33.16f, -15.62f
+                (byte) 0x42, (byte) 0x04, (byte) 0xA3, (byte) 0xD7, (byte) 0xC1, (byte) 0x79, (byte) 0xEB, (byte) 0x85,
+                // 156665.35455556
+                (byte) 0x41, (byte) 0x03, (byte) 0x1F, (byte) 0xCA, (byte) 0xD6, (byte) 0x21, (byte) 0x39, (byte) 0xB7,
+                // -56516.66664
+                (byte) 0xC0, (byte) 0xEB, (byte) 0x98, (byte) 0x95, (byte) 0x55, (byte) 0x1D, (byte) 0x68, (byte) 0xC7,
+                // 23A
+                (byte) 0x32, (byte) 0x33, (byte) 0x41};
+
+        ByteArrayListBean listBean = serializer.toObject(ByteArrayListBean.class, expect);
+        actual = serializer.toByteArray(listBean);
         assertArrayEquals(expect, actual);
     }
 }

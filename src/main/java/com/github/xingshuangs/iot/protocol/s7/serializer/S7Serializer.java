@@ -2,7 +2,7 @@ package com.github.xingshuangs.iot.protocol.s7.serializer;
 
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
-import com.github.xingshuangs.iot.protocol.common.IPLCSerializable;
+import com.github.xingshuangs.iot.protocol.common.serializer.IPLCSerializable;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.common.enums.EDataType;
@@ -141,7 +141,6 @@ public class S7Serializer implements IPLCSerializable {
      * @return 目标类型的实体对象
      */
     private <T> T extractData(Class<T> targetClass, List<S7ParseData> s7ParseDataList) {
-
         try {
             final T result = targetClass.newInstance();
             for (S7ParseData item : s7ParseDataList) {

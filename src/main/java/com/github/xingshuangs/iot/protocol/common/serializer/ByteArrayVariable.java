@@ -1,7 +1,6 @@
 package com.github.xingshuangs.iot.protocol.common.serializer;
 
 
-import com.github.xingshuangs.iot.protocol.common.buff.EByteBuffFormat;
 import com.github.xingshuangs.iot.protocol.common.enums.EDataType;
 
 import java.lang.annotation.*;
@@ -42,10 +41,10 @@ public @interface ByteArrayVariable {
      */
     EDataType type() default EDataType.BYTE;
 
-    /**
-     * 数据格式
-     *
-     * @return 数据格式
-     */
-    EByteBuffFormat format() default EByteBuffFormat.DC_BA;
+//    /**
+//     * 数据格式
+//     *
+//     * @return 数据格式
+//     */
+//    EByteBuffFormat format() default EByteBuffFormat.DC_BA;
 }

@@ -21,11 +21,15 @@ import java.util.stream.IntStream;
  */
 public class ByteArraySerializer implements IByteArraySerializable {
 
+    public static ByteArraySerializer newInstance() {
+        return new ByteArraySerializer();
+    }
+
     @Override
     public <T> T toObject(final Class<T> targetClass, final byte[] src) {
         try {
             ByteReadBuff buff = new ByteReadBuff(src);
-            final T result = targetClass.newInstance();
+            final T bean = targetClass.newInstance();
             for (final Field field : targetClass.getDeclaredFields()) {
                 final ByteArrayVariable variable = field.getAnnotation(ByteArrayVariable.class);
                 if (variable == null) {
@@ -33,15 +37,66 @@ public class ByteArraySerializer implements IByteArraySerializable {
                 }
 
                 this.checkByteArrayVariable(variable);
-                this.extractData(buff, result, field, variable);
+                this.extractData(buff, bean, field, variable);
             }
-            return result;
+            return bean;
         } catch (Exception e) {
             throw new ByteArrayParseException("解析成对象错误，原因：" + e.getMessage(), e);
         }
     }
 
-    private <T> void extractData(ByteReadBuff buff, T result, Field field, ByteArrayVariable variable) throws IllegalAccessException {
+    @Override
+    public <T> byte[] toByteArray(final T targetBean) {
+        try {
+            // 组装数据，同时计算最大的字节长度
+            int buffSize = 0;
+            List<ByteArrayParseData> parseDataList = new ArrayList<>();
+            for (final Field field : targetBean.getClass().getDeclaredFields()) {
+                final ByteArrayVariable variable = field.getAnnotation(ByteArrayVariable.class);
+                if (variable == null) {
+                    continue;
+                }
+                this.checkByteArrayVariable(variable);
+                parseDataList.add(new ByteArrayParseData(variable, field));
+                int maxPos = variable.byteOffset() + variable.count() * variable.type().getByteLength();
+                if (maxPos > buffSize) {
+                    buffSize = maxPos;
+                }
+            }
+            if (buffSize == 0 || parseDataList.isEmpty()) {
+                return new byte[0];
+            }
+            // 填充字节数组的内容
+            ByteWriteBuff buff = ByteWriteBuff.newInstance(buffSize);
+            for (ByteArrayParseData item : parseDataList) {
+                item.getField().setAccessible(true);
+                Object data = item.getField().get(targetBean);
+                if (data == null) {
+                    continue;
+                }
+                if (item.getVariable().count() == 1) {
+                    this.fillOneData(item.getVariable(), data, buff, 0);
+                } else {
+                    this.fillListData(item.getVariable(), data, buff);
+                }
+            }
+            return buff.getData();
+        } catch (Exception e) {
+            throw new ByteArrayParseException("解析成对象错误，原因：" + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 提取数据
+     *
+     * @param buff     字节缓存
+     * @param bean     对象
+     * @param field    字段
+     * @param variable 字节数组注解
+     * @param <T>      类型
+     * @throws IllegalAccessException 访问异常
+     */
+    private <T> void extractData(ByteReadBuff buff, T bean, Field field, ByteArrayVariable variable) throws IllegalAccessException {
         field.setAccessible(true);
         switch (variable.type()) {
             case BOOL:
@@ -51,52 +106,52 @@ public class ByteArraySerializer implements IByteArraySerializable {
                             int bitAdd = (variable.bitOffset() + x) % 8;
                             return buff.getBoolean(byteAdd, bitAdd);
                         }).collect(Collectors.toList());
-                field.set(result, variable.count() == 1 ? booleans.get(0) : booleans);
+                field.set(bean, variable.count() == 1 ? booleans.get(0) : booleans);
                 break;
             case BYTE:
                 List<Byte> bytes = IntStream.range(0, variable.count()).boxed()
                         .map(x -> buff.getByte(variable.byteOffset() + x * variable.type().getByteLength()))
                         .collect(Collectors.toList());
-                field.set(result, variable.count() == 1 ? bytes.get(0) : bytes);
+                field.set(bean, variable.count() == 1 ? bytes.get(0) : bytes);
                 break;
             case UINT16:
                 List<Integer> uint16s = IntStream.range(0, variable.count()).boxed()
                         .map(x -> buff.getUInt16(variable.byteOffset() + x * variable.type().getByteLength()))
                         .collect(Collectors.toList());
-                field.set(result, variable.count() == 1 ? uint16s.get(0) : uint16s);
+                field.set(bean, variable.count() == 1 ? uint16s.get(0) : uint16s);
                 break;
             case INT16:
                 List<Short> int16s = IntStream.range(0, variable.count()).boxed()
                         .map(x -> buff.getInt16(variable.byteOffset() + x * variable.type().getByteLength()))
                         .collect(Collectors.toList());
-                field.set(result, variable.count() == 1 ? int16s.get(0) : int16s);
+                field.set(bean, variable.count() == 1 ? int16s.get(0) : int16s);
                 break;
             case UINT32:
                 List<Long> uint32s = IntStream.range(0, variable.count()).boxed()
                         .map(x -> buff.getUInt32(variable.byteOffset() + x * variable.type().getByteLength()))
                         .collect(Collectors.toList());
-                field.set(result, variable.count() == 1 ? uint32s.get(0) : uint32s);
+                field.set(bean, variable.count() == 1 ? uint32s.get(0) : uint32s);
                 break;
             case INT32:
                 List<Integer> int32s = IntStream.range(0, variable.count()).boxed()
                         .map(x -> buff.getInt32(variable.byteOffset() + x * variable.type().getByteLength()))
                         .collect(Collectors.toList());
-                field.set(result, variable.count() == 1 ? int32s.get(0) : int32s);
+                field.set(bean, variable.count() == 1 ? int32s.get(0) : int32s);
                 break;
             case FLOAT32:
                 List<Float> float32s = IntStream.range(0, variable.count()).boxed()
                         .map(x -> buff.getFloat32(variable.byteOffset() + x * variable.type().getByteLength()))
                         .collect(Collectors.toList());
-                field.set(result, variable.count() == 1 ? float32s.get(0) : float32s);
+                field.set(bean, variable.count() == 1 ? float32s.get(0) : float32s);
                 break;
             case FLOAT64:
                 List<Double> float64s = IntStream.range(0, variable.count()).boxed()
                         .map(x -> buff.getFloat64(variable.byteOffset() + x * variable.type().getByteLength()))
                         .collect(Collectors.toList());
-                field.set(result, variable.count() == 1 ? float64s.get(0) : float64s);
+                field.set(bean, variable.count() == 1 ? float64s.get(0) : float64s);
                 break;
             case STRING:
-                field.set(result, buff.getString(variable.byteOffset(), variable.count()));
+                field.set(bean, buff.getString(variable.byteOffset(), variable.count()));
                 break;
             default:
                 throw new ByteArrayParseException("提取数据的时候无法识别数据类型");
@@ -120,77 +175,42 @@ public class ByteArraySerializer implements IByteArraySerializable {
         }
     }
 
-    @Override
-    public <T> byte[] toByteArray(final T targetBean) {
-        try {
-            // 组装数据，同时计算最大的字节长度
-            int buffSize = 0;
-            List<ByteArrayParseData> parseDataList = new ArrayList<>();
-            for (final Field field : targetBean.getClass().getDeclaredFields()) {
-                final ByteArrayVariable variable = field.getAnnotation(ByteArrayVariable.class);
-                if (variable == null) {
-                    continue;
-                }
-                this.checkByteArrayVariable(variable);
-                parseDataList.add(new ByteArrayParseData(variable, field));
-                int maxPos = variable.byteOffset() + variable.count() * variable.type().getByteLength();
-                if (maxPos > buffSize) {
-                    buffSize = maxPos;
-                }
-            }
-            if (buffSize == 0) {
-                return new byte[0];
-            }
-            // 填充字节数组的内容
-            ByteWriteBuff buff = ByteWriteBuff.newInstance(buffSize);
-            for (ByteArrayParseData item : parseDataList) {
-                Field field = item.getField();
-                ByteArrayVariable variable = item.getVariable();
-                field.setAccessible(true);
-                Object data = field.get(targetBean);
-                if (data == null) {
-                    continue;
-                }
-                if (variable.count() == 1) {
-                    this.fillOneData(variable, data, buff);
-                } else {
-                    this.fillListData(variable, data, buff);
-                }
-            }
-            return buff.getData();
-        } catch (Exception e) {
-            throw new ByteArrayParseException("解析成对象错误，原因：" + e.getMessage(), e);
-        }
-    }
-
-    private void fillOneData(ByteArrayVariable variable, Object data, ByteWriteBuff buff) {
+    /**
+     * 填充一个数据
+     *
+     * @param variable 字节数组注解对象
+     * @param data     数据对象
+     * @param buff     字节缓存
+     * @param index    索引，第几个
+     */
+    private void fillOneData(ByteArrayVariable variable, Object data, ByteWriteBuff buff, int index) {
         switch (variable.type()) {
             case BOOL:
-                int byteAdd = variable.byteOffset() + variable.bitOffset() / 8;
-                int bitAdd = variable.bitOffset() % 8;
+                int byteAdd = variable.byteOffset() + (variable.bitOffset() + index) / 8;
+                int bitAdd = (variable.bitOffset() + index) % 8;
                 byte newByte = BooleanUtil.setBit(buff.getByte(byteAdd), bitAdd, (Boolean) data);
                 buff.putByte(newByte, byteAdd);
                 break;
             case BYTE:
-                buff.putByte((Byte) data, variable.byteOffset());
+                buff.putByte((Byte) data, variable.byteOffset() + index * variable.type().getByteLength());
                 break;
             case UINT16:
-                buff.putShort((Integer) data, variable.byteOffset());
+                buff.putShort((Integer) data, variable.byteOffset() + index * variable.type().getByteLength());
                 break;
             case INT16:
-                buff.putShort((Short) data, variable.byteOffset());
+                buff.putShort((Short) data, variable.byteOffset() + index * variable.type().getByteLength());
                 break;
             case UINT32:
-                buff.putInteger((Long) data, variable.byteOffset());
+                buff.putInteger((Long) data, variable.byteOffset() + index * variable.type().getByteLength());
                 break;
             case INT32:
-                buff.putInteger((Integer) data, variable.byteOffset());
+                buff.putInteger((Integer) data, variable.byteOffset() + index * variable.type().getByteLength());
                 break;
             case FLOAT32:
-                buff.putFloat((Float) data, variable.byteOffset());
+                buff.putFloat((Float) data, variable.byteOffset() + index * variable.type().getByteLength());
                 break;
             case FLOAT64:
-                buff.putDouble((Double) data, variable.byteOffset());
+                buff.putDouble((Double) data, variable.byteOffset() + index * variable.type().getByteLength());
                 break;
             case STRING:
                 buff.putString((String) data, StandardCharsets.US_ASCII, variable.byteOffset());
@@ -200,64 +220,21 @@ public class ByteArraySerializer implements IByteArraySerializable {
         }
     }
 
+    /**
+     * 填充多个数据，必须是list的数据
+     *
+     * @param variable 字节数组注解对象
+     * @param data     数据对象
+     * @param buff     字节缓存
+     */
     private void fillListData(ByteArrayVariable variable, Object data, ByteWriteBuff buff) {
-        switch (variable.type()) {
-            case BOOL:
-                List<Boolean> booleanData = ((List<Boolean>) data);
-                for (int i = 0; i < booleanData.size(); i++) {
-                    int byteAdd = variable.byteOffset() + (variable.bitOffset() + i) / 8;
-                    int bitAdd = (variable.bitOffset() + i) % 8;
-                    byte newByte = BooleanUtil.setBit(buff.getByte(byteAdd), bitAdd, booleanData.get(i));
-                    buff.putByte(newByte, byteAdd);
-                }
-                break;
-            case BYTE:
-                List<Byte> byteData = ((List<Byte>) data);
-                for (int i = 0; i < byteData.size(); i++) {
-                    buff.putByte(byteData.get(i), variable.byteOffset() + i * variable.type().getByteLength());
-                }
-                break;
-            case UINT16:
-                List<Integer> uint16 = ((List<Integer>) data);
-                for (int i = 0; i < uint16.size(); i++) {
-                    buff.putShort(uint16.get(i), variable.byteOffset() + i * variable.type().getByteLength());
-                }
-                break;
-            case INT16:
-                List<Short> int16 = ((List<Short>) data);
-                for (int i = 0; i < int16.size(); i++) {
-                    buff.putShort(int16.get(i), variable.byteOffset() + i * variable.type().getByteLength());
-                }
-                break;
-            case UINT32:
-                List<Long> uint32 = ((List<Long>) data);
-                for (int i = 0; i < uint32.size(); i++) {
-                    buff.putInteger(uint32.get(i), variable.byteOffset() + i * variable.type().getByteLength());
-                }
-                break;
-            case INT32:
-                List<Integer> int32 = ((List<Integer>) data);
-                for (int i = 0; i < int32.size(); i++) {
-                    buff.putInteger(int32.get(i), variable.byteOffset() + i * variable.type().getByteLength());
-                }
-                break;
-            case FLOAT32:
-                List<Float> float32 = ((List<Float>) data);
-                for (int i = 0; i < float32.size(); i++) {
-                    buff.putFloat(float32.get(i), variable.byteOffset() + i * variable.type().getByteLength());
-                }
-                break;
-            case FLOAT64:
-                List<Double> float64 = ((List<Double>) data);
-                for (int i = 0; i < float64.size(); i++) {
-                    buff.putDouble(float64.get(i), variable.byteOffset() + i * variable.type().getByteLength());
-                }
-                break;
-            case STRING:
-                buff.putString((String) data, StandardCharsets.US_ASCII, variable.byteOffset());
-                break;
-            default:
-                throw new ByteArrayParseException("填充数据的时候无法识别数据类型");
+        if (variable.type() == EDataType.STRING) {
+            buff.putString((String) data, StandardCharsets.US_ASCII, variable.byteOffset());
+        } else {
+            List<Object> list = (List<Object>) data;
+            for (int i = 0; i < list.size(); i++) {
+                this.fillOneData(variable, list.get(i), buff, i);
+            }
         }
     }
 }
