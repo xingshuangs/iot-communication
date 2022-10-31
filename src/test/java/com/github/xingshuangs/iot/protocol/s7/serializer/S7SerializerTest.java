@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 
 @Ignore
 public class S7SerializerTest {
-    S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
 
     @Test
     public void read() {

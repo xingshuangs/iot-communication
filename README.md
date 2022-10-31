@@ -1,15 +1,15 @@
 # IOT-COMMUNICATION
 
-![Maven-v1.2.2](https://img.shields.io/badge/Maven-v1.2.2-brightgreen)
+![Maven-v1.2.3](https://img.shields.io/badge/Maven-v1.2.3-brightgreen)
 ![Language-java8](https://img.shields.io/badge/Language-java8-blue)
 ![Idea-2018.02.04](https://img.shields.io/badge/Idea-2018.02.04-lightgrey)
 ![CopyRight-Oscura](https://img.shields.io/badge/CopyRight-Oscura-yellow)
 
 ## CopyRight
 
-@2019-2022 Oscura, All Rights Reserved <br>
-You can add QQ(759101350) if you have questions, the author will give answers in his spare time.<br>
-如果有任何问题，可以添加QQ(759101350)，作者在空余时间会做解答。<br>
+@2019 - 9999 Oscura, All Rights Reserved <br>
+You can add QQ( 759101350 ) if you have questions, the author will give answers in his spare time.<br>
+如果有任何问题，可以添加QQ( 759101350 )，作者在空余时间会做解答。<br>
 
 
 ## How to get（如何获取）
@@ -18,7 +18,7 @@ You can add QQ(759101350) if you have questions, the author will give answers in
 <dependency>
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
 </dependency>
 ```
 
@@ -32,11 +32,11 @@ Now, it is a tool for iot communication.
 
 # Instance（示例）
 
-## 1、Siemens S7 protocol（西门子S7协议）
+## 1. Siemens S7 protocol（西门子S7协议）
 
 对于200smartPLC的V区，就是DB1.X，例如，**V1=DB1.1，V100=DB1.100**
 
-> read data(读)
+### 1.1 read data(读)
 ```java
 class Demo {
     public static void main(String[] args) {
@@ -86,7 +86,7 @@ class Demo {
 }
 ```
 
-> write data(写)
+### 1.2 write data(写)
 ```java
 class Demo {
     public static void main(String[] args) {
@@ -126,7 +126,7 @@ class Demo {
 }
 ```
 
-> control(控制)
+### 1.3 control(控制)
 ```java
 class Demo {
     public static void main(String[] args) {
@@ -149,7 +149,7 @@ class Demo {
 }
 ```
 
-> serializer(序列化的方式)
+### 1.4 serializer(序列化的方式)
 ```java
 @Data
 public class DemoBean {
@@ -198,9 +198,9 @@ class Demo {
 ```
 ---
 
-## 2、ModbusTCP protocol（ModbusTCP协议）
+## 2. ModbusTCP protocol（ModbusTCP协议）
 
-> read data(读)
+### 2.1 read data(读)
 ```java
 class Demo {
     public static void main(String[] args) {
@@ -242,7 +242,7 @@ class Demo {
 }
 ```
 
-> write data(写)
+### 2.2 write data(写)
 ```java
 class Demo {
     public static void main(String[] args) {
@@ -297,9 +297,111 @@ class Demo {
 
 ---
 
-## 3、Byte array parse（字节数据解析）
+## 3. Byte array parse（字节数据解析）
 
-> Get single data
+### 3.1 serializer(序列化的方式)
+```java
+@Data
+public class ByteArrayBean {
+
+    @ByteArrayVariable(byteOffset = 0, bitOffset = 0, count = 1, type = EDataType.BOOL)
+    Boolean boolData;
+
+    @ByteArrayVariable(byteOffset = 0, count = 1, type = EDataType.BYTE)
+    Byte byteData;
+
+    @ByteArrayVariable(byteOffset = 3, count = 1, type = EDataType.UINT16)
+    Integer uint16Data;
+
+    @ByteArrayVariable(byteOffset = 3, count = 1, type = EDataType.INT16)
+    Short int16Data;
+
+    @ByteArrayVariable(byteOffset = 5, count = 1, type = EDataType.UINT32)
+    Long uint32Data;
+
+    @ByteArrayVariable(byteOffset = 9, count = 1, type = EDataType.INT32)
+    Integer int32Data;
+
+    @ByteArrayVariable(byteOffset = 13, count = 1, type = EDataType.FLOAT32)
+    Float float32Data;
+
+    @ByteArrayVariable(byteOffset = 21, count = 1, type = EDataType.FLOAT64)
+    Double float64Data;
+
+    @ByteArrayVariable(byteOffset = 37, count = 3, type = EDataType.STRING)
+    String stringData;
+}
+@Data
+public class ByteArrayListBean {
+
+    @ByteArrayVariable(byteOffset = 0, bitOffset = 0, count = 8, type = EDataType.BOOL)
+    List<Boolean> boolData;
+
+    @ByteArrayVariable(byteOffset = 1, count = 4, type = EDataType.BYTE)
+    List<Byte> byteData;
+
+    @ByteArrayVariable(byteOffset = 1, count = 2, type = EDataType.UINT16)
+    List<Integer> uint16Data;
+
+    @ByteArrayVariable(byteOffset = 3, count = 2, type = EDataType.INT16)
+    List<Short> int16Data;
+
+    @ByteArrayVariable(byteOffset = 5, count = 2, type = EDataType.UINT32)
+    List<Long> uint32Data;
+
+    @ByteArrayVariable(byteOffset = 5, count = 2, type = EDataType.INT32)
+    List<Integer> int32Data;
+
+    @ByteArrayVariable(byteOffset = 13, count = 2, type = EDataType.FLOAT32)
+    List<Float> float32Data;
+
+    @ByteArrayVariable(byteOffset = 21, count = 2, type = EDataType.FLOAT64)
+    List<Double> float64Data;
+
+    @ByteArrayVariable(byteOffset = 37, count = 3, type = EDataType.STRING)
+    String stringData;
+}
+
+class Demo {
+    public static void main(String[] args) {
+        ByteArraySerializer serializer = ByteArraySerializer.newInstance();
+        byte[] expect = new byte[]{(byte) 0x01,
+                // 0, 25689
+                (byte) 0x00, (byte) 0x00, (byte) 0x64, (byte) 0x59,
+                // 523975585
+                (byte) 0x1F, (byte) 0x3B, (byte) 0x3B, (byte) 0xA1, (byte) 0x1F, (byte) 0x3B, (byte) 0x3B, (byte) 0xA1,
+                // 33.16f
+                (byte) 0x42, (byte) 0x04, (byte) 0xA3, (byte) 0xD7, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                // 156665.35455556
+                (byte) 0x41, (byte) 0x03, (byte) 0x1F, (byte) 0xCA, (byte) 0xD6, (byte) 0x21, (byte) 0x39, (byte) 0xB7,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                // 23A
+                (byte) 0x32, (byte) 0x33, (byte) 0x41};
+
+        ByteArrayBean bean = serializer.toObject(ByteArrayBean.class, expect);
+        byte[] actual = serializer.toByteArray(bean);
+
+        expect = new byte[]{(byte) 0x81,
+                // 0, 25689
+                (byte) 0x00, (byte) 0x00, (byte) 0x64, (byte) 0x59,
+                // 523975585
+                (byte) 0x1F, (byte) 0x3B, (byte) 0x3B, (byte) 0xA1, (byte) 0x1F, (byte) 0x3B, (byte) 0x3B, (byte) 0xA1,
+                // 33.16f, -15.62f
+                (byte) 0x42, (byte) 0x04, (byte) 0xA3, (byte) 0xD7, (byte) 0xC1, (byte) 0x79, (byte) 0xEB, (byte) 0x85,
+                // 156665.35455556
+                (byte) 0x41, (byte) 0x03, (byte) 0x1F, (byte) 0xCA, (byte) 0xD6, (byte) 0x21, (byte) 0x39, (byte) 0xB7,
+                // -56516.66664
+                (byte) 0xC0, (byte) 0xEB, (byte) 0x98, (byte) 0x95, (byte) 0x55, (byte) 0x1D, (byte) 0x68, (byte) 0xC7,
+                // 23A
+                (byte) 0x32, (byte) 0x33, (byte) 0x41};
+
+        ByteArrayListBean listBean = serializer.toObject(ByteArrayListBean.class, expect);
+        actual = serializer.toByteArray(listBean);
+    }
+}
+```
+
+### 3.2 Get single data
 ```java
 /*********************************** EXAMPLE1 ***********************************/
 class Demo {
@@ -334,7 +436,7 @@ true
 */
 ```
 
-> Get Array data
+### 3.3 Get Array data
 ```java
 /*********************************** EXAMPLE2 ***********************************/
 class Demo {
