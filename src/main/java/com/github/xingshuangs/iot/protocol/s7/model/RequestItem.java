@@ -97,7 +97,7 @@ public class RequestItem implements IObjectByteArray {
                 .putShort(this.dbNumber)
                 .putByte(this.area.getCode())
                 // 只有3个字节，因此只取后面的3字节，第一个字节舍弃
-                .putBytes(IntegerUtil.toByteArray((this.byteAddress << 3) + this.bitAddress),1)
+                .putBytes(IntegerUtil.toByteArray((this.byteAddress << 3) + this.bitAddress), 1)
                 .getData();
     }
 
@@ -118,6 +118,28 @@ public class RequestItem implements IObjectByteArray {
         requestItem.dbNumber = buff.getUInt16();
         requestItem.byteAddress = IntegerUtil.toInt32In3Bytes(data, 9) >> 3;
         requestItem.bitAddress = buff.getByte(11) & 0x07;
+        return requestItem;
+    }
+
+    /**
+     * 通过参数创建请求项
+     *
+     * @param variableType 参数类型
+     * @param count        数据个数
+     * @param area         区域
+     * @param dbNumber     DB块编号
+     * @param byteAddress  字节地址
+     * @param bitAddress   位地址
+     * @return 请求项
+     */
+    public static RequestItem createByParams(EParamVariableType variableType, int count, EArea area, int dbNumber, int byteAddress, int bitAddress) {
+        RequestItem requestItem = new RequestItem();
+        requestItem.setVariableType(variableType);
+        requestItem.setCount(count);
+        requestItem.setArea(area);
+        requestItem.setDbNumber(dbNumber);
+        requestItem.setByteAddress(byteAddress);
+        requestItem.setBitAddress(bitAddress);
         return requestItem;
     }
 }

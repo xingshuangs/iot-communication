@@ -1,5 +1,8 @@
 package com.github.xingshuangs.iot.protocol.s7.service;
 
+import com.github.xingshuangs.iot.protocol.s7.enums.EArea;
+import com.github.xingshuangs.iot.protocol.s7.enums.EDataVariableType;
+import com.github.xingshuangs.iot.protocol.s7.enums.EParamVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -10,9 +13,24 @@ import static org.junit.Assert.*;
 
 @Ignore
 public class S7PLCTest {
-    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
+//    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
 //    private S7PLC s7PLC = new S7PLC(EPlcType.S200_SMART, "192.168.3.102");
-//    private S7PLC s7PLC = new S7PLC(EPlcType.S1200);
+    private S7PLC s7PLC = new S7PLC(EPlcType.S1200);
+
+    @Test
+    public void readByRaw() {
+        byte[] expect = new byte[]{(byte) 0x00};
+        this.s7PLC.writeRaw(EParamVariableType.BIT, 1, EArea.DATA_BLOCKS, 1, 0, 3,
+                EDataVariableType.BIT, expect);
+        byte[] actual = this.s7PLC.readRaw(EParamVariableType.BIT, 1, EArea.DATA_BLOCKS, 1, 0, 3);
+        assertArrayEquals(expect, actual);
+
+        expect = new byte[]{(byte) 0x02, (byte) 0x03};
+        this.s7PLC.writeRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0,
+                EDataVariableType.BYTE_WORD_DWORD, expect);
+        actual = this.s7PLC.readRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0);
+        assertArrayEquals(expect, actual);
+    }
 
     @Test
     public void readByte() {

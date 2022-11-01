@@ -65,7 +65,7 @@ public class AddressUtil {
         item.setVariableType(variableType);
         item.setCount(count);
         item.setArea(parseArea(addList));
-        item.setDbNumber(parseDB(addList));
+        item.setDbNumber(parseDbNumber(addList));
         item.setByteAddress(parseByteAddress(addList));
         item.setBitAddress(parseBitAddress(addList, variableType));
         if (item.getBitAddress() > 7) {
@@ -108,7 +108,7 @@ public class AddressUtil {
      * @param addList 地址信息
      * @return DB块索引
      */
-    private static int parseDB(String[] addList) {
+    private static int parseDbNumber(String[] addList) {
         switch (addList[0].substring(0, 1)) {
             case "D":
                 return addList[0].contains("DB") ?

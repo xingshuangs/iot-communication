@@ -2,6 +2,9 @@ package com.github.xingshuangs.iot.protocol.s7.service;
 
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
+import com.github.xingshuangs.iot.protocol.s7.enums.EArea;
+import com.github.xingshuangs.iot.protocol.s7.enums.EDataVariableType;
+import com.github.xingshuangs.iot.protocol.s7.enums.EParamVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import com.github.xingshuangs.iot.protocol.s7.model.DataItem;
 import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
@@ -43,6 +46,35 @@ public class S7PLC extends PLCNetwork {
     }
 
     //region 读取数据
+
+    /**
+     * 最原始的方式读取生数据
+     *
+     * @param variableType 参数类型
+     * @param count        数据个数
+     * @param area         区域
+     * @param dbNumber     DB块编号
+     * @param byteAddress  字节地址
+     * @param bitAddress   位地址
+     * @return 字节数组
+     */
+    public byte[] readRaw(EParamVariableType variableType, int count, EArea area, int dbNumber, int byteAddress, int bitAddress) {
+        if (count <= 0) {
+            throw new IllegalArgumentException("count<=0");
+        }
+        if (dbNumber <= 0) {
+            throw new IllegalArgumentException("dbNumber<=0");
+        }
+        if (byteAddress < 0) {
+            throw new IllegalArgumentException("byteAddress<0");
+        }
+        if (bitAddress < 0 || bitAddress > 7) {
+            throw new IllegalArgumentException("bitAddress<0||bitAddress>7");
+        }
+        RequestItem requestItem = RequestItem.createByParams(variableType, count, area, dbNumber, byteAddress, bitAddress);
+        DataItem dataItem = this.readS7Data(requestItem);
+        return dataItem.getData();
+    }
 
     /**
      * 多地址读取字节数据
@@ -349,6 +381,40 @@ public class S7PLC extends PLCNetwork {
     //endregion
 
     //region 写入数据
+
+    /**
+     * 最原始的方式写入生数据
+     *
+     * @param variableType     参数类型
+     * @param count            数据个数
+     * @param area             区域
+     * @param dbNumber         DB块编号
+     * @param byteAddress      字节地址
+     * @param bitAddress       位地址
+     * @param dataVariableType 数据变量类型
+     * @param data             数据字节数组
+     */
+    public void writeRaw(EParamVariableType variableType, int count, EArea area, int dbNumber, int byteAddress,
+                         int bitAddress, EDataVariableType dataVariableType, byte[] data) {
+        if (count <= 0) {
+            throw new IllegalArgumentException("count<=0");
+        }
+        if (dbNumber <= 0) {
+            throw new IllegalArgumentException("dbNumber<=0");
+        }
+        if (byteAddress < 0) {
+            throw new IllegalArgumentException("byteAddress<0");
+        }
+        if (bitAddress < 0 || bitAddress > 7) {
+            throw new IllegalArgumentException("bitAddress<0||bitAddress>7");
+        }
+        if (data == null || data.length == 0) {
+            throw new IllegalArgumentException("data");
+        }
+        RequestItem requestItem = RequestItem.createByParams(variableType, count, area, dbNumber, byteAddress, bitAddress);
+        DataItem dataItem = DataItem.createByByte(data, dataVariableType);
+        this.writeS7Data(requestItem, dataItem);
+    }
 
     /**
      * 写入boolean数据

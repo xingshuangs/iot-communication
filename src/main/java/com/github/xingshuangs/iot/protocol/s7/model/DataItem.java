@@ -91,7 +91,7 @@ public class DataItem extends ReturnItem implements IObjectByteArray {
      * @return DataItem数据
      */
     public static DataItem createByByte(byte[] data) {
-        if (data == null) {
+        if (data == null || data.length == 0) {
             throw new IllegalArgumentException("data数据不能为null");
         }
         DataItem dataItem = new DataItem();
@@ -114,6 +114,22 @@ public class DataItem extends ReturnItem implements IObjectByteArray {
         dataItem.setVariableType(EDataVariableType.BIT);
         dataItem.setCount(1);
         dataItem.setData(new byte[]{BooleanUtil.toByte(data)});
+        return dataItem;
+    }
+
+    /**
+     * 通过字节数组+数据类型转换为DataItem数据
+     *
+     * @param data             字节数组
+     * @param dataVariableType 数据类型
+     * @return 数据项目
+     */
+    public static DataItem createByByte(byte[] data, EDataVariableType dataVariableType) {
+        DataItem dataItem = new DataItem();
+        dataItem.setReturnCode(EReturnCode.RESERVED);
+        dataItem.setVariableType(dataVariableType);
+        dataItem.setCount(data.length);
+        dataItem.setData(data);
         return dataItem;
     }
 }
