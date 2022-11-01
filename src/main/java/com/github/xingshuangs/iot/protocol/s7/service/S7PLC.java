@@ -62,8 +62,8 @@ public class S7PLC extends PLCNetwork {
         if (count <= 0) {
             throw new IllegalArgumentException("count<=0");
         }
-        if (dbNumber <= 0) {
-            throw new IllegalArgumentException("dbNumber<=0");
+        if (dbNumber < 0) {
+            throw new IllegalArgumentException("dbNumber<0");
         }
         if (byteAddress < 0) {
             throw new IllegalArgumentException("byteAddress<0");
