@@ -165,14 +165,15 @@ public class S7Data implements IObjectByteArray {
     /**
      * 创建连接setup
      *
+     * @param pduLength PDU长度
      * @return s7data数据
      */
-    public static S7Data createConnectDtData() {
+    public static S7Data createConnectDtData(int pduLength) {
         S7Data s7Data = new S7Data();
         s7Data.tpkt = new TPKT();
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = Header.createDefault();
-        s7Data.parameter = SetupComParameter.createDefault();
+        s7Data.parameter = SetupComParameter.createDefault(pduLength);
         s7Data.selfCheck();
         return s7Data;
     }

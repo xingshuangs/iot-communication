@@ -80,18 +80,19 @@ public class SetupComParameter extends Parameter implements IObjectByteArray {
     }
 
     /**
-     * 创建默认的设置通信参数
+     * 创建默认的设置通信参数，默认最大PDU长度240
      *
+     * @param pduLength PDU长度
      * @return SetupComParameter
      */
-    public static SetupComParameter createDefault() {
+    public static SetupComParameter createDefault(int pduLength) {
         SetupComParameter parameter = new SetupComParameter();
         parameter.functionCode = EFunctionCode.SETUP_COMMUNICATION;
         parameter.reserved = (byte) 0x00;
         parameter.maxAmqCaller = 1;
         parameter.maxAmqCallee = 1;
-        // 默认最大PDU长度480
-        parameter.pduLength = 480;
+        // 默认最大PDU长度240
+        parameter.pduLength = pduLength;
         return parameter;
     }
 }

@@ -40,12 +40,15 @@ public class DataItem extends ReturnItem implements IObjectByteArray {
 
     @Override
     public int byteArrayLength() {
-        return 4 + this.data.length;
+        // 如果数据长度为奇数，S7协议会多填充一个字节，使其保持为偶数（最后一个奇数长度数据不需要填充）
+        return 4 + this.data.length + (this.data.length % 2 == 0 ? 0 : 1);
     }
 
     @Override
     public byte[] toByteArray() {
-        return ByteWriteBuff.newInstance(4 + this.data.length)
+        // 如果数据长度为奇数，S7协议会多填充一个字节，使其保持为偶数（最后一个奇数长度数据不需要填充）
+        int length = 4 + this.data.length + (this.data.length % 2 == 0 ? 0 : 1);
+        return ByteWriteBuff.newInstance(length)
                 .putByte(this.returnCode.getCode())
                 .putByte(this.variableType.getCode())
                 // 如果数据类型是位，不需要 * 8，如果是其他类型，需要 * 8

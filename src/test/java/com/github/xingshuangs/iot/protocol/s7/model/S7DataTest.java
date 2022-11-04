@@ -21,7 +21,7 @@ public class S7DataTest {
 
     @Test
     public void createConnectDtData() {
-        S7Data s7Data = S7Data.createConnectDtData();
+        S7Data s7Data = S7Data.createConnectDtData(240);
         assertEquals(25, s7Data.byteArrayLength());
         assertEquals(8, s7Data.getHeader().getParameterLength());
     }

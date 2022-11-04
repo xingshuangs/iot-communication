@@ -24,25 +24,28 @@ public class S7PLC extends PLCNetwork {
 
     public static final int PORT = 102;
 
+    public static final int DEFAULT_PDU_LENGTH = 240;
+
     public static final String IP = "127.0.0.1";
 
     public S7PLC() {
-        this(EPlcType.S1200, IP, PORT, 0, 0);
+        this(EPlcType.S1200, IP, PORT, 0, 0, DEFAULT_PDU_LENGTH);
     }
 
     public S7PLC(EPlcType plcType) {
-        this(plcType, IP, PORT, 0, 0);
+        this(plcType, IP, PORT, 0, 0, DEFAULT_PDU_LENGTH);
     }
 
     public S7PLC(EPlcType plcType, String ip) {
-        this(plcType, ip, PORT, 0, 0);
+        this(plcType, ip, PORT, 0, 0, DEFAULT_PDU_LENGTH);
     }
 
-    public S7PLC(EPlcType plcType, String ip, int port, int rack, int slot) {
+    public S7PLC(EPlcType plcType, String ip, int port, int rack, int slot, int pduLength) {
         super(ip, port);
         this.plcType = plcType;
         this.rack = rack;
         this.slot = slot;
+        this.pduLength = pduLength;
     }
 
     //region 读取数据

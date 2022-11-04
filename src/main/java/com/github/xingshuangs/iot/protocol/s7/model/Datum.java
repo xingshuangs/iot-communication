@@ -32,13 +32,6 @@ public class Datum implements IObjectByteArray {
         int sum = 0;
         for (int i = 0; i < this.returnItems.size(); i++) {
             sum += this.returnItems.get(i).byteArrayLength();
-            if (this.returnItems.get(i) instanceof DataItem) {
-                DataItem dataItem = (DataItem) this.returnItems.get(i);
-                // 如果数据长度为奇数，S7协议会多填充一个字节，使其保持为偶数（最后一个奇数长度数据不需要填充）
-                if (dataItem.getCount() % 2 != 0 && i != this.returnItems.size() - 1) {
-                    sum++;
-                }
-            }
         }
         return sum;
     }
@@ -51,13 +44,6 @@ public class Datum implements IObjectByteArray {
         ByteWriteBuff buff = ByteWriteBuff.newInstance(this.byteArrayLength());
         for (int i = 0; i < this.returnItems.size(); i++) {
             buff.putBytes(this.returnItems.get(i).toByteArray());
-            if (this.returnItems.get(i) instanceof DataItem) {
-                DataItem dataItem = (DataItem) this.returnItems.get(i);
-                // 如果数据长度为奇数，S7协议会多填充一个字节，使其保持为偶数（最后一个奇数长度数据不需要填充）
-                if (dataItem.getCount() % 2 != 0 && i != this.returnItems.size() - 1) {
-                    buff.putByte((byte)0x00);
-                }
-            }
         }
         return buff.getData();
     }
@@ -96,12 +82,7 @@ public class Datum implements IObjectByteArray {
             if (EMessageType.ACK_DATA == messageType && EFunctionCode.WRITE_VARIABLE == functionCode) {
                 dataItem = ReturnItem.fromBytes(data);
             } else {
-                DataItem item = DataItem.fromBytes(remain);
-                dataItem = item;
-                // 如果数据长度为奇数，S7协议会多填充一个字节，使其保持为偶数，需要跳过这个字节
-                if (item.getCount() % 2 != 0) {
-                    offset++;
-                }
+                dataItem = DataItem.fromBytes(remain);
             }
 
             datum.returnItems.add(dataItem);

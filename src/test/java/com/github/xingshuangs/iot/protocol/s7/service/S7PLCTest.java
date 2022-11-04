@@ -11,11 +11,11 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-@Ignore
+//@Ignore
 public class S7PLCTest {
-//    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
+    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
 //    private S7PLC s7PLC = new S7PLC(EPlcType.S200_SMART, "192.168.3.102");
-    private S7PLC s7PLC = new S7PLC(EPlcType.S1200);
+//    private S7PLC s7PLC = new S7PLC(EPlcType.S1200);
 
     @Test
     public void readByRaw() {
@@ -147,6 +147,46 @@ public class S7PLCTest {
         assertEquals(1, list.get(0).length);
         assertEquals(3, list.get(1).length);
         assertEquals(5, list.get(2).length);
+    }
+
+    @Test
+    public void writeMultiData1() {
+        s7PLC.setComCallback(x -> System.out.println("长度：" + x.length));
+        MultiAddressWrite addressWrite = new MultiAddressWrite();
+        addressWrite.addByte("DB2.0", (byte) 0x11)
+                .addByte("DB2.1", (byte) 0x12)
+                .addByte("DB2.2", (byte) 0x13)
+                .addByte("DB2.3", (byte) 0x14);
+        s7PLC.writeMultiData(addressWrite);
+
+
+//        MultiAddressWrite addressWrite = new MultiAddressWrite();
+//        addressWrite.addInt16("DB2.0", 1)
+//                .addInt16("DB2.2", 2)
+//                .addInt16("DB2.4", 3)
+//                .addInt16("DB2.6", 4);
+//        s7PLC.writeMultiData(addressWrite);
+    }
+
+    @Test
+    public void readMultiData() {
+
+        MultiAddressRead addressRead = new MultiAddressRead();
+        addressRead.addData("DB2.0", 1)
+                .addData("DB2.2", 3)
+                .addData("DB2.1", 208);
+        List<byte[]> list = s7PLC.readMultiByte(addressRead);
+
+//        MultiAddressRead addressRead = new MultiAddressRead();
+//        addressRead.addData("DB2.1", 222);
+//        List<byte[]> list = s7PLC.readMultiByte(addressRead);
+
+//        byte[] bytes = s7PLC.readByte("DB2.1", 240);
+    }
+
+    @Test
+    public void readByteData() {
+        byte[] bytes = s7PLC.readByte("DB2.12", 240);
     }
 
     @Test

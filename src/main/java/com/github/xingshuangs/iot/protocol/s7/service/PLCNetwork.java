@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 /**
  * plc的网络通信
+ * 根据测试S1200[CPU 1214C]，单次读多字节，最大字节读取长度是222
  *
  * @author xingshuang
  */
@@ -43,9 +44,10 @@ public class PLCNetwork extends SocketBasic {
     protected int slot = 0;
 
     /**
-     * 最大的PDU长度
+     * 最大的PDU长度，最小值是240-18=222，480-18=462,960-18=942
+     * 为什么是18？ 返回响应中：header（12）+ parameter（2）+ data前部（4）
      */
-    private int maxPduLength = 0;
+    protected int pduLength;
 
     /**
      * 通信回调
@@ -64,6 +66,16 @@ public class PLCNetwork extends SocketBasic {
         super(host, port);
     }
 
+    /**
+     * 可用的PDU长度
+     *
+     * @return PDU长度
+     */
+    public int getAvailablePduLength() {
+        // 减去前部的字节header（12）+ parameter（2）+ data前部（4），剩下的pdu
+        return this.pduLength - 18;
+    }
+
     //region socket连接后握手操作
 
     /**
@@ -72,8 +84,7 @@ public class PLCNetwork extends SocketBasic {
     @Override
     protected void doAfterConnected() {
         this.connectionRequest();
-        // 减去前部的字节tpkt+cotp，留下pdu
-        this.maxPduLength = this.connectDtData() - 20;
+        this.pduLength = this.connectDtData();
     }
 
     /**
@@ -111,7 +122,7 @@ public class PLCNetwork extends SocketBasic {
      * @return pduLength pdu长度
      */
     private int connectDtData() {
-        S7Data req = S7Data.createConnectDtData();
+        S7Data req = S7Data.createConnectDtData(this.pduLength);
         S7Data ack = this.readFromServer(req);
         if (ack.getCotp().getPduType() != EPduType.DT_DATA) {
             throw new S7CommException("连接Setup响应错误");
@@ -140,24 +151,25 @@ public class PLCNetwork extends SocketBasic {
         if (this.comCallback != null) {
             this.comCallback.accept(sendData);
         }
-//        if (this.maxPduLength > 0 && sendData.length > this.maxPduLength) {
-//            throw new S7CommException("发送请求的字节数过长，已经大于最大的PDU长度");
-//        }
+
+        if (this.getAvailablePduLength() > 0 && sendData.length > this.getAvailablePduLength()) {
+            throw new S7CommException("发送请求的字节数过长，已经大于最大的PDU长度");
+        }
 
         TPKT tpkt;
         int len;
         byte[] remain;
         synchronized (this.objLock) {
-            this.writeCycle(sendData, this.maxPduLength);
+            this.write(sendData);
 
             byte[] data = new byte[TPKT.BYTE_LENGTH];
-            len = this.readCycle(data, this.maxPduLength);
+            len = this.read(data);
             if (len < TPKT.BYTE_LENGTH) {
                 throw new S7CommException(" TPKT 无效，长度不一致");
             }
             tpkt = TPKT.fromBytes(data);
             remain = new byte[tpkt.getLength() - TPKT.BYTE_LENGTH];
-            len = this.readCycle(remain, this.maxPduLength);
+            len = this.read(remain);
         }
         if (len < remain.length) {
             throw new S7CommException(" TPKT后面的数据长度，长度不一致");
@@ -167,24 +179,25 @@ public class PLCNetwork extends SocketBasic {
         if (this.comCallback != null) {
             this.comCallback.accept(ack.toByteArray());
         }
-        this.checkResult(req, ack);
+        this.checkPostedCom(req, ack);
         return ack;
     }
 
     /**
-     * 对请求和响应数据进行一次校验
+     * 后置通信处理，对请求和响应数据进行一次校验
      *
      * @param req 请求数据
      * @param ack 响应属于
      */
-    private void checkResult(S7Data req, S7Data ack) {
+    private void checkPostedCom(S7Data req, S7Data ack) {
         if (ack.getHeader() == null) {
             return;
         }
         // 响应头正确
         AckHeader ackHeader = (AckHeader) ack.getHeader();
         if (ackHeader.getErrorClass() != EErrorClass.NO_ERROR) {
-            throw new S7CommException(String.format("响应异常，错误类型：%s，错误原因：%s", ackHeader.getErrorClass().getDescription(), ErrorCode.MAP.get(ackHeader.getErrorCode())));
+            throw new S7CommException(String.format("响应异常，错误类型：%s，错误原因：%s",
+                    ackHeader.getErrorClass().getDescription(), ErrorCode.MAP.get(ackHeader.getErrorCode())));
         }
         // 发送和接收的PDU编号一致
         if (ackHeader.getPduReference() != req.getHeader().getPduReference()) {
@@ -218,6 +231,20 @@ public class PLCNetwork extends SocketBasic {
      * @return 数据项列表
      */
     public List<DataItem> readS7Data(List<RequestItem> requestItems) {
+        if (requestItems == null || requestItems.isEmpty()) {
+            throw new S7CommException("请求项缺失，无法获取数据");
+        }
+        int sum = requestItems.stream().mapToInt(RequestItem::getCount).sum();
+        int removeNumber = 0;
+        for (int i = 0; i < requestItems.size() - 1; i++) {
+            // 返回的数据额外字节长度，偶数：4个，奇数5个
+            removeNumber += requestItems.get(i).getCount() % 2 == 0 ? 4 : 5;
+        }
+        // 请求的字节数量和最大允许访问字节数量比较
+        if (sum > this.getAvailablePduLength() - removeNumber) {
+            throw new S7CommException(String.format("本次读取数据字节数量超过最大允许值[%d]，当前请求数据字节数量[%d]",
+                    this.getAvailablePduLength() - removeNumber, sum));
+        }
         S7Data req = S7Data.createReadDefault();
         ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
         parameter.addItem(requestItems);
@@ -229,11 +256,28 @@ public class PLCNetwork extends SocketBasic {
     /**
      * 读取S7协议数据
      *
-     * @param item 请求项
+     * @param requestItem 请求项
      * @return 数据项
      */
-    public DataItem readS7Data(RequestItem item) {
-        return this.readS7Data(Collections.singletonList(item)).get(0);
+    public DataItem readS7Data(RequestItem requestItem) {
+        DataItem dataItem = new DataItem();
+        int sum = requestItem.getCount();
+        int offset = 0;
+        if (offset >= sum) {
+            throw new S7CommException("请求数据字节为0，禁止访问");
+        }
+        byte[] data = new byte[sum];
+        while (offset < sum) {
+            int length = Math.min(this.getAvailablePduLength(), sum - offset);
+            requestItem.setCount(length);
+            requestItem.setByteAddress(requestItem.getByteAddress() + offset);
+            dataItem = this.readS7Data(Collections.singletonList(requestItem)).get(0);
+            System.arraycopy(dataItem.getData(), 0, data, offset, dataItem.getCount());
+            offset += length;
+        }
+        dataItem.setData(data);
+        dataItem.setCount(data.length);
+        return dataItem;
     }
 
     /**
