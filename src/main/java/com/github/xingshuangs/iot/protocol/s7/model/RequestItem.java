@@ -102,6 +102,24 @@ public class RequestItem implements IObjectByteArray {
     }
 
     /**
+     * 复制一个新对象
+     *
+     * @return requestItem
+     */
+    public RequestItem copy() {
+        RequestItem requestItem = new RequestItem();
+        requestItem.specificationType = this.specificationType;
+        requestItem.lengthOfFollowing = this.lengthOfFollowing;
+        requestItem.syntaxId = this.syntaxId;
+        requestItem.variableType = this.variableType;
+        requestItem.count = this.count;
+        requestItem.dbNumber = this.dbNumber;
+        requestItem.byteAddress = this.byteAddress;
+        requestItem.bitAddress = this.bitAddress;
+        return requestItem;
+    }
+
+    /**
      * 字节数组数据解析
      *
      * @param data 字节数组数据

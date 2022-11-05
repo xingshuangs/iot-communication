@@ -15,9 +15,6 @@ public class DemoBean {
     @S7Variable(address = "DB1.0.1", type = EDataType.BOOL)
     private boolean bitData;
 
-    @S7Variable(address = "DB1.1", type = EDataType.BYTE, count = 3)
-    private byte[] byteData;
-
     @S7Variable(address = "DB1.4", type = EDataType.UINT16)
     private int uint16Data;
 
@@ -35,4 +32,7 @@ public class DemoBean {
 
     @S7Variable(address = "DB1.20", type = EDataType.FLOAT64)
     private double float64Data;
+
+    @S7Variable(address = "DB1.28", type = EDataType.BYTE, count = 3)
+    private byte[] byteData;
 }

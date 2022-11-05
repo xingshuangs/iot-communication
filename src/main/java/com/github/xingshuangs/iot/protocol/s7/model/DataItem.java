@@ -58,6 +58,20 @@ public class DataItem extends ReturnItem implements IObjectByteArray {
     }
 
     /**
+     * 复制一个新对象
+     *
+     * @return DataItem
+     */
+    public DataItem copy() {
+        DataItem dataItem = new DataItem();
+        dataItem.returnCode = this.returnCode;
+        dataItem.variableType = this.variableType;
+        dataItem.count = this.count;
+        dataItem.data = this.data;
+        return dataItem;
+    }
+
+    /**
      * 字节数组数据解析
      *
      * @param data 字节数组数据

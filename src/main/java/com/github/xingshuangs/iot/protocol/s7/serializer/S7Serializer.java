@@ -151,7 +151,7 @@ public class S7Serializer implements IPLCSerializable {
                         item.getField().set(result, buff.getBoolean(0));
                         break;
                     case BYTE:
-                        item.getField().set(result, buff.getBytes());
+                        item.getField().set(result, buff.getBytes(item.getCount()));
                         break;
                     case UINT16:
                         item.getField().set(result, buff.getUInt16());
@@ -203,7 +203,8 @@ public class S7Serializer implements IPLCSerializable {
                         item.setDataItem(DataItem.createByBoolean((Boolean) data));
                         break;
                     case BYTE:
-                        item.setDataItem(DataItem.createByByte((byte[]) data));
+                        item.setDataItem(DataItem.createByByte(ByteReadBuff.newInstance((byte[]) data)
+                                .getBytes(item.getCount())));
                         break;
                     case UINT16:
                         item.setDataItem(DataItem.createByByte(ByteWriteBuff.newInstance(2)

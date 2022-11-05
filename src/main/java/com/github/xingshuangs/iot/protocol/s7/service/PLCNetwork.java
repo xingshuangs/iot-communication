@@ -3,11 +3,12 @@ package com.github.xingshuangs.iot.protocol.s7.service;
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.net.socket.SocketBasic;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.protocol.s7.algorithm.S7ComGroup;
+import com.github.xingshuangs.iot.protocol.s7.algorithm.S7ComItem;
+import com.github.xingshuangs.iot.protocol.s7.algorithm.S7SequentialGroupAlg;
 import com.github.xingshuangs.iot.protocol.s7.constant.ErrorCode;
-import com.github.xingshuangs.iot.protocol.s7.enums.EErrorClass;
-import com.github.xingshuangs.iot.protocol.s7.enums.EPduType;
-import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
-import com.github.xingshuangs.iot.protocol.s7.enums.EReturnCode;
+import com.github.xingshuangs.iot.protocol.s7.enums.*;
 import com.github.xingshuangs.iot.protocol.s7.model.*;
 
 import java.util.Collections;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
  *
  * @author xingshuang
  */
+@SuppressWarnings("Duplicates")
 public class PLCNetwork extends SocketBasic {
 
     /**
@@ -152,8 +154,8 @@ public class PLCNetwork extends SocketBasic {
             this.comCallback.accept(sendData);
         }
 
-        if (this.getAvailablePduLength() > 0 && sendData.length > this.getAvailablePduLength()) {
-            throw new S7CommException("发送请求的字节数过长，已经大于最大的PDU长度");
+        if (this.pduLength > 0 && sendData.length > this.pduLength) {
+            throw new S7CommException(String.format("发送请求的字节数过长[%d]，已经大于最大的PDU长度[%d]", sendData.length, this.pduLength));
         }
 
         TPKT tpkt;
@@ -234,23 +236,42 @@ public class PLCNetwork extends SocketBasic {
         if (requestItems == null || requestItems.isEmpty()) {
             throw new S7CommException("请求项缺失，无法获取数据");
         }
-        int sum = requestItems.stream().mapToInt(RequestItem::getCount).sum();
-        int removeNumber = 0;
-        for (int i = 0; i < requestItems.size() - 1; i++) {
-            // 返回的数据额外字节长度，偶数：4个，奇数5个
-            removeNumber += requestItems.get(i).getCount() % 2 == 0 ? 4 : 5;
-        }
-        // 请求的字节数量和最大允许访问字节数量比较
-        if (sum > this.getAvailablePduLength() - removeNumber) {
-            throw new S7CommException(String.format("本次读取数据字节数量超过最大允许值[%d]，当前请求数据字节数量[%d]",
-                    this.getAvailablePduLength() - removeNumber, sum));
-        }
-        S7Data req = S7Data.createReadDefault();
-        ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
-        parameter.addItem(requestItems);
-        req.selfCheck();
-        S7Data ack = this.readFromServer(req);
-        return ack.getDatum().getReturnItems().stream().map(x -> (DataItem) x).collect(Collectors.toList());
+        // 根据原始请求列表提取每个请求数据大小
+        List<Integer> rawNumbers = requestItems.stream().map(RequestItem::getCount).collect(Collectors.toList());
+        // 根据原始请求列表构建最终结果列表
+        List<DataItem> resultList = requestItems.stream().map(x -> DataItem.createByByte(new byte[x.getCount()],
+                x.getVariableType() == EParamVariableType.BIT ? EDataVariableType.BIT : EDataVariableType.BYTE_WORD_DWORD))
+                .collect(Collectors.toList());
+
+        // 根据顺序分组算法得出分组结果，14=12(header)+2(parameter),5(DataItem)
+        List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.recombination(rawNumbers, this.pduLength - 14, 5);
+        s7ComGroups.forEach(x -> {
+            // 根据分组构建对应的请求列表
+            List<S7ComItem> comItemList = x.getItems();
+            List<RequestItem> newRequestItems = comItemList.stream().map(i -> {
+                RequestItem item = requestItems.get(i.getIndex()).copy();
+                item.setCount(i.getRipeData());
+                item.setByteAddress(item.getByteAddress() + i.getSplitOffset());
+                return item;
+            }).collect(Collectors.toList());
+
+            // S7数据请求
+            S7Data req = S7Data.createReadDefault();
+            ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
+            parameter.addItem(newRequestItems);
+            req.selfCheck();
+            S7Data ack = this.readFromServer(req);
+            List<DataItem> dataItems = ack.getDatum().getReturnItems().stream().map(a -> (DataItem) a).collect(Collectors.toList());
+
+            // 将获取的数据重装实际结果列表中
+            for (int i = 0; i < comItemList.size(); i++) {
+                S7ComItem comItem = comItemList.get(i);
+                byte[] src = dataItems.get(i).getData();
+                byte[] des = resultList.get(comItem.getIndex()).getData();
+                System.arraycopy(src, 0, des, comItem.getSplitOffset(), src.length);
+            }
+        });
+        return resultList;
     }
 
     /**
@@ -260,24 +281,7 @@ public class PLCNetwork extends SocketBasic {
      * @return 数据项
      */
     public DataItem readS7Data(RequestItem requestItem) {
-        DataItem dataItem = new DataItem();
-        int sum = requestItem.getCount();
-        int offset = 0;
-        if (offset >= sum) {
-            throw new S7CommException("请求数据字节为0，禁止访问");
-        }
-        byte[] data = new byte[sum];
-        while (offset < sum) {
-            int length = Math.min(this.getAvailablePduLength(), sum - offset);
-            requestItem.setCount(length);
-            requestItem.setByteAddress(requestItem.getByteAddress() + offset);
-            dataItem = this.readS7Data(Collections.singletonList(requestItem)).get(0);
-            System.arraycopy(dataItem.getData(), 0, data, offset, dataItem.getCount());
-            offset += length;
-        }
-        dataItem.setData(data);
-        dataItem.setCount(data.length);
-        return dataItem;
+        return this.readS7Data(Collections.singletonList(requestItem)).get(0);
     }
 
     /**
@@ -300,12 +304,37 @@ public class PLCNetwork extends SocketBasic {
         if (requestItems.size() != dataItems.size()) {
             throw new S7CommException("写操作过程中，requestItems和dataItems数据个数不一致");
         }
-        S7Data req = S7Data.createWriteDefault();
-        ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
-        parameter.addItem(requestItems);
-        req.getDatum().addItem(dataItems);
-        req.selfCheck();
-        this.readFromServer(req);
+
+        // 根据原始请求列表提取每个请求数据大小
+        List<Integer> rawNumbers = requestItems.stream().map(RequestItem::getCount).collect(Collectors.toList());
+
+        // 根据顺序分组算法得出分组结果 19=4(tpkt)+3(cotp)+10(header)+2(parameter前),17=12(parameter后)+5(dataItem)
+        List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.recombination(rawNumbers, this.pduLength - 19, 17);
+        s7ComGroups.forEach(x -> {
+            // 根据分组构建对应的请求列表
+            List<S7ComItem> comItemList = x.getItems();
+            List<RequestItem> newRequestItems = comItemList.stream().map(i -> {
+                RequestItem item = requestItems.get(i.getIndex()).copy();
+                item.setCount(i.getRipeData());
+                item.setByteAddress(item.getByteAddress() + i.getSplitOffset());
+                return item;
+            }).collect(Collectors.toList());
+            // 根据分组构建对应的数据列表
+            List<DataItem> newDataItems = comItemList.stream().map(i -> {
+                DataItem item = dataItems.get(i.getIndex()).copy();
+                item.setCount(i.getRipeData());
+                item.setData(ByteReadBuff.newInstance(item.getData()).getBytes(i.getSplitOffset(), i.getRipeData()));
+                return item;
+            }).collect(Collectors.toList());
+
+            // S7数据请求
+            S7Data req = S7Data.createWriteDefault();
+            ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
+            parameter.addItem(newRequestItems);
+            req.getDatum().addItem(newDataItems);
+            req.selfCheck();
+            this.readFromServer(req);
+        });
     }
 
     //endregion

@@ -11,11 +11,11 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-//@Ignore
+@Ignore
 public class S7PLCTest {
-    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
+//    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
 //    private S7PLC s7PLC = new S7PLC(EPlcType.S200_SMART, "192.168.3.102");
-//    private S7PLC s7PLC = new S7PLC(EPlcType.S1200);
+    private S7PLC s7PLC = new S7PLC(EPlcType.S1200);
 
     @Test
     public void readByRaw() {
@@ -59,9 +59,9 @@ public class S7PLCTest {
 
     @Test
     public void writeBoolean() {
-        s7PLC.writeBoolean("DB2.0.7", false);
-        boolean res = s7PLC.readBoolean("DB2.0.7");
-        assertFalse(res);
+        s7PLC.writeBoolean("DB2.1.7", true);
+        boolean res = s7PLC.readBoolean("DB2.1.7");
+        assertTrue(res);
 
         List<Boolean> actual = s7PLC.readBoolean("DB1.2.0", "DB1.2.1", "DB1.2.7");
         assertEquals(3, actual.size());
@@ -83,8 +83,8 @@ public class S7PLCTest {
 
     @Test
     public void writeInt16() {
-        s7PLC.writeInt16("DB14.0", (short) 16);
-        int i = s7PLC.readUInt16("DB14.0");
+        s7PLC.writeInt16("DB2.0", (short) 16);
+        int i = s7PLC.readUInt16("DB2.0");
         assertEquals(16, i);
 
         List<Integer> actual = s7PLC.readUInt16("DB1.0", "DB1.2");
@@ -103,22 +103,22 @@ public class S7PLCTest {
 
     @Test
     public void writeInt32() {
-        s7PLC.writeInt32("DB2.0", 0x11113322);
-        int i = s7PLC.readInt32("DB2.0");
+        s7PLC.writeInt32("DB2.4", 0x11113322);
+        int i = s7PLC.readInt32("DB2.4");
         assertEquals(0x11113322, i);
     }
 
     @Test
     public void writeFloat32() {
-        s7PLC.writeFloat32("DB2.0", 12);
-        float actual = s7PLC.readFloat32("DB2.0");
+        s7PLC.writeFloat32("DB2.6", 12);
+        float actual = s7PLC.readFloat32("DB2.6");
         assertEquals(12, actual, 0.00001);
     }
 
     @Test
     public void writeFloat64() {
-        s7PLC.writeFloat64("DB2.0", 12.02);
-        double actual = s7PLC.readFloat64("DB2.0");
+        s7PLC.writeFloat64("DB2.10", 12.02);
+        double actual = s7PLC.readFloat64("DB2.10");
         assertEquals(12.02, actual, 0.00001);
     }
 
@@ -132,11 +132,11 @@ public class S7PLCTest {
     @Test
     public void writeMultiData() {
         MultiAddressWrite addressWrite = new MultiAddressWrite();
-        addressWrite.addUInt16("DB14.0", (byte) 0x11)
-                .addUInt16("DB14.4", 88)
-                .addBoolean("DB14.2.0", true);
+        addressWrite.addUInt16("DB2.0", (byte) 0x11)
+                .addUInt16("DB2.4", 88)
+                .addBoolean("DB2.2.0", true);
         s7PLC.writeMultiData(addressWrite);
-        boolean actual = s7PLC.readBoolean("DB14.2.0");
+        boolean actual = s7PLC.readBoolean("DB2.2.0");
         assertTrue(actual);
 
         MultiAddressRead addressRead = new MultiAddressRead();
