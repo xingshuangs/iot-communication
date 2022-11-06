@@ -18,7 +18,9 @@ import java.util.stream.Collectors;
 
 /**
  * plc的网络通信
- * 根据测试S1200[CPU 1214C]，单次读多字节，最大字节读取长度是222
+ * 最小字节数组大小是240-18=222，480-18=462,960-18=942
+ * 根据测试S1200[CPU 1214C]，单次读多字节，最大字节读取长度是 222 = 240 - 18, 18(响应报文的PDU)=12(header)+2(parameter)+4(dataItem)
+ * 根据测试S1200[CPU 1214C]，单次写多字节，最大字节写入长度是 212 = 240 - 28, 28(请求报文的PDU)=10(header)+14(parameter)+4(dataItem)
  *
  * @author xingshuang
  */
@@ -46,8 +48,7 @@ public class PLCNetwork extends SocketBasic {
     protected int slot = 0;
 
     /**
-     * 最大的PDU长度，最小值是240-18=222，480-18=462,960-18=942
-     * 为什么是18？ 返回响应中：header（12）+ parameter（2）+ data前部（4）
+     * 最大的PDU长度，不同PLC对应不同值，有240,480,960，目前默认240
      */
     protected int pduLength;
 
@@ -66,16 +67,6 @@ public class PLCNetwork extends SocketBasic {
 
     public PLCNetwork(String host, int port) {
         super(host, port);
-    }
-
-    /**
-     * 可用的PDU长度
-     *
-     * @return PDU长度
-     */
-    public int getAvailablePduLength() {
-        // 减去前部的字节header（12）+ parameter（2）+ data前部（4），剩下的pdu
-        return this.pduLength - 18;
     }
 
     //region socket连接后握手操作
@@ -154,7 +145,8 @@ public class PLCNetwork extends SocketBasic {
             this.comCallback.accept(sendData);
         }
 
-        if (this.pduLength > 0 && sendData.length > this.pduLength) {
+        // 将报文中的TPKT和COTP减掉，剩下PDU的内容，7=4(tpkt)+3(cotp)
+        if (this.pduLength > 0 && sendData.length - 7 > this.pduLength) {
             throw new S7CommException(String.format("发送请求的字节数过长[%d]，已经大于最大的PDU长度[%d]", sendData.length, this.pduLength));
         }
 
@@ -243,7 +235,7 @@ public class PLCNetwork extends SocketBasic {
                 x.getVariableType() == EParamVariableType.BIT ? EDataVariableType.BIT : EDataVariableType.BYTE_WORD_DWORD))
                 .collect(Collectors.toList());
 
-        // 根据顺序分组算法得出分组结果，14=12(header)+2(parameter),5(DataItem)
+        // 根据顺序分组算法得出分组结果，14=12(header)+2(parameter),5(DataItem)，dataItem可能4或5，统一采用5
         List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.recombination(rawNumbers, this.pduLength - 14, 5);
         s7ComGroups.forEach(x -> {
             // 根据分组构建对应的请求列表
@@ -308,8 +300,8 @@ public class PLCNetwork extends SocketBasic {
         // 根据原始请求列表提取每个请求数据大小
         List<Integer> rawNumbers = requestItems.stream().map(RequestItem::getCount).collect(Collectors.toList());
 
-        // 根据顺序分组算法得出分组结果 19=4(tpkt)+3(cotp)+10(header)+2(parameter前),17=12(parameter后)+5(dataItem)
-        List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.recombination(rawNumbers, this.pduLength - 19, 17);
+        // 根据顺序分组算法得出分组结果 12=10(header)+2(parameter前),17=12(parameter后)+5(dataItem)，dataItem可能4或5，统一采用5
+        List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.recombination(rawNumbers, this.pduLength - 12, 17);
         s7ComGroups.forEach(x -> {
             // 根据分组构建对应的请求列表
             List<S7ComItem> comItemList = x.getItems();

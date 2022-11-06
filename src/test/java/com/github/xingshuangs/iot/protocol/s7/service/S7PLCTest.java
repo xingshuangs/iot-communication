@@ -186,7 +186,11 @@ public class S7PLCTest {
 
     @Test
     public void readByteData() {
-        byte[] bytes = s7PLC.readByte("DB2.12", 240);
+        s7PLC.setComCallback(x -> System.out.println("长度：" + x.length));
+        byte[] bytes = s7PLC.readByte("DB2.12", 1000);
+        long start = System.currentTimeMillis();
+        s7PLC.writeByte("DB2.12", bytes);
+        System.out.println(System.currentTimeMillis() - start);
     }
 
     @Test
