@@ -1,6 +1,6 @@
 # IOT-COMMUNICATION
 
-![Maven-v1.2.3](https://img.shields.io/badge/Maven-v1.2.3-brightgreen)
+![Maven-v1.2.4](https://img.shields.io/badge/Maven-v1.2.4-brightgreen)
 ![Language-java8](https://img.shields.io/badge/Language-java8-blue)
 ![Idea-2018.02.04](https://img.shields.io/badge/Idea-2018.02.04-lightgrey)
 ![CopyRight-Oscura](https://img.shields.io/badge/CopyRight-Oscura-yellow)
@@ -18,7 +18,7 @@ You can add QQ( 759101350 ) if you have questions, the author will give answers 
 <dependency>
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
-    <version>1.2.3</version>
+    <version>1.2.4</version>
 </dependency>
 ```
 
@@ -114,7 +114,7 @@ class Demo {
         s7PLC.writeFloat64("DB2.0", 12.02);
 
         // write String
-        s7PLC.writeString("DB14.4","demo");
+        s7PLC.writeString("DB14.4", "demo");
 
         // write multi address
         MultiAddressWrite addressWrite = new MultiAddressWrite();
@@ -150,15 +150,13 @@ class Demo {
 ```
 
 ### 1.4 serializer(序列化的方式)
+create small size data class (构建数据量比较小的类型数据)
 ```java
 @Data
 public class DemoBean {
 
     @S7Variable(address = "DB1.0.1", type = EDataType.BOOL)
     private boolean bitData;
-
-    @S7Variable(address = "DB1.1", type = EDataType.BYTE, count = 3)
-    private byte[] byteData;
 
     @S7Variable(address = "DB1.4", type = EDataType.UINT16)
     private int uint16Data;
@@ -177,21 +175,76 @@ public class DemoBean {
 
     @S7Variable(address = "DB1.20", type = EDataType.FLOAT64)
     private double float64Data;
-}
 
+    @S7Variable(address = "DB1.28", type = EDataType.BYTE, count = 3)
+    private byte[] byteData;
+}
+```
+create big size data class (构建数据量比较大的数据类型)
+```java
+@Data
+public class DemoLargeBean {
+
+    @S7Variable(address = "DB1.0.1", type = EDataType.BOOL)
+    private boolean bitData;
+
+    @S7Variable(address = "DB1.10", type = EDataType.BYTE, count = 50)
+    private byte[] byteData1;
+
+    @S7Variable(address = "DB1.60", type = EDataType.BYTE, count = 65)
+    private byte[] byteData2;
+
+    @S7Variable(address = "DB1.125", type = EDataType.BYTE, count = 200)
+    private byte[] byteData3;
+
+    @S7Variable(address = "DB1.325", type = EDataType.BYTE, count = 322)
+    private byte[] byteData4;
+
+    @S7Variable(address = "DB1.647", type = EDataType.BYTE, count = 99)
+    private byte[] byteData5;
+
+    @S7Variable(address = "DB1.746", type = EDataType.BYTE, count = 500)
+    private byte[] byteData6;
+
+    @S7Variable(address = "DB1.1246", type = EDataType.BYTE, count = 44)
+    private byte[] byteData7;
+}
+```
+read and write (数据读写)
+```java
 class Demo {
     public static void main(String[] args) {
+        // 构建PLC对象
         S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+        // 构建序列化对象
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
+        
+        // 小数据量的读写
         DemoBean bean = s7Serializer.read(DemoBean.class);
         bean.setBitData(true);
-        bean.setByteData(new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03});
         bean.setUint16Data(42767);
         bean.setInt16Data((short) 32767);
         bean.setUint32Data(3147483647L);
         bean.setInt32Data(2147483647);
         bean.setFloat32Data(3.14f);
         bean.setFloat64Data(4.15);
+        bean.setByteData(new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03});
+        s7Serializer.write(bean);
+        
+        // 大数据量的读写
+        DemoLargeBean largeBean = s7Serializer.read(DemoLargeBean.class);
+        largeBean.getByteData2()[0] = (byte) 0x05;
+        largeBean.getByteData3()[0] = (byte) 0x05;
+        largeBean.getByteData4()[0] = (byte) 0x05;
+        largeBean.getByteData5()[0] = (byte) 0x05;
+        largeBean.getByteData6()[0] = (byte) 0x05;
+        largeBean.getByteData7()[0] = (byte) 0x05;
+        largeBean.getByteData2()[64] = (byte) 0x02;
+        largeBean.getByteData3()[199] = (byte) 0x03;
+        largeBean.getByteData4()[321] = (byte) 0x04;
+        largeBean.getByteData5()[98] = (byte) 0x05;
+        largeBean.getByteData6()[499] = (byte) 0x06;
+        largeBean.getByteData7()[43] = (byte) 0x07;
         s7Serializer.write(bean);
     }
 }

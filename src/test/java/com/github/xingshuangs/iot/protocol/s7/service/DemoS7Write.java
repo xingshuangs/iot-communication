@@ -35,7 +35,7 @@ public class DemoS7Write {
         s7PLC.writeFloat64("DB2.0", 12.02);
 
         // write String
-        s7PLC.writeString("DB14.4","demo");
+        s7PLC.writeString("DB14.4", "demo");
 
         // write multi address
         MultiAddressWrite addressWrite = new MultiAddressWrite();
