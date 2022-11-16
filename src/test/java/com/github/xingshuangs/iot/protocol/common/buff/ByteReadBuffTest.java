@@ -48,6 +48,10 @@ public class ByteReadBuffTest {
         ByteReadBuff buff = new ByteReadBuff(new byte[]{(byte) 0x5F, (byte) 0xF5});
         short actual = buff.getInt16();
         assertEquals(24565, actual);
+
+        buff = new ByteReadBuff(new byte[]{(byte) 0xF5, (byte) 0x5F}, true);
+        actual = buff.getInt16();
+        assertEquals(24565, actual);
     }
 
     @Test
@@ -61,6 +65,10 @@ public class ByteReadBuffTest {
     public void getInt32() {
         ByteReadBuff buff = new ByteReadBuff(new byte[]{(byte) 0x00, (byte) 0x20, (byte) 0x37, (byte) 0x36});
         int actual = buff.getInt32();
+        assertEquals(2111286, actual);
+
+        buff = new ByteReadBuff(new byte[]{(byte) 0x36, (byte) 0x37, (byte) 0x20, (byte) 0x00}, true);
+        actual = buff.getInt32();
         assertEquals(2111286, actual);
 
         buff = new ByteReadBuff(new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x2A, (byte) 0xF8}, EByteBuffFormat.DC_BA);
@@ -91,6 +99,10 @@ public class ByteReadBuffTest {
     public void getFloat32() {
         ByteReadBuff buff = new ByteReadBuff(new byte[]{(byte) 0x42, (byte) 0x04, (byte) 0xA3, (byte) 0xD7});
         float actual = buff.getFloat32();
+        assertEquals(33.16f, actual, 0.001);
+
+        buff = new ByteReadBuff(new byte[]{(byte) 0xD7, (byte) 0xA3, (byte) 0x04, (byte) 0x42}, true);
+        actual = buff.getFloat32();
         assertEquals(33.16f, actual, 0.001);
     }
 

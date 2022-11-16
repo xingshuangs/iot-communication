@@ -25,24 +25,34 @@ public class ByteReadBuff extends ByteBuffBase {
     private int offset = 0;
 
     /**
+     * 是否为小端模式，默认不是，为大端模式
+     */
+    private boolean littleEndian = false;
+
+    /**
      * 构造方法
      *
      * @param data 字节数组
      */
     public ByteReadBuff(byte[] data) {
-        this(data, 0, EByteBuffFormat.DC_BA);
+        this(data, 0, false, EByteBuffFormat.DC_BA);
     }
 
     public ByteReadBuff(byte[] data, int offset) {
-        this(data, offset, EByteBuffFormat.DC_BA);
+        this(data, offset, false, EByteBuffFormat.DC_BA);
     }
 
     public ByteReadBuff(byte[] data, EByteBuffFormat format) {
-        this(data, 0, format);
+        this(data, 0, false, format);
     }
 
-    public ByteReadBuff(byte[] data, int offset, EByteBuffFormat format) {
+    public ByteReadBuff(byte[] data, boolean littleEndian) {
+        this(data, 0, littleEndian, EByteBuffFormat.DC_BA);
+    }
+
+    public ByteReadBuff(byte[] data, int offset, boolean littleEndian, EByteBuffFormat format) {
         super(format);
+        this.littleEndian = littleEndian;
         this.data = data;
         this.offset = offset;
     }
@@ -55,12 +65,16 @@ public class ByteReadBuff extends ByteBuffBase {
         return new ByteReadBuff(data, offset);
     }
 
+    public static ByteReadBuff newInstance(byte[] data, boolean littleEndian) {
+        return new ByteReadBuff(data, littleEndian);
+    }
+
     public static ByteReadBuff newInstance(byte[] data, EByteBuffFormat format) {
         return new ByteReadBuff(data, format);
     }
 
-    public static ByteReadBuff newInstance(byte[] data, int offset, EByteBuffFormat format) {
-        return new ByteReadBuff(data, offset, format);
+    public static ByteReadBuff newInstance(byte[] data, int offset, boolean littleEndian, EByteBuffFormat format) {
+        return new ByteReadBuff(data, offset, littleEndian, format);
     }
 
     /**
@@ -275,7 +289,7 @@ public class ByteReadBuff extends ByteBuffBase {
      */
     public short getInt16(int index) {
         this.checkCondition(index);
-        return ShortUtil.toInt16(this.data, index);
+        return ShortUtil.toInt16(this.data, index, this.littleEndian);
     }
 
     /**
@@ -286,7 +300,7 @@ public class ByteReadBuff extends ByteBuffBase {
      */
     public int getUInt16(int index) {
         this.checkCondition(index);
-        return ShortUtil.toUInt16(this.data, index);
+        return ShortUtil.toUInt16(this.data, index, this.littleEndian);
     }
 
     /**
@@ -297,7 +311,7 @@ public class ByteReadBuff extends ByteBuffBase {
      */
     public int getInt32(int index) {
         this.checkCondition(index);
-        return IntegerUtil.toInt32(this.reorderByFormatIn4Bytes(this.data, index));
+        return IntegerUtil.toInt32(this.reorderByFormatIn4Bytes(this.data, index), 0, this.littleEndian);
     }
 
     /**
@@ -308,7 +322,7 @@ public class ByteReadBuff extends ByteBuffBase {
      */
     public long getUInt32(int index) {
         this.checkCondition(index);
-        return IntegerUtil.toUInt32(this.reorderByFormatIn4Bytes(this.data, index));
+        return IntegerUtil.toUInt32(this.reorderByFormatIn4Bytes(this.data, index), 0, this.littleEndian);
     }
 
     /**
@@ -319,7 +333,7 @@ public class ByteReadBuff extends ByteBuffBase {
      */
     public float getFloat32(int index) {
         this.checkCondition(index);
-        return FloatUtil.toFloat32(this.reorderByFormatIn4Bytes(this.data, index));
+        return FloatUtil.toFloat32(this.reorderByFormatIn4Bytes(this.data, index), 0, this.littleEndian);
     }
 
     /**
@@ -330,7 +344,7 @@ public class ByteReadBuff extends ByteBuffBase {
      */
     public double getFloat64(int index) {
         this.checkCondition(index);
-        return FloatUtil.toFloat64(this.reorderByFormatIn8Bytes(this.data, index));
+        return FloatUtil.toFloat64(this.reorderByFormatIn8Bytes(this.data, index), 0, this.littleEndian);
     }
 
     /**

@@ -26,16 +26,26 @@ public class ByteWriteBuff extends ByteBuffBase {
     private int offset = 0;
 
     /**
+     * 是否为小端模式，默认不是，为大端模式
+     */
+    private boolean littleEndian = false;
+
+    /**
      * 构造方法
      *
      * @param capacity 容量
      */
     public ByteWriteBuff(int capacity) {
-        this(capacity, EByteBuffFormat.DC_BA);
+        this(capacity, false, EByteBuffFormat.DC_BA);
     }
 
     public ByteWriteBuff(int capacity, EByteBuffFormat format) {
+        this(capacity, false, format);
+    }
+
+    public ByteWriteBuff(int capacity, boolean littleEndian, EByteBuffFormat format) {
         super(format);
+        this.littleEndian = littleEndian;
         this.data = new byte[capacity];
     }
 
@@ -44,7 +54,11 @@ public class ByteWriteBuff extends ByteBuffBase {
     }
 
     public static ByteWriteBuff newInstance(int capacity, EByteBuffFormat format) {
-        return new ByteWriteBuff(capacity, format);
+        return new ByteWriteBuff(capacity, false, format);
+    }
+
+    public static ByteWriteBuff newInstance(int capacity, boolean littleEndian, EByteBuffFormat format) {
+        return new ByteWriteBuff(capacity, littleEndian, format);
     }
 
     /**
@@ -149,7 +163,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putShort(short src) {
-        return this.putShort(src, this.offset, false);
+        return this.putShort(src, this.offset, this.littleEndian);
     }
 
     /**
@@ -160,7 +174,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putShort(short src, int desIndex) {
-        return this.putShort(src, desIndex, false);
+        return this.putShort(src, desIndex, this.littleEndian);
     }
 
     /**
@@ -170,7 +184,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putShort(int src) {
-        return this.putBytes(ShortUtil.toByteArray(src, false));
+        return this.putBytes(ShortUtil.toByteArray(src, this.littleEndian));
     }
 
     /**
@@ -181,7 +195,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putShort(int src, int desIndex) {
-        return this.putBytes(ShortUtil.toByteArray(src, false), 0, desIndex);
+        return this.putBytes(ShortUtil.toByteArray(src, this.littleEndian), 0, desIndex);
     }
 
     /**
@@ -191,7 +205,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putInteger(int src) {
-        return this.putInteger(src, this.offset, false);
+        return this.putInteger(src, this.offset, this.littleEndian);
     }
 
     /**
@@ -202,7 +216,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putInteger(int src, int desIndex) {
-        return this.putInteger(src, desIndex, false);
+        return this.putInteger(src, desIndex, this.littleEndian);
     }
 
     /**
@@ -212,7 +226,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putInteger(long src) {
-        return this.putInteger(src, this.offset, false);
+        return this.putInteger(src, this.offset, this.littleEndian);
     }
 
     /**
@@ -223,7 +237,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putInteger(long src, int desIndex) {
-        return this.putInteger(src, desIndex, false);
+        return this.putInteger(src, desIndex, this.littleEndian);
     }
 
     /**
@@ -233,7 +247,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putLong(long src) {
-        return this.putLong(src, this.offset, false);
+        return this.putLong(src, this.offset, this.littleEndian);
     }
 
     /**
@@ -244,7 +258,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putLong(long src, int desIndex) {
-        return this.putLong(src, desIndex, false);
+        return this.putLong(src, desIndex, this.littleEndian);
     }
 
     /**
@@ -254,7 +268,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putFloat(float src) {
-        return this.putFloat(src, this.offset, false);
+        return this.putFloat(src, this.offset, this.littleEndian);
     }
 
     /**
@@ -265,7 +279,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putFloat(float src, int desIndex) {
-        return this.putFloat(src, desIndex, false);
+        return this.putFloat(src, desIndex, this.littleEndian);
     }
 
     /**
@@ -275,7 +289,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putDouble(double src) {
-        return this.putDouble(src, this.offset, false);
+        return this.putDouble(src, this.offset, this.littleEndian);
     }
 
     /**
@@ -286,7 +300,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putDouble(double src, int desIndex) {
-        return this.putDouble(src, desIndex, false);
+        return this.putDouble(src, desIndex, this.littleEndian);
     }
 
     /**

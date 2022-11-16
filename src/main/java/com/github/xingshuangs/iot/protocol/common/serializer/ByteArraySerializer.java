@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.common.serializer;
 import com.github.xingshuangs.iot.exceptions.ByteArrayParseException;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.EByteBuffFormat;
 import com.github.xingshuangs.iot.protocol.common.enums.EDataType;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
 
@@ -28,7 +29,6 @@ public class ByteArraySerializer implements IByteArraySerializable {
     @Override
     public <T> T toObject(final Class<T> targetClass, final byte[] src) {
         try {
-            ByteReadBuff buff = new ByteReadBuff(src);
             final T bean = targetClass.newInstance();
             for (final Field field : targetClass.getDeclaredFields()) {
                 final ByteArrayVariable variable = field.getAnnotation(ByteArrayVariable.class);
@@ -37,7 +37,7 @@ public class ByteArraySerializer implements IByteArraySerializable {
                 }
 
                 this.checkByteArrayVariable(variable);
-                this.extractData(buff, bean, field, variable);
+                this.extractData(src, bean, field, variable);
             }
             return bean;
         } catch (Exception e) {
@@ -89,14 +89,15 @@ public class ByteArraySerializer implements IByteArraySerializable {
     /**
      * 提取数据
      *
-     * @param buff     字节缓存
+     * @param src      数据内容，字节数组
      * @param bean     对象
      * @param field    字段
      * @param variable 字节数组注解
      * @param <T>      类型
      * @throws IllegalAccessException 访问异常
      */
-    private <T> void extractData(ByteReadBuff buff, T bean, Field field, ByteArrayVariable variable) throws IllegalAccessException {
+    private <T> void extractData(byte[] src, T bean, Field field, ByteArrayVariable variable) throws IllegalAccessException {
+        ByteReadBuff buff = new ByteReadBuff(src, 0, variable.littleEndian(), EByteBuffFormat.DC_BA);
         field.setAccessible(true);
         switch (variable.type()) {
             case BOOL:
@@ -195,22 +196,22 @@ public class ByteArraySerializer implements IByteArraySerializable {
                 buff.putByte((Byte) data, variable.byteOffset() + index * variable.type().getByteLength());
                 break;
             case UINT16:
-                buff.putShort((Integer) data, variable.byteOffset() + index * variable.type().getByteLength());
+                buff.putShort((Integer) data, variable.byteOffset() + index * variable.type().getByteLength(), variable.littleEndian());
                 break;
             case INT16:
-                buff.putShort((Short) data, variable.byteOffset() + index * variable.type().getByteLength());
+                buff.putShort((Short) data, variable.byteOffset() + index * variable.type().getByteLength(), variable.littleEndian());
                 break;
             case UINT32:
-                buff.putInteger((Long) data, variable.byteOffset() + index * variable.type().getByteLength());
+                buff.putInteger((Long) data, variable.byteOffset() + index * variable.type().getByteLength(), variable.littleEndian());
                 break;
             case INT32:
-                buff.putInteger((Integer) data, variable.byteOffset() + index * variable.type().getByteLength());
+                buff.putInteger((Integer) data, variable.byteOffset() + index * variable.type().getByteLength(), variable.littleEndian());
                 break;
             case FLOAT32:
-                buff.putFloat((Float) data, variable.byteOffset() + index * variable.type().getByteLength());
+                buff.putFloat((Float) data, variable.byteOffset() + index * variable.type().getByteLength(), variable.littleEndian());
                 break;
             case FLOAT64:
-                buff.putDouble((Double) data, variable.byteOffset() + index * variable.type().getByteLength());
+                buff.putDouble((Double) data, variable.byteOffset() + index * variable.type().getByteLength(), variable.littleEndian());
                 break;
             case STRING:
                 buff.putString((String) data, StandardCharsets.US_ASCII, variable.byteOffset());

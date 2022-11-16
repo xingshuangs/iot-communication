@@ -41,6 +41,11 @@ public @interface ByteArrayVariable {
      */
     EDataType type() default EDataType.BYTE;
 
+    /**
+     * 是否小端模式
+     */
+    boolean littleEndian() default false;
+
 //    /**
 //     * 数据格式
 //     *
