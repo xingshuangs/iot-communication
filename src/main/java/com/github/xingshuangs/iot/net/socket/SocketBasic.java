@@ -100,7 +100,7 @@ public class SocketBasic {
             // 重新创建对象，并连接
             this.socket = new Socket();
 //        this.socket.setTcpNoDelay(true);
-            this.socket.setSoTimeout(10_000);
+            this.socket.setSoTimeout(this.receiveTimeout);
             this.socket.connect(this.socketAddress, this.connectTimeout);
             this.socketError.set(false);
             this.doAfterConnected();
