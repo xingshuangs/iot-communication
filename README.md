@@ -2,7 +2,7 @@
 
 ![Maven-v1.2.4](https://img.shields.io/badge/Maven-v1.2.4-brightgreen)
 ![Language-java8](https://img.shields.io/badge/Language-java8-blue)
-![Idea-2018.02.04](https://img.shields.io/badge/Idea-2018.02.04-lightgrey)
+![Idea-2022.02.03](https://img.shields.io/badge/Idea-2022.02.03-lightgrey)
 ![CopyRight-Oscura](https://img.shields.io/badge/CopyRight-Oscura-yellow)
 
 ## CopyRight

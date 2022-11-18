@@ -114,7 +114,7 @@ public enum EParamVariableType {
         return map.get(data);
     }
 
-    private byte code;
+    private final byte code;
 
     EParamVariableType(byte code) {
         this.code = code;

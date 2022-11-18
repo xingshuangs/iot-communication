@@ -78,7 +78,7 @@ public enum ESyntaxID {
         return map.get(data);
     }
 
-    private byte code;
+    private final byte code;
 
     ESyntaxID(byte code) {
         this.code = code;

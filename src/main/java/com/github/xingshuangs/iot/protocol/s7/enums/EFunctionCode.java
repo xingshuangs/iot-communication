@@ -83,7 +83,7 @@ public enum EFunctionCode {
         return map.get(data);
     }
 
-    private byte code;
+    private final byte code;
 
     EFunctionCode(byte code) {
         this.code = code;

@@ -22,12 +22,12 @@ public class ByteReadBuff extends ByteBuffBase {
     /**
      * 偏移量
      */
-    private int offset = 0;
+    private int offset;
 
     /**
      * 是否为小端模式，默认不是，为大端模式
      */
-    private boolean littleEndian = false;
+    private boolean littleEndian;
 
     /**
      * 构造方法

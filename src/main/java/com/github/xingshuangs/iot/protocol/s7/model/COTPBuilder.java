@@ -12,6 +12,10 @@ import java.util.Arrays;
  */
 public class COTPBuilder {
 
+    private COTPBuilder() {
+        // NOOP
+    }
+
     /**
      * 字节数组数据解析
      *

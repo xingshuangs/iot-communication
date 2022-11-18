@@ -18,6 +18,7 @@ import lombok.EqualsAndHashCode;
 public class SetupComParameter extends Parameter implements IObjectByteArray {
 
     public static final int BYTE_LENGTH = 8;
+
     /**
      * 预留 <br>
      * 字节大小：1 <br>

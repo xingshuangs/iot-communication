@@ -54,7 +54,7 @@ public enum EPduType {
         return map.get(data);
     }
 
-    private byte code;
+    private final byte code;
 
     EPduType(byte code) {
         this.code = code;

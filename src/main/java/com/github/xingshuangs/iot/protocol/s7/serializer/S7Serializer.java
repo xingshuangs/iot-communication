@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 public class S7Serializer implements IPLCSerializable {
 
-    private S7PLC s7PLC;
+    private final S7PLC s7PLC;
 
     public S7Serializer(S7PLC s7PLC) {
         this.s7PLC = s7PLC;

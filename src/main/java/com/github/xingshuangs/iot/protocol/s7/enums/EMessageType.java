@@ -44,7 +44,7 @@ public enum EMessageType {
         return map.get(data);
     }
 
-    private byte code;
+    private final byte code;
 
     EMessageType(byte code) {
         this.code = code;

@@ -89,7 +89,6 @@ public class AddressUtil {
             case "M":
                 return EArea.FLAGS;
             case "D":
-                return EArea.DATA_BLOCKS;
             case "V":
                 //****************** 对于200smartPLC的V区，就是DB1.X，例如，V1=DB1.1，V100=DB1.100 **********************/
                 return EArea.DATA_BLOCKS;
@@ -131,9 +130,9 @@ public class AddressUtil {
     private static int parseByteAddress(String[] addList) {
         switch (addList[0].substring(0, 1)) {
             case "D":
-                return addList.length >= 2 ? Integer.valueOf(addList[1]) : 0;
+                return addList.length >= 2 ? Integer.parseInt(addList[1]) : 0;
             default:
-                return Integer.valueOf(addList[0].substring(1));
+                return Integer.parseInt(addList[0].substring(1));
         }
     }
 
@@ -147,10 +146,10 @@ public class AddressUtil {
         switch (addList[0].substring(0, 1)) {
             case "D":
                 // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0；本质上不是bit时，位索引是不是0都不受影响的
-                return addList.length >= 3 && variableType == EParamVariableType.BIT ? Integer.valueOf(addList[2]) : 0;
+                return addList.length >= 3 && variableType == EParamVariableType.BIT ? Integer.parseInt(addList[2]) : 0;
             default:
                 // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0；本质上不是bit时，位索引是不是0都不受影响的
-                return addList.length >= 2 && variableType == EParamVariableType.BIT ? Integer.valueOf(addList[1]) : 0;
+                return addList.length >= 2 && variableType == EParamVariableType.BIT ? Integer.parseInt(addList[1]) : 0;
         }
     }
 }

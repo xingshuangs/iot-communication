@@ -63,6 +63,12 @@ public class ModbusNetwork extends SocketBasic {
         return ack;
     }
 
+    /**
+     * 校验请求数据和响应数据
+     *
+     * @param req 请求数据
+     * @param ack 响应数据
+     */
     private void checkResult(MbTcpRequest req, MbTcpResponse ack) {
         if (ack.getPdu() == null) {
             throw new ModbusCommException("PDU数据为null");
@@ -82,6 +88,12 @@ public class ModbusNetwork extends SocketBasic {
 
     //endregion
 
+    /**
+     * 读取modbus数据
+     *
+     * @param reqPdu 请求对象
+     * @return 响应结果
+     */
     protected MbPdu readModbusData(MbPdu reqPdu) {
         MbTcpRequest request = MbTcpRequest.createDefault();
         request.getHeader().setUnitId(this.unitId);

@@ -45,9 +45,9 @@ public enum EMbExceptionCode {
         return map.get(data);
     }
 
-    private byte code;
+    private final byte code;
 
-    private String description;
+    private final String description;
 
     EMbExceptionCode(byte code, String description) {
         this.code = code;

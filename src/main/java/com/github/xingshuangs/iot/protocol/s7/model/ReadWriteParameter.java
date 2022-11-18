@@ -43,6 +43,11 @@ public class ReadWriteParameter extends Parameter implements IObjectByteArray {
         this.itemCount = this.requestItems.size();
     }
 
+    /**
+     * 添加请求项列表
+     *
+     * @param items 请求项列表
+     */
     public void addItem(List<RequestItem> items) {
         this.requestItems.addAll(items);
         this.itemCount = this.requestItems.size();

@@ -28,7 +28,7 @@ public class ByteWriteBuff extends ByteBuffBase {
     /**
      * 是否为小端模式，默认不是，为大端模式
      */
-    private boolean littleEndian = false;
+    private boolean littleEndian;
 
     /**
      * 构造方法

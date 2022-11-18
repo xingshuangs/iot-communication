@@ -25,7 +25,7 @@ public class MbapHeader implements IObjectByteArray {
      * 字节大小：2个字节
      * 字节序数：0-1
      */
-    private int transactionId = 0;
+    private int transactionId;
 
     /**
      * 协议标识符<br>

@@ -139,9 +139,9 @@ public enum EMbFunctionCode {
         return map.get(data);
     }
 
-    private byte code;
+    private final byte code;
 
-    private String description;
+    private final String description;
 
     EMbFunctionCode(byte code, String description) {
         this.code = code;

@@ -105,7 +105,7 @@ public enum EArea {
         return map.get(data);
     }
 
-    private byte code;
+    private final byte code;
 
     EArea(byte code) {
         this.code = code;

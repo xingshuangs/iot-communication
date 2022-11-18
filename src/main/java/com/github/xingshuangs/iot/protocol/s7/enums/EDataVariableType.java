@@ -59,7 +59,7 @@ public enum EDataVariableType {
         return map.get(data);
     }
 
-    private byte code;
+    private final byte code;
 
     EDataVariableType(byte code) {
         this.code = code;

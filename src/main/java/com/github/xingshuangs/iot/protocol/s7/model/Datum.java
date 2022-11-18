@@ -30,8 +30,8 @@ public class Datum implements IObjectByteArray {
             return 0;
         }
         int sum = 0;
-        for (int i = 0; i < this.returnItems.size(); i++) {
-            sum += this.returnItems.get(i).byteArrayLength();
+        for (ReturnItem returnItem : this.returnItems) {
+            sum += returnItem.byteArrayLength();
         }
         return sum;
     }
@@ -42,14 +42,14 @@ public class Datum implements IObjectByteArray {
             return new byte[0];
         }
         ByteWriteBuff buff = ByteWriteBuff.newInstance(this.byteArrayLength());
-        for (int i = 0; i < this.returnItems.size(); i++) {
-            buff.putBytes(this.returnItems.get(i).toByteArray());
+        for (ReturnItem returnItem : this.returnItems) {
+            buff.putBytes(returnItem.toByteArray());
         }
         return buff.getData();
     }
 
     /**
-     * 添加请求项
+     * 添加数据项
      *
      * @param item 项
      */
@@ -57,6 +57,11 @@ public class Datum implements IObjectByteArray {
         this.returnItems.add(item);
     }
 
+    /**
+     * 批量添加数据项
+     *
+     * @param items 数据项列表
+     */
     public void addItem(List<DataItem> items) {
         this.returnItems.addAll(items);
     }

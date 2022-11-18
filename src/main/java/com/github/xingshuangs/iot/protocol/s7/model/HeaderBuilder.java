@@ -11,6 +11,10 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
  */
 public class HeaderBuilder {
 
+    private HeaderBuilder() {
+        // NOOP
+    }
+
     /**
      * 字节数组数据解析
      *

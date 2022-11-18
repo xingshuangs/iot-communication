@@ -59,9 +59,9 @@ public enum EErrorClass {
         return map.get(data);
     }
 
-    private byte code;
+    private final byte code;
 
-    private String description;
+    private final String description;
 
     EErrorClass(byte code, String description) {
         this.code = code;

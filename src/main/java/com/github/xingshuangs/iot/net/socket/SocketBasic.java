@@ -40,7 +40,7 @@ public class SocketBasic {
     /**
      * socket是否发生错误
      */
-    private AtomicBoolean socketError;
+    private final AtomicBoolean socketError;
 
     public int getConnectTimeout() {
         return connectTimeout;
@@ -99,7 +99,6 @@ public class SocketBasic {
         try {
             // 重新创建对象，并连接
             this.socket = new Socket();
-//        this.socket.setTcpNoDelay(true);
             this.socket.setSoTimeout(this.receiveTimeout);
             this.socket.connect(this.socketAddress, this.connectTimeout);
             this.socketError.set(false);
