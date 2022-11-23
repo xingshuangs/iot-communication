@@ -85,9 +85,9 @@ public class PLCNetwork extends SocketBasic {
      */
     private void connectionRequest() {
         // 对应0xC1
-        int local = 0x0100;
+        int local = 0x0102;
         // 对应0xC2 | 经测试：S1200支持0x0100、0x0200、0x0300，S200Smart支持0x0200、0x0300
-        int remote = 0x0300;
+        int remote = 0x0100;
         switch (this.plcType) {
             case S200:
                 // S7net中写的是0x1000,0x1001
@@ -95,6 +95,9 @@ public class PLCNetwork extends SocketBasic {
                 remote = 0x4D57;
                 break;
             case S200_SMART:
+                local = 0x0100;
+                remote = 0x0300;
+                break;
             case S300:
             case S400:
             case S1200:
