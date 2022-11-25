@@ -82,6 +82,9 @@ public class PLCNetwork extends SocketBasic {
 
     /**
      * 连接请求
+     * 	1500	1200	300	    400	    200	    200Smart
+     *  0x0102	0x0102	0x0102	0x0102	0x4d57	0x1000
+     *  0x0100	0x0100	0x0102	0x0103	0x4d57	0x0300
      */
     private void connectionRequest() {
         // 对应0xC1
@@ -245,7 +248,7 @@ public class PLCNetwork extends SocketBasic {
             List<S7ComItem> comItemList = x.getItems();
             List<RequestItem> newRequestItems = comItemList.stream().map(i -> {
                 RequestItem item = requestItems.get(i.getIndex()).copy();
-                item.setCount(i.getRipeData());
+                item.setCount(i.getRipeSize());
                 item.setByteAddress(item.getByteAddress() + i.getSplitOffset());
                 return item;
             }).collect(Collectors.toList());
@@ -310,15 +313,15 @@ public class PLCNetwork extends SocketBasic {
             List<S7ComItem> comItemList = x.getItems();
             List<RequestItem> newRequestItems = comItemList.stream().map(i -> {
                 RequestItem item = requestItems.get(i.getIndex()).copy();
-                item.setCount(i.getRipeData());
+                item.setCount(i.getRipeSize());
                 item.setByteAddress(item.getByteAddress() + i.getSplitOffset());
                 return item;
             }).collect(Collectors.toList());
             // 根据分组构建对应的数据列表
             List<DataItem> newDataItems = comItemList.stream().map(i -> {
                 DataItem item = dataItems.get(i.getIndex()).copy();
-                item.setCount(i.getRipeData());
-                item.setData(ByteReadBuff.newInstance(item.getData()).getBytes(i.getSplitOffset(), i.getRipeData()));
+                item.setCount(i.getRipeSize());
+                item.setData(ByteReadBuff.newInstance(item.getData()).getBytes(i.getSplitOffset(), i.getRipeSize()));
                 return item;
             }).collect(Collectors.toList());
 

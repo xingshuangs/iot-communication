@@ -39,12 +39,12 @@ public class S7SequentialGroupAlg {
             while (number > 0) {
                 S7ComItem s7ComItem = new S7ComItem(i, src.get(i), offset, 0, extraNumber);
                 if (sum + number + extraNumber > targetNumber) {
-                    s7ComItem.setRipeData(targetNumber - sum - extraNumber);
+                    s7ComItem.setRipeSize(targetNumber - sum - extraNumber);
                 } else {
-                    s7ComItem.setRipeData(number);
+                    s7ComItem.setRipeSize(number);
                 }
-                number -= s7ComItem.getRipeData();
-                offset += s7ComItem.getRipeData();
+                number -= s7ComItem.getRipeSize();
+                offset += s7ComItem.getRipeSize();
                 sum += s7ComItem.getTotalLength();
                 group.add(s7ComItem);
                 if (sum >= targetNumber - extraNumber) {
