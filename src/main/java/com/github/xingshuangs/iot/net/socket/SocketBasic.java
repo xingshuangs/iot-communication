@@ -71,15 +71,15 @@ public class SocketBasic {
     }
     // endregion
 
-    //region 私有方法
+    //region 公共方法
 
     /**
      * 校验连接状态，true为连接，false为断开
      *
      * @return 连接状态，true为连接，false为断开
      */
-    private boolean checkConnected() {
-        return !this.socketError.get() && this.socket != null && (socket.isConnected() && !socket.isClosed());
+    public boolean checkConnected() {
+        return !this.socketError.get() && this.socket != null && (this.socket.isConnected() && !this.socket.isClosed());
     }
 
     /**
@@ -87,7 +87,7 @@ public class SocketBasic {
      *
      * @return socket对象
      */
-    private Socket getAvailableSocket() {
+    public Socket getAvailableSocket() {
 
         // 已连接的直接返回socket
         if (this.checkConnected()) {
@@ -129,7 +129,7 @@ public class SocketBasic {
         // NOOP
     }
 
-    //region 公有方法
+    //region 读写方法
 
     /**
      * 写入数据

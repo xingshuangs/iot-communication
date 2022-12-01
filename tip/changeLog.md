@@ -1,3 +1,9 @@
+## v1.2.5
+- 更新时间：2022.12.01
+- 修改基础的sourceTSAP和destinationTSAP
+- SocketBasic的方法暴露出来
+- ByteReadBuff和ByteWriteBuff添加littleEndian字段
+
 ## v1.2.4
 - 更新时间：2022.11.09
 - 完善pduLength的数据大小约束

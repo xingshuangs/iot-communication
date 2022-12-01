@@ -1,6 +1,6 @@
 # IOT-COMMUNICATION
 
-![Maven-v1.2.4](https://img.shields.io/badge/Maven-v1.2.4-brightgreen)
+![Maven-v1.2.5](https://img.shields.io/badge/Maven-v1.2.5-brightgreen)
 ![Language-java8](https://img.shields.io/badge/Language-java8-blue)
 ![Idea-2022.02.03](https://img.shields.io/badge/Idea-2022.02.03-lightgrey)
 ![CopyRight-Oscura](https://img.shields.io/badge/CopyRight-Oscura-yellow)
@@ -18,7 +18,7 @@ You can add QQ( 759101350 ) if you have questions, the author will give answers 
 <dependency>
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
 </dependency>
 ```
 
