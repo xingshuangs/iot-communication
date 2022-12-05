@@ -113,6 +113,7 @@ public class RequestItem implements IObjectByteArray {
         requestItem.syntaxId = this.syntaxId;
         requestItem.variableType = this.variableType;
         requestItem.count = this.count;
+        requestItem.area = this.area;
         requestItem.dbNumber = this.dbNumber;
         requestItem.byteAddress = this.byteAddress;
         requestItem.bitAddress = this.bitAddress;
