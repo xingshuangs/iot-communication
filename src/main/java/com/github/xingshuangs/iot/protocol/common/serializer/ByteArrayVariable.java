@@ -43,6 +43,8 @@ public @interface ByteArrayVariable {
 
     /**
      * 是否小端模式
+     *
+     * @return 是否小端模式
      */
     boolean littleEndian() default false;
 
