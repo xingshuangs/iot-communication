@@ -311,10 +311,10 @@ public class S7PLC extends PLCNetwork {
     }
 
     /**
-     * 读取一个Float32的数据
+     * 读取一个Float64的数据
      *
      * @param address 地址
-     * @return 一个Float32的数据
+     * @return 一个Float64的数据
      */
     public double readFloat64(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 8));
@@ -322,20 +322,20 @@ public class S7PLC extends PLCNetwork {
     }
 
     /**
-     * 读取多个Float32的数据
+     * 读取多个Float64的数据
      *
      * @param address 多个地址
-     * @return 多个Float32的数据
+     * @return 多个Float64的数据
      */
     public List<Double> readFloat64(String... address) {
         return this.readFloat64(Arrays.asList(address));
     }
 
     /**
-     * 读取多个Float32的数据
+     * 读取多个Float64的数据
      *
      * @param addresses 地址列表
-     * @return 多个Float32的数据
+     * @return 多个Float64的数据
      */
     public List<Double> readFloat64(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 8)).collect(Collectors.toList());
