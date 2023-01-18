@@ -99,4 +99,16 @@ public class Datum implements IObjectByteArray {
         }
         return datum;
     }
+
+    /**
+     * 创建数据Datum
+     *
+     * @param dataItems 数据项
+     * @return 数据对象Datum
+     */
+    public static Datum createDatum(List<DataItem> dataItems) {
+        Datum datum = new Datum();
+        datum.addItem(dataItems);
+        return datum;
+    }
 }

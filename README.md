@@ -8,9 +8,10 @@
 ## CopyRight
 
 @2019 - 9999 Oscura, All Rights Reserved <br>
-You can add QQ( 759101350 ) if you have questions, the author will give answers in his spare time.<br>
-如果有任何问题，可以添加QQ( 759101350 )，作者在空余时间会做解答。<br>
-
+You can add QQ( **759101350** ) or send email( **xingshuang_cool@163.com** ) if you have questions, the author will give
+answers in his spare time. <br>
+如果有任何问题，可以添加QQ( **759101350** ) 或者发送邮件( **xingshuang_cool@163.com** )
+，作者在空余时间会做解答。<br>
 
 ## How to get（如何获取）
 
@@ -24,19 +25,56 @@ You can add QQ( 759101350 ) if you have questions, the author will give answers 
 
 ## Description（简介）
 
-Now, it is a tool for iot communication. 
-1. It includes Siemens S7 protocol, it can access to S1200, S200smart.（包含西门子S7协议，目前可以访问西门子S1200，S200smart）
+Now, it is a tool for iot communication.
+
+1. It includes Siemens S7 protocol, it can access to S1500, S1200, S200smart.（包含西门子S7协议，目前可以访问西门子S1500，S1200，S200smart）
 2. It includes ModbusTCP protocol.（包含modbusTCP通信协议）
 3. It can parse byte array data.（可以进行字节数组数据解析）
-
 
 # Instance（示例）
 
 ## 1. Siemens S7 protocol（西门子S7协议）
 
+You can check this [address](https://blog.csdn.net/XS_YOUYOU/article/details/124870209) if
+you're not familiar with the S7 protocol. (
+如果你不熟悉S7协议可以查看这个[地址](https://blog.csdn.net/XS_YOUYOU/article/details/124870209)
+)<br>
 对于200smartPLC的V区，就是DB1.X，例如，**V1=DB1.1，V100=DB1.100**
 
+> Tips1: Format and meaning of the address, case compatible (知识点1：地址的格式以及对应含义，兼容大小写)
+
+| Abbr<br/>(简写) | Area<br/>(区域) | Byte Index<br/>(字节索引) | Bit Index<br/>(位索引) | PLC Type<br/>(PLC类型) |
+|---------------|:-------------:|:---------------------:|:-------------------:|----------------------|
+| DB1.1.2       |     DB1区      |           1           |          2          | 1200                 |
+| DB2           |     DB2区      |           0           |          0          | 1200                 |
+| DB3.3         |     DB3区      |           3           |          0          | 1200                 |
+| D1.1.2        |     DB1区      |           1           |          2          | 1200                 |
+| Q1.6          |      Q区       |           1           |          6          | 1200                 |
+| Q1            |      Q区       |           1           |          0          | 1200                 |
+| I2.5          |      I区       |           2           |          5          | 1200                 |
+| I2            |      I区       |           2           |          0          | 1200                 |
+| M3.2          |      M区       |           3           |          2          | 1200                 |
+| M3            |      M区       |           3           |          0          | 1200                 |
+| V2.1          |      V区       |           2           |          1          | 200Smart             |
+| V2            |      V区       |           2           |          0          | 200Smart             |
+
+> Tips2: Access data types mapping to JAVA data types and PLC data types (
+> 知识点2：访问数据类型与JAVA数据类型和PLC数据类型对应关系)
+
+| Access Data Type<br/>(访问数据类型) | Data Type Name<br/>(数据类型名称) | Data Size in Bit<br/>(数据大小[位]) | Data Size in Byte<br/>(数据大小[字节]) | JAVA Data Type<br/>(JAVA数据类型) | PLC Data Type<br/>(PLC数据类型) | Instance<br/>(示例) |
+|-------------------------------|-----------------------------|:------------------------------:|:--------------------------------:|-------------------------------|-----------------------------|-------------------|
+| boolean                       | 布尔类型                        |               1                |               1/8                | Boolean                       | BOOL                        | true              |
+| byte                          | 字节类型                        |               8                |                1                 | Byte                          | BYTE                        | 0x11              |
+| uint16                        | 无符号2字节整型                    |               16               |                2                 | Integer                       | WORD/UINT                   | 65535             |
+| int16                         | 有符号2字节整型                    |               16               |                2                 | Short                         | WORD/INT                    | -32760            |
+| uint32                        | 无符号4字节整型                    |               32               |                4                 | Long                          | DWORD/UDINT                 | 70000             |
+| int32                         | 有符号4字节整型                    |               32               |                4                 | Integer                       | DWORD/DINT                  | -70000            |
+| float32                       | 4字节浮点型                      |               32               |                4                 | Float                         | REAL                        | 3.14              |
+| float64                       | 8字节浮点型                      |               64               |                8                 | Double                        | LREAL                       | 3.14              |
+| string                        | 字符型                         |               8                |                1                 | String                        | String                      | ABC               |
+
 ### 1.1 read data(读)
+
 ```java
 class Demo {
     public static void main(String[] args) {
@@ -87,6 +125,7 @@ class Demo {
 ```
 
 ### 1.2 write data(写)
+
 ```java
 class Demo {
     public static void main(String[] args) {
@@ -127,6 +166,7 @@ class Demo {
 ```
 
 ### 1.3 control(控制)
+
 ```java
 class Demo {
     public static void main(String[] args) {
@@ -150,8 +190,11 @@ class Demo {
 ```
 
 ### 1.4 serializer(序列化的方式)
+
 create small size data class (构建数据量比较小的类型数据)
+
 ```java
+
 @Data
 public class DemoBean {
 
@@ -180,8 +223,11 @@ public class DemoBean {
     private byte[] byteData;
 }
 ```
+
 create big size data class (构建数据量比较大的数据类型)
+
 ```java
+
 @Data
 public class DemoLargeBean {
 
@@ -210,7 +256,9 @@ public class DemoLargeBean {
     private byte[] byteData7;
 }
 ```
+
 read and write (数据读写)
+
 ```java
 class Demo {
     public static void main(String[] args) {
@@ -218,7 +266,7 @@ class Demo {
         S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
         // 构建序列化对象
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
-        
+
         // 小数据量的读写
         DemoBean bean = s7Serializer.read(DemoBean.class);
         bean.setBitData(true);
@@ -230,7 +278,7 @@ class Demo {
         bean.setFloat64Data(4.15);
         bean.setByteData(new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03});
         s7Serializer.write(bean);
-        
+
         // 大数据量的读写
         DemoLargeBean largeBean = s7Serializer.read(DemoLargeBean.class);
         largeBean.getByteData2()[0] = (byte) 0x05;
@@ -249,53 +297,56 @@ class Demo {
     }
 }
 ```
+
 ---
 
 ## 2. ModbusTCP protocol（ModbusTCP协议）
 
 ### 2.1 read data(读)
+
 ```java
 class Demo {
     public static void main(String[] args) {
-      ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
-              
-      // read coil
-      List<Boolean> readCoil = plc.readCoil(0, 2);
+        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
 
-      // read discrete input
-      List<Boolean> readDiscreteInput = plc.readDiscreteInput(0, 4);
+        // read coil
+        List<Boolean> readCoil = plc.readCoil(0, 2);
 
-      // read hold register
-      byte[] readHoldRegister = plc.readHoldRegister(0, 4);
+        // read discrete input
+        List<Boolean> readDiscreteInput = plc.readDiscreteInput(0, 4);
 
-      // read input register
-      byte[] readInputRegister = plc.readInputRegister(0, 2);
+        // read hold register
+        byte[] readHoldRegister = plc.readHoldRegister(0, 4);
 
-      // hold register read Int16
-      short readInt16 = plc.readInt16(2);
+        // read input register
+        byte[] readInputRegister = plc.readInputRegister(0, 2);
 
-      // hold register read UInt16
-      int readUInt16 = plc.readUInt16(2);
+        // hold register read Int16
+        short readInt16 = plc.readInt16(2);
 
-      // hold register read Int32
-      int readInt32 = plc.readInt32(2);
+        // hold register read UInt16
+        int readUInt16 = plc.readUInt16(2);
 
-      // hold register read Int32
-      long readUInt32 = plc.readUInt32(2);
+        // hold register read Int32
+        int readInt32 = plc.readInt32(2);
 
-      // hold register read Float32
-      float readFloat32 = plc.readFloat32(2);
+        // hold register read Int32
+        long readUInt32 = plc.readUInt32(2);
 
-      // hold register read Float64
-      double readFloat64 = plc.readFloat64(2);
+        // hold register read Float32
+        float readFloat32 = plc.readFloat32(2);
 
-      // hold register read String
-      String readString = plc.readString(2, 4);
+        // hold register read Float64
+        double readFloat64 = plc.readFloat64(2);
+
+        // hold register read String
+        String readString = plc.readString(2, 4);
     }
 }
 ```
 
 ### 2.2 write data(写)
+
 ```java
 class Demo {
     public static void main(String[] args) {
@@ -305,11 +356,7 @@ class Demo {
         plc.writeCoil(0, true);
 
         // multiple write coil
-        List<Boolean> booleans = new ArrayList<>();
-        booleans.add(true);
-        booleans.add(false);
-        booleans.add(true);
-        booleans.add(false);
+        List<Boolean> booleans = Arrays.asList(true, false, true, false);
         plc.writeCoil(0, booleans);
 
         // single write hold register
@@ -317,11 +364,7 @@ class Demo {
         // multiple write hold register
         plc.writeHoldRegister(3, new byte[]{(byte) 0x11, (byte) 0x12});
         // multiple write hold register
-        List<Integer> integers = new ArrayList<>();
-        integers.add(11);
-        integers.add(12);
-        integers.add(13);
-        integers.add(14);
+        List<Integer> integers = Arrays.asList(11, 12, 13, 14);
         plc.writeHoldRegister(3, integers);
 
         // hold register write int16
@@ -353,7 +396,9 @@ class Demo {
 ## 3. Byte array parse（字节数据解析）
 
 ### 3.1 serializer(序列化的方式)
+
 ```java
+
 @Data
 public class ByteArrayBean {
 
@@ -384,6 +429,7 @@ public class ByteArrayBean {
     @ByteArrayVariable(byteOffset = 37, count = 3, type = EDataType.STRING)
     String stringData;
 }
+
 @Data
 public class ByteArrayListBean {
 
@@ -455,6 +501,7 @@ class Demo {
 ```
 
 ### 3.2 Get single data
+
 ```java
 /*********************************** EXAMPLE1 ***********************************/
 class Demo {
@@ -468,11 +515,11 @@ class Demo {
         list.add(new DataUnit<>(6, "short"));
         list.add(new DataUnit<>(0, "int"));
         list.add(new DataUnit<>(0, "uint"));
-        list.add(new DataUnit<>(8,"float"));
-        list.add(new DataUnit<>(12,"double"));
+        list.add(new DataUnit<>(8, "float"));
+        list.add(new DataUnit<>(12, "double"));
         list.add(new DataUnit<>(20, 9, "string"));
         parse.parseDataList(list);
-        list.forEach(x-> System.out.println(x.getValue()));
+        list.forEach(x -> System.out.println(x.getValue()));
     }
 }
 
@@ -490,6 +537,7 @@ true
 ```
 
 ### 3.3 Get Array data
+
 ```java
 /*********************************** EXAMPLE2 ***********************************/
 class Demo {

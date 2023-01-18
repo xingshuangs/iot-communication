@@ -26,7 +26,7 @@ public class ReadWriteParameter extends Parameter implements IObjectByteArray {
      * 字节大小：1 <br>
      * 字节序数：1
      */
-    private int itemCount = 0x01;
+    private int itemCount = 0x00;
 
     /**
      * 可重复的请求项
@@ -101,24 +101,26 @@ public class ReadWriteParameter extends Parameter implements IObjectByteArray {
     /**
      * 创建默认的读取参数
      *
+     * @param requestItems 请求项
      * @return ReadWriteParameter
      */
-    public static ReadWriteParameter createReadDefault() {
+    public static ReadWriteParameter createReadParameter(List<RequestItem> requestItems) {
         ReadWriteParameter parameter = new ReadWriteParameter();
         parameter.functionCode = EFunctionCode.READ_VARIABLE;
-        parameter.itemCount = 0;
+        parameter.addItem(requestItems);
         return parameter;
     }
 
     /**
      * 创建默认的写入参数
      *
+     * @param requestItems 请求项
      * @return ReadWriteParameter
      */
-    public static ReadWriteParameter createWriteDefault() {
+    public static ReadWriteParameter createWriteParameter(List<RequestItem> requestItems) {
         ReadWriteParameter parameter = new ReadWriteParameter();
         parameter.functionCode = EFunctionCode.WRITE_VARIABLE;
-        parameter.itemCount = 0;
+        parameter.addItem(requestItems);
         return parameter;
     }
 }

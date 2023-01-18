@@ -77,14 +77,14 @@ public class PLCNetwork extends SocketBasic {
     @Override
     protected void doAfterConnected() {
         this.connectionRequest();
-        this.pduLength = this.connectDtData();
+        this.connectDtData();
     }
 
     /**
      * 连接请求
-     * 	1500	1200	300	    400	    200	    200Smart
-     *  0x0102	0x0102	0x0102	0x0102	0x4d57	0x1000
-     *  0x0100	0x0100	0x0102	0x0103	0x4d57	0x0300
+     * 1500	1200	300	    400	    200	    200Smart
+     * 0x0102	0x0102	0x0102	0x0102	0x4d57	0x1000
+     * 0x0100	0x0100	0x0102	0x0103	0x4d57	0x0300
      */
     private void connectionRequest() {
         // 对应0xC1
@@ -238,7 +238,7 @@ public class PLCNetwork extends SocketBasic {
         List<Integer> rawNumbers = requestItems.stream().map(RequestItem::getCount).collect(Collectors.toList());
         // 根据原始请求列表构建最终结果列表
         List<DataItem> resultList = requestItems.stream().map(x -> DataItem.createByByte(new byte[x.getCount()],
-                x.getVariableType() == EParamVariableType.BIT ? EDataVariableType.BIT : EDataVariableType.BYTE_WORD_DWORD))
+                        x.getVariableType() == EParamVariableType.BIT ? EDataVariableType.BIT : EDataVariableType.BYTE_WORD_DWORD))
                 .collect(Collectors.toList());
 
         // 根据顺序分组算法得出分组结果，14=12(header)+2(parameter),5(DataItem)，dataItem可能4或5，统一采用5
@@ -254,10 +254,7 @@ public class PLCNetwork extends SocketBasic {
             }).collect(Collectors.toList());
 
             // S7数据请求
-            S7Data req = S7Data.createReadDefault();
-            ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
-            parameter.addItem(newRequestItems);
-            req.selfCheck();
+            S7Data req = S7Data.createReadRequest(newRequestItems);
             S7Data ack = this.readFromServer(req);
             List<DataItem> dataItems = ack.getDatum().getReturnItems().stream().map(a -> (DataItem) a).collect(Collectors.toList());
 
@@ -326,11 +323,7 @@ public class PLCNetwork extends SocketBasic {
             }).collect(Collectors.toList());
 
             // S7数据请求
-            S7Data req = S7Data.createWriteDefault();
-            ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
-            parameter.addItem(newRequestItems);
-            req.getDatum().addItem(newDataItems);
-            req.selfCheck();
+            S7Data req = S7Data.createWriteRequest(newRequestItems, newDataItems);
             this.readFromServer(req);
         });
     }

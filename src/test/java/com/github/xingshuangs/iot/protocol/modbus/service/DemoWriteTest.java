@@ -1,7 +1,7 @@
 package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,11 +16,7 @@ public class DemoWriteTest {
         plc.writeCoil(0, true);
 
         // multiple write coil
-        List<Boolean> booleans = new ArrayList<>();
-        booleans.add(true);
-        booleans.add(false);
-        booleans.add(true);
-        booleans.add(false);
+        List<Boolean> booleans = Arrays.asList(true, false, true, false);
         plc.writeCoil(0, booleans);
 
         // single write hold register
@@ -28,11 +24,7 @@ public class DemoWriteTest {
         // multiple write hold register
         plc.writeHoldRegister(3, new byte[]{(byte) 0x11, (byte) 0x12});
         // multiple write hold register
-        List<Integer> integers = new ArrayList<>();
-        integers.add(11);
-        integers.add(12);
-        integers.add(13);
-        integers.add(14);
+        List<Integer> integers = Arrays.asList(11, 12, 13, 14);
         plc.writeHoldRegister(3, integers);
 
         // hold register write int16

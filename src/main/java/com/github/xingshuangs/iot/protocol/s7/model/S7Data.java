@@ -6,6 +6,7 @@ import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * S7数据结构
@@ -181,14 +182,15 @@ public class S7Data implements IObjectByteArray {
     /**
      * 创建默认读对象
      *
+     * @param requestItems 请求项
      * @return S7Data
      */
-    public static S7Data createReadDefault() {
+    public static S7Data createReadRequest(List<RequestItem> requestItems) {
         S7Data s7Data = new S7Data();
         s7Data.tpkt = new TPKT();
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = Header.createDefault();
-        s7Data.parameter = ReadWriteParameter.createReadDefault();
+        s7Data.parameter = ReadWriteParameter.createReadParameter(requestItems);
         s7Data.selfCheck();
         return s7Data;
     }
@@ -196,15 +198,17 @@ public class S7Data implements IObjectByteArray {
     /**
      * 创建默认写对象
      *
+     * @param requestItems 请求项
+     * @param dataItems    数据项
      * @return S7Data
      */
-    public static S7Data createWriteDefault() {
+    public static S7Data createWriteRequest(List<RequestItem> requestItems, List<DataItem> dataItems) {
         S7Data s7Data = new S7Data();
         s7Data.tpkt = new TPKT();
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = Header.createDefault();
-        s7Data.parameter = ReadWriteParameter.createWriteDefault();
-        s7Data.datum = new Datum();
+        s7Data.parameter = ReadWriteParameter.createWriteParameter(requestItems);
+        s7Data.datum = Datum.createDatum(dataItems);
         s7Data.selfCheck();
         return s7Data;
     }
