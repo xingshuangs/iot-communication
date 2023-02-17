@@ -57,4 +57,12 @@ public class S7SerializerTest {
         bean.getByteData7()[43] = (byte) 0x07;
         s7Serializer.write(bean);
     }
+
+    @Test
+    public void dbData() {
+        s7PLC.setComCallback(x -> System.out.println("长度：" + x.length + ", 内容：" + HexUtil.toHexString(x)));
+        S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
+        DB80 bean = s7Serializer.read(DB80.class);
+        System.out.println(bean);
+    }
 }

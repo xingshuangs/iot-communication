@@ -19,8 +19,12 @@ import java.util.stream.Collectors;
 /**
  * plc的网络通信
  * 最小字节数组大小是240-18=222，480-18=462,960-18=942
- * 根据测试S1200[CPU 1214C]，单次读多字节，最大字节读取长度是 222 = 240 - 18, 18(响应报文的PDU)=12(header)+2(parameter)+4(dataItem)
- * 根据测试S1200[CPU 1214C]，单次写多字节，最大字节写入长度是 212 = 240 - 28, 28(请求报文的PDU)=10(header)+14(parameter)+4(dataItem)
+ * 根据测试S1200[CPU 1214C]，单次读多字节
+ * 发送：最大字节读取长度是 216 = 240 - 24, 18(响应报文的PDU)=10(header)+14(parameter)
+ * 接收：最大字节读取长度是 222 = 240 - 18, 18(响应报文的PDU)=12(header)+2(parameter)+4(dataItem)
+ * 根据测试S1200[CPU 1214C]，单次写多字节
+ * 发送：最大字节写入长度是 212 = 240 - 28, 28(请求报文的PDU)=10(header)+14(parameter)+4(dataItem)
+ * 接收：最大字节写入长度是 225 = 240 - 15, 28(请求报文的PDU)=12(header)+2(parameter)+1(dataItem)
  *
  * @author xingshuang
  */
@@ -241,8 +245,10 @@ public class PLCNetwork extends SocketBasic {
                         x.getVariableType() == EParamVariableType.BIT ? EDataVariableType.BIT : EDataVariableType.BYTE_WORD_DWORD))
                 .collect(Collectors.toList());
 
-        // 根据顺序分组算法得出分组结果，14=12(header)+2(parameter),5(DataItem)，dataItem可能4或5，统一采用5
-        List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.recombination(rawNumbers, this.pduLength - 14, 5);
+        // 根据顺序分组算法得出分组结果，
+        // 发送： 12=10(header)+2(parameter前),12(parameter后) （采用)
+        // 接收： 14=12(header)+2(parameter),5(DataItem)，dataItem可能4或5，统一采用5  (不采用)
+        List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.readRecombination(rawNumbers, this.pduLength - 14, 12,5);
         s7ComGroups.forEach(x -> {
             // 根据分组构建对应的请求列表
             List<S7ComItem> comItemList = x.getItems();
@@ -303,8 +309,10 @@ public class PLCNetwork extends SocketBasic {
         // 根据原始请求列表提取每个请求数据大小
         List<Integer> rawNumbers = requestItems.stream().map(RequestItem::getCount).collect(Collectors.toList());
 
-        // 根据顺序分组算法得出分组结果 12=10(header)+2(parameter前),17=12(parameter后)+5(dataItem)，dataItem可能4或5，统一采用5
-        List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.recombination(rawNumbers, this.pduLength - 12, 17);
+        // 根据顺序分组算法得出分组结果
+        // 发送：12=10(header)+2(parameter前),17=12(parameter后)+5(dataItem)，dataItem可能4或5，统一采用5 （采用)
+        // 接收：14=12(header)+2(parameter),1(DataItem)  (不采用)
+        List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.writeRecombination(rawNumbers, this.pduLength - 12, 17);
         s7ComGroups.forEach(x -> {
             // 根据分组构建对应的请求列表
             List<S7ComItem> comItemList = x.getItems();
