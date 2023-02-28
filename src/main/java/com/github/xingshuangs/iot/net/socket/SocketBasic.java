@@ -35,7 +35,7 @@ public class SocketBasic {
     /**
      * socket的地址
      */
-    private InetSocketAddress socketAddress;
+    private final InetSocketAddress socketAddress;
 
     /**
      * socket是否发生错误
