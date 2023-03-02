@@ -16,7 +16,7 @@ public class UdpClientBasic {
     /**
      * 服务端地址
      */
-    private final InetSocketAddress serverAddress;
+    protected final InetSocketAddress serverAddress;
 
     /**
      * socket对象

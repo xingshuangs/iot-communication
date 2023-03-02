@@ -14,7 +14,11 @@ public class UdpClientBasicTest extends TestCase {
         String data = "hello world ";
         udpClientBasic.write(data.getBytes(StandardCharsets.UTF_8));
         byte[] in = new byte[1024];
-        udpClientBasic.read(in);
+        int read = udpClientBasic.read(in);
+        System.out.println("长度：" + read);
+        System.out.println(new String(in));
+        read = udpClientBasic.read(in);
+        System.out.println("长度：" + read);
         System.out.println(new String(in));
     }
 
