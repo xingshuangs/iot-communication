@@ -156,6 +156,32 @@ public class COTPConnection extends COTP implements IObjectByteArray {
     }
 
     /**
+     * CRConnect Request 连接请求
+     *
+     * @param local  本地参数
+     * @param remote 远程参数
+     * @return COTPConnection对象
+     */
+    public static COTPConnection crConnectConfirm(COTPConnection request) {
+        COTPConnection connection = new COTPConnection();
+        connection.length = 0x11;
+        connection.pduType = EPduType.CONNECT_CONFIRM;
+        connection.destinationReference = 0x0001;
+        connection.sourceReference = request.sourceReference;
+        connection.flags = request.flags;
+        connection.parameterCodeTpduSize = request.parameterCodeTpduSize;
+        connection.parameterLength1 = request.parameterLength1;
+        connection.tpduSize = request.tpduSize;
+        connection.parameterCodeSrcTsap = request.parameterCodeSrcTsap;
+        connection.parameterLength2 = request.parameterLength2;
+        connection.sourceTsap = request.sourceTsap;
+        connection.parameterCodeDstTsap = request.parameterCodeDstTsap;
+        connection.parameterLength3 = request.parameterLength3;
+        connection.destinationTsap = request.destinationTsap;
+        return connection;
+    }
+
+    /**
      * 字节数组数据解析
      *
      * @param data 字节数组数据

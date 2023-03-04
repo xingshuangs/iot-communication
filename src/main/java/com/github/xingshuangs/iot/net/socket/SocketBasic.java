@@ -36,7 +36,7 @@ public class SocketBasic {
     /**
      * socket的地址
      */
-    private final InetSocketAddress socketAddress;
+    protected final InetSocketAddress socketAddress;
 
     /**
      * socket是否发生错误
@@ -103,20 +103,21 @@ public class SocketBasic {
             this.socket.setSoTimeout(this.receiveTimeout);
             this.socket.connect(this.socketAddress, this.connectTimeout);
             this.socketError.set(false);
+            log.debug("创建并连接服务端[{}]成功", this.socketAddress);
             this.doAfterConnected();
-            log.debug("创建并连接服务端成功，IP地址[{}]，端口号[{}]", this.socketAddress.getHostString(), this.socketAddress.getPort());
             return socket;
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
         }
     }
 
+    /**
+     * 关闭socket
+     */
     public void close() {
         try {
-            if (this.socket != null) {
-                this.socket.close();
-                this.socket = null;
-            }
+            SocketUtils.close(this.socket);
+            this.socket = null;
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
         }

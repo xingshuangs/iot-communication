@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.concurrent.*;
 
 /**
@@ -23,6 +24,11 @@ public class ServerSocketBasic {
      * 服务器对象
      */
     private ServerSocket serverSocket;
+
+    /**
+     * 客户端MAP
+     */
+    private ConcurrentHashMap<String, Socket> clientMap = new ConcurrentHashMap<>();
 
     //region 服务端
 
@@ -42,7 +48,7 @@ public class ServerSocketBasic {
         try {
             this.stop();
             this.serverSocket = new ServerSocket(port);
-            CompletableFuture.runAsync(this::waitConnection);
+            CompletableFuture.runAsync(this::waitForClients);
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
         }
@@ -70,15 +76,17 @@ public class ServerSocketBasic {
         return this.serverSocket != null && !this.serverSocket.isClosed();
     }
 
-    private void waitConnection() {
+    /**
+     * 等待客户端连入
+     */
+    private void waitForClients() {
         while (this.isAlive()) {
             try {
                 Socket client = this.serverSocket.accept();
                 if (!this.checkClientValid(client)) {
-                    client.close();
+                    SocketUtils.close(client);
                 }
-
-                CompletableFuture.runAsync(() -> this.doAfterConnected(client));
+                CompletableFuture.runAsync(() -> this.doClientConnected(client));
             } catch (IOException e) {
                 log.error(e.getMessage());
             }
@@ -89,40 +97,97 @@ public class ServerSocketBasic {
 
     //region 客户端
 
-    protected boolean checkClientValid(Socket client) {
+    /**
+     * 校验客户端是否允许连入
+     *
+     * @param client 客户端
+     * @return 是否有效，true：有效，false：无效
+     */
+    protected boolean checkClientValid(Socket client) throws IOException {
         return true;
     }
 
+    /**
+     * 客户端连入后要做的业务
+     *
+     * @param client 客户端
+     */
+    private void doClientConnected(Socket client) {
+        SocketAddress address = client.getRemoteSocketAddress();
+        this.clientMap.put(address.toString(), client);
+        log.debug("有客户端[{}]连入，当前客户端数量[{}]", address, this.clientMap.size());
 
-    protected void doAfterConnected(Socket client) {
-        log.debug("有客户端连入，IP[{}]，端口号[{}]", client.getInetAddress().getHostAddress(), client.getPort());
-
-        while (SocketUtils.isConnected(client)) {
-            try {
-                InputStream in = client.getInputStream();
-                int firstByte = in.read();
-                if (firstByte == -1) {
-                    client.close();
-                    log.debug("客户端主动断开，IP[{}]，端口号[{}]", client.getInetAddress().getHostAddress(), client.getPort());
-                    break;
-                }
-                byte[] data = new byte[in.available() + 1];
-                data[0] = (byte) firstByte;
-                int offset = 1;
-                SocketUtils.read(client, data, offset, data.length - 1, 1024, -1);
-                log.debug(new String(data));
-            } catch (Exception e) {
-                try {
-                    if (!client.isClosed()) {
-                        client.close();
-                        break;
-                    }
-                } catch (Exception ex) {
-                    // NOOP
-                } finally {
-                    log.debug("客户端异常断开，IP[{}]，端口号[{}]，原因：{}", client.getInetAddress().getHostAddress(), client.getPort(), e.getMessage());
+        try {
+            if (this.checkHandshake(client)) {
+                while (SocketUtils.isConnected(client)) {
+                    this.doClientHandle(client);
                 }
             }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        } finally {
+            try {
+                SocketUtils.close(client);
+            } catch (Exception ex) {
+                // NOOP
+            }
+        }
+
+        this.clientMap.remove(address.toString());
+        log.debug("有客户端[{}]断开，当前客户端数量[{}]", address, this.clientMap.size());
+    }
+
+    /**
+     * 握手校验
+     *
+     * @param socket 客户端
+     * @return 校验结果，true：成功，false：失败
+     */
+    protected boolean checkHandshake(Socket socket) {
+        return true;
+    }
+
+    /**
+     * 执行客户端的业务，可重写
+     *
+     * @param socket 客户端的socket对象
+     * @throws IOException IO异常
+     */
+    protected void doClientHandle(Socket socket) {
+        byte[] data = this.readClientData(socket);
+        if (data.length == 0) {
+            throw new SocketRuntimeException("客户端主动断开");
+        }
+        log.debug(new String(data));
+    }
+
+    /**
+     * 读取客户端数据
+     *
+     * @param socket 客户端socket对象
+     * @return 读取的字节数据
+     */
+    protected byte[] readClientData(Socket socket) {
+        try {
+            InputStream in = socket.getInputStream();
+            int firstByte = in.read();
+            if (firstByte == -1) {
+                return new byte[0];
+            }
+            byte[] data = new byte[in.available() + 1];
+            data[0] = (byte) firstByte;
+            SocketUtils.read(socket, data, 1, data.length - 1, 1024);
+            return data;
+        } catch (IOException e) {
+            throw new SocketRuntimeException(e);
+        }
+    }
+
+    public void write(final Socket socket, final byte[] data) {
+        try {
+            SocketUtils.write(socket, data);
+        } catch (IOException e) {
+            throw new SocketRuntimeException(e);
         }
     }
     //endregion

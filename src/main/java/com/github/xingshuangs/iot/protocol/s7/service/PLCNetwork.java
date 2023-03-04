@@ -10,6 +10,7 @@ import com.github.xingshuangs.iot.protocol.s7.algorithm.S7SequentialGroupAlg;
 import com.github.xingshuangs.iot.protocol.s7.constant.ErrorCode;
 import com.github.xingshuangs.iot.protocol.s7.enums.*;
 import com.github.xingshuangs.iot.protocol.s7.model.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +29,8 @@ import java.util.stream.Collectors;
  *
  * @author xingshuang
  */
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("DuplicatedCode")
+@Slf4j
 public class PLCNetwork extends SocketBasic {
 
     /**
@@ -57,12 +59,25 @@ public class PLCNetwork extends SocketBasic {
     protected int pduLength;
 
     /**
+     * 是否持久化，默认是持久化，对应长短连接，true：长链接，false：短连接
+     */
+    private boolean persistence = true;
+
+    /**
      * 通信回调
      */
     private Consumer<byte[]> comCallback;
 
     public void setComCallback(Consumer<byte[]> comCallback) {
         this.comCallback = comCallback;
+    }
+
+    public boolean isPersistence() {
+        return persistence;
+    }
+
+    public void setPersistence(boolean persistence) {
+        this.persistence = persistence;
     }
 
     public PLCNetwork() {
@@ -82,6 +97,7 @@ public class PLCNetwork extends SocketBasic {
     protected void doAfterConnected() {
         this.connectionRequest();
         this.connectDtData();
+        log.debug("PLC[{}]握手成功，机架号[{}]，槽号[{}]，PDU长度[{}]", this.plcType, this.rack, this.slot, this.pduLength);
     }
 
     /**
@@ -248,31 +264,38 @@ public class PLCNetwork extends SocketBasic {
         // 根据顺序分组算法得出分组结果，
         // 发送： 12=10(header)+2(parameter前),12(parameter后) （采用)
         // 接收： 14=12(header)+2(parameter),5(DataItem)，dataItem可能4或5，统一采用5  (不采用)
-        List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.readRecombination(rawNumbers, this.pduLength - 14, 12,5);
-        s7ComGroups.forEach(x -> {
-            // 根据分组构建对应的请求列表
-            List<S7ComItem> comItemList = x.getItems();
-            List<RequestItem> newRequestItems = comItemList.stream().map(i -> {
-                RequestItem item = requestItems.get(i.getIndex()).copy();
-                item.setCount(i.getRipeSize());
-                item.setByteAddress(item.getByteAddress() + i.getSplitOffset());
-                return item;
-            }).collect(Collectors.toList());
+        List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.readRecombination(rawNumbers, this.pduLength - 14, 12, 5);
+        try {
+            s7ComGroups.forEach(x -> {
+                // 根据分组构建对应的请求列表
+                List<S7ComItem> comItemList = x.getItems();
+                List<RequestItem> newRequestItems = comItemList.stream().map(i -> {
+                    RequestItem item = requestItems.get(i.getIndex()).copy();
+                    item.setCount(i.getRipeSize());
+                    item.setByteAddress(item.getByteAddress() + i.getSplitOffset());
+                    return item;
+                }).collect(Collectors.toList());
 
-            // S7数据请求
-            S7Data req = S7Data.createReadRequest(newRequestItems);
-            S7Data ack = this.readFromServer(req);
-            List<DataItem> dataItems = ack.getDatum().getReturnItems().stream().map(a -> (DataItem) a).collect(Collectors.toList());
+                // S7数据请求
+                S7Data req = S7Data.createReadRequest(newRequestItems);
+                S7Data ack = this.readFromServer(req);
+                List<DataItem> dataItems = ack.getDatum().getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
 
-            // 将获取的数据重装实际结果列表中
-            for (int i = 0; i < comItemList.size(); i++) {
-                S7ComItem comItem = comItemList.get(i);
-                byte[] src = dataItems.get(i).getData();
-                byte[] des = resultList.get(comItem.getIndex()).getData();
-                System.arraycopy(src, 0, des, comItem.getSplitOffset(), src.length);
+                // 将获取的数据重装实际结果列表中
+                for (int i = 0; i < comItemList.size(); i++) {
+                    S7ComItem comItem = comItemList.get(i);
+                    byte[] src = dataItems.get(i).getData();
+                    byte[] des = resultList.get(comItem.getIndex()).getData();
+                    System.arraycopy(src, 0, des, comItem.getSplitOffset(), src.length);
+                }
+            });
+            return resultList;
+        } finally {
+            if (!this.persistence) {
+                log.debug("由于短连接方式，通信完毕触发关闭连接通道，服务端IP[{}]", this.socketAddress);
+                this.close();
             }
-        });
-        return resultList;
+        }
     }
 
     /**
@@ -313,27 +336,34 @@ public class PLCNetwork extends SocketBasic {
         // 发送：12=10(header)+2(parameter前),17=12(parameter后)+5(dataItem)，dataItem可能4或5，统一采用5 （采用)
         // 接收：14=12(header)+2(parameter),1(DataItem)  (不采用)
         List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.writeRecombination(rawNumbers, this.pduLength - 12, 17);
-        s7ComGroups.forEach(x -> {
-            // 根据分组构建对应的请求列表
-            List<S7ComItem> comItemList = x.getItems();
-            List<RequestItem> newRequestItems = comItemList.stream().map(i -> {
-                RequestItem item = requestItems.get(i.getIndex()).copy();
-                item.setCount(i.getRipeSize());
-                item.setByteAddress(item.getByteAddress() + i.getSplitOffset());
-                return item;
-            }).collect(Collectors.toList());
-            // 根据分组构建对应的数据列表
-            List<DataItem> newDataItems = comItemList.stream().map(i -> {
-                DataItem item = dataItems.get(i.getIndex()).copy();
-                item.setCount(i.getRipeSize());
-                item.setData(ByteReadBuff.newInstance(item.getData()).getBytes(i.getSplitOffset(), i.getRipeSize()));
-                return item;
-            }).collect(Collectors.toList());
+        try {
+            s7ComGroups.forEach(x -> {
+                // 根据分组构建对应的请求列表
+                List<S7ComItem> comItemList = x.getItems();
+                List<RequestItem> newRequestItems = comItemList.stream().map(i -> {
+                    RequestItem item = requestItems.get(i.getIndex()).copy();
+                    item.setCount(i.getRipeSize());
+                    item.setByteAddress(item.getByteAddress() + i.getSplitOffset());
+                    return item;
+                }).collect(Collectors.toList());
+                // 根据分组构建对应的数据列表
+                List<DataItem> newDataItems = comItemList.stream().map(i -> {
+                    DataItem item = dataItems.get(i.getIndex()).copy();
+                    item.setCount(i.getRipeSize());
+                    item.setData(ByteReadBuff.newInstance(item.getData()).getBytes(i.getSplitOffset(), i.getRipeSize()));
+                    return item;
+                }).collect(Collectors.toList());
 
-            // S7数据请求
-            S7Data req = S7Data.createWriteRequest(newRequestItems, newDataItems);
-            this.readFromServer(req);
-        });
+                // S7数据请求
+                S7Data req = S7Data.createWriteRequest(newRequestItems, newDataItems);
+                this.readFromServer(req);
+            });
+        } finally {
+            if (!this.persistence) {
+                log.debug("由于短连接方式，通信完毕触发关闭连接通道，服务端IP[{}]", this.socketAddress);
+                this.close();
+            }
+        }
     }
 
     //endregion

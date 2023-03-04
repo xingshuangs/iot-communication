@@ -69,4 +69,22 @@ public class AckHeader extends Header {
         header.errorCode = buff.getUInt16(10);
         return header;
     }
+
+    /**
+     * 创建默认的头header
+     *
+     * @return Header对象
+     */
+    public static AckHeader createDefault(Header request) {
+        AckHeader header = new AckHeader();
+        header.protocolId = request.protocolId;
+        header.messageType = EMessageType.ACK_DATA;
+        header.reserved = request.reserved;
+        header.pduReference = request.pduReference;
+        header.parameterLength = request.parameterLength;
+        header.dataLength = request.dataLength;
+        header.errorClass = EErrorClass.NO_ERROR;
+        header.errorCode = 0;
+        return header;
+    }
 }

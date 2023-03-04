@@ -5,6 +5,7 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EDataVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EParamVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import com.github.xingshuangs.iot.utils.HexUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -13,16 +14,17 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+@Slf4j
 @Ignore
 public class S7PLCTest {
 //    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
 //    private S7PLC s7PLC = new S7PLC(EPlcType.S1500, "192.168.3.201");
 //    private S7PLC s7PLC = new S7PLC(EPlcType.S200_SMART, "192.168.3.102");
-    private S7PLC s7PLC = new S7PLC(EPlcType.S1200);
+    private final S7PLC s7PLC = new S7PLC(EPlcType.S1200);
 
     @Before
     public void before(){
-        this.s7PLC.setComCallback(x -> System.out.println("长度：" + x.length + ", 内容：" + HexUtil.toHexString(x)));
+        this.s7PLC.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
     }
 
     @Test
@@ -244,5 +246,16 @@ public class S7PLCTest {
         s7PLC.writeByte("V2", (byte) 0x34);
         byte v2 = s7PLC.readByte("V2");
         assertEquals((byte) 0x34, v2);
+    }
+
+    @Test
+    public void persistence() {
+        s7PLC.setPersistence(false);
+        s7PLC.writeByte("DB2.1", (byte) 0x11);
+        byte actual = s7PLC.readByte("DB2.1");
+        assertEquals((byte) 0x11, actual);
+        s7PLC.writeByte("DB2.1", (byte) 0x11);
+        actual = s7PLC.readByte("DB2.1");
+        assertEquals((byte) 0x11, actual);
     }
 }

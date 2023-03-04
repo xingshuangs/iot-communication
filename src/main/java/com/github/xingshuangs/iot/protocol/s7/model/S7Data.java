@@ -164,6 +164,20 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
+     * 创建连接确认
+     *
+     * @param request 请求参数
+     * @return s7data数据
+     */
+    public static S7Data createConnectConfirm(S7Data request) {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPConnection.crConnectConfirm((COTPConnection)request.cotp);
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    /**
      * 创建连接setup
      *
      * @param pduLength PDU长度
@@ -175,6 +189,22 @@ public class S7Data implements IObjectByteArray {
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = Header.createDefault();
         s7Data.parameter = SetupComParameter.createDefault(pduLength);
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    /**
+     * 创建连接响应setup
+     *
+     * @param pduLength PDU长度
+     * @return s7data数据
+     */
+    public static S7Data createConnectAckDtData(S7Data request) {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = request.cotp;
+        s7Data.header = AckHeader.createDefault(request.header);
+        s7Data.parameter = request.parameter;
         s7Data.selfCheck();
         return s7Data;
     }

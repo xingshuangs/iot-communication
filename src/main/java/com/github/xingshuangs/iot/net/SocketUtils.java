@@ -20,6 +20,18 @@ public class SocketUtils {
     }
 
     /**
+     * 关闭socket
+     *
+     * @param socket socket对象
+     * @throws IOException IO异常
+     */
+    public static void close(final Socket socket) throws IOException {
+        if (socket != null && !socket.isClosed()) {
+            socket.close();
+        }
+    }
+
+    /**
      * 是否连接状态
      *
      * @param socket socket对象
@@ -38,7 +50,7 @@ public class SocketUtils {
      * @throws IOException IO异常
      */
     public static int read(final Socket socket, final byte[] data) throws IOException {
-        return read(socket, data, 0, data.length, -1, -1);
+        return read(socket, data, 0, data.length, -1, 0);
     }
 
     /**
@@ -52,7 +64,7 @@ public class SocketUtils {
      * @throws IOException IO异常
      */
     public static int read(final Socket socket, final byte[] data, int offset, final int length) throws IOException {
-        return read(socket, data, offset, length, -1, -1);
+        return read(socket, data, offset, length, -1, 0);
     }
 
     /**
@@ -67,7 +79,7 @@ public class SocketUtils {
      * @throws IOException IO异常
      */
     public static int read(final Socket socket, final byte[] data, int offset, final int length, final int maxLength) throws IOException {
-        return read(socket, data, offset, length, maxLength, -1);
+        return read(socket, data, offset, length, maxLength, 0);
     }
 
     /**
@@ -85,6 +97,9 @@ public class SocketUtils {
     public static int read(final Socket socket, final byte[] data, final int offset, final int length, final int maxLength, final int timeout) throws IOException {
         if (offset + length > data.length) {
             throw new IllegalArgumentException("offset+length");
+        }
+        if (timeout < 0) {
+            throw new IllegalArgumentException("timeout>=0");
         }
         // 阻塞不是指read的时间长短，可以理解为没有数据可读，线程一直在这等待
         socket.setSoTimeout(timeout);
