@@ -3,29 +3,31 @@ package com.github.xingshuangs.iot.protocol.s7.serializer;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import com.github.xingshuangs.iot.protocol.s7.service.S7PLC;
 import com.github.xingshuangs.iot.utils.HexUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+@Slf4j
 @Ignore
 public class S7SerializerTest {
-    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+    private final S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
 
     @Test
     public void read() {
-        s7PLC.setComCallback(x -> System.out.println("长度：" + x.length + ", 内容：" + HexUtil.toHexString(x)));
+        s7PLC.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
         DemoBean bean = s7Serializer.read(DemoBean.class);
-        System.out.println(bean.toString());
+        log.info(bean.toString());
     }
 
     @Test
     public void write() {
-        s7PLC.setComCallback(x -> System.out.println("长度：" + x.length + ", 内容：" + HexUtil.toHexString(x)));
+        s7PLC.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
         DemoBean bean = s7Serializer.read(DemoBean.class);
-        System.out.println(bean.toString());
+        log.info(bean.toString());
         bean.setBitData(true);
         bean.setUint16Data(42767);
         bean.setInt16Data((short) 32767);
@@ -39,7 +41,7 @@ public class S7SerializerTest {
 
     @Test
     public void writeLargeData() {
-        s7PLC.setComCallback(x -> System.out.println("长度：" + x.length + ", 内容：" + HexUtil.toHexString(x)));
+        s7PLC.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
         DemoLargeBean bean = s7Serializer.read(DemoLargeBean.class);
         System.out.println("-------------------------------");
@@ -60,7 +62,7 @@ public class S7SerializerTest {
 
     @Test
     public void dbData() {
-        s7PLC.setComCallback(x -> System.out.println("长度：" + x.length + ", 内容：" + HexUtil.toHexString(x)));
+        s7PLC.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
         DB80 bean = s7Serializer.read(DB80.class);
         System.out.println(bean);

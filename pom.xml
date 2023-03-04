@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <name>iot-communication</name>
-    <description>iot communication tool 目前支持S7、ModbusTCP通信协议</description>
+    <description>iot communication tool 目前支持S7、ModbusTCP通信协议、字节数据转换</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -34,6 +34,20 @@
             <version>1.18.24</version>
             <optional>true</optional>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.36</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.36</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <!--填入开发者信息，姓名、邮箱、项目地址-->

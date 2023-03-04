@@ -44,16 +44,16 @@ public class ModbusNetwork extends SocketBasic {
         int len;
         byte[] remain;
         synchronized (this.objLock) {
-            this.writeCycle(req.toByteArray());
+            this.write(req.toByteArray());
 
             byte[] data = new byte[MbapHeader.BYTE_LENGTH];
-            len = this.readCycle(data);
+            len = this.read(data);
             if (len < MbapHeader.BYTE_LENGTH) {
                 throw new ModbusCommException(" MbapHeader 无效，读取长度不一致");
             }
             header = MbapHeader.fromBytes(data);
             remain = new byte[header.getLength() - 1];
-            len = this.readCycle(remain);
+            len = this.read(remain);
         }
         if (len < remain.length) {
             throw new ModbusCommException(" MbapHeader后面的数据长度，长度不一致");

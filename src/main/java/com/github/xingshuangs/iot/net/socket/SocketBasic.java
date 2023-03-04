@@ -2,10 +2,10 @@ package com.github.xingshuangs.iot.net.socket;
 
 
 import com.github.xingshuangs.iot.exceptions.SocketRuntimeException;
+import com.github.xingshuangs.iot.net.SocketUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * @author xingshuang
  */
+@Slf4j
 public class SocketBasic {
 
     // region 私有对象
@@ -79,7 +80,7 @@ public class SocketBasic {
      * @return 连接状态，true为连接，false为断开
      */
     public boolean checkConnected() {
-        return !this.socketError.get() && this.socket != null && (this.socket.isConnected() && !this.socket.isClosed());
+        return !this.socketError.get() && SocketUtils.isConnected(this.socket);
     }
 
     /**
@@ -103,6 +104,7 @@ public class SocketBasic {
             this.socket.connect(this.socketAddress, this.connectTimeout);
             this.socketError.set(false);
             this.doAfterConnected();
+            log.debug("创建并连接服务端成功，IP地址[{}]，端口号[{}]", this.socketAddress.getHostString(), this.socketAddress.getPort());
             return socket;
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
@@ -147,39 +149,26 @@ public class SocketBasic {
      * @param offset 偏移量
      * @param length 数据长度
      */
-    public void write(final byte[] data, int offset, int length) {
+    public void write(final byte[] data, final int offset, final int length) {
+        this.write(data, offset, length, -1);
+    }
+
+    /**
+     * 写入数据
+     *
+     * @param data      字节数组
+     * @param offset    偏移量
+     * @param length    数据长度
+     * @param maxLength 单次通信允许的对最大长度
+     */
+    public void write(final byte[] data, final int offset, final int length, final int maxLength) {
         try {
             Socket availableSocket = this.getAvailableSocket();
-            OutputStream out = availableSocket.getOutputStream();
-            out.write(data, offset, length);
+            SocketUtils.write(availableSocket, data, offset, length, maxLength);
         } catch (IOException e) {
             this.socketError.set(true);
             throw new SocketRuntimeException(e);
         }
-    }
-
-    /**
-     * 写入字节
-     *
-     * @param data      字节数组
-     * @param maxLength 最大允许写入长度
-     */
-    public void writeCycle(final byte[] data, int maxLength) {
-        int offset = 0;
-        while (offset < data.length) {
-            int length = maxLength <= 0 ? data.length - offset : Math.min(maxLength, data.length - offset);
-            this.write(data, offset, length);
-            offset += length;
-        }
-    }
-
-    /**
-     * 写入字节
-     *
-     * @param data 字节数组
-     */
-    public void writeCycle(final byte[] data) {
-        this.writeCycle(data, -1);
     }
 
     /**
@@ -199,7 +188,7 @@ public class SocketBasic {
      * @param timeout 超时时间，毫秒级别
      * @return 读取的数据长度
      */
-    public int read(final byte[] data, int timeout) {
+    public int read(final byte[] data, final int timeout) {
         return this.read(data, 0, data.length, timeout);
     }
 
@@ -211,7 +200,7 @@ public class SocketBasic {
      * @param length 数据长度
      * @return 读取的数据长度
      */
-    public int read(final byte[] data, int offset, int length) {
+    public int read(final byte[] data, final int offset, final int length) {
         return this.read(data, offset, length, this.receiveTimeout);
     }
 
@@ -224,50 +213,29 @@ public class SocketBasic {
      * @param timeout 超时时间，毫秒级别
      * @return 读取的数据长度
      */
-    public int read(final byte[] data, int offset, int length, int timeout) {
+    public int read(final byte[] data, final int offset, final int length, final int timeout) {
+        return this.read(data, offset, length, -1, timeout);
+    }
+
+    /**
+     * 读取数据
+     *
+     * @param data      字节数组
+     * @param offset    偏移量
+     * @param length    数据长度
+     * @param timeout   超时时间，毫秒级别
+     * @param maxLength 单次通信允许的对最大长度
+     * @return 读取的数据长度
+     */
+    public int read(final byte[] data, final int offset, final int length, final int maxLength, final int timeout) {
         try {
             Socket availableSocket = this.getAvailableSocket();
-            // 阻塞不是指read的时间长短，可以理解为没有数据可读，线程一直在这等待
-            availableSocket.setSoTimeout(timeout);
-            InputStream in = availableSocket.getInputStream();
-            int count = in.read(data, offset, length);
-            if (count < 0) {
-                throw new SocketRuntimeException("读取数据异常，未读取到数据");
-            }
-            return count;
+            return SocketUtils.read(availableSocket, data, offset, length, maxLength, timeout);
         } catch (Exception e) {
             this.socketError.set(true);
             throw new SocketRuntimeException(e);
         }
     }
-
-    /**
-     * 读取字节
-     *
-     * @param data      字节数组
-     * @param maxLength 最大允许读取长度
-     * @return 读取数量
-     */
-    public int readCycle(final byte[] data, int maxLength) {
-        int offset = 0;
-        while (offset < data.length) {
-            int length = maxLength <= 0 ? data.length - offset : Math.min(maxLength, data.length - offset);
-            this.read(data, offset, length);
-            offset += length;
-        }
-        return offset;
-    }
-
-    /**
-     * 读取字节
-     *
-     * @param data 字节数组
-     * @return 读取数量
-     */
-    public int readCycle(final byte[] data) {
-        return this.readCycle(data, -1);
-    }
-
 
     //endregion
 }

@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 @Ignore
 public class ModbusTcpTest {
 
-    private ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+    private final ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
 
     @Test
     public void readCoil() {

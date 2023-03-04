@@ -2,9 +2,11 @@ package com.github.xingshuangs.iot.net.server;
 
 
 import com.github.xingshuangs.iot.exceptions.SocketRuntimeException;
+import com.github.xingshuangs.iot.net.SocketUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.*;
@@ -14,7 +16,7 @@ import java.util.concurrent.*;
  *
  * @author xingshuang
  */
-//@Slf4j
+@Slf4j
 public class ServerSocketBasic {
 
     /**
@@ -22,27 +24,36 @@ public class ServerSocketBasic {
      */
     private ServerSocket serverSocket;
 
-    private ExecutorService executorService = new ThreadPoolExecutor(
-            1,
-            50,
-            300L,
-            TimeUnit.SECONDS,
-            // 使用无缓冲队列,提交后立即执行
-            new SynchronousQueue<>());
+    //region 服务端
 
+    /**
+     * 启动
+     */
+    public void start() {
+        this.start(8088);
+    }
+
+    /**
+     * 启动
+     *
+     * @param port 端口号
+     */
     public void start(int port) {
         try {
             this.stop();
             this.serverSocket = new ServerSocket(port);
-            this.executorService.submit(this::waitConnection);
+            CompletableFuture.runAsync(this::waitConnection);
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
         }
     }
 
+    /**
+     * 停止
+     */
     public void stop() {
         try {
-            if (this.isConnected()) {
+            if (this.isAlive()) {
                 this.serverSocket.close();
             }
         } catch (IOException e) {
@@ -50,40 +61,69 @@ public class ServerSocketBasic {
         }
     }
 
-    public boolean isConnected() {
+    /**
+     * 是否活跃着
+     *
+     * @return ture：活跃着，false：死了
+     */
+    public boolean isAlive() {
         return this.serverSocket != null && !this.serverSocket.isClosed();
     }
 
-    private void removeClient(Socket socket) {
-
-    }
-
     private void waitConnection() {
-        while (this.isConnected()) {
+        while (this.isAlive()) {
             try {
                 Socket client = this.serverSocket.accept();
                 if (!this.checkClientValid(client)) {
                     client.close();
                 }
-                this.executorService.submit(() -> this.doAfterConnected(client));
+
+                CompletableFuture.runAsync(() -> this.doAfterConnected(client));
             } catch (IOException e) {
-                System.out.println(e.getMessage());
+                log.error(e.getMessage());
             }
         }
     }
+
+    //endregion
+
+    //region 客户端
 
     protected boolean checkClientValid(Socket client) {
         return true;
     }
 
-    protected boolean isClientConnected(Socket client){
-        return client != null && (client.isConnected() && !client.isClosed());
-    }
 
     protected void doAfterConnected(Socket client) {
-        // NOOP
-        while (this.isClientConnected(client)) {
+        log.debug("有客户端连入，IP[{}]，端口号[{}]", client.getInetAddress().getHostAddress(), client.getPort());
 
+        while (SocketUtils.isConnected(client)) {
+            try {
+                InputStream in = client.getInputStream();
+                int firstByte = in.read();
+                if (firstByte == -1) {
+                    client.close();
+                    log.debug("客户端主动断开，IP[{}]，端口号[{}]", client.getInetAddress().getHostAddress(), client.getPort());
+                    break;
+                }
+                byte[] data = new byte[in.available() + 1];
+                data[0] = (byte) firstByte;
+                int offset = 1;
+                SocketUtils.read(client, data, offset, data.length - 1, 1024, -1);
+                log.debug(new String(data));
+            } catch (Exception e) {
+                try {
+                    if (!client.isClosed()) {
+                        client.close();
+                        break;
+                    }
+                } catch (Exception ex) {
+                    // NOOP
+                } finally {
+                    log.debug("客户端异常断开，IP[{}]，端口号[{}]，原因：{}", client.getInetAddress().getHostAddress(), client.getPort(), e.getMessage());
+                }
+            }
         }
     }
+    //endregion
 }
