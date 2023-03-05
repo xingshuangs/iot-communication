@@ -200,34 +200,34 @@ public class S7Serializer implements IPLCSerializable {
                 }
                 switch (item.getDataType()) {
                     case BOOL:
-                        item.setDataItem(DataItem.createByBoolean((Boolean) data));
+                        item.setDataItem(DataItem.createReqByBoolean((Boolean) data));
                         break;
                     case BYTE:
-                        item.setDataItem(DataItem.createByByte(ByteReadBuff.newInstance((byte[]) data)
+                        item.setDataItem(DataItem.createReqByByte(ByteReadBuff.newInstance((byte[]) data)
                                 .getBytes(item.getCount())));
                         break;
                     case UINT16:
-                        item.setDataItem(DataItem.createByByte(ByteWriteBuff.newInstance(2)
+                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(2)
                                 .putShort((Integer) data).getData()));
                         break;
                     case INT16:
-                        item.setDataItem(DataItem.createByByte(ByteWriteBuff.newInstance(2)
+                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(2)
                                 .putShort((Short) data).getData()));
                         break;
                     case UINT32:
-                        item.setDataItem(DataItem.createByByte(ByteWriteBuff.newInstance(4)
+                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)
                                 .putInteger((Long) data).getData()));
                         break;
                     case INT32:
-                        item.setDataItem(DataItem.createByByte(ByteWriteBuff.newInstance(4)
+                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)
                                 .putInteger((Integer) data).getData()));
                         break;
                     case FLOAT32:
-                        item.setDataItem(DataItem.createByByte(ByteWriteBuff.newInstance(4)
+                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)
                                 .putFloat((Float) data).getData()));
                         break;
                     case FLOAT64:
-                        item.setDataItem(DataItem.createByByte(ByteWriteBuff.newInstance(8)
+                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(8)
                                 .putDouble((Double) data).getData()));
                         break;
                     default:

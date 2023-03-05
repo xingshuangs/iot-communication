@@ -99,28 +99,28 @@ public class ReadWriteParameter extends Parameter implements IObjectByteArray {
     }
 
     /**
-     * 创建默认的读取参数
+     * 创建默认的请求参数
      *
      * @param requestItems 请求项
      * @return ReadWriteParameter
      */
-    public static ReadWriteParameter createReadParameter(List<RequestItem> requestItems) {
+    public static ReadWriteParameter createReqParameter(EFunctionCode functionCode, List<RequestItem> requestItems) {
         ReadWriteParameter parameter = new ReadWriteParameter();
-        parameter.functionCode = EFunctionCode.READ_VARIABLE;
+        parameter.functionCode = functionCode;
         parameter.addItem(requestItems);
         return parameter;
     }
 
     /**
-     * 创建默认的写入参数
+     * 创建响应参数
      *
-     * @param requestItems 请求项
-     * @return ReadWriteParameter
+     * @param request 对应请求对象
+     * @return 读写参数
      */
-    public static ReadWriteParameter createWriteParameter(List<RequestItem> requestItems) {
+    public static ReadWriteParameter createAckParameter(ReadWriteParameter request) {
         ReadWriteParameter parameter = new ReadWriteParameter();
-        parameter.functionCode = EFunctionCode.WRITE_VARIABLE;
-        parameter.addItem(requestItems);
+        parameter.functionCode = request.functionCode;
+        parameter.itemCount = request.itemCount;
         return parameter;
     }
 }

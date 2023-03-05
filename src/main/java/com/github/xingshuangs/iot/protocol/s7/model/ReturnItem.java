@@ -44,4 +44,16 @@ public class ReturnItem implements IObjectByteArray {
         returnItem.returnCode = EReturnCode.from(data[0]);
         return returnItem;
     }
+
+    /**
+     * 获取默认数据返回
+     *
+     * @param returnCode 返回码
+     * @return 返回数据
+     */
+    public static ReturnItem createDefault(EReturnCode returnCode) {
+        ReturnItem item = new ReturnItem();
+        item.returnCode = returnCode;
+        return item;
+    }
 }

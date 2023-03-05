@@ -257,7 +257,7 @@ public class PLCNetwork extends SocketBasic {
         // 根据原始请求列表提取每个请求数据大小
         List<Integer> rawNumbers = requestItems.stream().map(RequestItem::getCount).collect(Collectors.toList());
         // 根据原始请求列表构建最终结果列表
-        List<DataItem> resultList = requestItems.stream().map(x -> DataItem.createByByte(new byte[x.getCount()],
+        List<DataItem> resultList = requestItems.stream().map(x -> DataItem.createReq(new byte[x.getCount()],
                         x.getVariableType() == EParamVariableType.BIT ? EDataVariableType.BIT : EDataVariableType.BYTE_WORD_DWORD))
                 .collect(Collectors.toList());
 

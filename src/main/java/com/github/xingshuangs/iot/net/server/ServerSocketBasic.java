@@ -28,7 +28,7 @@ public class ServerSocketBasic {
     /**
      * 客户端MAP
      */
-    private ConcurrentHashMap<String, Socket> clientMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Socket> clientMap = new ConcurrentHashMap<>();
 
     //region 服务端
 
@@ -98,6 +98,15 @@ public class ServerSocketBasic {
     //region 客户端
 
     /**
+     * 获取客户端连入数量
+     *
+     * @return 客户端连入数量
+     */
+    public int getClientSum() {
+        return this.clientMap.size();
+    }
+
+    /**
      * 校验客户端是否允许连入
      *
      * @param client 客户端
@@ -151,13 +160,9 @@ public class ServerSocketBasic {
      * 执行客户端的业务，可重写
      *
      * @param socket 客户端的socket对象
-     * @throws IOException IO异常
      */
     protected void doClientHandle(Socket socket) {
         byte[] data = this.readClientData(socket);
-        if (data.length == 0) {
-            throw new SocketRuntimeException("客户端主动断开");
-        }
         log.debug(new String(data));
     }
 
@@ -172,20 +177,58 @@ public class ServerSocketBasic {
             InputStream in = socket.getInputStream();
             int firstByte = in.read();
             if (firstByte == -1) {
-                return new byte[0];
+                throw new SocketRuntimeException("客户端主动断开");
             }
             byte[] data = new byte[in.available() + 1];
             data[0] = (byte) firstByte;
-            SocketUtils.read(socket, data, 1, data.length - 1, 1024);
+            this.read(socket, data, 1, data.length - 1, 1024);
             return data;
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
         }
     }
 
-    public void write(final Socket socket, final byte[] data) {
+    /**
+     * 写数据
+     *
+     * @param socket socket
+     * @param data   字节数组数据
+     */
+    protected void write(final Socket socket, final byte[] data) {
         try {
             SocketUtils.write(socket, data);
+        } catch (IOException e) {
+            throw new SocketRuntimeException(e);
+        }
+    }
+
+    /**
+     * 读数据
+     *
+     * @param socket socket
+     * @param data   字节数组数据
+     * @return 读取个数
+     */
+    protected int read(final Socket socket, final byte[] data) {
+        try {
+            return SocketUtils.read(socket, data);
+        } catch (IOException e) {
+            throw new SocketRuntimeException(e);
+        }
+    }
+
+    /**
+     * 读取数据
+     *
+     * @param socket    socket对象
+     * @param data      字节数组
+     * @param offset    偏移量
+     * @param length    写入长度
+     * @param maxLength 单次通信允许的对最大长度
+     */
+    protected void read(final Socket socket,final byte[] data, final int offset, final int length, final int maxLength) {
+        try {
+            SocketUtils.read(socket, data, offset, length, maxLength);
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
         }

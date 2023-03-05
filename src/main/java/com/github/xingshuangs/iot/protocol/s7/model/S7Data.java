@@ -3,6 +3,8 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.s7.enums.EErrorClass;
+import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
 import lombok.Data;
 
 import java.util.Arrays;
@@ -82,10 +84,6 @@ public class S7Data implements IObjectByteArray {
             this.header.setParameterLength(0);
         }
         if (this.parameter != null && this.header != null) {
-            if (this.parameter instanceof ReadWriteParameter) {
-                ReadWriteParameter p = (ReadWriteParameter) this.parameter;
-                p.setItemCount(p.getRequestItems().size());
-            }
             this.header.setParameterLength(this.parameter.byteArrayLength());
         }
         if (this.datum != null && this.header != null) {
@@ -172,7 +170,7 @@ public class S7Data implements IObjectByteArray {
     public static S7Data createConnectConfirm(S7Data request) {
         S7Data s7Data = new S7Data();
         s7Data.tpkt = new TPKT();
-        s7Data.cotp = COTPConnection.crConnectConfirm((COTPConnection)request.cotp);
+        s7Data.cotp = COTPConnection.crConnectConfirm((COTPConnection) request.cotp);
         s7Data.selfCheck();
         return s7Data;
     }
@@ -196,15 +194,33 @@ public class S7Data implements IObjectByteArray {
     /**
      * 创建连接响应setup
      *
-     * @param pduLength PDU长度
+     * @param request 请求数据
      * @return s7data数据
      */
     public static S7Data createConnectAckDtData(S7Data request) {
         S7Data s7Data = new S7Data();
         s7Data.tpkt = new TPKT();
         s7Data.cotp = request.cotp;
-        s7Data.header = AckHeader.createDefault(request.header);
+        s7Data.header = AckHeader.createDefault(request.header, EErrorClass.NO_ERROR, 0);
         s7Data.parameter = request.parameter;
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    /**
+     * 创建错误响应
+     *
+     * @param request    请求对象
+     * @param errorClass 错误类
+     * @param errorCode  错误码
+     * @return S7数据
+     */
+    public static S7Data createErrorResponse(S7Data request, EErrorClass errorClass, int errorCode) {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = AckHeader.createDefault(request.header, errorClass, errorCode);
+        s7Data.parameter = ReadWriteParameter.createAckParameter((ReadWriteParameter) request.parameter);
         s7Data.selfCheck();
         return s7Data;
     }
@@ -220,7 +236,7 @@ public class S7Data implements IObjectByteArray {
         s7Data.tpkt = new TPKT();
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = Header.createDefault();
-        s7Data.parameter = ReadWriteParameter.createReadParameter(requestItems);
+        s7Data.parameter = ReadWriteParameter.createReqParameter(EFunctionCode.READ_VARIABLE, requestItems);
         s7Data.selfCheck();
         return s7Data;
     }
@@ -237,8 +253,26 @@ public class S7Data implements IObjectByteArray {
         s7Data.tpkt = new TPKT();
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = Header.createDefault();
-        s7Data.parameter = ReadWriteParameter.createWriteParameter(requestItems);
+        s7Data.parameter = ReadWriteParameter.createReqParameter(EFunctionCode.WRITE_VARIABLE, requestItems);
         s7Data.datum = Datum.createDatum(dataItems);
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    /**
+     * 创建读写响应
+     *
+     * @param request     请求对象
+     * @param returnItems 返回数据内容
+     * @return 响应数据
+     */
+    public static S7Data createReadWriteResponse(S7Data request, List<ReturnItem> returnItems) {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = AckHeader.createDefault(request.header, EErrorClass.NO_ERROR, 0);
+        s7Data.parameter = ReadWriteParameter.createAckParameter((ReadWriteParameter) request.parameter);
+        s7Data.datum = Datum.createDatum(returnItems);
         s7Data.selfCheck();
         return s7Data;
     }

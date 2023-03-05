@@ -419,7 +419,7 @@ public class S7PLC extends PLCNetwork {
             throw new IllegalArgumentException("data");
         }
         RequestItem requestItem = RequestItem.createByParams(variableType, count, area, dbNumber, byteAddress, bitAddress);
-        DataItem dataItem = DataItem.createByByte(data, dataVariableType);
+        DataItem dataItem = DataItem.createReq(data, dataVariableType);
         this.writeS7Data(requestItem, dataItem);
     }
 
@@ -430,7 +430,7 @@ public class S7PLC extends PLCNetwork {
      * @param data    boolean数据
      */
     public void writeBoolean(String address, boolean data) {
-        this.writeS7Data(AddressUtil.parseBit(address), DataItem.createByBoolean(data));
+        this.writeS7Data(AddressUtil.parseBit(address), DataItem.createReqByBoolean(data));
     }
 
     /**
@@ -440,7 +440,7 @@ public class S7PLC extends PLCNetwork {
      * @param data    字节数据
      */
     public void writeByte(String address, byte data) {
-        this.writeS7Data(AddressUtil.parseByte(address, 1), DataItem.createByByte(data));
+        this.writeS7Data(AddressUtil.parseByte(address, 1), DataItem.createReqByByte(data));
     }
 
     /**
@@ -450,7 +450,7 @@ public class S7PLC extends PLCNetwork {
      * @param data    字节列表数据
      */
     public void writeByte(String address, byte[] data) {
-        this.writeS7Data(AddressUtil.parseByte(address, data.length), DataItem.createByByte(data));
+        this.writeS7Data(AddressUtil.parseByte(address, data.length), DataItem.createReqByByte(data));
     }
 
     /**

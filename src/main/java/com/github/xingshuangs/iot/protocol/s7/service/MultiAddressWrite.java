@@ -39,7 +39,7 @@ public class MultiAddressWrite {
      */
     public MultiAddressWrite addBoolean(String address, boolean data) {
         this.requestItems.add(AddressUtil.parseBit(address));
-        this.dataItems.add(DataItem.createByBoolean(data));
+        this.dataItems.add(DataItem.createReqByBoolean(data));
         return this;
     }
 
@@ -52,7 +52,7 @@ public class MultiAddressWrite {
      */
     public MultiAddressWrite addByte(String address, byte data) {
         this.requestItems.add(AddressUtil.parseByte(address, 1));
-        this.dataItems.add(DataItem.createByByte(data));
+        this.dataItems.add(DataItem.createReqByByte(data));
         return this;
     }
 
@@ -65,7 +65,7 @@ public class MultiAddressWrite {
      */
     public MultiAddressWrite addByte(String address, byte[] data) {
         this.requestItems.add(AddressUtil.parseByte(address, data.length));
-        this.dataItems.add(DataItem.createByByte(data));
+        this.dataItems.add(DataItem.createReqByByte(data));
         return this;
     }
 

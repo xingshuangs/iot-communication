@@ -67,7 +67,7 @@ public class RequestItem implements IObjectByteArray {
      * 字节大小：1 <br>
      * 字节序数：8
      */
-    private EArea area = EArea.DATA_BLOCKS;
+    private EArea area = EArea.INPUTS;
 
     /**
      * 字节地址，位于开始字节地址address中3个字节，从第4位开始计数 <br>
@@ -113,8 +113,8 @@ public class RequestItem implements IObjectByteArray {
         requestItem.syntaxId = this.syntaxId;
         requestItem.variableType = this.variableType;
         requestItem.count = this.count;
-        requestItem.area = this.area;
         requestItem.dbNumber = this.dbNumber;
+        requestItem.area = this.area;
         requestItem.byteAddress = this.byteAddress;
         requestItem.bitAddress = this.bitAddress;
         return requestItem;
@@ -135,6 +135,7 @@ public class RequestItem implements IObjectByteArray {
         requestItem.variableType = EParamVariableType.from(buff.getByte());
         requestItem.count = buff.getUInt16();
         requestItem.dbNumber = buff.getUInt16();
+        requestItem.area = EArea.from(buff.getByte());
         requestItem.byteAddress = IntegerUtil.toInt32In3Bytes(data, 9) >> 3;
         requestItem.bitAddress = buff.getByte(11) & 0x07;
         return requestItem;

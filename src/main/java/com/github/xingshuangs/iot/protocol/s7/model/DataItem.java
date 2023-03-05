@@ -97,8 +97,8 @@ public class DataItem extends ReturnItem implements IObjectByteArray {
      * @param data 字节数据
      * @return DataItem数据
      */
-    public static DataItem createByByte(byte data) {
-        return createByByte(new byte[]{data});
+    public static DataItem createReqByByte(byte data) {
+        return createReqByByte(new byte[]{data});
     }
 
     /**
@@ -107,7 +107,7 @@ public class DataItem extends ReturnItem implements IObjectByteArray {
      * @param data 字节数组
      * @return DataItem数据
      */
-    public static DataItem createByByte(byte[] data) {
+    public static DataItem createReqByByte(byte[] data) {
         if (data == null || data.length == 0) {
             throw new IllegalArgumentException("data数据不能为null");
         }
@@ -125,7 +125,7 @@ public class DataItem extends ReturnItem implements IObjectByteArray {
      * @param data boolean数据
      * @return DataItem数据
      */
-    public static DataItem createByBoolean(boolean data) {
+    public static DataItem createReqByBoolean(boolean data) {
         DataItem dataItem = new DataItem();
         dataItem.setReturnCode(EReturnCode.RESERVED);
         dataItem.setVariableType(EDataVariableType.BIT);
@@ -141,9 +141,25 @@ public class DataItem extends ReturnItem implements IObjectByteArray {
      * @param dataVariableType 数据类型
      * @return 数据项目
      */
-    public static DataItem createByByte(byte[] data, EDataVariableType dataVariableType) {
+    public static DataItem createReq(byte[] data, EDataVariableType dataVariableType) {
         DataItem dataItem = new DataItem();
         dataItem.setReturnCode(EReturnCode.RESERVED);
+        dataItem.setVariableType(dataVariableType);
+        dataItem.setCount(data.length);
+        dataItem.setData(data);
+        return dataItem;
+    }
+
+    /**
+     * 通过字节数组+数据类型转换为DataItem数据
+     *
+     * @param data             字节数组
+     * @param dataVariableType 数据类型
+     * @return 数据项目
+     */
+    public static DataItem createAckBy(byte[] data, EDataVariableType dataVariableType) {
+        DataItem dataItem = new DataItem();
+        dataItem.setReturnCode(EReturnCode.SUCCESS);
         dataItem.setVariableType(dataVariableType);
         dataItem.setCount(data.length);
         dataItem.setData(data);

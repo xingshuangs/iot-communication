@@ -75,7 +75,7 @@ public class AckHeader extends Header {
      *
      * @return Header对象
      */
-    public static AckHeader createDefault(Header request) {
+    public static AckHeader createDefault(Header request, EErrorClass errorClass, int errorCode) {
         AckHeader header = new AckHeader();
         header.protocolId = request.protocolId;
         header.messageType = EMessageType.ACK_DATA;
@@ -83,8 +83,8 @@ public class AckHeader extends Header {
         header.pduReference = request.pduReference;
         header.parameterLength = request.parameterLength;
         header.dataLength = request.dataLength;
-        header.errorClass = EErrorClass.NO_ERROR;
-        header.errorCode = 0;
+        header.errorClass = errorClass;
+        header.errorCode = errorCode;
         return header;
     }
 }

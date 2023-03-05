@@ -152,4 +152,29 @@ public class AddressUtil {
                 return addList.length >= 2 && variableType == EParamVariableType.BIT ? Integer.parseInt(addList[1]) : 0;
         }
     }
+
+    /**
+     * 根据请求项解析对应的区域
+     *
+     * @param item 请求项
+     * @return 区域
+     */
+    public static String parseArea(RequestItem item) {
+        switch (item.getArea()) {
+            case DATA_BLOCKS:
+                return "DB" + item.getDbNumber();
+            case INPUTS:
+                return "I";
+            case OUTPUTS:
+                return "Q";
+            case FLAGS:
+                return "M";
+            case S7_TIMERS:
+                return "T";
+            case S7_COUNTERS:
+                return "C";
+            default:
+                throw new IllegalArgumentException("不支持访问");
+        }
+    }
 }

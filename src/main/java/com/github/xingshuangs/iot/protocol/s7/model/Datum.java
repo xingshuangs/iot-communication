@@ -9,6 +9,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -53,7 +54,7 @@ public class Datum implements IObjectByteArray {
      *
      * @param item 项
      */
-    public void addItem(DataItem item) {
+    public void addItem(ReturnItem item) {
         this.returnItems.add(item);
     }
 
@@ -62,7 +63,7 @@ public class Datum implements IObjectByteArray {
      *
      * @param items 数据项列表
      */
-    public void addItem(List<DataItem> items) {
+    public void addItem(Collection<? extends ReturnItem> items) {
         this.returnItems.addAll(items);
     }
 
@@ -106,7 +107,7 @@ public class Datum implements IObjectByteArray {
      * @param dataItems 数据项
      * @return 数据对象Datum
      */
-    public static Datum createDatum(List<DataItem> dataItems) {
+    public static Datum createDatum(Collection<? extends ReturnItem> dataItems) {
         Datum datum = new Datum();
         datum.addItem(dataItems);
         return datum;
