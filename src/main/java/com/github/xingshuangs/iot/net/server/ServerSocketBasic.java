@@ -26,6 +26,11 @@ public class ServerSocketBasic {
     private ServerSocket serverSocket;
 
     /**
+     * 端口号
+     */
+    protected int port = 8088;
+
+    /**
      * 客户端MAP
      */
     private final ConcurrentHashMap<String, Socket> clientMap = new ConcurrentHashMap<>();
@@ -36,7 +41,7 @@ public class ServerSocketBasic {
      * 启动
      */
     public void start() {
-        this.start(8088);
+        this.start(this.port);
     }
 
     /**
@@ -46,6 +51,7 @@ public class ServerSocketBasic {
      */
     public void start(int port) {
         try {
+            this.port = port;
             this.stop();
             this.serverSocket = new ServerSocket(port);
             CompletableFuture.runAsync(this::waitForClients);

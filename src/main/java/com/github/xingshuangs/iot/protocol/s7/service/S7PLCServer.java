@@ -29,6 +29,11 @@ public class S7PLCServer extends ServerSocketBasic {
     private final HashMap<String, byte[]> dataMap = new HashMap<>();
 
     public S7PLCServer() {
+        this(102);
+    }
+
+    public S7PLCServer(int port) {
+        this.port = port;
         this.dataMap.put("DB1", new byte[65536]);
         this.dataMap.put("M", new byte[65536]);
         this.dataMap.put("I", new byte[65536]);
@@ -130,7 +135,8 @@ public class S7PLCServer extends ServerSocketBasic {
                 // 判定该区域的数据是否存在
                 String area = AddressUtil.parseArea(p);
                 if (!this.dataMap.containsKey(area)) {
-                    log.error("读取[{}]数据，区域[{}]，字节索引[{}]，位索引[{}]，长度[{}]，无该区域地址数据", p.getVariableType(), area, p.getByteAddress(), p.getBitAddress(), p.getCount());
+                    log.error("客户端[{}]读取[{}]数据，区域[{}]，字节索引[{}]，位索引[{}]，长度[{}]，无该区域地址数据",
+                            socket.getRemoteSocketAddress(), p.getVariableType(), area, p.getByteAddress(), p.getBitAddress(), p.getCount());
                     return ReturnItem.createDefault(EReturnCode.OBJECT_DOES_NOT_EXIST);
                 }
                 // 提取指定地址的字节数据
@@ -143,7 +149,8 @@ public class S7PLCServer extends ServerSocketBasic {
                     byte oldData = buff.getByte(p.getByteAddress());
                     data = BooleanUtil.getValue(oldData, p.getBitAddress()) ? new byte[]{(byte) 0x01} : new byte[]{(byte) 0x00};
                 }
-                log.debug("读取[{}]数据，区域[{}]，字节索引[{}]，位索引[{}]，长度[{}]，区域地址数据{}", p.getVariableType(), area, p.getByteAddress(), p.getBitAddress(), p.getCount(), data);
+                log.debug("客户端[{}]读取[{}]数据，区域[{}]，字节索引[{}]，位索引[{}]，长度[{}]，区域地址数据{}",
+                        socket.getRemoteSocketAddress(), p.getVariableType(), area, p.getByteAddress(), p.getBitAddress(), p.getCount(), data);
                 return DataItem.createAckBy(data, p.getVariableType() == EParamVariableType.BYTE ? EDataVariableType.BYTE_WORD_DWORD : EDataVariableType.BIT);
             }).collect(Collectors.toList());
         }
@@ -159,7 +166,7 @@ public class S7PLCServer extends ServerSocketBasic {
      */
     private void writeVariableHandle(Socket socket, S7Data req) {
         ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
-        List<DataItem> dataItems = req.getDatum().getReturnItems().stream().map(x -> (DataItem) x).collect(Collectors.toList());
+        List<DataItem> dataItems = req.getDatum().getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
         List<ReturnItem> returnItems = new ArrayList<>();
         synchronized (this.objLock) {
             for (int i = 0; i < parameter.getItemCount(); i++) {
@@ -168,7 +175,8 @@ public class S7PLCServer extends ServerSocketBasic {
                 // 判定该区域的数据是否存在
                 String area = AddressUtil.parseArea(p);
                 if (!this.dataMap.containsKey(area)) {
-                    log.error("写入[{}]数据，区域[{}]，字节索引[{}]，位索引[{}]，长度[{}]，无该区域地址", p.getVariableType(), area, p.getByteAddress(), p.getBitAddress(), p.getCount());
+                    log.error("客户端[{}]写入[{}]数据，区域[{}]，字节索引[{}]，位索引[{}]，长度[{}]，无该区域地址",
+                            socket.getRemoteSocketAddress(), p.getVariableType(), area, p.getByteAddress(), p.getBitAddress(), p.getCount());
                     returnItems.add(ReturnItem.createDefault(EReturnCode.OBJECT_DOES_NOT_EXIST));
                     continue;
                 }
@@ -180,7 +188,8 @@ public class S7PLCServer extends ServerSocketBasic {
                     byte newData = BooleanUtil.setBit(bytes[p.getByteAddress()], p.getBitAddress(), d.getData()[0] == 1);
                     System.arraycopy(new byte[]{newData}, 0, bytes, p.getByteAddress(), 1);
                 }
-                log.debug("写入[{}]数据，区域[{}]，字节索引[{}]，位索引[{}]，长度[{}]，区域地址数据{}", p.getVariableType(), area, p.getByteAddress(), p.getBitAddress(), p.getCount(), d.getData());
+                log.debug("客户端[{}]写入[{}]数据，区域[{}]，字节索引[{}]，位索引[{}]，长度[{}]，区域地址数据{}",
+                        socket.getRemoteSocketAddress(), p.getVariableType(), area, p.getByteAddress(), p.getBitAddress(), p.getCount(), d.getData());
                 returnItems.add(ReturnItem.createDefault(EReturnCode.SUCCESS));
             }
         }

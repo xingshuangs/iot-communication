@@ -15,15 +15,19 @@ public class S7PLCServerTest extends TestCase {
 
     public void testGetAvailableAreas() {
         Set<String> areas = server.getAvailableAreas();
-        areas.forEach(log::debug);
-        server.addDBArea(1,20,3,4);
+        log.debug(areas.toString());
+        server.addDBArea(1, 20, 3, 4);
         log.debug("----------------------------");
         areas = server.getAvailableAreas();
-        areas.forEach(log::debug);
+        log.debug(areas.toString());
+        assertEquals(9, areas.size());
     }
 
     public void testAddDBArea() throws InterruptedException {
-        server.start(102);
+        server.addDBArea(1, 20, 3, 4);
+        Set<String> areas = server.getAvailableAreas();
+        log.debug(areas.toString());
+        server.start();
         TimeUnit.MINUTES.sleep(10);
     }
 }

@@ -7,11 +7,15 @@
 
 ## CopyRight
 
-@2019 - 9999 Oscura, All Rights Reserved <br>
-You can add QQ( **759101350** ) or send email( **xingshuang_cool@163.com** ) if you have questions, the author will give
+**If this helps you, please give the author a :star: .**<br>
+**如果这个库对你有帮助，请给作者一颗星星**<br>
+
+You can add QQ group( **759101350** ) or send email( **xingshuang_cool@163.com** ) if you have questions, the author will give
 answers in his spare time. <br>
-如果有任何问题，可以添加QQ( **759101350** ) 或者发送邮件( **xingshuang_cool@163.com** )
+如果有任何问题，可以添加QQ群( **759101350** ) 或者发送邮件( **xingshuang_cool@163.com** )
 ，作者在空余时间会做解答。<br>
+
+@2019 - 9999 Oscura, All Rights Reserved <br>
 
 ## How to get（如何获取）
 
@@ -36,12 +40,12 @@ Now, it is a tool for iot communication.
 ## 1. Siemens S7 protocol（西门子S7协议）
 
 You can check this [address](https://blog.csdn.net/XS_YOUYOU/article/details/124870209) if
-you're not familiar with the S7 protocol. (
+you're not familiar with the S7 protocol. <br>(
 如果你不熟悉S7协议可以查看这个[地址](https://blog.csdn.net/XS_YOUYOU/article/details/124870209)
 )<br>
 对于200smartPLC的V区，就是DB1.X，例如，**V1=DB1.1，V100=DB1.100**
 
-> Tips1: Format and meaning of the address, case compatible (知识点1：地址的格式以及对应含义，兼容大小写)
+> Tips1: Format and meaning of the address, case compatible. <br> 知识点1：地址的格式以及对应含义，兼容大小写
 
 | Abbr<br/>(简写) | Area<br/>(区域) | Byte Index<br/>(字节索引) | Bit Index<br/>(位索引) | PLC Type<br/>(PLC类型) |
 |---------------|:-------------:|:---------------------:|:-------------------:|----------------------|
@@ -58,8 +62,7 @@ you're not familiar with the S7 protocol. (
 | V2.1          |      V区       |           2           |          1          | 200Smart             |
 | V2            |      V区       |           2           |          0          | 200Smart             |
 
-> Tips2: Access data types mapping to JAVA data types and PLC data types (
-> 知识点2：访问数据类型与JAVA数据类型和PLC数据类型对应关系)
+> Tips2: Access data types mapping to JAVA data types and PLC data types. <br> 知识点2：访问数据类型与JAVA数据类型和PLC数据类型对应关系
 
 | Access Data Type<br/>(访问数据类型) | Data Type Name<br/>(数据类型名称) | Data Size in Bit<br/>(数据大小[位]) | Data Size in Byte<br/>(数据大小[字节]) | JAVA Data Type<br/>(JAVA数据类型) | PLC Data Type<br/>(PLC数据类型) | Instance<br/>(示例) |
 |-------------------------------|-----------------------------|:------------------------------:|:--------------------------------:|-------------------------------|-----------------------------|-------------------|
