@@ -1,4 +1,4 @@
-package com.github.xingshuangs.iot.net.socket;
+package com.github.xingshuangs.iot.net.client;
 
 
 import com.github.xingshuangs.iot.exceptions.SocketRuntimeException;
@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author xingshuang
  */
 @Slf4j
-public class SocketBasic {
+public class TcpClientBasic {
 
     // region 私有对象
 
@@ -62,11 +62,11 @@ public class SocketBasic {
     // endregion
 
     // region 构造方法
-    public SocketBasic() {
+    public TcpClientBasic() {
         this("127.0.0.1", 8088);
     }
 
-    public SocketBasic(String host, int port) {
+    public TcpClientBasic(String host, int port) {
         this.socketError = new AtomicBoolean(false);
         this.socketAddress = new InetSocketAddress(host, port);
     }

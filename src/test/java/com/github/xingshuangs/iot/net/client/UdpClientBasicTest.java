@@ -1,4 +1,4 @@
-package com.github.xingshuangs.iot.net.socket;
+package com.github.xingshuangs.iot.net.client;
 
 import junit.framework.TestCase;
 import org.junit.Ignore;

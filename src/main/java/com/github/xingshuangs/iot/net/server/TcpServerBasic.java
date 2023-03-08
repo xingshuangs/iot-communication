@@ -13,12 +13,12 @@ import java.net.SocketAddress;
 import java.util.concurrent.*;
 
 /**
- * socket服务端的基础类
+ * TCP socket服务端的基础类
  *
  * @author xingshuang
  */
 @Slf4j
-public class ServerSocketBasic {
+public class TcpServerBasic {
 
     /**
      * 服务器对象

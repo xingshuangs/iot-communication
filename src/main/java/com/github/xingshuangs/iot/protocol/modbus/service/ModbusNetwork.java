@@ -2,7 +2,7 @@ package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
 import com.github.xingshuangs.iot.exceptions.ModbusCommException;
-import com.github.xingshuangs.iot.net.socket.SocketBasic;
+import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.protocol.modbus.model.*;
 
 /**
@@ -10,7 +10,7 @@ import com.github.xingshuangs.iot.protocol.modbus.model.*;
  *
  * @author xingshuang
  */
-public class ModbusNetwork extends SocketBasic {
+public class ModbusNetwork extends TcpClientBasic {
 
     /**
      * 从站编号

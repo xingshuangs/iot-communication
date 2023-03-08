@@ -1,4 +1,4 @@
-package com.github.xingshuangs.iot.net.socket;
+package com.github.xingshuangs.iot.net.client;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -9,13 +9,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 @Ignore
-public class SocketBasicTest {
+public class TcpClientBasicTest {
 
-    private SocketBasic socketBasic;
+    private TcpClientBasic tcpClientBasic;
 
     @Before
     public void init() {
-        this.socketBasic = new SocketBasic("127.0.0.1", 8088);
+        this.tcpClientBasic = new TcpClientBasic("127.0.0.1", 8088);
     }
 
     @Test
@@ -26,7 +26,7 @@ public class SocketBasicTest {
             try {
                 TimeUnit.SECONDS.sleep(2);
                 System.out.println(data);
-                this.socketBasic.write(data.getBytes(StandardCharsets.UTF_8));
+                this.tcpClientBasic.write(data.getBytes(StandardCharsets.UTF_8));
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -40,7 +40,7 @@ public class SocketBasicTest {
     @Test
     public void read() {
         byte[] data = new byte[1024];
-        int read = this.socketBasic.read(data);
+        int read = this.tcpClientBasic.read(data);
         if (read > 0) {
             System.out.println(new String(data));
         }
@@ -53,7 +53,7 @@ public class SocketBasicTest {
                 TimeUnit.SECONDS.sleep(2);
                 System.out.println("第" + i + "次读取数据");
                 byte[] data = new byte[1024];
-                int read = this.socketBasic.read(data);
+                int read = this.tcpClientBasic.read(data);
                 if (read > 0) {
                     System.out.println(new String(data));
                 }

@@ -2,7 +2,7 @@ package com.github.xingshuangs.iot.protocol.s7.service;
 
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
-import com.github.xingshuangs.iot.net.socket.SocketBasic;
+import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.s7.algorithm.S7ComGroup;
 import com.github.xingshuangs.iot.protocol.s7.algorithm.S7ComItem;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("DuplicatedCode")
 @Slf4j
-public class PLCNetwork extends SocketBasic {
+public class PLCNetwork extends TcpClientBasic {
 
     /**
      * 锁

@@ -1,7 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.service;
 
 
-import com.github.xingshuangs.iot.net.server.ServerSocketBasic;
+import com.github.xingshuangs.iot.net.server.TcpServerBasic;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.s7.enums.*;
 import com.github.xingshuangs.iot.protocol.s7.model.*;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * @author xingshuang
  */
 @Slf4j
-public class S7PLCServer extends ServerSocketBasic {
+public class S7PLCServer extends TcpServerBasic {
 
     private final Object objLock = new Object();
 

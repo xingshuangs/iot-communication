@@ -8,9 +8,9 @@ import java.util.concurrent.TimeUnit;
 
 @Ignore
 @Slf4j
-public class ServerSocketBasicTest extends TestCase {
+public class TcpServerBasicTest extends TestCase {
 
-    private final ServerSocketBasic serverSocketBasic = new ServerSocketBasic();
+    private final TcpServerBasic serverSocketBasic = new TcpServerBasic();
 
     public void testStart() throws InterruptedException {
         this.serverSocketBasic.start();
