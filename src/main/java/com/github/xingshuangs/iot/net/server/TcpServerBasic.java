@@ -114,9 +114,9 @@ public class TcpServerBasic {
 
     /**
      * 校验客户端是否允许连入
-     *
      * @param client 客户端
-     * @return 是否有效，true：有效，false：无效
+     * @return true:验证成功，false：验证失败
+     * @throws IOException IO异常
      */
     protected boolean checkClientValid(Socket client) throws IOException {
         return true;

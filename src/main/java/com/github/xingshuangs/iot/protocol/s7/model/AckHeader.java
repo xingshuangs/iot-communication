@@ -73,6 +73,9 @@ public class AckHeader extends Header {
     /**
      * 创建默认的头header
      *
+     * @param request    请求头
+     * @param errorClass 错误类
+     * @param errorCode  错误码
      * @return Header对象
      */
     public static AckHeader createDefault(Header request, EErrorClass errorClass, int errorCode) {

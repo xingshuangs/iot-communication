@@ -158,8 +158,7 @@ public class COTPConnection extends COTP implements IObjectByteArray {
     /**
      * CRConnect Request 连接请求
      *
-     * @param local  本地参数
-     * @param remote 远程参数
+     * @param request 请求数据
      * @return COTPConnection对象
      */
     public static COTPConnection crConnectConfirm(COTPConnection request) {

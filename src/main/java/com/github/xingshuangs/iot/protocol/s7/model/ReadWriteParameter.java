@@ -101,6 +101,7 @@ public class ReadWriteParameter extends Parameter implements IObjectByteArray {
     /**
      * 创建默认的请求参数
      *
+     * @param functionCode 功能码
      * @param requestItems 请求项
      * @return ReadWriteParameter
      */
