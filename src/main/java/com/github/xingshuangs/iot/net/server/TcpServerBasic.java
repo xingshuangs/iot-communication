@@ -67,6 +67,7 @@ public class TcpServerBasic {
         try {
             if (this.isAlive()) {
                 this.serverSocket.close();
+                log.debug("关闭服务端，端口号[{}]", this.port);
             }
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
@@ -86,6 +87,7 @@ public class TcpServerBasic {
      * 等待客户端连入
      */
     private void waitForClients() {
+        log.debug("开启等待客户端线程，端口号[{}]", this.port);
         while (this.isAlive()) {
             try {
                 Socket client = this.serverSocket.accept();
@@ -114,6 +116,7 @@ public class TcpServerBasic {
 
     /**
      * 校验客户端是否允许连入
+     *
      * @param client 客户端
      * @return true:验证成功，false：验证失败
      * @throws IOException IO异常
@@ -232,7 +235,7 @@ public class TcpServerBasic {
      * @param length    写入长度
      * @param maxLength 单次通信允许的对最大长度
      */
-    protected void read(final Socket socket,final byte[] data, final int offset, final int length, final int maxLength) {
+    protected void read(final Socket socket, final byte[] data, final int offset, final int length, final int maxLength) {
         try {
             SocketUtils.read(socket, data, offset, length, maxLength);
         } catch (IOException e) {

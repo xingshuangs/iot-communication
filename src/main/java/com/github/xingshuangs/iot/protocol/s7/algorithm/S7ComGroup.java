@@ -27,13 +27,4 @@ public class S7ComGroup {
     public void add(S7ComItem item) {
         this.items.add(item);
     }
-
-    /**
-     * 计算总数
-     *
-     * @return 总数
-     */
-    public int total() {
-        return items.stream().mapToInt(S7ComItem::getTotalLength).sum();
-    }
 }

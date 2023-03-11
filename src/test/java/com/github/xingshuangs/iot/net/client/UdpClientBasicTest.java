@@ -2,14 +2,16 @@ package com.github.xingshuangs.iot.net.client;
 
 import junit.framework.TestCase;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
 
 @Ignore
-public class UdpClientBasicTest extends TestCase {
+public class UdpClientBasicTest {
 
     private final UdpClientBasic udpClientBasic = new UdpClientBasic();
 
+    @Test
     public void testWrite() {
         String data = "hello world ";
         udpClientBasic.write(data.getBytes(StandardCharsets.UTF_8));
@@ -22,6 +24,7 @@ public class UdpClientBasicTest extends TestCase {
         System.out.println(new String(in));
     }
 
+    @Test
     public void testRead() {
     }
 }

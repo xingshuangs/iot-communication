@@ -264,7 +264,7 @@ public class PLCNetwork extends TcpClientBasic {
         // 根据顺序分组算法得出分组结果，
         // 发送： 12=10(header)+2(parameter前),12(parameter后) （采用)
         // 接收： 14=12(header)+2(parameter),5(DataItem)，dataItem可能4或5，统一采用5  (不采用)
-        List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.readRecombination(rawNumbers, this.pduLength - 14, 12, 5);
+        List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.readRecombination(rawNumbers, this.pduLength - 14, 5, 12);
         try {
             s7ComGroups.forEach(x -> {
                 // 根据分组构建对应的请求列表

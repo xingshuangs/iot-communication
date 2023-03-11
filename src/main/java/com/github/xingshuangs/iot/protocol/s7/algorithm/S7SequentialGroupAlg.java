@@ -23,67 +23,76 @@ public class S7SequentialGroupAlg {
      * |1,50,65,90|110,106|216|99,117|221|162,44|
      * 第一      第二      第三 第四   第五 第六
      *
-     * @param src          数据源
-     * @param targetNumber 目标值
-     * @param extraNumber  每个数据额外占用的数据大小
+     * @param src        数据源
+     * @param targetSize 目标值
+     * @param extraSize  每个数据额外占用的数据大小
      * @return 分组结果
      */
-    public static List<S7ComGroup> writeRecombination(List<Integer> src, int targetNumber, int extraNumber) {
+    public static List<S7ComGroup> writeRecombination(List<Integer> src, int targetSize, int extraSize) {
         List<S7ComGroup> groupList = new LinkedList<>();
         S7ComGroup group = new S7ComGroup();
-        int sum = group.total();
         groupList.add(group);
+        int sum = 0;
         for (int i = 0; i < src.size(); i++) {
             int number = src.get(i);
             int offset = 0;
             while (number > 0) {
-                S7ComItem s7ComItem = new S7ComItem(i, src.get(i), offset, 0, extraNumber);
-                if (sum + number + extraNumber > targetNumber) {
-                    s7ComItem.setRipeSize(targetNumber - sum - extraNumber);
+                S7ComItem item = new S7ComItem(i, src.get(i), offset, 0, extraSize, 0);
+                if (sum + number + item.getExtraSize() > targetSize) {
+                    item.setRipeSize(targetSize - sum - item.getExtraSize());
                 } else {
-                    s7ComItem.setRipeSize(number);
+                    item.setRipeSize(number);
                 }
-                number -= s7ComItem.getRipeSize();
-                offset += s7ComItem.getRipeSize();
-                sum += s7ComItem.getTotalLength();
-                group.add(s7ComItem);
-                if (sum >= targetNumber - extraNumber) {
+                number -= item.getRipeSize();
+                offset += item.getRipeSize();
+                sum += item.getTotalLength();
+                group.add(item);
+                if (sum + extraSize >= targetSize) {
                     group = new S7ComGroup();
                     groupList.add(group);
-                    sum = group.total();
+                    sum = 0;
                 }
             }
         }
         return groupList;
     }
 
-    public static List<S7ComGroup> readRecombination(List<Integer> src, int targetNumber, int sndExtraNumber, int recExtraNumber) {
+    /**
+     * 重组，按照目标最大值进行顺序分组，超过最大值则进行分割
+     * 示例：
+     * 目标值：226 ，额外数据大小：5，阀值数据大小：12
+     * 1, 9, 102, 33, 2, 4, 8, 326, 2, 2, 2, 2, 2,         400, 2, 2, 2, 2, 2, 2, 2, 2,        2, 2, 2, 99
+     * 1, 9, 102, 33, 2, 4, 8, 13| 221| 92, 2, 2, 2, 2, 2, 64|221|115, 2, 2, 2, 2, 2, 2, 2, 2| 2, 2, 2, 99
+     *
+     * @param src        数据源
+     * @param targetSize 目标值
+     * @param extraSize  每个数据额外占用的数据大小
+     * @param threshold  阀值
+     * @return 分组结果
+     */
+    public static List<S7ComGroup> readRecombination(List<Integer> src, int targetSize, int extraSize, int threshold) {
         List<S7ComGroup> groupList = new LinkedList<>();
         S7ComGroup group = new S7ComGroup();
-        int sum = group.total();
         groupList.add(group);
+        int sum = 0;
         for (int i = 0; i < src.size(); i++) {
             int number = src.get(i);
             int offset = 0;
             while (number > 0) {
-                // 读取大小+5>12，这时候以接收的数据尺寸为准，若小于12，则以发送的尺寸为准
-                S7ComItem s7ComItem = new S7ComItem(i, src.get(i), offset, 0, sndExtraNumber);
-                if (number + recExtraNumber > sndExtraNumber
-                        && sum + number + recExtraNumber > targetNumber) {
-                    s7ComItem.setRipeSize(targetNumber - sum - recExtraNumber);
-                    s7ComItem.setExtraSize(recExtraNumber);
-                    sum += s7ComItem.getTotalLength();
+                S7ComItem item = new S7ComItem(i, src.get(i), offset, 0, extraSize, threshold);
+                if (sum + number + item.getExtraSize() > targetSize) {
+                    item.setRipeSize(targetSize - sum - item.getExtraSize());
                 } else {
-                    s7ComItem.setRipeSize(number);
-                    sum += s7ComItem.getExtraSize();
+                    item.setRipeSize(number);
                 }
-                number -= s7ComItem.getRipeSize();
-                offset += s7ComItem.getRipeSize();
-                group.add(s7ComItem);
-                if (sum >= targetNumber - s7ComItem.getExtraSize()) {
+                sum += item.getTotalLength();
+                number -= item.getRipeSize();
+                offset += item.getRipeSize();
+                group.add(item);
+                if (sum + threshold >= targetSize) {
                     group = new S7ComGroup();
                     groupList.add(group);
-                    sum = group.total();
+                    sum = 0;
                 }
             }
         }

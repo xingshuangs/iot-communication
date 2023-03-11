@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 /**
@@ -25,6 +27,8 @@ import java.util.stream.Collectors;
 public class S7PLCServer extends TcpServerBasic {
 
     private final Object objLock = new Object();
+
+    private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
     private final HashMap<String, byte[]> dataMap = new HashMap<>();
 
@@ -59,6 +63,7 @@ public class S7PLCServer extends TcpServerBasic {
      * @param dbNumbers db块编号
      */
     public void addDBArea(int... dbNumbers) {
+        log.debug("服务端数据区添加DB[{}]", dbNumbers);
         synchronized (this.objLock) {
             for (int x : dbNumbers) {
                 String name = String.format("DB%s", x);
@@ -129,15 +134,17 @@ public class S7PLCServer extends TcpServerBasic {
      */
     private void readVariableHandle(Socket socket, S7Data req) {
         ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
-        List<ReturnItem> returnItems;
-        synchronized (this.objLock) {
-            returnItems = parameter.getRequestItems().stream().map(p -> {
+        List<ReturnItem> returnItems = new ArrayList<>();
+        try {
+            this.rwLock.readLock().lock();
+            parameter.getRequestItems().forEach(p -> {
                 // 判定该区域的数据是否存在
                 String area = AddressUtil.parseArea(p);
                 if (!this.dataMap.containsKey(area)) {
                     log.error("客户端[{}]读取[{}]数据，区域[{}]，字节索引[{}]，位索引[{}]，长度[{}]，无该区域地址数据",
                             socket.getRemoteSocketAddress(), p.getVariableType(), area, p.getByteAddress(), p.getBitAddress(), p.getCount());
-                    return ReturnItem.createDefault(EReturnCode.OBJECT_DOES_NOT_EXIST);
+                    returnItems.add(ReturnItem.createDefault(EReturnCode.OBJECT_DOES_NOT_EXIST));
+                    return;
                 }
                 // 提取指定地址的字节数据
                 byte[] bytes = this.dataMap.get(area);
@@ -151,8 +158,11 @@ public class S7PLCServer extends TcpServerBasic {
                 }
                 log.debug("客户端[{}]读取[{}]数据，区域[{}]，字节索引[{}]，位索引[{}]，长度[{}]，区域地址数据{}",
                         socket.getRemoteSocketAddress(), p.getVariableType(), area, p.getByteAddress(), p.getBitAddress(), p.getCount(), data);
-                return DataItem.createAckBy(data, p.getVariableType() == EParamVariableType.BYTE ? EDataVariableType.BYTE_WORD_DWORD : EDataVariableType.BIT);
-            }).collect(Collectors.toList());
+                DataItem dataItem = DataItem.createAckBy(data, p.getVariableType() == EParamVariableType.BYTE ? EDataVariableType.BYTE_WORD_DWORD : EDataVariableType.BIT);
+                returnItems.add(dataItem);
+            });
+        } finally {
+            this.rwLock.readLock().unlock();
         }
         S7Data ack = S7Data.createReadWriteResponse(req, returnItems);
         this.write(socket, ack.toByteArray());
@@ -168,7 +178,8 @@ public class S7PLCServer extends TcpServerBasic {
         ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
         List<DataItem> dataItems = req.getDatum().getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
         List<ReturnItem> returnItems = new ArrayList<>();
-        synchronized (this.objLock) {
+        try {
+            this.rwLock.writeLock().lock();
             for (int i = 0; i < parameter.getItemCount(); i++) {
                 RequestItem p = parameter.getRequestItems().get(i);
                 DataItem d = dataItems.get(i);
@@ -192,6 +203,8 @@ public class S7PLCServer extends TcpServerBasic {
                         socket.getRemoteSocketAddress(), p.getVariableType(), area, p.getByteAddress(), p.getBitAddress(), p.getCount(), d.getData());
                 returnItems.add(ReturnItem.createDefault(EReturnCode.SUCCESS));
             }
+        } finally {
+            this.rwLock.writeLock().unlock();
         }
 
         S7Data ack = S7Data.createReadWriteResponse(req, returnItems);

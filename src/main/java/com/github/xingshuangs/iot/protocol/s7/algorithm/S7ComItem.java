@@ -41,11 +41,20 @@ public class S7ComItem {
     private int extraSize;
 
     /**
+     * 阀值
+     */
+    private int threshold = 0;
+
+    /**
      * 整个长度
      *
      * @return 整个长度
      */
     public int getTotalLength() {
-        return this.ripeSize + this.extraSize;
+        if (this.ripeSize + this.extraSize > this.threshold) {
+            return this.ripeSize + this.extraSize;
+        } else {
+            return this.threshold;
+        }
     }
 }
