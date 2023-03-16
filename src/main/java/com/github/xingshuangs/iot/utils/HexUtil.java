@@ -49,18 +49,32 @@ public class HexUtil {
     }
 
     /**
-     * 将字节数组转换为16进制字符串，并且按空格隔开
+     * 将字节数组转换为16进制字符串，并且默认按空格隔开
      *
      * @param src 字节数组
      * @return 字符串
      */
     public static String toHexString(byte[] src) {
+        return toHexString(src, " ");
+    }
+
+    /**
+     * 将字节数组转换为16进制字符串，并且默认按指定字符串隔开
+     *
+     * @param src      字节数组
+     * @param splitStr 分隔字符串
+     * @return 字符串
+     */
+    public static String toHexString(byte[] src, String splitStr) {
         if (src == null || src.length == 0) {
             return "";
         }
         StringBuilder sb = new StringBuilder();
-        for (byte b : src) {
-            sb.append(String.format("%02X", b)).append(" ");
+        for (int i = 0; i < src.length; i++) {
+            sb.append(String.format("%02X", src[i]));
+            if (i != src.length - 1) {
+                sb.append(splitStr);
+            }
         }
         return sb.toString().trim();
     }

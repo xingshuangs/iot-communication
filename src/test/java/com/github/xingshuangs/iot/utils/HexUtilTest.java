@@ -51,5 +51,20 @@ public class HexUtilTest {
         data = new byte[]{(byte) 0xA1, (byte) 0x49, (byte) 0xAB, (byte) 0xDF};
         actual = HexUtil.toHexString(data);
         assertEquals(expected, actual);
+
+        expected = "A1|49|AB|DF";
+        data = new byte[]{(byte) 0xA1, (byte) 0x49, (byte) 0xAB, (byte) 0xDF};
+        actual = HexUtil.toHexString(data,"|");
+        assertEquals(expected, actual);
+
+        expected = "A1-49-AB-DF";
+        data = new byte[]{(byte) 0xA1, (byte) 0x49, (byte) 0xAB, (byte) 0xDF};
+        actual = HexUtil.toHexString(data,"-");
+        assertEquals(expected, actual);
+
+        expected = "A1@49@AB@DF";
+        data = new byte[]{(byte) 0xA1, (byte) 0x49, (byte) 0xAB, (byte) 0xDF};
+        actual = HexUtil.toHexString(data,"@");
+        assertEquals(expected, actual);
     }
 }
