@@ -43,5 +43,7 @@ public class DemoS7Write {
                 .addUInt16("DB2.2", 88)
                 .addBoolean("DB2.1.0", true);
         s7PLC.writeMultiData(addressWrite);
+
+        s7PLC.close();
     }
 }

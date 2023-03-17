@@ -26,11 +26,20 @@ import java.util.stream.Collectors;
 @Slf4j
 public class S7PLCServer extends TcpServerBasic {
 
+    /**
+     * 数据Map操作锁
+     */
     private final Object objLock = new Object();
 
+    /**
+     * 读写锁
+     */
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
-    private final HashMap<String, byte[]> dataMap = new HashMap<>();
+    /**
+     * 所有数据
+     */
+    protected final HashMap<String, byte[]> dataMap = new HashMap<>();
 
     public S7PLCServer() {
         this(102);

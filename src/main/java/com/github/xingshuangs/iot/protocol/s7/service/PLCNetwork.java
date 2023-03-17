@@ -59,7 +59,7 @@ public class PLCNetwork extends TcpClientBasic {
     protected int pduLength;
 
     /**
-     * 是否持久化，默认是持久化，对应长短连接，true：长链接，false：短连接
+     * 是否持久化，默认是持久化，对应长连接，true：长连接，false：短连接
      */
     private boolean persistence = true;
 

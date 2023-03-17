@@ -24,5 +24,7 @@ public class DemoS7Control {
 
         // compress
         s7PLC.compress();
+
+        s7PLC.close();
     }
 }

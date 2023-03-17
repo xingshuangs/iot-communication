@@ -40,7 +40,42 @@
 | float64 | 8字节浮点型   |   64    |    8     | Double   | LREAL       | 3.14   |
 | string  | 字符型      |    8    |    1     | String   | String      | ABC    |
 
-## 教程
+## 通信连接
+
+- PLC默认采用长连接的方式，不用的时候需要手动关闭；
+- 若需要短连接，则需要手动设置；
+
+### 1. 长连接方式
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        // 长连接方式，即持久化为true
+        S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+        s7PLC.writeByte("DB2.1", (byte) 0x11);
+        s7PLC.readByte("DB2.1");
+        // 需要手动关闭
+        s7PLC.close();
+    }
+}
+```
+
+### 2. 短连接方式
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        // 短连接
+        S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+        // 设置短连接模式，即持久化为false
+        s7PLC.setPersistence(false);
+        s7PLC.writeByte("DB2.1", (byte) 0x11);
+        s7PLC.readByte("DB2.1");
+    }
+}
+```
+
+## 客户端教程
 
 ### 1. 直接方式读写
 
@@ -91,6 +126,8 @@ class Demo {
                 .addData("DB1.2", 3)
                 .addData("DB1.3", 5);
         List<byte[]> multiByte = s7PLC.readMultiByte(addressRead);
+
+        s7PLC.close();
     }
 }
 ```
@@ -132,6 +169,8 @@ class Demo {
                 .addUInt16("DB2.2", 88)
                 .addBoolean("DB2.1.0", true);
         s7PLC.writeMultiData(addressWrite);
+
+        s7PLC.close();
     }
 }
 ```
@@ -156,6 +195,8 @@ class Demo {
 
         // compress
         s7PLC.compress();
+
+        s7PLC.close();
     }
 }
 ```
@@ -176,6 +217,7 @@ class Demo {
         this.s7PLC.writeRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0,
                 EDataVariableType.BYTE_WORD_DWORD, expect);
         actual = this.s7PLC.readRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0);
+        s7PLC.close();
     }
 }
 ```
@@ -216,6 +258,7 @@ public class DemoBean {
     private byte[] byteData;
 }
 ```
+
 对于大数据量建议采用字节数组的方式，后续采用字节数据解析
 
 构建数据量比较大的数据类
@@ -288,6 +331,52 @@ class Demo {
         largeBean.getByteData6()[499] = (byte) 0x06;
         largeBean.getByteData7()[43] = (byte) 0x07;
         s7Serializer.write(bean);
+        s7PLC.close();
+    }
+}
+```
+
+## 服务端端教程
+
+- 服务端支持默认支持I区，Q区，M区，T区，C区以及DB1区，每个区都包含65536个字节；
+- 服务端可以自定义DB区，随意添加；
+- 目前只支持读写操作；
+
+### 1. 初始化
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        // 创建服务端
+        S7PLCServer server = new S7PLCServer();
+        // 添加DB2，DB3，DB4
+        server.addDBArea(2, 3, 4);
+        // 服务端启动
+        server.start();
+        // 服务端停止
+        server.stop();
+    }
+}
+```
+
+### 2. 读写数据
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        // 创建服务端
+        S7PLCServer server = new S7PLCServer();
+        server.addDBArea(2, 3, 4);
+        server.start();
+
+        // 创建客户端
+        S7PLC s7PLC = new S7PLC(EPlcType.S1200);
+        s7PLC.writeByte("DB2.0", (byte) 0x01);
+        byte b = s7PLC.readByte("DB2.0");
+
+        // 关闭
+        s7PLC.close();
+        server.stop();
     }
 }
 ```

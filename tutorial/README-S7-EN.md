@@ -41,11 +41,46 @@
 | float64          |        64        |         8         | Double         | LREAL         | 3.14     |
 | string           |        8         |         1         | String         | String        | ABC      |
 
-## Tutorial
+## Communication Connection
 
-### 1. Direct mode read-write
+- By default, the long connection mode is adopted. You need to close connection manually when it is not in use.
+- If a short connection is required, you need to set it manually.
 
-#### 1.1 Read data
+### 1. Long Connection Mode
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        // long connection mode, persistence = true
+        S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+        s7PLC.writeByte("DB2.1", (byte) 0x11);
+        s7PLC.readByte("DB2.1");
+        // close it manually
+        s7PLC.close();
+    }
+}
+```
+
+### 2. Short Connection Mode
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        // short connection mode
+        S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+        // set short connection mode，persistence = false
+        s7PLC.setPersistence(false);
+        s7PLC.writeByte("DB2.1", (byte) 0x11);
+        s7PLC.readByte("DB2.1");
+    }
+}
+```
+
+## Client Tutorial
+
+### 1. Direct Mode Read-write
+
+#### 1.1 Read Data
 
 ```java
 class Demo {
@@ -92,11 +127,13 @@ class Demo {
                 .addData("DB1.2", 3)
                 .addData("DB1.3", 5);
         List<byte[]> multiByte = s7PLC.readMultiByte(addressRead);
+
+        s7PLC.close();
     }
 }
 ```
 
-#### 1.2 Write data
+#### 1.2 Write Data
 
 ```java
 class Demo {
@@ -133,11 +170,13 @@ class Demo {
                 .addUInt16("DB2.2", 88)
                 .addBoolean("DB2.1.0", true);
         s7PLC.writeMultiData(addressWrite);
+
+        s7PLC.close();
     }
 }
 ```
 
-#### 1.3 Control command
+#### 1.3 Control Command
 
 ```java
 class Demo {
@@ -157,11 +196,13 @@ class Demo {
 
         // compress
         s7PLC.compress();
+
+        s7PLC.close();
     }
 }
 ```
 
-### 2. Custom mode read-write
+### 2. Custom Mode Read-write
 
 ```java
 class Demo {
@@ -177,11 +218,13 @@ class Demo {
         this.s7PLC.writeRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0,
                 EDataVariableType.BYTE_WORD_DWORD, expect);
         actual = this.s7PLC.readRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0);
+
+        s7PLC.close();
     }
 }
 ```
 
-### 3. Serializer mode read-write
+### 3. Serializer Mode Read-write
 
 Support BOOL UINT16 INT16 UINT32 INT32 FLOAT32 FLOAT64 read-write.
 
@@ -290,6 +333,52 @@ class Demo {
         largeBean.getByteData6()[499] = (byte) 0x06;
         largeBean.getByteData7()[43] = (byte) 0x07;
         s7Serializer.write(bean);
+        s7PLC.close();
+    }
+}
+```
+
+## Server Tutorial
+
+- By default, the server supports area I, Q, M, T, C and DB1, each includes 65536 bytes.
+- The server can customize the DB area and add it at will.
+- Currently, only read and write operations are supported.
+
+### 1. Initialization
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        // create server
+        S7PLCServer server = new S7PLCServer();
+        // add DB2，DB3，DB4
+        server.addDBArea(2, 3, 4);
+        // server start
+        server.start();
+        // server stop
+        server.stop();
+    }
+}
+```
+
+### 2. Read-write Data
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        // create server
+        S7PLCServer server = new S7PLCServer();
+        server.addDBArea(2, 3, 4);
+        server.start();
+
+        // create client
+        S7PLC s7PLC = new S7PLC(EPlcType.S1200);
+        s7PLC.writeByte("DB2.0", (byte) 0x01);
+        byte b = s7PLC.readByte("DB2.0");
+
+        // close
+        s7PLC.close();
+        server.stop();
     }
 }
 ```

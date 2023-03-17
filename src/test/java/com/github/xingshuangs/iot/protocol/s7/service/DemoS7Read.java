@@ -53,5 +53,7 @@ public class DemoS7Read {
                 .addData("DB1.2", 3)
                 .addData("DB1.3", 5);
         List<byte[]> multiByte = s7PLC.readMultiByte(addressRead);
+
+        s7PLC.close();
     }
 }
