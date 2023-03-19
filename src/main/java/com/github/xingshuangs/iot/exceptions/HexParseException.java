@@ -5,7 +5,6 @@ package com.github.xingshuangs.iot.exceptions;
  *
  * @author ShuangPC
  */
-
 public class HexParseException extends RuntimeException {
 
     public HexParseException() {

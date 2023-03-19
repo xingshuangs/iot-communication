@@ -50,6 +50,11 @@ public class MbTcpRequest implements IObjectByteArray {
         this.header.setLength(this.pdu.byteArrayLength() + 1);
     }
 
+    /**
+     * 创建默认请求对象
+     *
+     * @return MbTcpRequest
+     */
     public static MbTcpRequest createDefault() {
         MbTcpRequest request = new MbTcpRequest();
         request.header = new MbapHeader();

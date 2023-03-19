@@ -52,10 +52,23 @@ public final class MbReadInputRegisterRequest extends MbPdu {
                 .getData();
     }
 
+    /**
+     * 解析字节数组数据
+     *
+     * @param data 字节数组数据
+     * @return MbReadInputRegisterRequest
+     */
     public static MbReadInputRegisterRequest fromBytes(final byte[] data) {
         return fromBytes(data, 0);
     }
 
+    /**
+     * 解析字节数组数据
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return MbReadInputRegisterRequest
+     */
     public static MbReadInputRegisterRequest fromBytes(final byte[] data, final int offset) {
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         MbReadInputRegisterRequest res = new MbReadInputRegisterRequest();

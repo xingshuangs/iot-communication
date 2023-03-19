@@ -33,6 +33,12 @@ public class MbPdu implements IObjectByteArray {
                 .getData();
     }
 
+    /**
+     * 解析字节数组数据
+     *
+     * @param data 字节数组数据
+     * @return MbPdu
+     */
     public static MbPdu fromBytes(final byte[] data) {
         return fromBytes(data, 0);
     }

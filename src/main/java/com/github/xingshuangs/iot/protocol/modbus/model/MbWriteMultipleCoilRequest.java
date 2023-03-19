@@ -68,10 +68,23 @@ public final class MbWriteMultipleCoilRequest extends MbPdu {
                 .getData();
     }
 
+    /**
+     * 解析字节数组数据
+     *
+     * @param data 字节数组数据
+     * @return MbWriteMultipleCoilRequest
+     */
     public static MbWriteMultipleCoilRequest fromBytes(final byte[] data) {
         return fromBytes(data, 0);
     }
 
+    /**
+     * 解析字节数组数据
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return MbWriteMultipleCoilRequest
+     */
     public static MbWriteMultipleCoilRequest fromBytes(final byte[] data, final int offset) {
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         MbWriteMultipleCoilRequest res = new MbWriteMultipleCoilRequest();

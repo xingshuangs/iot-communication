@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 响应读取线圈
+ * 响应读取保持寄存器
  *
  * @author xingshuang
  */
@@ -42,10 +42,23 @@ public final class MbReadHoldRegisterResponse extends MbPdu {
                 .getData();
     }
 
+    /**
+     * 解析字节数组数据
+     *
+     * @param data 字节数组数据
+     * @return MbReadHoldRegisterResponse
+     */
     public static MbReadHoldRegisterResponse fromBytes(final byte[] data) {
         return fromBytes(data, 0);
     }
 
+    /**
+     * 解析字节数组数据
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return MbReadHoldRegisterResponse
+     */
     public static MbReadHoldRegisterResponse fromBytes(final byte[] data, final int offset) {
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         MbReadHoldRegisterResponse res = new MbReadHoldRegisterResponse();

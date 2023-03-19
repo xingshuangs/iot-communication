@@ -52,10 +52,23 @@ public final class MbWriteSingleRegisterRequest extends MbPdu {
                 .getData();
     }
 
+    /**
+     * 解析字节数组数据
+     *
+     * @param data 字节数组数据
+     * @return MbWriteSingleRegisterRequest
+     */
     public static MbWriteSingleRegisterRequest fromBytes(final byte[] data) {
         return fromBytes(data,0);
     }
 
+    /**
+     * 解析字节数组数据
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return MbWriteSingleRegisterRequest
+     */
     public static MbWriteSingleRegisterRequest fromBytes(final byte[] data, final int offset) {
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         MbWriteSingleRegisterRequest res = new MbWriteSingleRegisterRequest();

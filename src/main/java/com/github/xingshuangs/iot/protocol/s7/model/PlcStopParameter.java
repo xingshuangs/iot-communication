@@ -80,6 +80,11 @@ public class PlcStopParameter extends Parameter implements IObjectByteArray {
         return parameter;
     }
 
+    /**
+     * 创建默认对象
+     *
+     * @return PlcStopParameter
+     */
     public static PlcStopParameter createDefault() {
         PlcStopParameter parameter = new PlcStopParameter();
         parameter.setPiService("P_PROGRAM");
