@@ -65,5 +65,10 @@ class Demo {
 ## 许可证
 
 根据MIT许可证发布，更多信息请参见[`LICENSE`](./LICENSE)。<br>
-@2019 - 9999 Oscura版权所有。
+@2019 - 2099 Oscura版权所有。
+
+## 赞助
+
+**微信** (请备注上你的姓名)<br>
+![微信](https://i.postimg.cc/brBG5vx8/image.png)
 

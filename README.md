@@ -66,4 +66,9 @@ spare time.
 ## License
 
 Distributed under the MIT License. See [`LICENSE`](./LICENSE) for more information.<br>
-@2019 - 9999 Oscura, All Rights Reserved <br>
+@2019 - 2099 Oscura, All Rights Reserved <br>
+
+## Sponsor
+
+**WeChat** (Please note your name)<br>
+![微信](https://i.postimg.cc/brBG5vx8/image.png)
