@@ -5,6 +5,8 @@ import com.github.xingshuangs.iot.exceptions.ModbusCommException;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.protocol.modbus.model.*;
 
+import java.util.function.Consumer;
+
 /**
  * plc的网络通信
  *
@@ -21,6 +23,15 @@ public class ModbusNetwork extends TcpClientBasic {
      * 锁
      */
     private final Object objLock = new Object();
+
+    /**
+     * 通信回调
+     */
+    private Consumer<byte[]> comCallback;
+
+    public void setComCallback(Consumer<byte[]> comCallback) {
+        this.comCallback = comCallback;
+    }
 
     public ModbusNetwork() {
         super();
@@ -40,6 +51,9 @@ public class ModbusNetwork extends TcpClientBasic {
      * @return modbus协议数据
      */
     protected MbTcpResponse readFromServer(MbTcpRequest req) {
+        if (this.comCallback != null) {
+            this.comCallback.accept(req.toByteArray());
+        }
         MbapHeader header;
         int len;
         byte[] remain;
@@ -59,6 +73,9 @@ public class ModbusNetwork extends TcpClientBasic {
             throw new ModbusCommException(" MbapHeader后面的数据长度，长度不一致");
         }
         MbTcpResponse ack = MbTcpResponse.fromBytes(header, remain);
+        if (this.comCallback != null) {
+            this.comCallback.accept(ack.toByteArray());
+        }
         this.checkResult(req, ack);
         return ack;
     }
