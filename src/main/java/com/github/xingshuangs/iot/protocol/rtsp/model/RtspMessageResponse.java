@@ -4,7 +4,6 @@ package com.github.xingshuangs.iot.protocol.rtsp.model;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspStatusCode;
 import lombok.Data;
 
-import java.net.URI;
 import java.util.Map;
 
 
