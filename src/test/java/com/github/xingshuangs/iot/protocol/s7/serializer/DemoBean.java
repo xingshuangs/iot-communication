@@ -35,4 +35,7 @@ public class DemoBean {
 
     @S7Variable(address = "DB1.28", type = EDataType.BYTE, count = 3)
     private byte[] byteData;
+
+    @S7Variable(address = "DB1.31", type = EDataType.STRING, count = 10)
+    private String stringData;
 }

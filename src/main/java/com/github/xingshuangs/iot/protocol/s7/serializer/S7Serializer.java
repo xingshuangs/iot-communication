@@ -12,6 +12,7 @@ import com.github.xingshuangs.iot.protocol.s7.service.S7PLC;
 import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
 
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -105,6 +106,9 @@ public class S7Serializer implements IPLCSerializable {
             s7ParseData.setField(field);
             if (s7Variable.type() == EDataType.BOOL) {
                 s7ParseData.setRequestItem(AddressUtil.parseBit(s7Variable.address()));
+            } else if (s7Variable.type() == EDataType.STRING) {
+                s7ParseData.setRequestItem(AddressUtil.parseByte(s7Variable.address(),
+                        2 + s7Variable.count() * s7Variable.type().getByteLength()));
             } else {
                 s7ParseData.setRequestItem(AddressUtil.parseByte(s7Variable.address(),
                         s7Variable.count() * s7Variable.type().getByteLength()));
@@ -127,8 +131,11 @@ public class S7Serializer implements IPLCSerializable {
         if (s7Variable.count() < 0) {
             throw new S7CommException("S7参数注解中[count]不能为负数");
         }
-        if (s7Variable.type() != EDataType.BYTE && s7Variable.count() > 1) {
-            throw new S7CommException("S7参数注解中只有[type]=字节类型数据的[count]才能大于1，其他必须等于1");
+        if (s7Variable.type() == EDataType.STRING && s7Variable.count() > 254) {
+            throw new S7CommException("S7参数注解中字符串类型类型数据的[count]不能大于254");
+        }
+        if (s7Variable.type() != EDataType.BYTE && s7Variable.type() != EDataType.STRING && s7Variable.count() > 1) {
+            throw new S7CommException("S7参数注解中只有[type]=字节和字符串类型数据的[count]才能大于1，其他必须等于1");
         }
     }
 
@@ -170,6 +177,10 @@ public class S7Serializer implements IPLCSerializable {
                         break;
                     case FLOAT64:
                         item.getField().set(result, buff.getFloat64());
+                        break;
+                    case STRING:
+                        int length = buff.getByteToInt(1);
+                        item.getField().set(result, buff.getString(2, Math.min(length, item.getCount())));
                         break;
                     default:
                         throw new S7CommException("无法识别数据类型");
@@ -229,6 +240,14 @@ public class S7Serializer implements IPLCSerializable {
                     case FLOAT64:
                         item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(8)
                                 .putDouble((Double) data).getData()));
+                        break;
+                    case STRING:
+                        byte[] bytes = ((String) data).getBytes(StandardCharsets.US_ASCII);
+                        byte[] targetBytes = new byte[2 + item.getCount()];
+                        targetBytes[0] = (byte) 0xFE;
+                        targetBytes[1] = (byte) item.getCount();
+                        System.arraycopy(bytes, 0, targetBytes, 2, Math.min(bytes.length, item.getCount()));
+                        item.setDataItem(DataItem.createReqByByte(targetBytes));
                         break;
                     default:
                         throw new S7CommException("无法识别数据类型");

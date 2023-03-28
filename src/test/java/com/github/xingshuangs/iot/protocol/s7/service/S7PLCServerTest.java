@@ -71,6 +71,7 @@ public class S7PLCServerTest {
         bean.setFloat32Data(3.14f);
         bean.setFloat64Data(4.15);
         bean.setByteData(bytes);
+        bean.setStringData("12345");
         s7Serializer.write(bean);
         bean = s7Serializer.read(DemoBean.class);
         assertTrue(bean.isBitData());

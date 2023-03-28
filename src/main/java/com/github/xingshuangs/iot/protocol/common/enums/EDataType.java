@@ -47,12 +47,12 @@ public enum EDataType {
     /**
      * 字节长度
      */
-    private int byteLength;
+    private final int byteLength;
 
     /**
      * 名称
      */
-    private String name;
+    private final String name;
 
     EDataType(String name, int byteLength) {
         this.name = name;

@@ -112,6 +112,6 @@ public class ByteUtil {
         if (offset > data.length || offset + length > data.length) {
             throw new IllegalArgumentException("偏移量 > 字节数组长度 || 偏移量 + 长度 > 字节数组长度");
         }
-        return new String(data, offset, length, charsetName);
+        return new String(data, offset, length, charsetName).trim();
     }
 }

@@ -26,8 +26,7 @@ public class S7SerializerTest {
     public void write() {
         s7PLC.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
-        DemoBean bean = s7Serializer.read(DemoBean.class);
-        log.info(bean.toString());
+        DemoBean bean = new DemoBean();
         bean.setBitData(true);
         bean.setUint16Data(42767);
         bean.setInt16Data((short) 32767);
@@ -36,7 +35,10 @@ public class S7SerializerTest {
         bean.setFloat32Data(3.14f);
         bean.setFloat64Data(4.15);
         bean.setByteData(new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05});
+        bean.setStringData("1234567");
         s7Serializer.write(bean);
+        bean = s7Serializer.read(DemoBean.class);
+        log.info(bean.toString());
     }
 
     @Test

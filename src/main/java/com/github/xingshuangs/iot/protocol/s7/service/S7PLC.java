@@ -366,6 +366,26 @@ public class S7PLC extends PLCNetwork {
         return ByteUtil.toStr(dataItem.getData(), 2);
     }
 
+    /**
+     * 读取字符串
+     *
+     * @param address 地址
+     * @param length  字符串长度
+     * @return 字符串
+     */
+    public String readString(String address, int length) {
+        if (length <= 0 || length > 254) {
+            throw new IllegalArgumentException("length <= 0 || length > 254");
+        }
+        DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 2 + length));
+        int type = ByteUtil.toUInt8(dataItem.getData(), 0);
+        if (type == 0 || type == 255) {
+            throw new S7CommException("该地址的值不是字符串类型");
+        }
+        int actLength = ByteUtil.toUInt8(dataItem.getData(), 1);
+        return ByteUtil.toStr(dataItem.getData(), 2, Math.min(actLength, length));
+    }
+
 //    /**
 //     * 读取字符串
 //     * Wsting数据类型与sting数据类型接近，支持单字值的较长字符串，
@@ -531,8 +551,8 @@ public class S7PLC extends PLCNetwork {
      * @param data    字符串数据
      */
     public void writeString(String address, String data) {
-        if (data.length() > 253) {
-            throw new IllegalArgumentException("data字符串参数过长，超过253");
+        if (data.length() > 254) {
+            throw new IllegalArgumentException("data字符串参数过长，超过254");
         }
         byte[] dataBytes = data.getBytes(StandardCharsets.US_ASCII);
         byte[] tmp = new byte[2 + dataBytes.length];
