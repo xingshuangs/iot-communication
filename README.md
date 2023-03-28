@@ -24,7 +24,7 @@ Now, it is a tool for iot communication, it includes
 
 Add the dependency to pom.xml in the JAVA project
 
-```
+```xml
 <dependency>
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>

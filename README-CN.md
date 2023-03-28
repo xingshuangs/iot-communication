@@ -24,7 +24,7 @@
 
 在JAVA工程的pom.xml文件中添加该依赖即可
 
-```
+```xml
 <dependency>
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
