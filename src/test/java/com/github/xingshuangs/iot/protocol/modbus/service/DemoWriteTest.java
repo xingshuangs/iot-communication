@@ -47,5 +47,7 @@ public class DemoWriteTest {
 
         // hold register write String
         plc.writeString(2, "1234");
+
+        plc.close();
     }
 }

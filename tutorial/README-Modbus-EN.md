@@ -2,7 +2,42 @@
 
 [HOME BACK](../README.md)
 
-## 1. Read data
+## Communication Connection
+
+- By default, the long connection mode is adopted. You need to close connection manually when it is not in use.
+- If a short connection is required, you need to set it manually.
+
+### 1. Long Connection Mode
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        // long connection mode, persistence = true
+        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        plc.writeInt16(2, (short) 10);
+        short data = plc.readInt16(2);
+        // close it manually
+        plc.close();
+    }
+}
+```
+
+### 2. Short Connection Mode
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        // short connection mode
+        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        // set short connection mode, persistence = false
+        plc.setPersistence(false);
+        plc.writeInt16(2, (short) 10);
+        short data = plc.readInt16(2);
+    }
+}
+```
+
+## Read data
 
 ```java
 class Demo {
@@ -41,11 +76,13 @@ class Demo {
 
         // hold register read String
         String readString = plc.readString(2, 4);
+
+        plc.close();
     }
 }
 ```
 
-## 2. Write data
+## Write data
 
 ```java
 class Demo {
@@ -87,6 +124,8 @@ class Demo {
 
         // hold register write String
         plc.writeString(2, "1234");
+
+        plc.close();
     }
 }
 ```

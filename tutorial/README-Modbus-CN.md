@@ -2,7 +2,42 @@
 
 [返回主页](../README-CN.md)
 
-## 1. 读取数据
+## 通信连接
+
+- 默认采用长连接的方式，不用的时候需要手动关闭；
+- 若需要短连接，则需要手动设置；
+
+### 1. 长连接方式
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        // 长连接方式，即持久化为true
+        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        plc.writeInt16(2, (short) 10);
+        short data = plc.readInt16(2);
+        // 需要手动关闭
+        plc.close();
+    }
+}
+```
+
+### 2. 短连接方式
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        // 短连接
+        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        // 设置短连接模式，即持久化为false
+        plc.setPersistence(false);
+        plc.writeInt16(2, (short) 10);
+        short data = plc.readInt16(2);
+    }
+}
+```
+
+## 读取数据
 
 ```java
 class Demo {
@@ -41,11 +76,13 @@ class Demo {
 
         // hold register read String
         String readString = plc.readString(2, 4);
+
+        plc.close();
     }
 }
 ```
 
-## 2. 写入数据
+## 写入数据
 
 ```java
 class Demo {
@@ -87,6 +124,8 @@ class Demo {
 
         // hold register write String
         plc.writeString(2, "1234");
+
+        plc.close();
     }
 }
 ```

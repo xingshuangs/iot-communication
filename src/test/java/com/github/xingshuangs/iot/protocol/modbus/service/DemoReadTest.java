@@ -43,5 +43,6 @@ public class DemoReadTest {
         // hold register read String
         String readString = plc.readString(2, 4);
 
+        plc.close();
     }
 }

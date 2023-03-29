@@ -45,6 +45,8 @@ class Demo {
         // 读写字节
         s7PLC.writeByte("DB2.1", (byte) 0x11);
         byte byteData = s7PLC.readByte("DB2.1");
+        // 关闭
+        s7PLC.close();
     }
 }
 ```

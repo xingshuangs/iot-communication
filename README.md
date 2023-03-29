@@ -45,6 +45,8 @@ class Demo {
         // read and write byte
         s7PLC.writeByte("DB2.1", (byte) 0x11);
         byte byteData = s7PLC.readByte("DB2.1");
+        // close
+        s7PLC.close();
     }
 }
 ```
