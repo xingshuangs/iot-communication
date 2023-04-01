@@ -13,6 +13,8 @@ import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
 import com.github.xingshuangs.iot.utils.*;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -405,6 +407,38 @@ public class S7PLC extends PLCNetwork {
 //        return ByteUtil.toStr(dataItem.getData(), 4);
 //    }
 
+    /**
+     * 读取时间，时间为毫秒时间，ms
+     *
+     * @param address 地址
+     * @return 时间，ms
+     */
+    public long readTime(String address) {
+        return this.readUInt32(address);
+    }
+
+    /**
+     * 读取日期
+     *
+     * @param address 地址
+     * @return 日期
+     */
+    public LocalDate readDate(String address) {
+        int offset = this.readUInt16(address);
+        return LocalDate.of(1990, 1, 1).plusDays(offset);
+    }
+
+    /**
+     * 读取一天中的时间
+     *
+     * @param address 地址
+     * @return 时间
+     */
+    public LocalTime readTimeOfDay(String address) {
+        long value = this.readUInt32(address);
+        return LocalTime.ofSecondOfDay(value / 1000);
+    }
+
     //endregion
 
     //region 写入数据
@@ -584,6 +618,39 @@ public class S7PLC extends PLCNetwork {
 //        System.arraycopy(dataBytes, 0, tmp, 4, dataBytes.length);
 //        this.writeByte(address, tmp);
 //    }
+
+    /**
+     * 写入时间，时间为毫秒时间，ms
+     *
+     * @param address 地址
+     * @param time    时间，ms
+     */
+    public void writeTime(String address, long time) {
+        this.writeUInt32(address, time);
+    }
+
+    /**
+     * 读取日期
+     *
+     * @param address 地址
+     * @param date    日期
+     */
+    public void writeDate(String address, LocalDate date) {
+        LocalDate start = LocalDate.of(1990, 1, 1);
+        long value = date.toEpochDay() - start.toEpochDay();
+        this.writeUInt16(address, (int) value);
+    }
+
+    /**
+     * 写入一天中的时间
+     *
+     * @param address 地址
+     * @param time    时间
+     */
+    public void writeTimeOfDay(String address, LocalTime time) {
+        int value = time.toSecondOfDay();
+        this.writeUInt32(address, (long) value * 1000);
+    }
 
     //endregion
 

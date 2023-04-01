@@ -10,6 +10,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -23,7 +25,7 @@ public class S7PLCTest {
     private final S7PLC s7PLC = new S7PLC(EPlcType.S1200);
 
     @Before
-    public void before(){
+    public void before() {
         this.s7PLC.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
     }
 
@@ -40,6 +42,12 @@ public class S7PLCTest {
                 EDataVariableType.BYTE_WORD_DWORD, expect);
         actual = this.s7PLC.readRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0);
         assertArrayEquals(expect, actual);
+    }
+
+    @Test
+    public void readByRaw1() {
+        byte[] actual = this.s7PLC.readRaw(EParamVariableType.BYTE, 4, EArea.DATA_BLOCKS, 4, 298, 0);
+        System.out.println(actual);
     }
 
     @Test
@@ -137,6 +145,29 @@ public class S7PLCTest {
         s7PLC.writeString("DB2.4", "demo");
         String str = s7PLC.readString("DB2.4");
         assertEquals("demo", str);
+    }
+
+    @Test
+    public void writeTime() {
+        s7PLC.writeTime("DB4.292", 1000);
+        long actual = s7PLC.readTime("DB4.292");
+        assertEquals(1000, actual);
+    }
+
+    @Test
+    public void writeDate() {
+        LocalDate expect = LocalDate.of(2023, 4, 1);
+        s7PLC.writeDate("DB4.296", expect);
+        LocalDate actual = s7PLC.readDate("DB4.296");
+        assertEquals(expect, actual);
+    }
+
+    @Test
+    public void writeTimeOfDay() {
+        LocalTime expect = LocalTime.of(20,15,11);
+        s7PLC.writeTimeOfDay("DB4.298", expect);
+        LocalTime actual = s7PLC.readTimeOfDay("DB4.298");
+        assertEquals(expect, actual);
     }
 
     @Test

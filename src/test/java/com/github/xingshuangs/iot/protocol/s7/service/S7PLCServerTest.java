@@ -103,4 +103,11 @@ public class S7PLCServerTest {
         bean.getByteData7()[43] = (byte) 0x07;
         s7Serializer.write(bean);
     }
+
+    @Test
+    public void writeStringTest() {
+        this.s7PLC.writeString("DB1.10","123456");
+        String actual = this.s7PLC.readString("DB1.10", 6);
+        assertEquals("123456", actual);
+    }
 }
