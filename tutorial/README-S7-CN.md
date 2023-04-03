@@ -28,17 +28,20 @@
 
 > 知识点2：访问数据类型与JAVA数据类型和PLC数据类型对应关系
 
-| 访问数据类型  | 数据类型名称   | 数据大小[位] | 数据大小[字节] | JAVA数据类型 | PLC数据类型     | 示例     |
-|---------|----------|:-------:|:--------:|----------|-------------|--------|
-| boolean | 布尔类型     |    1    |   1/8    | Boolean  | BOOL        | true   |
-| byte    | 字节类型     |    8    |    1     | Byte     | BYTE        | 0x11   |
-| uint16  | 无符号2字节整型 |   16    |    2     | Integer  | WORD/UINT   | 65535  |
-| int16   | 有符号2字节整型 |   16    |    2     | Short    | WORD/INT    | -32760 |
-| uint32  | 无符号4字节整型 |   32    |    4     | Long     | DWORD/UDINT | 70000  |
-| int32   | 有符号4字节整型 |   32    |    4     | Integer  | DWORD/DINT  | -70000 |
-| float32 | 4字节浮点型   |   32    |    4     | Float    | REAL        | 3.14   |
-| float64 | 8字节浮点型   |   64    |    8     | Double   | LREAL       | 3.14   |
-| string  | 字符型      |    8    |    1     | String   | String      | ABC    |
+| 访问数据类型    | 数据类型名称   | 数据大小[位] | 数据大小[字节] | JAVA数据类型  | PLC数据类型     | 示例         |
+|-----------|----------|:-------:|:--------:|-----------|-------------|------------|
+| boolean   | 布尔类型     |    1    |   1/8    | Boolean   | BOOL        | true       |
+| byte      | 字节类型     |    8    |    1     | Byte      | BYTE        | 0x11       |
+| uint16    | 无符号2字节整型 |   16    |    2     | Integer   | WORD/UINT   | 65535      |
+| int16     | 有符号2字节整型 |   16    |    2     | Short     | WORD/INT    | -32760     |
+| uint32    | 无符号4字节整型 |   32    |    4     | Long      | DWORD/UDINT | 70000      |
+| int32     | 有符号4字节整型 |   32    |    4     | Integer   | DWORD/DINT  | -70000     |
+| float32   | 4字节浮点型   |   32    |    4     | Float     | REAL        | 3.14       |
+| float64   | 8字节浮点型   |   64    |    8     | Double    | LREAL       | 3.14       |
+| string    | 字符型      |    8    |    1     | String    | String      | ABC        |
+| time      | 时间/耗时    |   32    |    4     | Long      | Time        | 100ms      |
+| date      | 日期       |   16    |    2     | LocalDate | Date        | 2023-04-03 |
+| timeOfDay | 一天中的时间   |   32    |    4     | LocalTime | TimeOfDay   | 10:22:11   |
 
 ## 通信连接
 

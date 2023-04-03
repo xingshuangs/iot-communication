@@ -29,17 +29,20 @@
 
 > Tips2: Access data types mapping to JAVA data types and PLC data types.
 
-| Access Data Type | Data Size in Bit | Data Size in Byte | JAVA Data Type | PLC Data Type | Instance |
-|------------------|:----------------:|:-----------------:|----------------|---------------|----------|
-| boolean          |        1         |        1/8        | Boolean        | BOOL          | true     |
-| byte             |        8         |         1         | Byte           | BYTE          | 0x11     |
-| uint16           |        16        |         2         | Integer        | WORD/UINT     | 65535    |
-| int16            |        16        |         2         | Short          | WORD/INT      | -32760   |
-| uint32           |        32        |         4         | Long           | DWORD/UDINT   | 70000    |
-| int32            |        32        |         4         | Integer        | DWORD/DINT    | -70000   |
-| float32          |        32        |         4         | Float          | REAL          | 3.14     |
-| float64          |        64        |         8         | Double         | LREAL         | 3.14     |
-| string           |        8         |         1         | String         | String        | ABC      |
+| Access Data Type | Data Size in Bit | Data Size in Byte | JAVA Data Type | PLC Data Type | Instance   |
+|------------------|:----------------:|:-----------------:|----------------|---------------|------------|
+| boolean          |        1         |        1/8        | Boolean        | BOOL          | true       |
+| byte             |        8         |         1         | Byte           | BYTE          | 0x11       |
+| uint16           |        16        |         2         | Integer        | WORD/UINT     | 65535      |
+| int16            |        16        |         2         | Short          | WORD/INT      | -32760     |
+| uint32           |        32        |         4         | Long           | DWORD/UDINT   | 70000      |
+| int32            |        32        |         4         | Integer        | DWORD/DINT    | -70000     |
+| float32          |        32        |         4         | Float          | REAL          | 3.14       |
+| float64          |        64        |         8         | Double         | LREAL         | 3.14       |
+| string           |        8         |         1         | String         | String        | ABC        |
+| time             |        32        |         4         | Long           | Time          | 100ms      |
+| date             |        16        |         2         | LocalDate      | Date          | 2023-04-03 |
+| timeOfDay        |        32        |         4         | LocalTime      | TimeOfDay     | 10:22:11   |
 
 ## Communication Connection
 
