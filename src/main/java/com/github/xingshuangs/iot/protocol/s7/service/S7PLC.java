@@ -408,7 +408,7 @@ public class S7PLC extends PLCNetwork {
 //    }
 
     /**
-     * 读取时间，时间为毫秒时间，ms
+     * 读取时间，时间为毫秒时间，ms，例如1000ms
      *
      * @param address 地址
      * @return 时间，ms
@@ -418,7 +418,7 @@ public class S7PLC extends PLCNetwork {
     }
 
     /**
-     * 读取日期
+     * 读取日期，例如：2023-04-04
      *
      * @param address 地址
      * @return 日期
@@ -429,7 +429,7 @@ public class S7PLC extends PLCNetwork {
     }
 
     /**
-     * 读取一天中的时间
+     * 读取一天中的时间，例如：23:56:31
      *
      * @param address 地址
      * @return 时间

@@ -3,7 +3,8 @@ package com.github.xingshuangs.iot.protocol.s7.service;
 
 import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  * @author xingshuang
@@ -36,6 +37,13 @@ public class DemoS7Write {
 
         // write String
         s7PLC.writeString("DB14.4", "demo");
+
+        // write time
+        s7PLC.writeTime("DB1.0", 1000);
+        // write date
+        s7PLC.writeDate("DB1.0", LocalDate.now());
+        // write time of day
+        s7PLC.writeTimeOfDay("DB1.0", LocalTime.now());
 
         // write multi address
         MultiAddressWrite addressWrite = new MultiAddressWrite();

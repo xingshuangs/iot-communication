@@ -122,6 +122,14 @@ class Demo {
 
         // read String
         String strData = s7PLC.readString("DB14.4");
+        String strData1 = s7PLC.readString("DB14.4", 10);
+
+        // read time
+        long timeData = s7PLC.readTime("DB1.0");
+        // read date
+        LocalDate localDateData = s7PLC.readDate("DB1.0");
+        // read time of day
+        LocalTime localTimeOfDayData = s7PLC.readTimeOfDay("DB1.0");
 
         // read multi address
         MultiAddressRead addressRead = new MultiAddressRead();
@@ -165,6 +173,13 @@ class Demo {
 
         // write String
         s7PLC.writeString("DB14.4", "demo");
+
+        // write time
+        s7PLC.writeTime("DB1.0", 1000);
+        // write date
+        s7PLC.writeDate("DB1.0", LocalDate.now());
+        // write time of day
+        s7PLC.writeTimeOfDay("DB1.0", LocalTime.now());
 
         // write multi address
         MultiAddressWrite addressWrite = new MultiAddressWrite();
@@ -227,7 +242,7 @@ class Demo {
 
 ### 3. 序列化方式读写
 
-支持BOOL UINT16 INT16 UINT32 INT32 FLOAT32 FLOAT64等数据类型读写
+支持BOOL UINT16 INT16 UINT32 INT32 FLOAT32 FLOAT64 STRING等数据类型读写
 
 构建数据量比较小的数据类
 
@@ -259,6 +274,9 @@ public class DemoBean {
 
     @S7Variable(address = "DB1.28", type = EDataType.BYTE, count = 3)
     private byte[] byteData;
+
+    @S7Variable(address = "DB1.31", type = EDataType.STRING, count = 10)
+    private String stringData;
 }
 ```
 
@@ -317,6 +335,7 @@ class Demo {
         bean.setFloat32Data(3.14f);
         bean.setFloat64Data(4.15);
         bean.setByteData(new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03});
+        bean.setStringData("1234567890");
         s7Serializer.write(bean);
 
         // 大数据量的读写

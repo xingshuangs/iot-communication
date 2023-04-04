@@ -27,6 +27,7 @@ public class DemoSerializer {
         bean.setFloat32Data(3.14f);
         bean.setFloat64Data(4.15);
         bean.setByteData(new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03});
+        bean.setStringData("1234567890");
         s7Serializer.write(bean);
 
         // 大数据量的读写
