@@ -63,6 +63,7 @@ If you have any questions, please contact the author in the following ways, and 
 spare time.
 
 - QQ Group: **759101350**
+- QQ Private: **837820457**
 - Email：**xingshuang_cool@163.com**
 
 ## License
