@@ -19,7 +19,7 @@ public class ModbusTcpTest {
     private final ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
 
     @Before
-    public void before(){
+    public void before() {
         this.plc.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
     }
 
@@ -85,6 +85,23 @@ public class ModbusTcpTest {
         plc.writeHoldRegister(3, list);
     }
 
+    @Test
+    public void readBoolean() {
+        byte[] expect = new byte[]{(byte) 0x22, (byte) 0xF0};
+        plc.writeHoldRegister(0, expect);
+        boolean b = this.plc.readBoolean(0, 1);
+        assertTrue(b);
+        b = this.plc.readBoolean(0, 5);
+        assertTrue(b);
+        b = this.plc.readBoolean(0, 6);
+        assertFalse(b);
+        b = this.plc.readBoolean(0, 9);
+        assertFalse(b);
+        b = this.plc.readBoolean(0, 12);
+        assertTrue(b);
+        b = this.plc.readBoolean(0, 15);
+        assertTrue(b);
+    }
 
     @Test
     public void readWriteData() {

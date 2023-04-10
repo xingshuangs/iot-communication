@@ -206,6 +206,23 @@ public class ModbusTcp extends ModbusNetwork {
     //region 通用保持寄存器 读取数据
 
     /**
+     * 读取一个boolean类型数据，只有一个地址的数据，位索引[0,15]
+     *
+     * @param address  地址
+     * @param bitIndex 位索引[0,15]
+     * @return true, false
+     */
+    public boolean readBoolean(int address, int bitIndex) {
+        if (bitIndex < 0 || bitIndex > 15) {
+            throw new IllegalArgumentException("bitIndex < 0 || bitIndex > 15");
+        }
+        byte[] res = this.readHoldRegister(address, 1);
+        int byteOffset = bitIndex / 8;
+        int bitOffset = bitIndex % 8;
+        return ByteReadBuff.newInstance(res, EByteBuffFormat.BA_DC).getBoolean(byteOffset, bitOffset);
+    }
+
+    /**
      * 读取一个Int16 2字节数据
      *
      * @param address 地址
