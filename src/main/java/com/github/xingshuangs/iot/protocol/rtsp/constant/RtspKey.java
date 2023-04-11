@@ -23,9 +23,18 @@ public class RtspKey {
     public static final String COLON = ":";
 
     /**
+     * 逗号
+     */
+    public static final String COMMA = ",";
+
+    /**
      * 空格
      */
     public static final String SP = " ";
 
+    /**
+     * 序列号
+     */
     public static final String C_SEQ = "CSeq";
+
 }

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * PDU类型（CRConnect Request 连接请求）
+ * ERtspMethod方法
  *
  * @author xingshuang
  */
