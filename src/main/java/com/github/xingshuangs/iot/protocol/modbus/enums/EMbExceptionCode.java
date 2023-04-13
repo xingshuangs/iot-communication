@@ -33,15 +33,15 @@ public enum EMbExceptionCode {
 
     ;
 
-    private static final Map<Byte, EMbExceptionCode> map = new HashMap<>();
-
-    static {
-        for (EMbExceptionCode item : EMbExceptionCode.values()) {
-            map.put(item.code, item);
-        }
-    }
+    private static Map<Byte, EMbExceptionCode> map;
 
     public static EMbExceptionCode from(byte data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (EMbExceptionCode item : EMbExceptionCode.values()) {
+                map.put(item.code, item);
+            }
+        }
         return map.get(data);
     }
 

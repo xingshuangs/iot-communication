@@ -66,15 +66,15 @@ public enum ESyntaxID {
     NCK((byte) 0x82),
     ;
 
-    private static final Map<Byte, ESyntaxID> map = new HashMap<>();
-
-    static {
-        for (ESyntaxID item : ESyntaxID.values()) {
-            map.put(item.code, item);
-        }
-    }
+    private static Map<Byte, ESyntaxID> map;
 
     public static ESyntaxID from(byte data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (ESyntaxID item : ESyntaxID.values()) {
+                map.put(item.code, item);
+            }
+        }
         return map.get(data);
     }
 

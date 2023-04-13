@@ -42,15 +42,15 @@ public enum EPduType {
     DT_DATA((byte) 0xF0),
     ;
 
-    private static final Map<Byte, EPduType> map = new HashMap<>();
-
-    static {
-        for (EPduType item : EPduType.values()) {
-            map.put(item.code, item);
-        }
-    }
+    private static Map<Byte, EPduType> map;
 
     public static EPduType from(byte data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (EPduType item : EPduType.values()) {
+                map.put(item.code, item);
+            }
+        }
         return map.get(data);
     }
 

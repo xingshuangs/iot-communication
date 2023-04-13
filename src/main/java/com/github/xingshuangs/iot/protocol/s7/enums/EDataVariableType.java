@@ -47,15 +47,15 @@ public enum EDataVariableType {
     OCTET_STRING((byte) 0x09),
     ;
 
-    private static final Map<Byte, EDataVariableType> map = new HashMap<>();
-
-    static {
-        for (EDataVariableType item : EDataVariableType.values()) {
-            map.put(item.code, item);
-        }
-    }
+    private static Map<Byte, EDataVariableType> map;
 
     public static EDataVariableType from(byte data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (EDataVariableType item : EDataVariableType.values()) {
+                map.put(item.code, item);
+            }
+        }
         return map.get(data);
     }
 

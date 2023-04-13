@@ -32,15 +32,15 @@ public enum EDataType {
 
 //    UNKNOWN("unknown", 0);
 
-    private static final Map<String, EDataType> map = new HashMap<>();
-
-    static {
-        for (EDataType item : EDataType.values()) {
-            map.put(item.name, item);
-        }
-    }
+    private static Map<String, EDataType> map;
 
     public static EDataType from(String data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (EDataType item : EDataType.values()) {
+                map.put(item.name, item);
+            }
+        }
         return map.get(data);
     }
 

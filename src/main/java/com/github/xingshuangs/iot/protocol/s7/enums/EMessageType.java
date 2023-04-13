@@ -32,15 +32,15 @@ public enum EMessageType {
     USER_DATA((byte) 0x07),
     ;
 
-    private static final Map<Byte, EMessageType> map = new HashMap<>();
-
-    static {
-        for (EMessageType item : EMessageType.values()) {
-            map.put(item.code, item);
-        }
-    }
+    private static Map<Byte, EMessageType> map;
 
     public static EMessageType from(byte data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (EMessageType item : EMessageType.values()) {
+                map.put(item.code, item);
+            }
+        }
         return map.get(data);
     }
 

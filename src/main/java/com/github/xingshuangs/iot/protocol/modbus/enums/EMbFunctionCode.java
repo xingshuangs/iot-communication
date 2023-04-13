@@ -127,15 +127,15 @@ public enum EMbFunctionCode {
     ERROR_READ_WRITE_MULTIPLE_REGISTER((byte) 0x97, "读/写多个寄存器错误"),
     ;
 
-    private static final Map<Byte, EMbFunctionCode> map = new HashMap<>();
-
-    static {
-        for (EMbFunctionCode item : EMbFunctionCode.values()) {
-            map.put(item.code, item);
-        }
-    }
+    private static Map<Byte, EMbFunctionCode> map;
 
     public static EMbFunctionCode from(byte data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (EMbFunctionCode item : EMbFunctionCode.values()) {
+                map.put(item.code, item);
+            }
+        }
         return map.get(data);
     }
 
