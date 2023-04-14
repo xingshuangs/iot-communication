@@ -660,35 +660,35 @@ public class S7PLC extends PLCNetwork {
      * 热重启
      */
     public void hotRestart() {
-        this.readFromServer(S7Data.createHotRestart());
+        this.readFromServerWithPersistence(S7Data.createHotRestart());
     }
 
     /**
      * 冷重启
      */
     public void coldRestart() {
-        this.readFromServer(S7Data.createColdRestart());
+        this.readFromServerWithPersistence(S7Data.createColdRestart());
     }
 
     /**
      * PLC停止
      */
     public void plcStop() {
-        this.readFromServer(S7Data.createPlcStop());
+        this.readFromServerWithPersistence(S7Data.createPlcStop());
     }
 
     /**
      * 将ram复制到rom
      */
     public void copyRamToRom() {
-        this.readFromServer(S7Data.createCopyRamToRom());
+        this.readFromServerWithPersistence(S7Data.createCopyRamToRom());
     }
 
     /**
      * 压缩
      */
     public void compress() {
-        this.readFromServer(S7Data.createCompress());
+        this.readFromServerWithPersistence(S7Data.createCompress());
     }
 
     //endregion

@@ -165,7 +165,7 @@ public class PLCNetwork extends TcpClientBasic {
      * @param req S7协议数据
      * @return S7协议数据
      */
-    protected S7Data readFromServer(S7Data req) {
+    private S7Data readFromServer(S7Data req) {
         byte[] sendData = req.toByteArray();
         if (this.comCallback != null) {
             this.comCallback.accept(sendData);
@@ -201,6 +201,22 @@ public class PLCNetwork extends TcpClientBasic {
         }
         this.checkPostedCom(req, ack);
         return ack;
+    }
+
+    /**
+     * 包含持久化的从服务器读取数据，外部继承使用该方法进行交互，内部不使用
+     *
+     * @param req 请求数据
+     * @return 响应数据
+     */
+    protected S7Data readFromServerWithPersistence(S7Data req) {
+        try {
+            return this.readFromServer(req);
+        } finally {
+            if (!this.persistence) {
+                this.close();
+            }
+        }
     }
 
     /**
@@ -292,7 +308,6 @@ public class PLCNetwork extends TcpClientBasic {
             return resultList;
         } finally {
             if (!this.persistence) {
-                log.debug("由于短连接方式，通信完毕触发关闭连接通道，服务端IP[{}]", this.socketAddress);
                 this.close();
             }
         }
@@ -360,7 +375,6 @@ public class PLCNetwork extends TcpClientBasic {
             });
         } finally {
             if (!this.persistence) {
-                log.debug("由于短连接方式，通信完毕触发关闭连接通道，服务端IP[{}]", this.socketAddress);
                 this.close();
             }
         }
