@@ -39,16 +39,12 @@ public class RtspDescribeRequest extends RtspMessageRequest {
     }
 
     @Override
-    public String toObjectString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.toObjectString());
-
+    protected void addRequestHeader(StringBuilder sb) {
         if (!this.acceptContents.isEmpty()) {
             sb.append(ACCEPT)
-                    .append(COLON)
+                    .append(COLON + SP)
                     .append(this.acceptContents.stream().map(ERtspAcceptContent::getCode).collect(Collectors.joining(COMMA)))
                     .append(CRLF);
         }
-        return sb.toString();
     }
 }

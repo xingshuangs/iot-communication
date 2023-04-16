@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model;
 
 
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.AbstractAuthenticator;
+import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspContentType;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspMethod;
 import lombok.Getter;
 
@@ -11,8 +12,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.COLON;
-import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CRLF;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspEntityHeaderFields.CONTENT_LENGTH;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspEntityHeaderFields.CONTENT_TYPE;
 
 /**
  * GetParameter请求
@@ -45,14 +47,21 @@ public class RtspSetParameterRequest extends RtspMessageRequest {
     }
 
     @Override
-    public String toObjectString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.toObjectString());
-
+    protected void addEntityHeader(StringBuilder sb) {
         if (!this.parameterMap.isEmpty()) {
-            sb.append(CRLF);
-            this.parameterMap.forEach((key, value) -> sb.append(key).append(COLON).append(value).append(CRLF));
+            StringBuilder stringBuilder = new StringBuilder();
+            this.parameterMap.forEach((key, value) -> stringBuilder.append(key).append(COLON + SP).append(value).append(CRLF));
+            String content = stringBuilder.toString();
+
+            sb.append(CONTENT_TYPE).append(COLON + SP).append(ERtspContentType.PARAMETER.getCode()).append(CRLF);
+            sb.append(CONTENT_LENGTH).append(COLON + SP).append(content.length()).append(CRLF);
         }
-        return sb.toString();
+    }
+
+    @Override
+    protected void addMessageBody(StringBuilder sb) {
+        if (!this.parameterMap.isEmpty()) {
+            this.parameterMap.forEach((key, value) -> sb.append(key).append(COLON + SP).append(value).append(CRLF));
+        }
     }
 }

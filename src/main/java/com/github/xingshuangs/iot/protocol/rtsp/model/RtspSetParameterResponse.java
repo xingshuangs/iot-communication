@@ -20,18 +20,9 @@ public class RtspSetParameterResponse extends RtspMessageResponse {
         if (src == null || src.equals("")) {
             throw new RtspCommException("解析RtspSetParameterResponse时字符串为空");
         }
-        String[] srcSplit = src.split(CRLF);
-        if (srcSplit.length < 2) {
-            throw new RtspCommException("解析RtspSetParameterResponse返回格式有误");
-        }
         RtspSetParameterResponse response = new RtspSetParameterResponse();
-        // 解析版本和状态码
-        response.assignVersionAndStatusCode(srcSplit[0]);
-        Map<String, String> map = response.getMapByData(srcSplit);
-        // 解析序列号
-        response.cSeq = map.containsKey(C_SEQ) ? Integer.parseInt(map.get(C_SEQ).trim()) : 0;
-        response.session = map.containsKey(SESSION) ? Integer.parseInt(map.get(SESSION).trim()) : -1;
-
+        Map<String, String> map = response.parseDataAndReturnMap(src);
+        // TODO: 还有body
         return response;
     }
 

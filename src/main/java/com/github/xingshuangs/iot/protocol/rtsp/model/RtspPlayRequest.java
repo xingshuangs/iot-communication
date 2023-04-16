@@ -7,8 +7,7 @@ import lombok.Getter;
 
 import java.net.URI;
 
-import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.COLON;
-import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CRLF;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspRequestHeaderFields.RANGE;
 
 /**
@@ -35,13 +34,9 @@ public class RtspPlayRequest extends RtspMessageRequest {
     }
 
     @Override
-    public String toObjectString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.toObjectString());
-
+    protected void addRequestHeader(StringBuilder sb) {
         if (this.range != null && !this.range.equals("")) {
-            sb.append(RANGE).append(COLON).append(this.range).append(CRLF);
+            sb.append(RANGE).append(COLON + SP).append(this.range).append(CRLF);
         }
-        return sb.toString();
     }
 }

@@ -69,21 +69,49 @@ public class RtspMessageRequest extends RtspMessage {
     @Override
     public String toObjectString() {
         StringBuilder sb = new StringBuilder();
+        this.addRequestLine(sb);
+        this.addGeneralHeader(sb);
+        this.addCommonRequestHeader(sb);
+        this.addRequestHeader(sb);
+        this.addEntityHeader(sb);
+        sb.append(CRLF);
+        this.addMessageBody(sb);
+        return sb.toString();
+    }
+
+    private void addRequestLine(StringBuilder sb){
         // Request-Line = Method SP Request-URI SP RTSP-Version CRLF
         sb.append(this.method.getCode()).append(SP).append(this.uri.toString()).append(SP).append(this.version).append(CRLF);
+    }
+
+    private void addGeneralHeader(StringBuilder sb){
         // CSeq: 1
-        sb.append(C_SEQ).append(COLON).append(this.cSeq).append(CRLF);
+        sb.append(C_SEQ).append(COLON + SP).append(this.cSeq).append(CRLF);
+    }
+
+    private void addCommonRequestHeader(StringBuilder sb){
         // authorization
         if (this.authenticator != null) {
-            sb.append(AUTHORIZATION).append(COLON).append(this.authenticator.createResponse()).append(CRLF);
+            sb.append(AUTHORIZATION).append(COLON + SP).append(this.authenticator.createResponse()).append(CRLF);
         }
-        sb.append(USER_AGENT).append(COLON).append(USER_AGENT_VALUE).append(CRLF);
+        sb.append(USER_AGENT).append(COLON + SP).append(USER_AGENT_VALUE).append(CRLF);
         // session
         if (session >= 0) {
-            sb.append(SESSION).append(COLON).append(this.session).append(CRLF);
+            sb.append(SESSION).append(COLON + SP).append(this.session).append(CRLF);
         }
         // 请求头
-        this.headers.forEach((key, value) -> sb.append(key).append(COLON).append(value).append(CRLF));
-        return sb.toString();
+        this.headers.forEach((key, value) -> sb.append(key).append(COLON + SP).append(value).append(CRLF));
+    }
+
+    protected void addRequestHeader(StringBuilder sb) {
+        // NOOP
+    }
+
+    protected void addEntityHeader(StringBuilder sb) {
+        // NOOP
+    }
+
+    protected void addMessageBody(StringBuilder sb) {
+        // NOOP
     }
 }

@@ -11,8 +11,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.COLON;
-import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CRLF;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspEntityHeaderFields.CONTENT_LENGTH;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspEntityHeaderFields.CONTENT_TYPE;
 
@@ -50,17 +49,19 @@ public class RtspGetParameterRequest extends RtspMessageRequest {
     }
 
     @Override
-    public String toObjectString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.toObjectString());
-
+    protected void addEntityHeader(StringBuilder sb) {
         if (!this.parameterNames.isEmpty()) {
-            String names = String.join(CRLF, this.parameterNames);
-            sb.append(CONTENT_TYPE).append(COLON).append(ERtspContentType.PARAMETER.getCode()).append(CRLF);
-            sb.append(CONTENT_LENGTH).append(COLON).append(names.length()).append(CRLF);
-            sb.append(CRLF);
+            String names = String.join(CRLF, this.parameterNames) + CRLF;
+            sb.append(CONTENT_TYPE).append(COLON + SP).append(ERtspContentType.PARAMETER.getCode()).append(CRLF);
+            sb.append(CONTENT_LENGTH).append(COLON + SP).append(names.length()).append(CRLF);
+        }
+    }
+
+    @Override
+    protected void addMessageBody(StringBuilder sb) {
+        if (!this.parameterNames.isEmpty()) {
+            String names = String.join(CRLF, this.parameterNames) + CRLF;
             sb.append(names);
         }
-        return sb.toString();
     }
 }

@@ -31,20 +31,10 @@ public class RtspOptionResponse extends RtspMessageResponse {
         if (src == null || src.equals("")) {
             throw new RtspCommException("解析RtspOptionResponse时字符串为空");
         }
-        String[] srcSplit = src.split(CRLF);
-        if (srcSplit.length < 2) {
-            throw new RtspCommException("解析RtspOptionResponse返回格式有误");
-        }
         RtspOptionResponse response = new RtspOptionResponse();
-        // 解析版本和状态码
-        response.assignVersionAndStatusCode(srcSplit[0]);
-        Map<String, String> map = response.getMapByData(srcSplit);
-        // 解析序列号
-        if (map.containsKey(C_SEQ)) {
-            response.cSeq = Integer.parseInt(map.get(C_SEQ).trim());
-        }
+        Map<String, String> map = response.parseDataAndReturnMap(src);
         // 解析公有方法
-        if(map.containsKey(RtspResponseHeaderFields.PUBLIC)) {
+        if (map.containsKey(RtspResponseHeaderFields.PUBLIC)) {
             String publicStr = map.get(RtspResponseHeaderFields.PUBLIC).trim();
             response.publicMethods = Stream.of(publicStr.split(COMMA))
                     .map(x -> ERtspMethod.from(x.trim()))
