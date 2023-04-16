@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author xingshuang
  */
-public enum ERtspAcceptContent {
+public enum ERtspContentType {
 
     /**
      * sdp
@@ -17,24 +17,18 @@ public enum ERtspAcceptContent {
     SDP("application/sdp"),
 
     /**
-     * rtsl
+     * parameter
      */
-    RTSL("application/rtsl"),
-
-
-    /**
-     * mheg
-     */
-    MHEG("application/mheg"),
+    PARAMETER("text/parameters"),
 
     ;
 
-    private static Map<String, ERtspAcceptContent> map;
+    private static Map<String, ERtspContentType> map;
 
-    public static ERtspAcceptContent from(String data) {
+    public static ERtspContentType from(String data) {
         if (map == null) {
             map = new HashMap<>();
-            for (ERtspAcceptContent item : ERtspAcceptContent.values()) {
+            for (ERtspContentType item : ERtspContentType.values()) {
                 map.put(item.code, item);
             }
         }
@@ -43,7 +37,7 @@ public enum ERtspAcceptContent {
 
     private final String code;
 
-    ERtspAcceptContent(String code) {
+    ERtspContentType(String code) {
         this.code = code;
     }
 

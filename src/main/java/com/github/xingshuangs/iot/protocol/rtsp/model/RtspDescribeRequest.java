@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.rtsp.model;
 
 
+import com.github.xingshuangs.iot.protocol.rtsp.authentication.AbstractAuthenticator;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspAcceptContent;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspMethod;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspKey.*;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspRequestHeaderFields.ACCEPT;
 
 /**
@@ -32,13 +33,19 @@ public class RtspDescribeRequest extends RtspMessageRequest {
         this.acceptContents = acceptContents;
     }
 
+    public RtspDescribeRequest(URI uri, List<ERtspAcceptContent> acceptContents, AbstractAuthenticator authenticator) {
+        super(ERtspMethod.DESCRIBE, uri, authenticator);
+        this.acceptContents = acceptContents;
+    }
+
     @Override
     public String toObjectString() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.toObjectString());
 
         if (!this.acceptContents.isEmpty()) {
-            sb.append(ACCEPT).append(COLON)
+            sb.append(ACCEPT)
+                    .append(COLON)
                     .append(this.acceptContents.stream().map(ERtspAcceptContent::getCode).collect(Collectors.joining(COMMA)))
                     .append(CRLF);
         }

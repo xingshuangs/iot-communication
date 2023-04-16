@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspKey.*;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 
 /**
  * RTSP基础消息
@@ -19,7 +19,6 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspKey.*;
 public class RtspMessage implements IObjectString {
 
     public static final String VERSION_1_0 = "RTSP/1.0";
-
     private static final AtomicInteger index = new AtomicInteger();
 
     public RtspMessage() {
@@ -32,14 +31,19 @@ public class RtspMessage implements IObjectString {
     }
 
     /**
+     * 版本号
+     */
+    protected String version;
+
+    /**
      * 序列号
      */
     protected int cSeq;
 
     /**
-     * 版本号
+     * 会话ID
      */
-    protected String version;
+    protected int session = -1;
 
     /**
      * 请求头
@@ -49,8 +53,11 @@ public class RtspMessage implements IObjectString {
     @Override
     public String toObjectString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(VERSION_1_0).append(CRLF)
-                .append(C_SEQ).append(COLON).append(this.cSeq);
+        sb.append(VERSION_1_0).append(CRLF);
+        sb.append(C_SEQ).append(COLON).append(this.cSeq).append(CRLF);
+        if (this.session >= 0) {
+            sb.append(SESSION).append(COLON).append(this.session).append(CRLF);
+        }
         return sb.toString();
     }
 

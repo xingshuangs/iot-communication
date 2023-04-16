@@ -55,7 +55,7 @@ public class HexUtil {
      * @return 字符串
      */
     public static String toHexString(byte[] src) {
-        return toHexString(src, " ");
+        return toHexString(src, " ", true);
     }
 
     /**
@@ -66,12 +66,25 @@ public class HexUtil {
      * @return 字符串
      */
     public static String toHexString(byte[] src, String splitStr) {
+        return toHexString(src, splitStr, true);
+    }
+
+    /**
+     * 将字节数组转换为16进制字符串，并且默认按指定字符串隔开
+     *
+     * @param src       字节数组
+     * @param splitStr  分隔字符串
+     * @param upperCase 大写
+     * @return 字符串
+     */
+    public static String toHexString(byte[] src, String splitStr, boolean upperCase) {
         if (src == null || src.length == 0) {
             return "";
         }
         StringBuilder sb = new StringBuilder();
+        String format = upperCase ? "%02X" : "%02x";
         for (int i = 0; i < src.length; i++) {
-            sb.append(String.format("%02X", src[i]));
+            sb.append(String.format(format, src[i]));
             if (i != src.length - 1) {
                 sb.append(splitStr);
             }

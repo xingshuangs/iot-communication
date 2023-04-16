@@ -69,15 +69,15 @@ public enum ERtspStatusCode {
 
     ;
 
-    private static final Map<Integer, ERtspStatusCode> map = new HashMap<>();
-
-    static {
-        for (ERtspStatusCode item : ERtspStatusCode.values()) {
-            map.put(item.code, item);
-        }
-    }
+    private static Map<Integer, ERtspStatusCode> map;
 
     public static ERtspStatusCode from(Integer data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (ERtspStatusCode item : ERtspStatusCode.values()) {
+                map.put(item.code, item);
+            }
+        }
         return map.get(data);
     }
 

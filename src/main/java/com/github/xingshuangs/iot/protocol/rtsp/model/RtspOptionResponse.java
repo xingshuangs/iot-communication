@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspKey.*;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 
 /**
  * Option响应
@@ -40,12 +40,16 @@ public class RtspOptionResponse extends RtspMessageResponse {
         response.assignVersionAndStatusCode(srcSplit[0]);
         Map<String, String> map = response.getMapByData(srcSplit);
         // 解析序列号
-        response.cSeq = Integer.parseInt(map.get(C_SEQ));
+        if (map.containsKey(C_SEQ)) {
+            response.cSeq = Integer.parseInt(map.get(C_SEQ).trim());
+        }
         // 解析公有方法
-        String publicStr = map.get(RtspResponseHeaderFields.PUBLIC);
-        response.publicMethods = Stream.of(publicStr.split(COMMA))
-                .map(x -> ERtspMethod.from(x.trim()))
-                .collect(Collectors.toList());
+        if(map.containsKey(RtspResponseHeaderFields.PUBLIC)) {
+            String publicStr = map.get(RtspResponseHeaderFields.PUBLIC).trim();
+            response.publicMethods = Stream.of(publicStr.split(COMMA))
+                    .map(x -> ERtspMethod.from(x.trim()))
+                    .collect(Collectors.toList());
+        }
         return response;
     }
 

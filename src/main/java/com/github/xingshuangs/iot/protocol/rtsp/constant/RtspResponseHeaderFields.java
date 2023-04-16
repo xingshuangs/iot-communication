@@ -20,4 +20,6 @@ public class RtspResponseHeaderFields {
     public static final String VARY = "Vary";
     public static final String RANGE = "Range";
     public static final String WWW_AUTHENTICATE = "WWW-Authenticate";
+
+    public static final String RTP_INFO = "RTP-Info";
 }

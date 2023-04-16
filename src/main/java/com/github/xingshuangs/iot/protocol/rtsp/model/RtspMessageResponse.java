@@ -7,8 +7,8 @@ import lombok.Getter;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspKey.COLON;
-import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspKey.SP;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.COLON;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SP;
 
 
 /**
@@ -37,8 +37,8 @@ public class RtspMessageResponse extends RtspMessage {
 
     public void assignVersionAndStatusCode(String src) {
         String[] versionContent = src.split(SP);
-        this.version = versionContent[0];
-        this.statusCode = ERtspStatusCode.from(Integer.parseInt(versionContent[1]));
+        this.version = versionContent[0].trim();
+        this.statusCode = ERtspStatusCode.from(Integer.parseInt(versionContent[1].trim()));
     }
 
     /**
@@ -50,9 +50,9 @@ public class RtspMessageResponse extends RtspMessage {
     public Map<String, String> getMapByData(String[] data) {
         Map<String, String> res = new HashMap<>();
         for (String item : data) {
-            String[] split = item.split(COLON);
-            if (split.length == 2) {
-                res.put(split[0].trim(), split[1].trim());
+            int index = item.indexOf(COLON);
+            if (index >= 0) {
+                res.put(item.substring(0, index).trim(), item.substring(index + 1).trim());
             }
         }
         return res;

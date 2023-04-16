@@ -69,15 +69,15 @@ public enum ERtspMethod {
 
     ;
 
-    private static final Map<String, ERtspMethod> map = new HashMap<>();
-
-    static {
-        for (ERtspMethod item : ERtspMethod.values()) {
-            map.put(item.code, item);
-        }
-    }
+    private static Map<String, ERtspMethod> map;
 
     public static ERtspMethod from(String data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (ERtspMethod item : ERtspMethod.values()) {
+                map.put(item.code, item);
+            }
+        }
         return map.get(data);
     }
 

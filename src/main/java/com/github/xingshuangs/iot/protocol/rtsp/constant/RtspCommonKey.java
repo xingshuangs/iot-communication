@@ -6,9 +6,9 @@ package com.github.xingshuangs.iot.protocol.rtsp.constant;
  *
  * @author xingshuang
  */
-public class RtspKey {
+public class RtspCommonKey {
 
-    private RtspKey() {
+    private RtspCommonKey() {
         // NOOP
     }
 
@@ -36,5 +36,15 @@ public class RtspKey {
      * 序列号
      */
     public static final String C_SEQ = "CSeq";
+
+    /**
+     * 会话
+     */
+    public static final String SESSION = "Session";
+
+    /**
+     * 通道
+     */
+    public static final String TRANSPORT = "Transport";
 
 }
