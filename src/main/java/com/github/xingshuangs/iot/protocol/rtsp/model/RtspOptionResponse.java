@@ -32,7 +32,7 @@ public class RtspOptionResponse extends RtspMessageResponse {
             throw new RtspCommException("解析RtspOptionResponse时字符串为空");
         }
         RtspOptionResponse response = new RtspOptionResponse();
-        Map<String, String> map = response.parseDataAndReturnMap(src);
+        Map<String, String> map = response.parseHeaderAndReturnMap(src);
         // 解析公有方法
         if (map.containsKey(RtspResponseHeaderFields.PUBLIC)) {
             String publicStr = map.get(RtspResponseHeaderFields.PUBLIC).trim();
@@ -42,5 +42,4 @@ public class RtspOptionResponse extends RtspMessageResponse {
         }
         return response;
     }
-
 }

@@ -190,9 +190,9 @@ public class DigestAuthenticator extends AbstractAuthenticator {
             }
         }
 
-        this.realm = map.getOrDefault("realm", "");
-        this.qop = map.getOrDefault("qop", "");
-        this.nonce = map.getOrDefault("nonce", "");
+        this.realm = map.getOrDefault("realm", "").trim();
+        this.qop = map.getOrDefault("qop", "").trim();
+        this.nonce = map.getOrDefault("nonce", "").trim();
         this.stale = map.containsKey("stale") && map.get("stale").equals("FALSE");
         this.nc = 0;
     }

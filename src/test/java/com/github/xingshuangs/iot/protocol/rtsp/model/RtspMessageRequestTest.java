@@ -13,7 +13,6 @@ import java.util.Collections;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CRLF;
 import static org.junit.Assert.assertEquals;
 
-@Ignore
 public class RtspMessageRequestTest {
 
     private DigestAuthenticator authenticator;
@@ -44,6 +43,7 @@ public class RtspMessageRequestTest {
                 "\r\n";
         URI uri = URI.create("rtsp://10.3.8.202:554");
         RtspOptionRequest request = new RtspOptionRequest(uri);
+        request.setCSeq(0);
         String actual = request.toObjectString();
         assertEquals(expect, actual);
     }
@@ -57,6 +57,7 @@ public class RtspMessageRequestTest {
                 "\r\n";
         URI uri = URI.create("rtsp://10.3.8.202:554");
         RtspDescribeRequest request = new RtspDescribeRequest(uri, Collections.singletonList(ERtspAcceptContent.SDP));
+        request.setCSeq(0);
         String actual = request.toObjectString();
         assertEquals(expect, actual);
 
@@ -67,6 +68,7 @@ public class RtspMessageRequestTest {
                 "Accept: application/sdp\r\n" +
                 "\r\n";
         request = new RtspDescribeRequest(uri, Collections.singletonList(ERtspAcceptContent.SDP), this.authenticator);
+        request.setCSeq(1);
         actual = request.toObjectString();
         assertEquals(expect, actual);
     }
@@ -84,6 +86,7 @@ public class RtspMessageRequestTest {
         URI uri = URI.create("rtsp://10.3.8.202:554/trackID=1");
         RtspTransport transport = RtspTransport.extractFrom("RTP/AVP;unicast;client_port=57844-57845");
         RtspSetupRequest request = new RtspSetupRequest(uri, transport, this.authenticator);
+        request.setCSeq(0);
         String actual = request.toObjectString();
         assertEquals(expect, actual);
     }
@@ -100,6 +103,7 @@ public class RtspMessageRequestTest {
         URI uri = URI.create("rtsp://10.3.8.202:554/");
         String range = "npt=0.000-";
         RtspPlayRequest request = new RtspPlayRequest(uri, 1273222592, range, this.authenticator);
+        request.setCSeq(0);
         String actual = request.toObjectString();
         assertEquals(expect, actual);
     }
@@ -114,6 +118,7 @@ public class RtspMessageRequestTest {
                 "\r\n";
         URI uri = URI.create("rtsp://10.3.8.202:554/");
         RtspPauseRequest request = new RtspPauseRequest(uri, 1273222592, this.authenticator);
+        request.setCSeq(0);
         String actual = request.toObjectString();
         assertEquals(expect, actual);
     }
@@ -129,6 +134,7 @@ public class RtspMessageRequestTest {
                 "\r\n";
         URI uri = URI.create("rtsp://10.3.8.202:554/");
         RtspGetParameterRequest request = new RtspGetParameterRequest(uri, 1273222592, this.authenticator);
+        request.setCSeq(0);
         String actual = request.toObjectString();
         assertEquals(expect, actual);
 
@@ -144,6 +150,7 @@ public class RtspMessageRequestTest {
                 "jitter\r\n";
         uri = URI.create("rtsp://10.3.8.202:554/");
         request = new RtspGetParameterRequest(uri, 1273222592, this.authenticator);
+        request.setCSeq(1);
         request.addParameter("packets_received");
         request.addParameter("jitter");
         actual = request.toObjectString();
@@ -161,6 +168,7 @@ public class RtspMessageRequestTest {
                 "\r\n";
         URI uri = URI.create("rtsp://10.3.8.202:554/");
         RtspSetParameterRequest request = new RtspSetParameterRequest(uri, 1273222592, this.authenticator);
+        request.setCSeq(0);
         String actual = request.toObjectString();
         assertEquals(expect, actual);
 
@@ -176,6 +184,7 @@ public class RtspMessageRequestTest {
 
         uri = URI.create("rtsp://10.3.8.202:554/");
         request = new RtspSetParameterRequest(uri, 1273222592, this.authenticator);
+        request.setCSeq(1);
         request.addParameter("barparam", "barstuff");
         actual = request.toObjectString();
         assertEquals(expect, actual);
@@ -191,6 +200,7 @@ public class RtspMessageRequestTest {
                 "\r\n";
         URI uri = URI.create("rtsp://10.3.8.202:554/");
         RtspTeardownRequest request = new RtspTeardownRequest(uri, 1273222592, this.authenticator);
+        request.setCSeq(0);
         String actual = request.toObjectString();
         assertEquals(expect, actual);
     }

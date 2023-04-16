@@ -79,7 +79,6 @@ public class RtspTransport {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
         if (this.protocol == null || this.protocol.equals("")) {
             throw new RtspCommException("RtspTransport的protocol异常");
         }

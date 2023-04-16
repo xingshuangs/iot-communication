@@ -15,6 +15,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspResponseHead
  */
 @Getter
 public class RtspPlayResponse extends RtspMessageResponse {
+    // TODO: RTP-INFO
     private String rtpInfo = "";
 
     public static RtspPlayResponse fromString(String src) {
@@ -22,7 +23,7 @@ public class RtspPlayResponse extends RtspMessageResponse {
             throw new RtspCommException("解析RtspPlayResponse时字符串为空");
         }
         RtspPlayResponse response = new RtspPlayResponse();
-        Map<String, String> map = response.parseDataAndReturnMap(src);
+        Map<String, String> map = response.parseHeaderAndReturnMap(src);
         response.rtpInfo = map.containsKey(RTP_INFO) ? map.get(RTP_INFO).trim() : "";
         return response;
     }

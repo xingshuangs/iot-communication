@@ -2,9 +2,14 @@ package com.github.xingshuangs.iot.protocol.rtsp.model;
 
 
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
+import com.github.xingshuangs.iot.utils.StringSplitUtil;
 import lombok.Getter;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.COLON;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CRLF;
 
 /**
  * Setup响应
@@ -14,14 +19,17 @@ import java.util.Map;
 @Getter
 public class RtspGetParameterResponse extends RtspMessageResponse {
 
-    public static RtspGetParameterResponse fromString(String src) {
+    private final Map<String, String> parameters = new LinkedHashMap<>();
+
+    public static RtspGetParameterResponse fromString(final String src) {
         if (src == null || src.equals("")) {
             throw new RtspCommException("解析RtspGetParameterResponse时字符串为空");
         }
         RtspGetParameterResponse response = new RtspGetParameterResponse();
-        Map<String, String> map = response.parseDataAndReturnMap(src);
-
+        response.parseHeaderAndReturnMap(src);
+        String body = response.parseMessageBody(src);
+        Map<String, String> map = StringSplitUtil.splitTwoStepByLine(body, CRLF, COLON);
+        response.getParameters().putAll(map);
         return response;
     }
-
 }

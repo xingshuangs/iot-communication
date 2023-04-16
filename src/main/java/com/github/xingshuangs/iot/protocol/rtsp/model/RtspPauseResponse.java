@@ -17,7 +17,7 @@ public class RtspPauseResponse extends RtspMessageResponse {
             throw new RtspCommException("解析RtspPlayResponse时字符串为空");
         }
         RtspPauseResponse response = new RtspPauseResponse();
-        response.parseDataAndReturnMap(src);
+        response.parseHeaderAndReturnMap(src);
         return response;
     }
 

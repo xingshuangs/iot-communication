@@ -15,6 +15,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
  */
 @Getter
 public class RtspSetupResponse extends RtspMessageResponse {
+
     private RtspTransport transport;
 
     public static RtspSetupResponse fromString(String src) {
@@ -22,7 +23,7 @@ public class RtspSetupResponse extends RtspMessageResponse {
             throw new RtspCommException("解析RtspSetupResponse时字符串为空");
         }
         RtspSetupResponse response = new RtspSetupResponse();
-        Map<String, String> map = response.parseDataAndReturnMap(src);
+        Map<String, String> map = response.parseHeaderAndReturnMap(src);
         if (map.containsKey(TRANSPORT)) {
             response.transport = RtspTransport.extractFrom(map.get(TRANSPORT));
         }

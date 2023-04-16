@@ -1,8 +1,6 @@
 package com.github.xingshuangs.iot.utils;
 
 
-import com.github.xingshuangs.iot.exceptions.AuthenticationException;
-
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

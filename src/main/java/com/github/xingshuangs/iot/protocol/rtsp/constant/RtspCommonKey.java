@@ -33,6 +33,11 @@ public class RtspCommonKey {
     public static final String SP = " ";
 
     /**
+     * 分号
+     */
+    public static final String SEMICOLON =";";
+
+    /**
      * 序列号
      */
     public static final String C_SEQ = "CSeq";

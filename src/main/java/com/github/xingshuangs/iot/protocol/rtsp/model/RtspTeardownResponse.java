@@ -17,7 +17,7 @@ public class RtspTeardownResponse extends RtspMessageResponse {
             throw new RtspCommException("解析RtspSetupResponse时字符串为空");
         }
         RtspTeardownResponse response = new RtspTeardownResponse();
-        response.parseDataAndReturnMap(src);
+        response.parseHeaderAndReturnMap(src);
         return response;
     }
 

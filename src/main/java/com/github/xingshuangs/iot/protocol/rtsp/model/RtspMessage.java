@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model;
 
 import com.github.xingshuangs.iot.protocol.common.IObjectString;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +17,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
  * @author xingshuang
  */
 @Getter
+@Setter
 public class RtspMessage implements IObjectString {
 
     public static final String VERSION_1_0 = "RTSP/1.0";
