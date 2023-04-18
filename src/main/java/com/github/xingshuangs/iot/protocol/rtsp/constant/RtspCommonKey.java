@@ -15,7 +15,8 @@ public class RtspCommonKey {
     /**
      * 换行
      */
-    public static final String CRLF = System.getProperty("line.separator");
+//    public static final String CRLF = System.getProperty("line.separator");
+    public static final String CRLF = "\r\n";
 
     /**
      * 冒号
@@ -35,7 +36,12 @@ public class RtspCommonKey {
     /**
      * 分号
      */
-    public static final String SEMICOLON =";";
+    public static final String SEMICOLON = ";";
+
+    /**
+     * 等号
+     */
+    public static final String EQUAL = "=";
 
     /**
      * 序列号

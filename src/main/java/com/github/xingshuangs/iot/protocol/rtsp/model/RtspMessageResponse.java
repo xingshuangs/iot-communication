@@ -2,7 +2,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model;
 
 
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspStatusCode;
-import com.github.xingshuangs.iot.utils.StringSplitUtil;
+import com.github.xingshuangs.iot.utils.StringSpUtil;
 import lombok.Getter;
 
 import java.util.Map;
@@ -46,7 +46,7 @@ public class RtspMessageResponse extends RtspMessage {
         int endIndex = src.indexOf(CRLF + CRLF);
         this.extractVersionAndStatusCode(src.substring(0, startIndex));
         String headerStr = src.substring(startIndex, endIndex + 4);
-        Map<String, String> map = StringSplitUtil.splitTwoStepByLine(headerStr, CRLF, COLON);
+        Map<String, String> map = StringSpUtil.splitTwoStepByLine(headerStr, CRLF, COLON);
         this.extractCommonData(map);
         return map;
     }

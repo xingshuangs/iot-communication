@@ -11,9 +11,9 @@ import java.util.Map;
  *
  * @author xingshuang
  */
-public class StringSplitUtil {
+public class StringSpUtil {
 
-    private StringSplitUtil() {
+    private StringSpUtil() {
         // NOOP
     }
 
@@ -52,6 +52,22 @@ public class StringSplitUtil {
             if (!tmp.equals("")) {
                 res.add(tmp);
             }
+        }
+        return res;
+    }
+
+    /**
+     * 获取字符串标记的所有索引
+     *
+     * @param src  数据源字符串
+     * @param flag 标记字符串
+     * @return 索引列表
+     */
+    public static List<Integer> findFlagAllIndexes(String src, String flag) {
+        List<Integer> res = new ArrayList<>();
+        int index = 0;
+        while ((index = src.indexOf(flag)) >= 0) {
+            res.add(index);
         }
         return res;
     }

@@ -2,7 +2,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model;
 
 
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
-import com.github.xingshuangs.iot.utils.StringSplitUtil;
+import com.github.xingshuangs.iot.utils.StringSpUtil;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class RtspSetParameterResponse extends RtspMessageResponse {
         Map<String, String> map = response.parseHeaderAndReturnMap(src);
 
         String body = response.parseMessageBody(src);
-        List<String> list = StringSplitUtil.splitOneStepByLine(body, CRLF);
+        List<String> list = StringSpUtil.splitOneStepByLine(body, CRLF);
         response.parameterNames.addAll(list);
         return response;
     }

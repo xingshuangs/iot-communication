@@ -1,10 +1,14 @@
 package com.github.xingshuangs.iot.protocol.rtsp.sdp;
 
 
+import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import lombok.Data;
+
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.COLON;
 
 /**
  * 带宽
+ * AS:5050
  *
  * @author xingshuang
  */
@@ -22,4 +26,18 @@ public class RtspSdpBandwidth {
      * 带宽值
      */
     private Integer value;
+
+    public static RtspSdpBandwidth fromString(String src) {
+        if (src == null || src.equals("")) {
+            throw new IllegalArgumentException("SDP解析Bandwidth部分数据源错误");
+        }
+        RtspSdpBandwidth bandwidth = new RtspSdpBandwidth();
+        String[] split = src.split(COLON);
+        if (split.length != 2) {
+            throw new RtspCommException("RtspSdpBandwidth数据有误，无法解析");
+        }
+        bandwidth.type = split[0];
+        bandwidth.value = Integer.parseInt(split[1]);
+        return bandwidth;
+    }
 }
