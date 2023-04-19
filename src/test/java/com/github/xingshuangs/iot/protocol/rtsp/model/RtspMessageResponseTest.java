@@ -51,7 +51,29 @@ public class RtspMessageResponseTest {
         assertEquals(ERtspStatusCode.OK, response.statusCode);
         assertEquals(1, response.cSeq);
         assertEquals(123456, response.getSession());
-        assertEquals("url=rtsp://10.3.8.202:554/trackID=1;seq=65373;rtptime=3566398668", response.getRtpInfo());
+        assertEquals(1, response.getRtpInfo().size());
+        assertEquals("rtsp://10.3.8.202:554/trackID=1", response.getRtpInfo().get(0).getUrl());
+        assertEquals(65373, response.getRtpInfo().get(0).getSeq().longValue());
+        assertEquals(3566398668L, response.getRtpInfo().get(0).getRtpTime().longValue());
+
+        src = "RTSP/1.0 200 OK\r\n" +
+                "CSeq: 1\r\n" +
+                "Session: 123456\r\n" +
+                "RTP-Info: url=rtsp://192.17.1.63:554/trackID=1;seq=3658;rtptime=1710363406,url=rtsp://192.17.1.63:554/trackID=2;seq=6598;rtptime=4065225152\r\n" +
+                "\r\n";
+
+        response = RtspPlayResponse.fromString(src);
+        assertEquals(RtspMessage.VERSION_1_0, response.version);
+        assertEquals(ERtspStatusCode.OK, response.statusCode);
+        assertEquals(1, response.cSeq);
+        assertEquals(123456, response.getSession());
+        assertEquals(2, response.getRtpInfo().size());
+        assertEquals("rtsp://192.17.1.63:554/trackID=1", response.getRtpInfo().get(0).getUrl());
+        assertEquals(3658, response.getRtpInfo().get(0).getSeq().longValue());
+        assertEquals(1710363406L, response.getRtpInfo().get(0).getRtpTime().longValue());
+        assertEquals("rtsp://192.17.1.63:554/trackID=2", response.getRtpInfo().get(1).getUrl());
+        assertEquals(6598, response.getRtpInfo().get(1).getSeq().longValue());
+        assertEquals(4065225152L, response.getRtpInfo().get(1).getRtpTime().longValue());
     }
 
     @Test

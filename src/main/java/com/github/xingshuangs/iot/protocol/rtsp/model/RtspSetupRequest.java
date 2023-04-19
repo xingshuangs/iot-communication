@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model;
 
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.AbstractAuthenticator;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspMethod;
+import lombok.Getter;
 
 import java.net.URI;
 
@@ -13,9 +14,13 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
  *
  * @author xingshuang
  */
+@Getter
 public class RtspSetupRequest extends RtspMessageRequest {
 
-    private RtspTransport transport;
+    /**
+     * 传输通道
+     */
+    private final RtspTransport transport;
 
     public RtspSetupRequest(URI uri, RtspTransport transport) {
         this(uri, transport, null);
@@ -28,7 +33,7 @@ public class RtspSetupRequest extends RtspMessageRequest {
 
     @Override
     protected void addRequestHeader(StringBuilder sb) {
-        if (this.transport != null && !this.transport.equals("")) {
+        if (this.transport != null) {
             sb.append(TRANSPORT).append(COLON + SP).append(this.transport).append(CRLF);
         }
     }

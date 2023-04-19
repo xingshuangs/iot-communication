@@ -101,7 +101,7 @@ public class RtspMessageRequestTest {
                 "Range: npt=0.000-\r\n" +
                 "\r\n";
         URI uri = URI.create("rtsp://10.3.8.202:554/");
-        String range = "npt=0.000-";
+        RtspRange range = new RtspRangeNpt("0.000");
         RtspPlayRequest request = new RtspPlayRequest(uri, 1273222592, range, this.authenticator);
         request.setCSeq(0);
         String actual = request.toObjectString();

@@ -17,25 +17,27 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspRequestHeade
  */
 @Getter
 public class RtspPlayRequest extends RtspMessageRequest {
-
-    private String range = "";
+    /**
+     * 时间范围
+     */
+    private final RtspRange range;
 
     public RtspPlayRequest(URI uri, int session) {
         this(uri, session, null, null);
     }
 
-    public RtspPlayRequest(URI uri, int session, String range) {
+    public RtspPlayRequest(URI uri, int session, RtspRange range) {
         this(uri, session, range, null);
     }
 
-    public RtspPlayRequest(URI uri, int session, String range, AbstractAuthenticator authenticator) {
+    public RtspPlayRequest(URI uri, int session, RtspRange range, AbstractAuthenticator authenticator) {
         super(ERtspMethod.PLAY, uri, session, authenticator);
         this.range = range;
     }
 
     @Override
     protected void addRequestHeader(StringBuilder sb) {
-        if (this.range != null && !this.range.equals("")) {
+        if (this.range != null) {
             sb.append(RANGE).append(COLON + SP).append(this.range).append(CRLF);
         }
     }

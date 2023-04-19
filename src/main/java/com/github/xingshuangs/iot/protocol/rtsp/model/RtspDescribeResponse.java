@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model;
 
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspStatusCode;
+import com.github.xingshuangs.iot.protocol.rtsp.sdp.RtspSdp;
 import lombok.Getter;
 
 import java.util.Map;
@@ -22,6 +23,11 @@ public class RtspDescribeResponse extends RtspMessageResponse {
      */
     private String wwwAuthenticate = "";
 
+    /**
+     * SDP描述部分
+     */
+    private RtspSdp sdp;
+
     public static RtspDescribeResponse fromString(String src) {
         if (src == null || src.equals("")) {
             throw new RtspCommException("解析RtspDescribeResponse时字符串为空");
@@ -33,9 +39,9 @@ public class RtspDescribeResponse extends RtspMessageResponse {
             response.wwwAuthenticate = map.getOrDefault(WWW_AUTHENTICATE, "").trim();
             return response;
         }
-        // TODO: 描述部分
 
-
+        String body = response.parseMessageBody(src);
+        response.sdp = RtspSdp.fromString(body);
         return response;
     }
 

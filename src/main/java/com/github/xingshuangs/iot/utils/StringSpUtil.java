@@ -65,9 +65,11 @@ public class StringSpUtil {
      */
     public static List<Integer> findFlagAllIndexes(String src, String flag) {
         List<Integer> res = new ArrayList<>();
-        int index = 0;
-        while ((index = src.indexOf(flag)) >= 0) {
+        int index = src.indexOf(flag);
+        while (index >= 0) {
             res.add(index);
+            String sub = src.substring(index + flag.length());
+            index = sub.indexOf(flag);
         }
         return res;
     }

@@ -40,7 +40,7 @@ public class RtspSdpMediaAttrRtpMap {
         }
         rtpMap.payloadNumber = Integer.parseInt(src.substring(0, i));
         String sub = src.substring(i + 1);
-        int index = sub.indexOf("//");
+        int index = sub.indexOf("/");
         if (index == -1) {
             throw new RtspCommException("RtspSdpMediaAttrRtpMap数据有误，无法解析");
         }

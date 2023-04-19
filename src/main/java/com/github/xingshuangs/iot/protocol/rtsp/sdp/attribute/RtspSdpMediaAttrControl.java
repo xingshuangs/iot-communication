@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.sdp.attribute;
 
 
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
+import lombok.Data;
 
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.EQUAL;
 
@@ -10,6 +11,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.EQ
  *
  * @author xingshuang
  */
+@Data
 public class RtspSdpMediaAttrControl {
 
     /**

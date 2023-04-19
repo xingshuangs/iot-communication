@@ -37,12 +37,15 @@ public class RtspSdp {
 
         RtspSdp sdp = new RtspSdp();
         // session数据解析
-        if (!flagAllIndexes.isEmpty()) {
+        if (startSession >= 0) {
             String sessionStr = src.substring(startSession, flagAllIndexes.get(0));
             sdp.session = RtspSdpSession.fromString(sessionStr);
         }
 
         // media数据解析
+        if (flagAllIndexes.isEmpty()) {
+            return sdp;
+        }
         List<String> mediaStrList = new ArrayList<>();
         for (int i = 0; i < flagAllIndexes.size() - 1; i++) {
             mediaStrList.add(src.substring(flagAllIndexes.get(i), flagAllIndexes.get(i + 1)));
