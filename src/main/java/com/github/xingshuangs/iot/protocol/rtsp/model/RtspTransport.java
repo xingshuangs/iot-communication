@@ -26,14 +26,24 @@ public class RtspTransport {
     private String castMode = "";
 
     /**
-     * 客户端端口号
+     * RTP客户端端口号
      */
-    private List<Integer> clientPort = new ArrayList<>();
+    private Integer rtpClientPort;
 
     /**
-     * 服务端端口号
+     * RTCP客户端端口号
      */
-    private List<Integer> serverPort = new ArrayList<>();
+    private Integer rtcpClientPort;
+
+    /**
+     * RTP服务端端口号
+     */
+    private Integer rtpServerPort;
+
+    /**
+     * RTCP服务端端口号
+     */
+    private Integer rtcpServerPort;
 
     private String ssrc = "";
 
@@ -48,14 +58,14 @@ public class RtspTransport {
         if (map.containsKey("client_port")) {
             String clientPort1 = map.get("client_port").trim();
             int clientPortIndex = clientPort1.indexOf("-");
-            transport.clientPort.add(Integer.parseInt(clientPort1.substring(0, clientPortIndex)));
-            transport.clientPort.add(Integer.parseInt(clientPort1.substring(clientPortIndex + 1)));
+            transport.rtpClientPort = Integer.parseInt(clientPort1.substring(0, clientPortIndex));
+            transport.rtcpClientPort = Integer.parseInt(clientPort1.substring(clientPortIndex + 1));
         }
         if (map.containsKey("server_port")) {
             String serverPort1 = map.get("server_port").trim();
             int serverPortIndex = serverPort1.indexOf("-");
-            transport.serverPort.add(Integer.parseInt(serverPort1.substring(0, serverPortIndex)));
-            transport.serverPort.add(Integer.parseInt(serverPort1.substring(serverPortIndex + 1)));
+            transport.rtpServerPort = Integer.parseInt(serverPort1.substring(0, serverPortIndex));
+            transport.rtcpServerPort = Integer.parseInt(serverPort1.substring(serverPortIndex + 1));
         }
         if (map.containsKey("ssrc")) {
             transport.ssrc = map.get("ssrc").trim();
@@ -85,16 +95,13 @@ public class RtspTransport {
         if (this.castMode == null || this.castMode.equals("")) {
             throw new RtspCommException("RtspTransport的castMode异常");
         }
-        if (this.clientPort == null || this.clientPort.size() != 2) {
-            throw new RtspCommException("RtspTransport的clientPort异常");
-        }
         List<String> res = new ArrayList<>();
         res.add(this.protocol);
         res.add(this.castMode);
-        res.add(String.format("client_port=%d-%d", this.clientPort.get(0), this.clientPort.get(1)));
+        res.add(String.format("client_port=%d-%d", this.rtpClientPort, this.rtcpClientPort));
 
-        if (this.serverPort != null && this.serverPort.size() == 2) {
-            res.add(String.format("server_port=%d-%d", this.serverPort.get(0), this.serverPort.get(1)));
+        if (this.rtpServerPort != null && this.rtcpServerPort != null) {
+            res.add(String.format("server_port=%d-%d", this.rtpServerPort, this.rtcpServerPort));
         }
         if (this.ssrc != null && !this.ssrc.equals("")) {
             res.add(String.format("ssrc=%s", this.ssrc));

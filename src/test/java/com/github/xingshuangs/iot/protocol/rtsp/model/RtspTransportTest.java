@@ -13,10 +13,10 @@ public class RtspTransportTest {
         RtspTransport transport = RtspTransport.extractFrom(src);
         assertEquals("RTP/AVP", transport.getProtocol());
         assertEquals("unicast", transport.getCastMode());
-        assertEquals(60802, transport.getClientPort().get(0).intValue());
-        assertEquals(60803, transport.getClientPort().get(1).intValue());
-        assertEquals(8216, transport.getServerPort().get(0).intValue());
-        assertEquals(8217, transport.getServerPort().get(1).intValue());
+        assertEquals(60802, transport.getRtpClientPort().intValue());
+        assertEquals(60803, transport.getRtcpClientPort().intValue());
+        assertEquals(8216, transport.getRtpServerPort().intValue());
+        assertEquals(8217, transport.getRtcpServerPort().intValue());
         assertEquals("4f92ef4b", transport.getSsrc());
         assertEquals("play", transport.getMode());
         assertEquals(src, transport.toString());
@@ -28,8 +28,8 @@ public class RtspTransportTest {
         RtspTransport transport = new RtspTransport();
         transport.setProtocol("RTP/AVP");
         transport.setCastMode("unicast");
-        transport.getClientPort().add(60802);
-        transport.getClientPort().add(60803);
+        transport.setRtpClientPort(60802);
+        transport.setRtcpClientPort(60803);
         assertEquals(expect, transport.toString());
     }
 }

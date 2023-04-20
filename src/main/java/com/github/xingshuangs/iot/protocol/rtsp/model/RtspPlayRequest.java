@@ -30,6 +30,10 @@ public class RtspPlayRequest extends RtspMessageRequest {
         this(uri, session, range, null);
     }
 
+    public RtspPlayRequest(URI uri, int session, AbstractAuthenticator authenticator) {
+        this(uri, session, null, authenticator);
+    }
+
     public RtspPlayRequest(URI uri, int session, RtspRange range, AbstractAuthenticator authenticator) {
         super(ERtspMethod.PLAY, uri, session, authenticator);
         this.range = range;

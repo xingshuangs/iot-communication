@@ -24,7 +24,7 @@ public class RtspSdp {
     /**
      * 媒体描述
      */
-    private List<RtspSdpMedia> medias;
+    private List<RtspSdpMedia> medias = new ArrayList<>();
 
     public static RtspSdp fromString(String src) {
         if (src == null || src.equals("")) {
