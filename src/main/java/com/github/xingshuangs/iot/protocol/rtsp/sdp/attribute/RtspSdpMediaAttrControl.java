@@ -8,6 +8,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.EQ
 
 /**
  * 附加信息：控制部分
+ * control:rtsp://10.3.8.202:554/trackID=1
  *
  * @author xingshuang
  */

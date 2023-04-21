@@ -12,9 +12,9 @@ import lombok.Getter;
 @Getter
 public class RtspTeardownResponse extends RtspMessageResponse {
 
-    public static RtspTeardownResponse fromString(String src) {
+    public static RtspTeardownResponse fromHeaderString(String src) {
         if (src == null || src.equals("")) {
-            throw new RtspCommException("解析RtspSetupResponse时字符串为空");
+            throw new RtspCommException("解析RtspTeardownResponse时字符串为空");
         }
         RtspTeardownResponse response = new RtspTeardownResponse();
         response.parseHeaderAndReturnMap(src);

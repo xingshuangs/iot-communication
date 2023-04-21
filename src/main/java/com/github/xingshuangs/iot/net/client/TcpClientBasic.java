@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.net.client;
 
 
 import com.github.xingshuangs.iot.exceptions.SocketRuntimeException;
+import com.github.xingshuangs.iot.net.ICommunicable;
 import com.github.xingshuangs.iot.net.SocketUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author xingshuang
  */
 @Slf4j
-public class TcpClientBasic {
+public class TcpClientBasic implements ICommunicable {
 
     // region 私有对象
 

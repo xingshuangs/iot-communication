@@ -22,19 +22,19 @@ public class RtspPlayRequest extends RtspMessageRequest {
      */
     private final RtspRange range;
 
-    public RtspPlayRequest(URI uri, int session) {
+    public RtspPlayRequest(URI uri, String session) {
         this(uri, session, null, null);
     }
 
-    public RtspPlayRequest(URI uri, int session, RtspRange range) {
+    public RtspPlayRequest(URI uri, String session, RtspRange range) {
         this(uri, session, range, null);
     }
 
-    public RtspPlayRequest(URI uri, int session, AbstractAuthenticator authenticator) {
+    public RtspPlayRequest(URI uri, String session, AbstractAuthenticator authenticator) {
         this(uri, session, null, authenticator);
     }
 
-    public RtspPlayRequest(URI uri, int session, RtspRange range, AbstractAuthenticator authenticator) {
+    public RtspPlayRequest(URI uri, String session, RtspRange range, AbstractAuthenticator authenticator) {
         super(ERtspMethod.PLAY, uri, session, authenticator);
         this.range = range;
     }

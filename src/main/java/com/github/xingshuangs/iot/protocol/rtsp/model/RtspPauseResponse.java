@@ -12,7 +12,7 @@ import lombok.Getter;
 @Getter
 public class RtspPauseResponse extends RtspMessageResponse {
 
-    public static RtspPauseResponse fromString(String src) {
+    public static RtspPauseResponse fromHeaderString(String src) {
         if (src == null || src.equals("")) {
             throw new RtspCommException("解析RtspPlayResponse时字符串为空");
         }

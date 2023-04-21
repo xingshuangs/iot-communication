@@ -10,7 +10,7 @@ public class RtspTransportTest {
     @Test
     public void extractFrom() {
         String src = "RTP/AVP;unicast;client_port=60802-60803;server_port=8216-8217;ssrc=4f92ef4b;mode=\"play\"";
-        RtspTransport transport = RtspTransport.extractFrom(src);
+        RtspTransport transport = RtspTransport.fromString(src);
         assertEquals("RTP/AVP", transport.getProtocol());
         assertEquals("unicast", transport.getCastMode());
         assertEquals(60802, transport.getRtpClientPort().intValue());

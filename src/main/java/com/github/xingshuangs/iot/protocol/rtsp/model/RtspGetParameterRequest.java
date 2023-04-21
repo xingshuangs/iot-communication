@@ -28,11 +28,11 @@ public class RtspGetParameterRequest extends RtspMessageRequest {
      */
     private final Set<String> parameterNames = new LinkedHashSet<>();
 
-    public RtspGetParameterRequest(URI uri, int session) {
+    public RtspGetParameterRequest(URI uri, String session) {
         super(ERtspMethod.GET_PARAMETER, uri, session);
     }
 
-    public RtspGetParameterRequest(URI uri, int session, AbstractAuthenticator authenticator) {
+    public RtspGetParameterRequest(URI uri, String session, AbstractAuthenticator authenticator) {
         super(ERtspMethod.GET_PARAMETER, uri, session, authenticator);
     }
 

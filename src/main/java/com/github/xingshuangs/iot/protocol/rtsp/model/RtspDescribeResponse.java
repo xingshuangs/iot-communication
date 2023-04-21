@@ -28,7 +28,7 @@ public class RtspDescribeResponse extends RtspMessageResponse {
      */
     private RtspSdp sdp;
 
-    public static RtspDescribeResponse fromString(String src) {
+    public static RtspDescribeResponse fromHeaderString(String src) {
         if (src == null || src.equals("")) {
             throw new RtspCommException("解析RtspDescribeResponse时字符串为空");
         }
@@ -39,10 +39,16 @@ public class RtspDescribeResponse extends RtspMessageResponse {
             response.wwwAuthenticate = map.getOrDefault(WWW_AUTHENTICATE, "").trim();
             return response;
         }
-
-        String body = response.parseMessageBody(src);
-        response.sdp = RtspSdp.fromString(body);
         return response;
     }
 
+    /**
+     * 通过字符串添加body内容
+     *
+     * @param src 字符串
+     */
+    @Override
+    public void addBodyFromString(String src) {
+        this.sdp = RtspSdp.fromString(src);
+    }
 }

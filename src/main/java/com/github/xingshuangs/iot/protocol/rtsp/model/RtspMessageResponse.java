@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.rtsp.model;
 
 
+import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspContentType;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspStatusCode;
 import com.github.xingshuangs.iot.utils.StringSpUtil;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import java.util.Map;
 
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspEntityHeaderFields.*;
 
 
 /**
@@ -22,6 +24,26 @@ public class RtspMessageResponse extends RtspMessage {
      * 状态码
      */
     protected ERtspStatusCode statusCode = ERtspStatusCode.OK;
+
+    /**
+     * 内容类型
+     */
+    protected ERtspContentType contentType;
+
+    /**
+     * 内容基础
+     */
+    protected String contentBase;
+
+    /**
+     * 内容长度
+     */
+    protected Integer contentLength = 0;
+
+    /**
+     * 缓存控制
+     */
+    protected String cacheControl;
 
     public RtspMessageResponse() {
     }
@@ -47,7 +69,8 @@ public class RtspMessageResponse extends RtspMessage {
         this.extractVersionAndStatusCode(src.substring(0, startIndex));
         String headerStr = src.substring(startIndex, endIndex + 4);
         Map<String, String> map = StringSpUtil.splitTwoStepByLine(headerStr, CRLF, COLON);
-        this.extractCommonData(map);
+        this.extractResponseHeader(map);
+        this.extractBodyHeader(map);
         return map;
     }
 
@@ -69,21 +92,33 @@ public class RtspMessageResponse extends RtspMessage {
      *
      * @param map map
      */
-    private void extractCommonData(Map<String, String> map) {
-        // 解析序列号
-        this.cSeq = map.containsKey(C_SEQ) ? Integer.parseInt(map.get(C_SEQ).trim()) : 0;
+    private void extractResponseHeader(Map<String, String> map) {
+        // 解析序列号，可能有两种不同的seq
+        if (map.containsKey(C_SEQ)) {
+            this.cSeq = Integer.parseInt(map.get(C_SEQ).trim());
+        }
+        if (map.containsKey(C_SEQ1)) {
+            this.cSeq = Integer.parseInt(map.get(C_SEQ1).trim());
+        }
         // 会话ID
-        this.session = map.containsKey(SESSION) ? Integer.parseInt(map.get(SESSION).trim()) : -1;
+        if (map.containsKey(SESSION) && !map.containsKey(TRANSPORT)) {
+            this.session = map.get(SESSION).trim();
+        }
     }
 
     /**
-     * 提取消息内容
+     * 提取body的头
      *
-     * @param src 字符串
-     * @return 内容
+     * @param map map
      */
-    public String parseMessageBody(String src) {
-        int endIndex = src.indexOf(CRLF + CRLF);
-        return src.substring(endIndex + 4);
+    private void extractBodyHeader(Map<String, String> map) {
+        this.contentType = map.containsKey(CONTENT_TYPE) ? ERtspContentType.from(map.get(CONTENT_TYPE)) : null;
+        this.contentBase = map.getOrDefault(CONTENT_BASE, "");
+        this.contentLength = map.containsKey(CONTENT_LENGTH) ? Integer.parseInt(map.get(CONTENT_LENGTH)) : 0;
+        this.cacheControl = map.getOrDefault(CACHE_CONTROL, "");
+    }
+
+    public void addBodyFromString(String src) {
+        // NOOP
     }
 }

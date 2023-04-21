@@ -26,11 +26,11 @@ public class RtspSetParameterRequest extends RtspMessageRequest {
 
     private final Map<String, String> parameterMap = new LinkedHashMap<>();
 
-    public RtspSetParameterRequest(URI uri, int session) {
+    public RtspSetParameterRequest(URI uri, String session) {
         super(ERtspMethod.SET_PARAMETER, uri, session);
     }
 
-    public RtspSetParameterRequest(URI uri, int session, AbstractAuthenticator authenticator) {
+    public RtspSetParameterRequest(URI uri, String session, AbstractAuthenticator authenticator) {
         super(ERtspMethod.SET_PARAMETER, uri, session, authenticator);
     }
 

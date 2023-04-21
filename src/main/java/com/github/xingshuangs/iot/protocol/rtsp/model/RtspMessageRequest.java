@@ -42,22 +42,22 @@ public class RtspMessageRequest extends RtspMessage {
     protected AbstractAuthenticator authenticator;
 
     public RtspMessageRequest(ERtspMethod method, URI uri) {
-        this(RtspMessage.VERSION_1_0, new HashMap<>(), method, uri, -1, null);
+        this(RtspMessage.VERSION_1_0, new HashMap<>(), method, uri, "", null);
     }
 
-    public RtspMessageRequest(ERtspMethod method, URI uri, int session) {
+    public RtspMessageRequest(ERtspMethod method, URI uri, String session) {
         this(RtspMessage.VERSION_1_0, new HashMap<>(), method, uri, session, null);
     }
 
     public RtspMessageRequest(ERtspMethod method, URI uri, AbstractAuthenticator authenticator) {
-        this(RtspMessage.VERSION_1_0, new HashMap<>(), method, uri, -1, authenticator);
+        this(RtspMessage.VERSION_1_0, new HashMap<>(), method, uri, "", authenticator);
     }
 
-    public RtspMessageRequest(ERtspMethod method, URI uri, int session, AbstractAuthenticator authenticator) {
+    public RtspMessageRequest(ERtspMethod method, URI uri, String session, AbstractAuthenticator authenticator) {
         this(RtspMessage.VERSION_1_0, new HashMap<>(), method, uri, session, authenticator);
     }
 
-    public RtspMessageRequest(String version, Map<String, String> headers, ERtspMethod method, URI uri, int session, AbstractAuthenticator authenticator) {
+    public RtspMessageRequest(String version, Map<String, String> headers, ERtspMethod method, URI uri, String session, AbstractAuthenticator authenticator) {
         super(version, headers);
         this.method = method;
         this.uri = uri;
@@ -79,24 +79,24 @@ public class RtspMessageRequest extends RtspMessage {
         return sb.toString();
     }
 
-    private void addRequestLine(StringBuilder sb){
+    private void addRequestLine(StringBuilder sb) {
         // Request-Line = Method SP Request-URI SP RTSP-Version CRLF
         sb.append(this.method.getCode()).append(SP).append(this.uri.toString()).append(SP).append(this.version).append(CRLF);
     }
 
-    private void addGeneralHeader(StringBuilder sb){
+    private void addGeneralHeader(StringBuilder sb) {
         // CSeq: 1
         sb.append(C_SEQ).append(COLON + SP).append(this.cSeq).append(CRLF);
     }
 
-    private void addCommonRequestHeader(StringBuilder sb){
+    private void addCommonRequestHeader(StringBuilder sb) {
         // authorization
         if (this.authenticator != null) {
             sb.append(AUTHORIZATION).append(COLON + SP).append(this.authenticator.createResponse()).append(CRLF);
         }
         sb.append(USER_AGENT).append(COLON + SP).append(USER_AGENT_VALUE).append(CRLF);
         // session
-        if (session >= 0) {
+        if (this.session != null && !this.session.equals("")) {
             sb.append(SESSION).append(COLON + SP).append(this.session).append(CRLF);
         }
         // 请求头

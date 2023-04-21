@@ -45,7 +45,7 @@ public class RtspMessage implements IObjectString {
     /**
      * 会话ID
      */
-    protected int session = -1;
+    protected String session = "";
 
     /**
      * 请求头
@@ -57,7 +57,7 @@ public class RtspMessage implements IObjectString {
         StringBuilder sb = new StringBuilder();
         sb.append(VERSION_1_0).append(CRLF);
         sb.append(C_SEQ).append(COLON).append(this.cSeq).append(CRLF);
-        if (this.session >= 0) {
+        if (this.session != null && !this.session.equals("")) {
             sb.append(SESSION).append(COLON).append(this.session).append(CRLF);
         }
         return sb.toString();

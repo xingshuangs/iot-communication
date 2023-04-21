@@ -49,7 +49,7 @@ public class RtspTransport {
 
     private String mode = "";
 
-    public static RtspTransport extractFrom(String src) {
+    public static RtspTransport fromString(String src) {
         RtspTransport transport = new RtspTransport();
         String[] split = src.split(";");
         transport.protocol = split[0];

@@ -21,15 +21,23 @@ public class RtspGetParameterResponse extends RtspMessageResponse {
 
     private final Map<String, String> parameters = new LinkedHashMap<>();
 
-    public static RtspGetParameterResponse fromString(final String src) {
+    public static RtspGetParameterResponse fromHeaderString(final String src) {
         if (src == null || src.equals("")) {
             throw new RtspCommException("解析RtspGetParameterResponse时字符串为空");
         }
         RtspGetParameterResponse response = new RtspGetParameterResponse();
         response.parseHeaderAndReturnMap(src);
-        String body = response.parseMessageBody(src);
-        Map<String, String> map = StringSpUtil.splitTwoStepByLine(body, CRLF, COLON);
-        response.getParameters().putAll(map);
         return response;
+    }
+
+    /**
+     * 通过字符串添加body内容
+     *
+     * @param src 字符串
+     */
+    @Override
+    public void addBodyFromString(String src) {
+        Map<String, String> map = StringSpUtil.splitTwoStepByLine(src, CRLF, COLON);
+        this.getParameters().putAll(map);
     }
 }

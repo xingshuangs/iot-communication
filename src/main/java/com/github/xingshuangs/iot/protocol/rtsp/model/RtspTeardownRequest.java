@@ -15,11 +15,11 @@ import java.net.URI;
 @Getter
 public class RtspTeardownRequest extends RtspMessageRequest {
 
-    public RtspTeardownRequest(URI uri, int session) {
+    public RtspTeardownRequest(URI uri, String session) {
         this(uri, session, null);
     }
 
-    public RtspTeardownRequest(URI uri, int session, AbstractAuthenticator authenticator) {
+    public RtspTeardownRequest(URI uri, String session, AbstractAuthenticator authenticator) {
         super(ERtspMethod.TEARDOWN, uri, session, authenticator);
     }
 }

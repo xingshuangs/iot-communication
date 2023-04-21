@@ -8,6 +8,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SP
 
 /**
  * 附加信息：媒体负载属性
+ * rtpmap:96 H264/90000
  *
  * @author xingshuang
  */
@@ -29,6 +30,11 @@ public class RtspSdpMediaAttrRtpMap {
      */
     private Integer clockFrequency;
 
+    /**
+     * 声道数量
+     */
+    private Integer soundTrackNumber;
+
     public static RtspSdpMediaAttrRtpMap fromString(String src) {
         if (src == null || src.equals("")) {
             throw new IllegalArgumentException("SDP解析MediaAttrRtpMap部分数据源错误");
@@ -39,13 +45,17 @@ public class RtspSdpMediaAttrRtpMap {
             throw new RtspCommException("RtspSdpMediaAttrRtpMap数据有误，无法解析");
         }
         rtpMap.payloadNumber = Integer.parseInt(src.substring(0, i));
-        String sub = src.substring(i + 1);
-        int index = sub.indexOf("/");
-        if (index == -1) {
-            throw new RtspCommException("RtspSdpMediaAttrRtpMap数据有误，无法解析");
+        String sub = src.substring(i + 1).trim();
+        String[] split = sub.split("/");
+        if (split.length > 0) {
+            rtpMap.payloadFormat = split[0];
         }
-        rtpMap.payloadFormat = sub.substring(0, index);
-        rtpMap.clockFrequency = Integer.parseInt(sub.substring(index + 1));
+        if (split.length > 1) {
+            rtpMap.clockFrequency = Integer.parseInt(split[1]);
+        }
+        if (split.length > 2) {
+            rtpMap.soundTrackNumber = Integer.parseInt(split[2]);
+        }
         return rtpMap;
     }
 }

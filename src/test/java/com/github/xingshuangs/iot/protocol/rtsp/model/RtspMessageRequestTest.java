@@ -4,7 +4,6 @@ import com.github.xingshuangs.iot.protocol.rtsp.authentication.DigestAuthenticat
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.UsernamePasswordCredential;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspAcceptContent;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.URI;
@@ -86,7 +85,7 @@ public class RtspMessageRequestTest {
                 "\r\n";
 
         URI uri = URI.create("rtsp://10.3.8.202:554/trackID=1");
-        RtspTransport transport = RtspTransport.extractFrom("RTP/AVP;unicast;client_port=57844-57845");
+        RtspTransport transport = RtspTransport.fromString("RTP/AVP;unicast;client_port=57844-57845");
         RtspSetupRequest request = new RtspSetupRequest(uri, transport, this.authenticator);
         request.setCSeq(0);
         String actual = request.toObjectString();
@@ -104,7 +103,7 @@ public class RtspMessageRequestTest {
                 "\r\n";
         URI uri = URI.create("rtsp://10.3.8.202:554/");
         RtspRange range = new RtspRangeNpt("0.000");
-        RtspPlayRequest request = new RtspPlayRequest(uri, 1273222592, range, this.authenticator);
+        RtspPlayRequest request = new RtspPlayRequest(uri, "1273222592", range, this.authenticator);
         request.setCSeq(0);
         String actual = request.toObjectString();
         assertEquals(expect, actual);
@@ -119,43 +118,9 @@ public class RtspMessageRequestTest {
                 "Session: 1273222592\r\n" +
                 "\r\n";
         URI uri = URI.create("rtsp://10.3.8.202:554/");
-        RtspPauseRequest request = new RtspPauseRequest(uri, 1273222592, this.authenticator);
+        RtspPauseRequest request = new RtspPauseRequest(uri, "1273222592", this.authenticator);
         request.setCSeq(0);
         String actual = request.toObjectString();
-        assertEquals(expect, actual);
-    }
-
-    @Test
-    public void rtspGetParameterRequestTest() {
-
-        String expect = "GET_PARAMETER rtsp://10.3.8.202:554/ RTSP/1.0\r\n" +
-                "CSeq: 0\r\n" +
-                "Authorization: Digest username=\"admin\", realm=\"IP Camera(10789)\", nonce=\"6b9a455aec675b8db81a9ceb802e4eb8\", uri=\"rtsp://10.3.8.202:554\", response=\"56d55b92e8b41aa6cc1a68a5c2e2de15\"\r\n" +
-                "User-Agent: IOT-COMMUNICATION\r\n" +
-                "Session: 1273222592\r\n" +
-                "\r\n";
-        URI uri = URI.create("rtsp://10.3.8.202:554/");
-        RtspGetParameterRequest request = new RtspGetParameterRequest(uri, 1273222592, this.authenticator);
-        request.setCSeq(0);
-        String actual = request.toObjectString();
-        assertEquals(expect, actual);
-
-        expect = "GET_PARAMETER rtsp://10.3.8.202:554/ RTSP/1.0\r\n" +
-                "CSeq: 1\r\n" +
-                "Authorization: Digest username=\"admin\", realm=\"IP Camera(10789)\", nonce=\"6b9a455aec675b8db81a9ceb802e4eb8\", uri=\"rtsp://10.3.8.202:554\", response=\"56d55b92e8b41aa6cc1a68a5c2e2de15\"\r\n" +
-                "User-Agent: IOT-COMMUNICATION\r\n" +
-                "Session: 1273222592\r\n" +
-                "Content-Type: text/parameters\r\n" +
-                "Content-Length: 26\r\n" +
-                "\r\n" +
-                "packets_received\r\n" +
-                "jitter\r\n";
-        uri = URI.create("rtsp://10.3.8.202:554/");
-        request = new RtspGetParameterRequest(uri, 1273222592, this.authenticator);
-        request.setCSeq(1);
-        request.addParameter("packets_received");
-        request.addParameter("jitter");
-        actual = request.toObjectString();
         assertEquals(expect, actual);
     }
 
@@ -169,7 +134,7 @@ public class RtspMessageRequestTest {
                 "Session: 1273222592\r\n" +
                 "\r\n";
         URI uri = URI.create("rtsp://10.3.8.202:554/");
-        RtspSetParameterRequest request = new RtspSetParameterRequest(uri, 1273222592, this.authenticator);
+        RtspSetParameterRequest request = new RtspSetParameterRequest(uri, "1273222592", this.authenticator);
         request.setCSeq(0);
         String actual = request.toObjectString();
         assertEquals(expect, actual);
@@ -185,9 +150,43 @@ public class RtspMessageRequestTest {
                 "barparam: barstuff\r\n";
 
         uri = URI.create("rtsp://10.3.8.202:554/");
-        request = new RtspSetParameterRequest(uri, 1273222592, this.authenticator);
+        request = new RtspSetParameterRequest(uri, "1273222592", this.authenticator);
         request.setCSeq(1);
         request.addParameter("barparam", "barstuff");
+        actual = request.toObjectString();
+        assertEquals(expect, actual);
+    }
+
+    @Test
+    public void rtspGetParameterRequestTest() {
+
+        String expect = "GET_PARAMETER rtsp://10.3.8.202:554/ RTSP/1.0\r\n" +
+                "CSeq: 0\r\n" +
+                "Authorization: Digest username=\"admin\", realm=\"IP Camera(10789)\", nonce=\"6b9a455aec675b8db81a9ceb802e4eb8\", uri=\"rtsp://10.3.8.202:554\", response=\"56d55b92e8b41aa6cc1a68a5c2e2de15\"\r\n" +
+                "User-Agent: IOT-COMMUNICATION\r\n" +
+                "Session: 1273222592\r\n" +
+                "\r\n";
+        URI uri = URI.create("rtsp://10.3.8.202:554/");
+        RtspGetParameterRequest request = new RtspGetParameterRequest(uri, "1273222592", this.authenticator);
+        request.setCSeq(0);
+        String actual = request.toObjectString();
+        assertEquals(expect, actual);
+
+        expect = "GET_PARAMETER rtsp://10.3.8.202:554/ RTSP/1.0\r\n" +
+                "CSeq: 1\r\n" +
+                "Authorization: Digest username=\"admin\", realm=\"IP Camera(10789)\", nonce=\"6b9a455aec675b8db81a9ceb802e4eb8\", uri=\"rtsp://10.3.8.202:554\", response=\"56d55b92e8b41aa6cc1a68a5c2e2de15\"\r\n" +
+                "User-Agent: IOT-COMMUNICATION\r\n" +
+                "Session: 1273222592\r\n" +
+                "Content-Type: text/parameters\r\n" +
+                "Content-Length: 26\r\n" +
+                "\r\n" +
+                "packets_received\r\n" +
+                "jitter\r\n";
+        uri = URI.create("rtsp://10.3.8.202:554/");
+        request = new RtspGetParameterRequest(uri, "1273222592", this.authenticator);
+        request.setCSeq(1);
+        request.addParameter("packets_received");
+        request.addParameter("jitter");
         actual = request.toObjectString();
         assertEquals(expect, actual);
     }
@@ -201,7 +200,7 @@ public class RtspMessageRequestTest {
                 "Session: 1273222592\r\n" +
                 "\r\n";
         URI uri = URI.create("rtsp://10.3.8.202:554/");
-        RtspTeardownRequest request = new RtspTeardownRequest(uri, 1273222592, this.authenticator);
+        RtspTeardownRequest request = new RtspTeardownRequest(uri, "1273222592", this.authenticator);
         request.setCSeq(0);
         String actual = request.toObjectString();
         assertEquals(expect, actual);

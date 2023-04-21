@@ -7,7 +7,6 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CRLF;
 
@@ -21,16 +20,23 @@ public class RtspSetParameterResponse extends RtspMessageResponse {
 
     private final List<String> parameterNames = new ArrayList<>();
 
-    public static RtspSetParameterResponse fromString(String src) {
+    public static RtspSetParameterResponse fromHeaderString(String src) {
         if (src == null || src.equals("")) {
             throw new RtspCommException("解析RtspSetParameterResponse时字符串为空");
         }
         RtspSetParameterResponse response = new RtspSetParameterResponse();
-        Map<String, String> map = response.parseHeaderAndReturnMap(src);
-
-        String body = response.parseMessageBody(src);
-        List<String> list = StringSpUtil.splitOneStepByLine(body, CRLF);
-        response.parameterNames.addAll(list);
+        response.parseHeaderAndReturnMap(src);
         return response;
+    }
+
+    /**
+     * 通过字符串添加body内容
+     *
+     * @param src 字符串
+     */
+    @Override
+    public void addBodyFromString(String src) {
+        List<String> list = StringSpUtil.splitOneStepByLine(src, CRLF);
+        this.parameterNames.addAll(list);
     }
 }

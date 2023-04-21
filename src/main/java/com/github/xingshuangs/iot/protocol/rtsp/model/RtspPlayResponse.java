@@ -27,7 +27,7 @@ public class RtspPlayResponse extends RtspMessageResponse {
      */
     private List<RtspRtpInfo> rtpInfo = new ArrayList<>();
 
-    public static RtspPlayResponse fromString(String src) {
+    public static RtspPlayResponse fromHeaderString(String src) {
         if (src == null || src.equals("")) {
             throw new RtspCommException("解析RtspPlayResponse时字符串为空");
         }

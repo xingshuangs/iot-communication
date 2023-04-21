@@ -49,6 +49,11 @@ public class RtspCommonKey {
     public static final String C_SEQ = "CSeq";
 
     /**
+     * 序列号
+     */
+    public static final String C_SEQ1 = "Cseq";
+
+    /**
      * 会话
      */
     public static final String SESSION = "Session";

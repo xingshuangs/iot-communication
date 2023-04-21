@@ -16,16 +16,28 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 @Getter
 public class RtspSetupResponse extends RtspMessageResponse {
 
+    /**
+     * 通道
+     */
     private RtspTransport transport;
 
-    public static RtspSetupResponse fromString(String src) {
+    /**
+     * 特殊的会话信息
+     */
+    private RtspSessionInfo sessionInfo;
+
+    public static RtspSetupResponse fromHeaderString(String src) {
         if (src == null || src.equals("")) {
             throw new RtspCommException("解析RtspSetupResponse时字符串为空");
         }
         RtspSetupResponse response = new RtspSetupResponse();
         Map<String, String> map = response.parseHeaderAndReturnMap(src);
+        if (map.containsKey(SESSION)) {
+            response.sessionInfo = RtspSessionInfo.fromString(map.get(SESSION).trim());
+            response.session = response.sessionInfo.getSessionId();
+        }
         if (map.containsKey(TRANSPORT)) {
-            response.transport = RtspTransport.extractFrom(map.get(TRANSPORT));
+            response.transport = RtspTransport.fromString(map.get(TRANSPORT).trim());
         }
         return response;
     }

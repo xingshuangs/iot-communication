@@ -27,7 +27,7 @@ public class RtspOptionResponse extends RtspMessageResponse {
      */
     private List<ERtspMethod> publicMethods = new ArrayList<>();
 
-    public static RtspOptionResponse fromString(String src) {
+    public static RtspOptionResponse fromHeaderString(String src) {
         if (src == null || src.equals("")) {
             throw new RtspCommException("解析RtspOptionResponse时字符串为空");
         }

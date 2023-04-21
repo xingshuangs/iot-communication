@@ -17,15 +17,15 @@ public class RtspMessageResponseBuilder {
 
         switch (request.getMethod()) {
             case OPTIONS:
-                return RtspOptionResponse.fromString(src);
+                return RtspOptionResponse.fromHeaderString(src);
             case DESCRIBE:
-                return RtspDescribeResponse.fromString(src);
+                return RtspDescribeResponse.fromHeaderString(src);
             case SETUP:
-                return RtspSetupResponse.fromString(src);
+                return RtspSetupResponse.fromHeaderString(src);
             case PLAY:
-                return RtspPlayResponse.fromString(src);
+                return RtspPlayResponse.fromHeaderString(src);
             case TEARDOWN:
-                return RtspTeardownResponse.fromString(src);
+                return RtspTeardownResponse.fromHeaderString(src);
             default:
                 throw new RtspCommException(String.format("未实现对该Method[%s]的数据解析", request.getMethod().getCode()));
         }

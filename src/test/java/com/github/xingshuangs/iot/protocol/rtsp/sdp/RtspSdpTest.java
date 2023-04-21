@@ -23,7 +23,7 @@ public class RtspSdpTest {
                 "a=x-dimensions:2048,1536\r\n" +
                 "a=control:rtsp://10.3.8.202:554/trackID=1\r\n" +
                 "a=rtpmap:96 H264/90000\r\n" +
-                "a=fmtp:96 profile-level-id=420029; packetization-mode=1; sprop-parameter-sets=Z00AMp2oCAAwabgICAoAAAMAAgAAAwBlCA==,aO48gA==\r\n" +
+                "a=fmtp:96 profile-level-id=420029; packetization-mode=1; sprop-parameter-sets=Z00AH5Y1QKALdNwEBAQI,aO48gA==\r\n" +
                 "a=Media_header:MEDIAINFO=494D4B48010200000400000100000000000000000000000000000000000000000000000000000000;\r\n" +
                 "a=appversion:1.0\r\n";
 
@@ -66,7 +66,11 @@ public class RtspSdpTest {
         assertEquals(96, media.getAttributeFmtp().getNumber().intValue());
         assertEquals(420029, media.getAttributeFmtp().getProfileLevelId().intValue());
         assertEquals(1, media.getAttributeFmtp().getPacketizationMode().intValue());
-        assertEquals("Z00AMp2oCAAwabgICAoAAAMAAgAAAwBlCA==,aO48gA==", media.getAttributeFmtp().getSpropParameterSets());
+        assertEquals("Z00AH5Y1QKALdNwEBAQI,aO48gA==", media.getAttributeFmtp().getSpropParameterSets());
+        byte[] sps = new byte[]{(byte) 0x67, (byte) 0x4D, (byte) 0x00, (byte) 0x1F, (byte) 0x96, (byte) 0x35, (byte) 0x40, (byte) 0xA0, (byte) 0x0B, (byte) 0x74, (byte) 0xDC, (byte) 0x04, (byte) 0x04, (byte) 0x04, (byte) 0x08};
+        assertArrayEquals(sps, media.getAttributeFmtp().getSps());
+        byte[] pps = new byte[]{(byte) 0x68, (byte) 0xEE, (byte) 0x3C, (byte) 0x80};
+        assertArrayEquals(pps, media.getAttributeFmtp().getPps());
         assertEquals("494D4B48010200000400000100000000000000000000000000000000000000000000000000000000", media.getAttributeHeader().getMediaInfo());
     }
 }

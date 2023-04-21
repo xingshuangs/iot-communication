@@ -15,11 +15,11 @@ import java.net.URI;
 @Getter
 public class RtspPauseRequest extends RtspMessageRequest {
 
-    public RtspPauseRequest(URI uri, int session) {
+    public RtspPauseRequest(URI uri, String session) {
         this(uri, session, null);
     }
 
-    public RtspPauseRequest(URI uri, int session, AbstractAuthenticator authenticator) {
+    public RtspPauseRequest(URI uri, String session, AbstractAuthenticator authenticator) {
         super(ERtspMethod.PAUSE, uri, session, authenticator);
     }
 }
