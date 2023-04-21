@@ -10,6 +10,8 @@ import java.util.Map;
 
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspEntityHeaderFields.*;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspRequestHeaderFields.AUTHORIZATION;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspRequestHeaderFields.USER_AGENT;
 
 
 /**
@@ -38,7 +40,7 @@ public class RtspMessageResponse extends RtspMessage {
     /**
      * 内容长度
      */
-    protected Integer contentLength = 0;
+    protected Integer contentLength = -1;
 
     /**
      * 缓存控制
@@ -100,10 +102,6 @@ public class RtspMessageResponse extends RtspMessage {
         if (map.containsKey(C_SEQ1)) {
             this.cSeq = Integer.parseInt(map.get(C_SEQ1).trim());
         }
-        // 会话ID
-        if (map.containsKey(SESSION) && !map.containsKey(TRANSPORT)) {
-            this.session = map.get(SESSION).trim();
-        }
     }
 
     /**
@@ -114,11 +112,69 @@ public class RtspMessageResponse extends RtspMessage {
     private void extractBodyHeader(Map<String, String> map) {
         this.contentType = map.containsKey(CONTENT_TYPE) ? ERtspContentType.from(map.get(CONTENT_TYPE)) : null;
         this.contentBase = map.getOrDefault(CONTENT_BASE, "");
-        this.contentLength = map.containsKey(CONTENT_LENGTH) ? Integer.parseInt(map.get(CONTENT_LENGTH)) : 0;
+        this.contentLength = map.containsKey(CONTENT_LENGTH) ? Integer.parseInt(map.get(CONTENT_LENGTH)) : null;
         this.cacheControl = map.getOrDefault(CACHE_CONTROL, "");
     }
 
     public void addBodyFromString(String src) {
+        // NOOP
+    }
+
+    @Override
+    public String toObjectString() {
+        StringBuilder sb = new StringBuilder();
+        this.addResponseLine(sb);
+        this.addGeneralHeader(sb);
+        this.addCommonResponseHeader(sb);
+        this.addResponseHeader(sb);
+        this.addCommonEntityHeader(sb);
+        this.addEntityHeader(sb);
+        sb.append(CRLF);
+        this.addMessageBody(sb);
+        return sb.toString();
+    }
+
+    private void addResponseLine(StringBuilder sb) {
+        // Status-Line = RTSP-Version SP Status-Code SP Reason-Phrase CRLF
+        sb.append(this.version).append(SP).append(this.statusCode.getCode()).append(SP).append(this.statusCode.getDescription()).append(CRLF);
+    }
+
+    private void addGeneralHeader(StringBuilder sb) {
+        // CSeq: 1
+        sb.append(C_SEQ).append(COLON + SP).append(this.cSeq).append(CRLF);
+    }
+
+    private void addCommonResponseHeader(StringBuilder sb) {
+        // session
+        if (this.session != null && !this.session.equals("")) {
+            sb.append(SESSION).append(COLON + SP).append(this.session).append(CRLF);
+        }
+    }
+
+    private void addCommonEntityHeader(StringBuilder sb) {
+        if (this.contentType != null) {
+            sb.append(CONTENT_TYPE).append(COLON + SP).append(this.contentType.getCode()).append(CRLF);
+        }
+        if (this.contentBase != null && !this.contentBase.equals("")) {
+            sb.append(CONTENT_BASE).append(COLON + SP).append(this.contentBase).append(CRLF);
+        }
+        if (this.contentLength != null && this.contentLength >= 0) {
+            sb.append(CONTENT_LENGTH).append(COLON + SP).append(this.contentLength).append(CRLF);
+        }
+        if (this.cacheControl != null && !this.cacheControl.equals("")) {
+            sb.append(CACHE_CONTROL).append(COLON + SP).append(this.cacheControl).append(CRLF);
+        }
+    }
+
+    protected void addResponseHeader(StringBuilder sb) {
+        // NOOP
+    }
+
+    protected void addEntityHeader(StringBuilder sb) {
+        // NOOP
+    }
+
+    protected void addMessageBody(StringBuilder sb) {
         // NOOP
     }
 }

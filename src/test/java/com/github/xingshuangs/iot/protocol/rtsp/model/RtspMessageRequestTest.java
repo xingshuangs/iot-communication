@@ -3,6 +3,9 @@ package com.github.xingshuangs.iot.protocol.rtsp.model;
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.DigestAuthenticator;
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.UsernamePasswordCredential;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspAcceptContent;
+import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspRange;
+import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspRangeNpt;
+import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspTransport;
 import org.junit.Before;
 import org.junit.Test;
 

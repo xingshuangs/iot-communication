@@ -1,9 +1,9 @@
 package com.github.xingshuangs.iot.protocol.rtsp.model;
 
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspStatusCode;
-import com.github.xingshuangs.iot.protocol.rtsp.sdp.RtspSdp;
-import com.github.xingshuangs.iot.protocol.rtsp.sdp.RtspSdpMedia;
-import com.github.xingshuangs.iot.protocol.rtsp.sdp.RtspSdpSession;
+import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdp;
+import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdpMedia;
+import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdpSession;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

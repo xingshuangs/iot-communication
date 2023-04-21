@@ -1,4 +1,4 @@
-package com.github.xingshuangs.iot.protocol.rtsp.sdp;
+package com.github.xingshuangs.iot.protocol.rtsp.model.sdp;
 
 
 import lombok.Data;

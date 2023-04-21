@@ -2,6 +2,8 @@ package com.github.xingshuangs.iot.protocol.rtsp.model;
 
 
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
+import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspSessionInfo;
+import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspTransport;
 import lombok.Getter;
 
 import java.util.Map;

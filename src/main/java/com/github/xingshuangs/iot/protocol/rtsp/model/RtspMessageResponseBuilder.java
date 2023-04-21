@@ -24,8 +24,14 @@ public class RtspMessageResponseBuilder {
                 return RtspSetupResponse.fromHeaderString(src);
             case PLAY:
                 return RtspPlayResponse.fromHeaderString(src);
+            case PAUSE:
+                return RtspPauseResponse.fromHeaderString(src);
             case TEARDOWN:
                 return RtspTeardownResponse.fromHeaderString(src);
+            case GET_PARAMETER:
+                return RtspGetParameterResponse.fromHeaderString(src);
+            case SET_PARAMETER:
+                return RtspSetParameterResponse.fromHeaderString(src);
             default:
                 throw new RtspCommException(String.format("未实现对该Method[%s]的数据解析", request.getMethod().getCode()));
         }

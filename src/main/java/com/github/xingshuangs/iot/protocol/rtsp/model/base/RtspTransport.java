@@ -1,4 +1,4 @@
-package com.github.xingshuangs.iot.protocol.rtsp.model;
+package com.github.xingshuangs.iot.protocol.rtsp.model.base;
 
 
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
@@ -50,6 +50,9 @@ public class RtspTransport {
     private String mode = "";
 
     public static RtspTransport fromString(String src) {
+        if (src == null || src.equals("")) {
+            throw new IllegalArgumentException("RtspTransport部分数据解析错误");
+        }
         RtspTransport transport = new RtspTransport();
         String[] split = src.split(";");
         transport.protocol = split[0];

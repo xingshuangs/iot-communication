@@ -10,8 +10,12 @@ import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspAcceptContent;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspMethod;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspStatusCode;
 import com.github.xingshuangs.iot.protocol.rtsp.model.*;
-import com.github.xingshuangs.iot.protocol.rtsp.sdp.RtspSdp;
-import com.github.xingshuangs.iot.protocol.rtsp.sdp.attribute.RtspSdpMediaAttrControl;
+import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspRtpInfo;
+import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspSessionInfo;
+import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspTransport;
+import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdp;
+import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdpMedia;
+import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.attribute.RtspSdpMediaAttrControl;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -78,6 +82,10 @@ public class RtspNetwork extends TcpClientBasic {
      */
     private Consumer<String> commCallback;
 
+    private Consumer<byte[]> rtpCallback;
+
+    private Consumer<byte[]> rtcpCallback;
+
     public void setCommCallback(Consumer<String> commCallback) {
         this.commCallback = commCallback;
     }
@@ -103,14 +111,16 @@ public class RtspNetwork extends TcpClientBasic {
         int headerLen;
         byte[] header;
         byte[] body = null;
+        String headerString = "";
+        String bodyString = "";
         RtspMessageResponse ack;
         synchronized (this.objLock) {
             this.write(reqBytes);
             // 读取并解析头
             header = new byte[1024];
             headerLen = this.read(header);
-            String ackString = new String(header,0,headerLen, StandardCharsets.US_ASCII);
-            ack = RtspMessageResponseBuilder.fromString(ackString, req);
+            headerString = new String(header, 0, headerLen, StandardCharsets.US_ASCII);
+            ack = RtspMessageResponseBuilder.fromString(headerString, req);
             // 读取并解析body
             if (ack.getContentLength() != null && ack.getContentLength() > 0) {
                 body = new byte[ack.getContentLength()];
@@ -121,11 +131,11 @@ public class RtspNetwork extends TcpClientBasic {
             throw new RtspCommException("RTSP数据接收长度为0，错误");
         }
         if (body != null) {
-            String bodyString = new String(body, StandardCharsets.US_ASCII);
+            bodyString = new String(body, StandardCharsets.US_ASCII);
             ack.addBodyFromString(bodyString);
         }
         if (this.commCallback != null) {
-            this.commCallback.accept(ack.toObjectString());
+            this.commCallback.accept(headerString + bodyString);
         }
         this.checkPostedCom(req, ack);
         return ack;
@@ -198,31 +208,37 @@ public class RtspNetwork extends TcpClientBasic {
     protected void setup() {
         this.checkBeforeRequest(ERtspMethod.SETUP);
 
-        UdpClientSample rtpClient = new UdpClientSample();
-        UdpClientSample rtcpClient = new UdpClientSample();
-        RtspSdpMediaAttrControl control = this.sdp.getMedias().get(0).getAttributeControl();
-        URI actualUri = URI.create(control.getUri());
-        RtspTransport reqTransport = new RtspTransport();
-        reqTransport.setProtocol(this.sdp.getMedias().get(0).getMediaDesc().getProtocol());
-        reqTransport.setCastMode("unicast");
-        reqTransport.setRtpClientPort(rtpClient.getLocalPort());
-        reqTransport.setRtcpClientPort(rtcpClient.getLocalPort());
+        for (RtspSdpMedia media : this.sdp.getMedias()) {
+            if (!media.getMediaDesc().getType().equals("video")) {
+                continue;
+            }
 
-        RtspSetupRequest request = this.needAuthorization ? new RtspSetupRequest(actualUri, reqTransport, this.authenticator)
-                : new RtspSetupRequest(actualUri, reqTransport);
-        RtspSetupResponse response = (RtspSetupResponse) this.readFromServer(request);
+            UdpClientSample rtpClient = new UdpClientSample();
+            UdpClientSample rtcpClient = new UdpClientSample();
+            RtspSdpMediaAttrControl control = media.getAttributeControl();
+            URI actualUri = URI.create(control.getUri());
+            RtspTransport reqTransport = new RtspTransport();
+            reqTransport.setProtocol(this.sdp.getMedias().get(0).getMediaDesc().getProtocol());
+            reqTransport.setCastMode("unicast");
+            reqTransport.setRtpClientPort(rtpClient.getLocalPort());
+            reqTransport.setRtcpClientPort(rtcpClient.getLocalPort());
 
-        this.checkAfterResponse(response, ERtspMethod.SETUP);
+            RtspSetupRequest request = this.needAuthorization ? new RtspSetupRequest(actualUri, reqTransport, this.authenticator)
+                    : new RtspSetupRequest(actualUri, reqTransport);
+            RtspSetupResponse response = (RtspSetupResponse) this.readFromServer(request);
 
-        this.transport = response.getTransport();
-        this.sessionInfo = response.getSessionInfo();
-        // socket客户端配置
-        rtpClient.bindServer(this.uri.getHost(), this.transport.getRtpServerPort());
-        rtpClient.bindServer(this.uri.getHost(), this.transport.getRtcpServerPort());
-        rtpClient.triggerReceive();
-        rtcpClient.triggerReceive();
-        this.socketClients.put(rtpClient.getLocalPort(), rtcpClient);
-        this.socketClients.put(rtcpClient.getLocalPort(), rtcpClient);
+            this.checkAfterResponse(response, ERtspMethod.SETUP);
+
+            this.transport = response.getTransport();
+            this.sessionInfo = response.getSessionInfo();
+            // socket客户端配置
+            rtpClient.bindServer(this.uri.getHost(), this.transport.getRtpServerPort());
+            rtpClient.bindServer(this.uri.getHost(), this.transport.getRtcpServerPort());
+            rtpClient.triggerReceive();
+            rtcpClient.triggerReceive();
+            this.socketClients.put(rtpClient.getLocalPort(), rtcpClient);
+            this.socketClients.put(rtcpClient.getLocalPort(), rtcpClient);
+        }
     }
 
     /**

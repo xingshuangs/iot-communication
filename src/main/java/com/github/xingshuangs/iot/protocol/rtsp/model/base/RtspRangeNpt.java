@@ -1,7 +1,9 @@
-package com.github.xingshuangs.iot.protocol.rtsp.model;
+package com.github.xingshuangs.iot.protocol.rtsp.model.base;
 
 
 import lombok.Data;
+
+import java.util.Map;
 
 /**
  * 范围

@@ -1,4 +1,4 @@
-package com.github.xingshuangs.iot.protocol.rtsp.sdp.attribute;
+package com.github.xingshuangs.iot.protocol.rtsp.model.sdp.attribute;
 
 
 import com.github.xingshuangs.iot.exceptions.RtspCommException;

@@ -1,7 +1,7 @@
-package com.github.xingshuangs.iot.protocol.rtsp.sdp;
+package com.github.xingshuangs.iot.protocol.rtsp.model.sdp;
 
 
-import com.github.xingshuangs.iot.protocol.rtsp.sdp.attribute.*;
+import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.attribute.*;
 import com.github.xingshuangs.iot.utils.StringSpUtil;
 import lombok.Data;
 

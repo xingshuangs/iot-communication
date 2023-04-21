@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model;
 
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.AbstractAuthenticator;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspMethod;
+import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspRange;
 import lombok.Getter;
 
 import java.net.URI;

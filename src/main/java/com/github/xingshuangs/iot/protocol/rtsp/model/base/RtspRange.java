@@ -1,4 +1,4 @@
-package com.github.xingshuangs.iot.protocol.rtsp.model;
+package com.github.xingshuangs.iot.protocol.rtsp.model.base;
 
 
 /**

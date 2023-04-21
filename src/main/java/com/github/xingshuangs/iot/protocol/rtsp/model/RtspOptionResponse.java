@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspEntityHeaderFields.CACHE_CONTROL;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspResponseHeaderFields.PUBLIC;
 
 /**
  * Option响应
@@ -34,12 +36,20 @@ public class RtspOptionResponse extends RtspMessageResponse {
         RtspOptionResponse response = new RtspOptionResponse();
         Map<String, String> map = response.parseHeaderAndReturnMap(src);
         // 解析公有方法
-        if (map.containsKey(RtspResponseHeaderFields.PUBLIC)) {
-            String publicStr = map.get(RtspResponseHeaderFields.PUBLIC).trim();
+        if (map.containsKey(PUBLIC)) {
+            String publicStr = map.get(PUBLIC).trim();
             response.publicMethods = Stream.of(publicStr.split(COMMA))
                     .map(x -> ERtspMethod.from(x.trim()))
                     .collect(Collectors.toList());
         }
         return response;
+    }
+
+    @Override
+    protected void addResponseHeader(StringBuilder sb) {
+        if (!this.publicMethods.isEmpty()) {
+            String str = this.publicMethods.stream().map(ERtspMethod::getCode).collect(Collectors.joining(COMMA));
+            sb.append(PUBLIC).append(COLON + SP).append(str).append(CRLF);
+        }
     }
 }

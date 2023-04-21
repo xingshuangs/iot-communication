@@ -65,7 +65,7 @@ public class UdpClientSample extends UdpClientBasic {
         int bufferSize = 4096;
         byte[] buffer = new byte[bufferSize];
         int length = this.read(buffer);
-        log.debug("接收到数据长度为：{}，缓存总长度：{}", length, bufferSize);
+//        log.debug("接收到数据长度为：{}，缓存总长度：{}", length, bufferSize);
         if (length < bufferSize) {
             byte[] data = new byte[length];
             System.arraycopy(buffer, 0, data, 0, length);

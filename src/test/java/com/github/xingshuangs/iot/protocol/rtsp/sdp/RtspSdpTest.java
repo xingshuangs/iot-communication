@@ -1,5 +1,8 @@
 package com.github.xingshuangs.iot.protocol.rtsp.sdp;
 
+import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdp;
+import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdpMedia;
+import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdpSession;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

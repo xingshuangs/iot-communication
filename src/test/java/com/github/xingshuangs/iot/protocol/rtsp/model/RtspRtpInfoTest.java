@@ -1,5 +1,6 @@
 package com.github.xingshuangs.iot.protocol.rtsp.model;
 
+import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspRtpInfo;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

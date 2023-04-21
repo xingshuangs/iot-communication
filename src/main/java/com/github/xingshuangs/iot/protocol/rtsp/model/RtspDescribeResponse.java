@@ -3,7 +3,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model;
 
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspStatusCode;
-import com.github.xingshuangs.iot.protocol.rtsp.sdp.RtspSdp;
+import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdp;
 import lombok.Getter;
 
 import java.util.Map;
