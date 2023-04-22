@@ -16,12 +16,12 @@ import java.util.Map;
 public class RtspTransport {
 
     /**
-     * 协议RTP/AVP
+     * 协议RTP/AVP，RTP/AVP：表示RTP通过UDP发送，如果是RTP/AVP/TCP则表示RTP通过TCP发送
      */
     private String protocol = "";
 
     /**
-     * unicast连接方式，单播
+     * unicast连接方式，单播，如果是multicast则表示多播
      */
     private String castMode = "";
 

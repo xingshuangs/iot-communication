@@ -18,17 +18,17 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SE
 public class RtspRtpInfo {
 
     /**
-     * 地址
+     * 地址，视频播放的地址
      */
     private String url;
 
     /**
-     * 序列号
+     * 序列号，视频数据包开始的序列号
      */
     private Long seq;
 
     /**
-     * RTP时间
+     * RTP时间，视频开始播放的时间戳
      */
     private Long rtpTime;
 
