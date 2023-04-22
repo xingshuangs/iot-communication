@@ -34,16 +34,11 @@ public class BasicAuthenticatorTest {
         String src = "Z00AH5Y1QKALdNwEBAQI";
         byte[] sps = decoder.decode(src);
         String spsStr = HexUtil.toHexString(sps);
-        System.out.println(spsStr);
+//        System.out.println(spsStr);
 
         src = "aO48gA==";
         byte[] pps = decoder.decode(src);
         String ppsStr = HexUtil.toHexString(pps);
-        System.out.println(ppsStr);
-    }
-
-    @Test
-    public void port(){
-
+//        System.out.println(ppsStr);
     }
 }
