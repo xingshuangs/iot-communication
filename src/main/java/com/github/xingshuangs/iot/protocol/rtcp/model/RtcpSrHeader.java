@@ -1,7 +1,10 @@
 package com.github.xingshuangs.iot.protocol.rtcp.model;
 
 
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.rtcp.enums.ERtcpPackageType;
+import com.github.xingshuangs.iot.utils.BooleanUtil;
 import lombok.Data;
 
 /**
@@ -28,5 +31,38 @@ public class RtcpSrHeader extends RtcpHeader {
                 .putBytes(super.toByteArray())
                 .putInteger(this.sourceId)
                 .getData();
+    }
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return RtcpHeader
+     */
+    public static RtcpSrHeader fromBytes(final byte[] data) {
+        return fromBytes(data, 0);
+    }
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return RtcpHeader
+     */
+    public static RtcpSrHeader fromBytes(final byte[] data, final int offset) {
+        if (data.length < 8) {
+            throw new IndexOutOfBoundsException("解析header时，字节数组长度不够");
+        }
+        ByteReadBuff buff = new ByteReadBuff(data, offset);
+        RtcpSrHeader res = new RtcpSrHeader();
+        byte aByte = buff.getByte();
+        res.version = aByte >> 6;
+        res.padding = BooleanUtil.getValue(aByte, 5);
+        res.receptionCount = aByte & 0x1F;
+        res.packageType = ERtcpPackageType.from(buff.getByte());
+        res.length = buff.getUInt16();
+        res.sourceId = buff.getUInt32();
+        return res;
     }
 }

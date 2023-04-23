@@ -47,4 +47,37 @@ public class RtcpReceiverReport implements IObjectByteArray {
         }
         return buff.getData();
     }
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return RtcpHeader
+     */
+    public static RtcpReceiverReport fromBytes(final byte[] data) {
+        return fromBytes(data, 0);
+    }
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return RtcpHeader
+     */
+    public static RtcpReceiverReport fromBytes(final byte[] data, final int offset) {
+        if (data.length < 8) {
+            throw new IndexOutOfBoundsException("解析RtcpReceiverReport时，字节数组长度不够");
+        }
+        int off = offset;
+        RtcpReceiverReport res = new RtcpReceiverReport();
+        res.header = RtcpSrHeader.fromBytes(data, off);
+        off += res.header.byteArrayLength();
+        for (int i = 0; i < res.header.getReceptionCount(); i++) {
+            RtcpReportBlock reportBlock = RtcpReportBlock.fromBytes(data, off);
+            res.reportBlocks.add(reportBlock);
+            off += reportBlock.byteArrayLength();
+        }
+        return res;
+    }
 }

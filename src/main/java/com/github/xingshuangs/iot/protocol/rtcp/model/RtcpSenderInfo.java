@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.rtcp.model;
 
 
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.utils.TimesUtil;
 import lombok.Data;
@@ -54,5 +55,38 @@ public class RtcpSenderInfo implements IObjectByteArray {
                 .putInteger(this.senderPacketCount)
                 .putInteger(this.senderOctetCount)
                 .getData();
+    }
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return RtcpHeader
+     */
+    public static RtcpSenderInfo fromBytes(final byte[] data) {
+        return fromBytes(data, 0);
+    }
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return RtcpHeader
+     */
+    public static RtcpSenderInfo fromBytes(final byte[] data, final int offset) {
+        if (data.length < 20) {
+            throw new IndexOutOfBoundsException("解析RtcpSenderInfo时，字节数组长度不够");
+        }
+        ByteReadBuff buff = new ByteReadBuff(data, offset);
+        RtcpSenderInfo res = new RtcpSenderInfo();
+        res.mswTimestamp = buff.getUInt32();
+        res.lswTimestamp = buff.getUInt32();
+        res.ntpTimestamp = TimesUtil.getNTPDateTime(res.mswTimestamp);
+        res.ntpTimestamp = res.ntpTimestamp.plusNanos(res.lswTimestamp * 232 / 1000);
+        res.rtpTimestamp = TimesUtil.getNTPDateTime(buff.getUInt32());
+        res.senderPacketCount = buff.getUInt32();
+        res.senderOctetCount = buff.getUInt32();
+        return res;
     }
 }

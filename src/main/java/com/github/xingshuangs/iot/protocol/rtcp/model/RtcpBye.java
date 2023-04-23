@@ -25,4 +25,30 @@ public class RtcpBye implements IObjectByteArray {
     public byte[] toByteArray() {
         return this.header.toByteArray();
     }
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return RtcpHeader
+     */
+    public static RtcpBye fromBytes(final byte[] data) {
+        return fromBytes(data, 0);
+    }
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return RtcpHeader
+     */
+    public static RtcpBye fromBytes(final byte[] data, final int offset) {
+        if (data.length < 8) {
+            throw new IndexOutOfBoundsException("解析RtcpBye时，字节数组长度不够");
+        }
+        RtcpBye res = new RtcpBye();
+        res.header = RtcpSrHeader.fromBytes(data, offset);
+        return res;
+    }
 }

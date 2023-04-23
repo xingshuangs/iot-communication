@@ -41,4 +41,37 @@ public class RtcpSdesReport implements IObjectByteArray {
         }
         return buff.getData();
     }
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return RtcpHeader
+     */
+    public static RtcpSdesReport fromBytes(final byte[] data) {
+        return fromBytes(data, 0);
+    }
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return RtcpHeader
+     */
+    public static RtcpSdesReport fromBytes(final byte[] data, final int offset) {
+        if (data.length < 4) {
+            throw new IndexOutOfBoundsException("解析RtcpReceiverReport时，字节数组长度不够");
+        }
+        int off = offset;
+        RtcpSdesReport res = new RtcpSdesReport();
+        res.header = RtcpHeader.fromBytes(data, off);
+        off += res.header.byteArrayLength();
+        for (int i = 0; i < res.header.getReceptionCount(); i++) {
+            RtcpSdesChunk chunk = RtcpSdesChunk.fromBytes(data, off);
+            res.sdesChunks.add(chunk);
+            off += chunk.byteArrayLength();
+        }
+        return res;
+    }
 }
