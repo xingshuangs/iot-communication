@@ -13,7 +13,7 @@ import java.net.URI;
  * @author xingshuang
  */
 @Getter
-public class RtspPauseRequest extends RtspMessageRequest {
+public final class RtspPauseRequest extends RtspMessageRequest {
 
     public RtspPauseRequest(URI uri, String session) {
         this(uri, session, null);

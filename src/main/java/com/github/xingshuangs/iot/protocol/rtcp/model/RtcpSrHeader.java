@@ -57,7 +57,7 @@ public class RtcpSrHeader extends RtcpHeader {
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         RtcpSrHeader res = new RtcpSrHeader();
         byte aByte = buff.getByte();
-        res.version = aByte >> 6;
+        res.version = (aByte >> 6) & 0x03;
         res.padding = BooleanUtil.getValue(aByte, 5);
         res.receptionCount = aByte & 0x1F;
         res.packageType = ERtcpPackageType.from(buff.getByte());

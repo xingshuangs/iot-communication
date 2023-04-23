@@ -16,7 +16,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
  * @author xingshuang
  */
 @Getter
-public class RtspSetupRequest extends RtspMessageRequest {
+public final class RtspSetupRequest extends RtspMessageRequest {
 
     /**
      * 传输通道

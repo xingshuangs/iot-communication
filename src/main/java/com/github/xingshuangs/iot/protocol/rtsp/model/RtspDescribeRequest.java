@@ -20,7 +20,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspRequestHeade
  * @author xingshuang
  */
 @Getter
-public class RtspDescribeRequest extends RtspMessageRequest {
+public final class RtspDescribeRequest extends RtspMessageRequest {
 
     private List<ERtspAcceptContent> acceptContents = new ArrayList<>();
 

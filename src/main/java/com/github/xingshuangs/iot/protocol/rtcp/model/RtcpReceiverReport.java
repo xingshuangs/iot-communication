@@ -14,7 +14,7 @@ import java.util.List;
  * @author xingshuang
  */
 @Data
-public class RtcpReceiverReport implements IObjectByteArray {
+public final class RtcpReceiverReport implements IObjectByteArray {
 
     /**
      * 头

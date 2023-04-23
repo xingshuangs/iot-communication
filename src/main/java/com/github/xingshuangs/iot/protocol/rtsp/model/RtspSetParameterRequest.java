@@ -22,7 +22,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspEntityHeader
  * @author xingshuang
  */
 @Getter
-public class RtspSetParameterRequest extends RtspMessageRequest {
+public final class RtspSetParameterRequest extends RtspMessageRequest {
 
     private final Map<String, String> parameterMap = new LinkedHashMap<>();
 

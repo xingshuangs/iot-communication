@@ -57,10 +57,10 @@ public class RtcpReportBlock implements IObjectByteArray {
 
     @Override
     public byte[] toByteArray() {
-        return ByteWriteBuff.newInstance(4)
+        return ByteWriteBuff.newInstance(24)
                 .putInteger(this.sourceId)
                 .putByte(this.fractionLost)
-                .putBytes(IntegerUtil.toCustomByteArray(this.cumulativePacketLost,0,3))
+                .putBytes(IntegerUtil.toCustomByteArray(this.cumulativePacketLost,1,3))
                 .putInteger(this.extHighestSequenceNumberReceived)
                 .putInteger(this.jitter)
                 .putInteger(this.lastNtpTimeSenderReportReceived)

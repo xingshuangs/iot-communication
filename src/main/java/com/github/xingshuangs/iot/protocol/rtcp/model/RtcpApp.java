@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
  * @author xingshuang
  */
 @Data
-public class RtcpApp implements IObjectByteArray {
+public final class RtcpApp implements IObjectByteArray {
 
     /**
      * 头

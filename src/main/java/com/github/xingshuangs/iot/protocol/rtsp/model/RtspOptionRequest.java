@@ -10,7 +10,7 @@ import java.net.URI;
  *
  * @author xingshuang
  */
-public class RtspOptionRequest extends RtspMessageRequest{
+public final class RtspOptionRequest extends RtspMessageRequest{
 
     public RtspOptionRequest(URI uri) {
         super(ERtspMethod.OPTIONS, uri);

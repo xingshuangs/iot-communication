@@ -17,7 +17,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspRequestHeade
  * @author xingshuang
  */
 @Getter
-public class RtspPlayRequest extends RtspMessageRequest {
+public final class RtspPlayRequest extends RtspMessageRequest {
     /**
      * 时间范围
      */

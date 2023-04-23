@@ -37,7 +37,8 @@ public class RtcpHeader implements IObjectByteArray {
     protected ERtcpPackageType packageType;
 
     /**
-     * 长度域（Length）：16比特，RTCP包的长度，包括填充的内容。长度代表整个数据包的大小（协议头+荷载+填充）
+     * 长度域（Length）：16比特，RTCP包的长度, 其中存放的是该SR包以32比特为单位的总长度减一, 包括填充的内容。长度代表整个数据包的大小（协议头+荷载+填充）
+     * length = 32/4-1=7
      */
     protected int length;
 
@@ -48,9 +49,9 @@ public class RtcpHeader implements IObjectByteArray {
 
     @Override
     public byte[] toByteArray() {
-        byte res = (byte) ((this.version << 6)
-                & (BooleanUtil.setBit(6, this.padding) & 0xFF)
-                & this.receptionCount);
+        byte res = (byte) (((this.version << 6) & 0xC0)
+                | (BooleanUtil.setBit(6, this.padding) & 0xFF)
+                | (this.receptionCount & 0xFF));
         return ByteWriteBuff.newInstance(4)
                 .putByte(res)
                 .putByte(this.packageType.getCode())
@@ -82,7 +83,7 @@ public class RtcpHeader implements IObjectByteArray {
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         RtcpHeader res = new RtcpHeader();
         byte aByte = buff.getByte();
-        res.version = aByte >> 6;
+        res.version = (aByte >> 6) & 0x03;
         res.padding = BooleanUtil.getValue(aByte, 5);
         res.receptionCount = aByte & 0x1F;
         res.packageType = ERtcpPackageType.from(buff.getByte());

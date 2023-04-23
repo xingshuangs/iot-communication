@@ -13,7 +13,7 @@ import java.net.URI;
  * @author xingshuang
  */
 @Getter
-public class RtspTeardownRequest extends RtspMessageRequest {
+public final class RtspTeardownRequest extends RtspMessageRequest {
 
     public RtspTeardownRequest(URI uri, String session) {
         this(uri, session, null);

@@ -16,7 +16,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspResponseHead
  * @author xingshuang
  */
 @Getter
-public class RtspDescribeResponse extends RtspMessageResponse {
+public final class RtspDescribeResponse extends RtspMessageResponse {
 
     /**
      * WWW-Authenticate: Digest realm="IP Camera(D2959)", nonce="c9f3698bf99b5f0a77f3960d35df7776", stale="FALSE"\r\n

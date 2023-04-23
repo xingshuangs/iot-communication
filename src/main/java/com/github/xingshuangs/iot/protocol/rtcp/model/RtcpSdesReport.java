@@ -14,7 +14,7 @@ import java.util.List;
  * @author xingshuang
  */
 @Data
-public class RtcpSdesReport implements IObjectByteArray {
+public final class RtcpSdesReport implements IObjectByteArray {
 
     private RtcpHeader header;
 

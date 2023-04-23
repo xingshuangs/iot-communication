@@ -34,7 +34,7 @@ public enum ERtcpPackageType {
     /**
      * 特定应用,204
      */
-    APP((byte) 0xCE),
+    APP((byte) 0xCC),
     ;
 
     private static final Map<Byte, ERtcpPackageType> map = new HashMap<>();

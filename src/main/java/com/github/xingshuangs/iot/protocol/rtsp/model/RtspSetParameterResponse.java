@@ -16,7 +16,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CR
  * @author xingshuang
  */
 @Getter
-public class RtspSetParameterResponse extends RtspMessageResponse {
+public final class RtspSetParameterResponse extends RtspMessageResponse {
 
     private final List<String> parameterNames = new ArrayList<>();
 

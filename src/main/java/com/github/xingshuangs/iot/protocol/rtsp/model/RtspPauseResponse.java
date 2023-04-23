@@ -15,7 +15,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SE
  * @author xingshuang
  */
 @Getter
-public class RtspPauseResponse extends RtspMessageResponse {
+public final class RtspPauseResponse extends RtspMessageResponse {
 
     /**
      * 特殊的会话信息

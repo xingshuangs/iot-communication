@@ -28,7 +28,7 @@ public class RtcpSdesChunk implements IObjectByteArray {
     @Override
     public int byteArrayLength() {
         // item结束的时候会多一个字节
-        int sum = this.sdesItems.stream().mapToInt(RtcpSdesItem::getLength).sum() + 1;
+        int sum = this.sdesItems.stream().mapToInt(RtcpSdesItem::byteArrayLength).sum() + 1;
         // 保持偶数个字节
         sum = sum % 2 == 0 ? sum : sum + 1;
         return 4 + sum;
@@ -65,12 +65,13 @@ public class RtcpSdesChunk implements IObjectByteArray {
         if (data.length < 4) {
             throw new IndexOutOfBoundsException("解析RtcpSdesChunk时，字节数组长度不够");
         }
+        int len = offset;
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         RtcpSdesChunk res = new RtcpSdesChunk();
         res.sourceId = buff.getUInt32();
+        len += 4;
 
-        int len = 4;
-        while (data.length > len) {
+        while (data.length > len + 2) {
             RtcpSdesItem item = RtcpSdesItem.fromBytes(data, len);
             res.sdesItems.add(item);
             len += item.byteArrayLength();

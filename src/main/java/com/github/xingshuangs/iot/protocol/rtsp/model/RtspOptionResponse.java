@@ -22,7 +22,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspResponseHead
  * @author xingshuang
  */
 @Getter
-public class RtspOptionResponse extends RtspMessageResponse {
+public final class RtspOptionResponse extends RtspMessageResponse {
 
     /**
      * 可用的方法

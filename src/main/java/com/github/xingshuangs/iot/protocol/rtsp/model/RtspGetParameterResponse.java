@@ -18,7 +18,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SE
  * @author xingshuang
  */
 @Getter
-public class RtspGetParameterResponse extends RtspMessageResponse {
+public final class RtspGetParameterResponse extends RtspMessageResponse {
 
     private final Map<String, String> parameters = new LinkedHashMap<>();
 

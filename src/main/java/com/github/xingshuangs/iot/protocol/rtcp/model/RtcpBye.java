@@ -10,7 +10,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
-public class RtcpBye implements IObjectByteArray {
+public final class RtcpBye implements IObjectByteArray {
     /**
      * 头
      */

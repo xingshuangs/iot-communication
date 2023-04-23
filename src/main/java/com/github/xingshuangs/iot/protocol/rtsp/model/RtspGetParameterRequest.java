@@ -21,7 +21,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspEntityHeader
  * @author xingshuang
  */
 @Getter
-public class RtspGetParameterRequest extends RtspMessageRequest {
+public final class RtspGetParameterRequest extends RtspMessageRequest {
 
     /**
      * 有序set集合，参数名
