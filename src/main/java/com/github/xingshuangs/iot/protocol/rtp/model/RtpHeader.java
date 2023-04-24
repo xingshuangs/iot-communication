@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.rtp.model;
 
 
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
 import lombok.Data;
@@ -74,16 +75,35 @@ public class RtpHeader implements IObjectByteArray {
      */
     private List<Long> csrcList = new ArrayList<>();
 
+    /**
+     * 扩展头Id，2个字节
+     */
+    private int extensionHeaderId;
+
+    /**
+     * 扩展头长度，2个字节
+     */
+    private int extensionHeaderLength;
+
+    /**
+     * 扩展头的内容
+     */
+    private byte[] extensionHeaderContent = new byte[0];
+
     @Override
     public int byteArrayLength() {
-        return 12 + this.csrcCount * 4;
+        int sum = 12 + this.csrcCount * 4;
+        if (this.extension) {
+            sum += 4 + this.extensionHeaderLength;
+        }
+        return sum;
     }
 
     @Override
     public byte[] toByteArray() {
         byte first = (byte) (((this.version << 6) & 0xC0)
-                | BooleanUtil.setBit(6, this.padding)
-                | BooleanUtil.setBit(5, this.extension)
+                | BooleanUtil.setBit(5, this.padding)
+                | BooleanUtil.setBit(4, this.extension)
                 | (this.csrcCount & 0x0F));
         byte second = (byte) (BooleanUtil.setBit(7, this.marker) | (this.payloadType & 0x7F));
 
@@ -94,6 +114,58 @@ public class RtpHeader implements IObjectByteArray {
                 .putInteger(this.timestamp)
                 .putInteger(this.ssrc);
         this.csrcList.forEach(buff::putInteger);
+        if (this.extension) {
+            buff.putShort(this.extensionHeaderId);
+            buff.putShort(this.extensionHeaderLength);
+            buff.putBytes(this.extensionHeaderContent);
+        }
         return buff.getData();
+    }
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return RtcpHeader
+     */
+    public static RtpHeader fromBytes(final byte[] data) {
+        return fromBytes(data, 0);
+    }
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return RtcpHeader
+     */
+    public static RtpHeader fromBytes(final byte[] data, final int offset) {
+        if (data.length < 12) {
+            throw new IndexOutOfBoundsException("解析header时，字节数组长度不够");
+        }
+        ByteReadBuff buff = new ByteReadBuff(data, offset);
+        RtpHeader res = new RtpHeader();
+        byte aByte = buff.getByte();
+        res.version = (aByte >> 6) & 0x03;
+        res.padding = BooleanUtil.getValue(aByte, 5);
+        res.extension = BooleanUtil.getValue(aByte, 4);
+        res.csrcCount = aByte & 0x0F;
+        byte bByte = buff.getByte();
+        res.marker = BooleanUtil.getValue(bByte, 7);
+        res.payloadType = bByte & 0x7F;
+        res.sequenceNumber = buff.getUInt16();
+        res.timestamp = buff.getUInt32();
+        res.ssrc = buff.getUInt32();
+
+        for (int i = 0; i < res.csrcCount; i++) {
+            res.csrcList.add(buff.getUInt32());
+        }
+        // 扩展头
+        if (res.extension) {
+            res.extensionHeaderId = buff.getUInt16();
+            res.extensionHeaderLength = buff.getUInt16() * 4;
+            res.extensionHeaderContent = buff.getBytes(res.extensionHeaderLength);
+        }
+        return res;
     }
 }
