@@ -1,7 +1,6 @@
 package com.github.xingshuangs.iot.protocol.rtcp.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
@@ -14,12 +13,12 @@ import java.nio.charset.StandardCharsets;
  * @author xingshuang
  */
 @Data
-public final class RtcpApp implements IObjectByteArray {
+public final class RtcpApp extends RtcpBasePackage {
 
     /**
-     * 头
+     * 同步源（SSRC of sender）：32比特，SR包发送者的同步源标识符。与对应RTP包中的SSRC一样。
      */
-    private RtcpSrHeader header;
+    private long sourceId;
 
     /**
      * 名称
@@ -38,6 +37,7 @@ public final class RtcpApp implements IObjectByteArray {
         System.arraycopy(src, 0, des, 0, Math.min(des.length, src.length));
         return ByteWriteBuff.newInstance(12)
                 .putBytes(this.header.toByteArray())
+                .putInteger(this.sourceId)
                 .putBytes(des)
                 .getData();
     }
@@ -64,8 +64,10 @@ public final class RtcpApp implements IObjectByteArray {
             throw new IndexOutOfBoundsException("解析RtcpBye时，字节数组长度不够");
         }
         RtcpApp res = new RtcpApp();
-        res.header = RtcpSrHeader.fromBytes(data, offset);
+        res.header = RtcpHeader.fromBytes(data, offset);
+
         ByteReadBuff buff = new ByteReadBuff(data, offset + res.header.byteArrayLength());
+        res.sourceId = buff.getUInt32();
         res.name = buff.getString(4);
         return res;
     }

@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.rtcp.model;
 
 
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
 
@@ -14,12 +15,12 @@ import java.util.List;
  * @author xingshuang
  */
 @Data
-public final class RtcpSenderReport implements IObjectByteArray {
+public final class RtcpSenderReport extends RtcpBasePackage {
 
     /**
-     * 头
+     * 同步源（SSRC of sender）：32比特，SR包发送者的同步源标识符。与对应RTP包中的SSRC一样。
      */
-    private RtcpSrHeader header;
+    private long sourceId;
 
     /**
      * 发送者信息
@@ -35,6 +36,7 @@ public final class RtcpSenderReport implements IObjectByteArray {
     public int byteArrayLength() {
         int length = 0;
         length += this.header != null ? this.header.byteArrayLength() : 0;
+        length += 4;
         length += this.senderInfo != null ? this.senderInfo.byteArrayLength() : 0;
         for (RtcpReportBlock block : this.reportBlocks) {
             length += block.byteArrayLength();
@@ -48,6 +50,7 @@ public final class RtcpSenderReport implements IObjectByteArray {
         if (this.header != null) {
             buff.putBytes(this.header.toByteArray());
         }
+        buff.putInteger(this.sourceId);
         if (this.senderInfo != null) {
             buff.putBytes(this.senderInfo.toByteArray());
         }
@@ -80,10 +83,15 @@ public final class RtcpSenderReport implements IObjectByteArray {
         }
         int off = offset;
         RtcpSenderReport res = new RtcpSenderReport();
-        res.header = RtcpSrHeader.fromBytes(data, off);
+        res.header = RtcpHeader.fromBytes(data, off);
         off += res.header.byteArrayLength();
+
+        res.sourceId = ByteReadBuff.newInstance(data,off).getUInt32();
+        off += 4;
+
         res.senderInfo = RtcpSenderInfo.fromBytes(data, off);
         off += res.senderInfo.byteArrayLength();
+
         for (int i = 0; i < res.header.getReceptionCount(); i++) {
             RtcpReportBlock reportBlock = RtcpReportBlock.fromBytes(data, off);
             res.reportBlocks.add(reportBlock);

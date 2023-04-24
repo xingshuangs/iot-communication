@@ -12,14 +12,14 @@ public class RtcpTest {
 
     @Test
     public void rtcpByteTest() {
-        byte[] expect = new byte[]{(byte) 0x81, (byte) 0xCB, (byte) 0x00, (byte) 0x01, (byte) 0xC3, (byte) 0x45, (byte) 0x17, (byte) 0xFC};
+        byte[] expect = new byte[]{(byte) 0xA1, (byte) 0xCB, (byte) 0x00, (byte) 0x01, (byte) 0xC3, (byte) 0x45, (byte) 0x17, (byte) 0xFC};
         RtcpBye bye = RtcpBye.fromBytes(expect);
         assertEquals(2, bye.getHeader().getVersion());
-        assertFalse(bye.getHeader().isPadding());
+        assertTrue(bye.getHeader().isPadding());
         assertEquals(1, bye.getHeader().getReceptionCount());
         assertEquals(ERtcpPackageType.BYE, bye.getHeader().getPackageType());
         assertEquals(1, bye.getHeader().getLength());
-        assertEquals(3276085244L, bye.getHeader().getSourceId());
+        assertEquals(3276085244L, bye.getSourceId());
         byte[] actual = bye.toByteArray();
         assertArrayEquals(expect, actual);
     }
@@ -34,7 +34,7 @@ public class RtcpTest {
         assertEquals(1, app.getHeader().getReceptionCount());
         assertEquals(ERtcpPackageType.BYE, app.getHeader().getPackageType());
         assertEquals(1, app.getHeader().getLength());
-        assertEquals(3276085244L, app.getHeader().getSourceId());
+        assertEquals(3276085244L, app.getSourceId());
         assertEquals("012A", app.getName());
         byte[] actual = app.toByteArray();
         assertArrayEquals(expect, actual);
@@ -52,7 +52,7 @@ public class RtcpTest {
         assertEquals(1, receiverReport.getHeader().getReceptionCount());
         assertEquals(ERtcpPackageType.RR, receiverReport.getHeader().getPackageType());
         assertEquals(7, receiverReport.getHeader().getLength());
-        assertEquals(3276085244L, receiverReport.getHeader().getSourceId());
+        assertEquals(3276085244L, receiverReport.getSourceId());
         assertEquals(1, receiverReport.getReportBlocks().size());
         receiverReport.getReportBlocks().forEach(x -> {
             assertEquals(1335029579L, x.getSourceId());
@@ -80,7 +80,7 @@ public class RtcpTest {
         assertEquals(0, senderReport.getHeader().getReceptionCount());
         assertEquals(ERtcpPackageType.SR, senderReport.getHeader().getPackageType());
         assertEquals(6, senderReport.getHeader().getLength());
-        assertEquals(1437164811L, senderReport.getHeader().getSourceId());
+        assertEquals(1437164811L, senderReport.getSourceId());
 
         assertEquals(3891134116L, senderReport.getSenderInfo().getMswTimestamp());
         assertEquals(72237054L, senderReport.getSenderInfo().getLswTimestamp());

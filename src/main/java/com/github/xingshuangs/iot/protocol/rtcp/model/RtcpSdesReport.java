@@ -14,9 +14,7 @@ import java.util.List;
  * @author xingshuang
  */
 @Data
-public final class RtcpSdesReport implements IObjectByteArray {
-
-    private RtcpHeader header;
+public final class RtcpSdesReport extends RtcpBasePackage{
 
     private List<RtcpSdesChunk> sdesChunks = new ArrayList<>();
 

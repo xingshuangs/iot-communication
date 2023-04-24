@@ -33,11 +33,13 @@ public class RtcpSenderInfo implements IObjectByteArray {
 
     /**
      * 发送包数量（32bit）：计算已经发送的包的数量
+     * 从开始发送包到产生这个SR包这段时间里，发送者发送的RTP数据包的总数. SSRC改变时，这个域清零。
      */
     private long senderPacketCount;
 
     /**
      * 发送字节数（32bit）：计算已经发送的字节数量
+     * 从开始发送包到产生这个SR包这段时间里，发送者发送的净荷数据的总字节数（不包括头部和填充）。发送者改变其SSRC时，这个域要清零。
      */
     private long senderOctetCount;
 

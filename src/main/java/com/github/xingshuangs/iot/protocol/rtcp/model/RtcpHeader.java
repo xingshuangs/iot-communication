@@ -50,8 +50,8 @@ public class RtcpHeader implements IObjectByteArray {
     @Override
     public byte[] toByteArray() {
         byte res = (byte) (((this.version << 6) & 0xC0)
-                | (BooleanUtil.setBit(6, this.padding) & 0xFF)
-                | (this.receptionCount & 0xFF));
+                | BooleanUtil.setBit(5, this.padding)
+                | (this.receptionCount & 0x0F));
         return ByteWriteBuff.newInstance(4)
                 .putByte(res)
                 .putByte(this.packageType.getCode())

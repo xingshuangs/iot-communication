@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.rtcp.model;
 
 
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
 
@@ -14,12 +15,12 @@ import java.util.List;
  * @author xingshuang
  */
 @Data
-public final class RtcpReceiverReport implements IObjectByteArray {
+public final class RtcpReceiverReport extends RtcpBasePackage {
 
     /**
-     * 头
+     * 同步源（SSRC of sender）：32比特，SR包发送者的同步源标识符。与对应RTP包中的SSRC一样。
      */
-    private RtcpSrHeader header;
+    private long sourceId;
 
     /**
      * 报告数据块
@@ -30,6 +31,7 @@ public final class RtcpReceiverReport implements IObjectByteArray {
     public int byteArrayLength() {
         int length = 0;
         length += this.header != null ? this.header.byteArrayLength() : 0;
+        length += 4;
         for (RtcpReportBlock block : this.reportBlocks) {
             length += block.byteArrayLength();
         }
@@ -42,6 +44,7 @@ public final class RtcpReceiverReport implements IObjectByteArray {
         if (this.header != null) {
             buff.putBytes(this.header.toByteArray());
         }
+        buff.putInteger(this.sourceId);
         for (RtcpReportBlock block : this.reportBlocks) {
             buff.putBytes(block.toByteArray());
         }
@@ -71,8 +74,12 @@ public final class RtcpReceiverReport implements IObjectByteArray {
         }
         int off = offset;
         RtcpReceiverReport res = new RtcpReceiverReport();
-        res.header = RtcpSrHeader.fromBytes(data, off);
+        res.header = RtcpHeader.fromBytes(data, off);
         off += res.header.byteArrayLength();
+
+        res.sourceId = ByteReadBuff.newInstance(data, off).getUInt32();
+        off += 4;
+
         for (int i = 0; i < res.header.getReceptionCount(); i++) {
             RtcpReportBlock reportBlock = RtcpReportBlock.fromBytes(data, off);
             res.reportBlocks.add(reportBlock);

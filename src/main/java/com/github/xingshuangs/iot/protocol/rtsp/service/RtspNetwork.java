@@ -5,6 +5,7 @@ import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import com.github.xingshuangs.iot.net.ICommunicable;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.net.client.UdpClientSample;
+import com.github.xingshuangs.iot.protocol.rtcp.service.RtcpUdpClient;
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.DigestAuthenticator;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspAcceptContent;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspMethod;
@@ -214,7 +215,7 @@ public class RtspNetwork extends TcpClientBasic {
             }
 
             UdpClientSample rtpClient = new UdpClientSample();
-            UdpClientSample rtcpClient = new UdpClientSample();
+            RtcpUdpClient rtcpClient = new RtcpUdpClient();
             RtspSdpMediaAttrControl control = media.getAttributeControl();
             URI actualUri = URI.create(control.getUri());
             RtspTransport reqTransport = new RtspTransport();
