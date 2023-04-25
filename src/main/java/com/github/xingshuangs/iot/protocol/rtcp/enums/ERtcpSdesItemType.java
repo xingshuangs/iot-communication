@@ -57,15 +57,15 @@ public enum ERtcpSdesItemType {
     PRIV((byte) 0x08),
     ;
 
-    private static final Map<Byte, ERtcpSdesItemType> map = new HashMap<>();
-
-    static {
-        for (ERtcpSdesItemType item : ERtcpSdesItemType.values()) {
-            map.put(item.code, item);
-        }
-    }
+    private static Map<Byte, ERtcpSdesItemType> map;
 
     public static ERtcpSdesItemType from(byte data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (ERtcpSdesItemType item : ERtcpSdesItemType.values()) {
+                map.put(item.code, item);
+            }
+        }
         return map.get(data);
     }
 

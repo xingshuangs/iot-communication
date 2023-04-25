@@ -37,15 +37,15 @@ public enum ERtcpPackageType {
     APP((byte) 0xCC),
     ;
 
-    private static final Map<Byte, ERtcpPackageType> map = new HashMap<>();
-
-    static {
-        for (ERtcpPackageType item : ERtcpPackageType.values()) {
-            map.put(item.code, item);
-        }
-    }
+    private static Map<Byte, ERtcpPackageType> map;
 
     public static ERtcpPackageType from(byte data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (ERtcpPackageType item : ERtcpPackageType.values()) {
+                map.put(item.code, item);
+            }
+        }
         return map.get(data);
     }
 
