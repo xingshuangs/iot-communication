@@ -18,21 +18,15 @@ public class H264NaluBase implements IObjectByteArray {
      */
     protected H264NaluHeader header;
 
-    /**
-     * 负载
-     */
-    protected byte[] payload;
-
     @Override
     public int byteArrayLength() {
-        return this.header.byteArrayLength() + this.payload.length;
+        return this.header.byteArrayLength();
     }
 
     @Override
     public byte[] toByteArray() {
         return ByteWriteBuff.newInstance(this.byteArrayLength())
                 .putBytes(this.header.toByteArray())
-                .putBytes(this.payload)
                 .getData();
     }
 }

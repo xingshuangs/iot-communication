@@ -7,6 +7,17 @@ import lombok.Data;
 
 /**
  * Nalu的FuA
+ * 0                   1                   2                   3
+ * 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ * | FU indicator  |   FU header   |                               |
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
+ * |                                                               |
+ * |                         FU payload                            |
+ * |                                                               |
+ * |                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ * |                               :...OPTIONAL RTP padding        |
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  *
  * @author xingshuang
  */
@@ -17,6 +28,11 @@ public class H264NaluFuA extends H264NaluBase {
      * Fu的头
      */
     private H264NaluFuHeader fuHeader;
+
+    /**
+     * 负载
+     */
+    protected byte[] payload;
 
     @Override
     public int byteArrayLength() {

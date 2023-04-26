@@ -6,11 +6,28 @@ import lombok.Data;
 
 /**
  * 单一Nalu模式
+ * 0                   1                   2                   3
+ * 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ * |F|NRI|  type   |                                               |
+ * +-+-+-+-+-+-+-+-+                                               |
+ * |                                                               |
+ * |               Bytes 2..n of a Single NAL unit                 |
+ * |                                                               |
+ * |                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ * |                               :...OPTIONAL RTP padding        |
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  *
  * @author xingshuang
  */
 @Data
 public class H264NaluSingle extends H264NaluBase {
+
+
+    /**
+     * 负载
+     */
+    protected byte[] payload;
 
     /**
      * 字节数组数据解析
