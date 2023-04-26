@@ -19,12 +19,27 @@ public enum EH264NaluType {
     /**
      * 非 IDR 图像的片
      */
-    NON_IDR(1),
+    NON_IDR_SLICE(1),
+
+    /**
+     * 片数据A分区
+     */
+    DPA(2),
+
+    /**
+     * 片数据B分区
+     */
+    DPB(3),
+
+    /**
+     * 片数据C分区
+     */
+    DPC(4),
 
     /**
      * IDR 图像的片
      */
-    IDR(5),
+    IDR_SLICE(5),
 
     /**
      * SEI（辅助增强信息）
@@ -40,6 +55,26 @@ public enum EH264NaluType {
      * PPS（图像参数集）
      */
     PPS(8),
+
+    /**
+     * 分界符
+     */
+    AUD(9),
+
+    /**
+     * 序列结束
+     */
+    END_OF_SEQUENCE(10),
+
+    /**
+     * 码流结束
+     */
+    END_OF_STREAM(11),
+
+    /**
+     * 填充
+     */
+    FILLER_DATA(12),
 
     /**
      * STAP-A（单一时间组合包模式 A，用于一个 RTP 包荷载多个 NALU）

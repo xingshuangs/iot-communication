@@ -71,6 +71,7 @@ public class RtpHeader implements IObjectByteArray {
     private boolean extension;
 
     /**
+     * CSRC Count，共享媒体源个数，一般用于混音和混屏中，例如某个音频流是混合了其它音频后的数据，那么其它音频源就是该音频源的 CSRC
      * 4 bits CSRC列表的长度。
      * The CSRC count contains the number of CSRC identifiers that follow
      * the fixed header.
@@ -78,6 +79,7 @@ public class RtpHeader implements IObjectByteArray {
     private int csrcCount;
 
     /**
+     * Mark 标记位，对于不同的负载类型有不同含义，例如使用 RTP 荷载 H264 码流时，如果某个帧分成多个包进行传输，可以使用该位标记是否为帧的最后一个包
      * 1 bit Marker会在预设中进行定义（预设和RTP的关系可以参考rfc3551，我的理解是预设是对RTP的补充，以达到某一类实际使用场景的需要），
      * 在报文流中用它来划分每一帧的边界。预设中可能会定义附加的marker，或者移除Marker来拓展payload type字段的长度。
      * The interpretation of the marker is defined by a profile.  It is
