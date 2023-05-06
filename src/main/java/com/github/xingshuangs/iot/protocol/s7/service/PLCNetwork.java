@@ -21,11 +21,11 @@ import java.util.stream.Collectors;
  * plc的网络通信
  * 最小字节数组大小是240-18=222，480-18=462,960-18=942
  * 根据测试S1200[CPU 1214C]，单次读多字节
- * 发送：最大字节读取长度是 216 = 240 - 24, 18(响应报文的PDU)=10(header)+14(parameter)
+ * 发送：最大字节读取长度是 216 = 240 - 24, 24(响应报文的PDU)=10(header)+14(parameter)
  * 接收：最大字节读取长度是 222 = 240 - 18, 18(响应报文的PDU)=12(header)+2(parameter)+4(dataItem)
  * 根据测试S1200[CPU 1214C]，单次写多字节
  * 发送：最大字节写入长度是 212 = 240 - 28, 28(请求报文的PDU)=10(header)+14(parameter)+4(dataItem)
- * 接收：最大字节写入长度是 225 = 240 - 15, 28(请求报文的PDU)=12(header)+2(parameter)+1(dataItem)
+ * 接收：最大字节写入长度是 225 = 240 - 15, 15(请求报文的PDU)=12(header)+2(parameter)+1(dataItem)
  *
  * @author xingshuang
  */
