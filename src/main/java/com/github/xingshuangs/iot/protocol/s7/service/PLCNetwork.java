@@ -127,6 +127,11 @@ public class PLCNetwork extends TcpClientBasic {
             case S1500:
                 remote += 0x20 * this.rack + this.slot;
                 break;
+            case SINUMERIK_828D:
+                local = 0x0400;
+                remote = 0x0D04;
+                remote += 0x20 * this.rack + this.slot;
+                break;
         }
         S7Data req = S7Data.createConnectRequest(local, remote);
         S7Data ack = this.readFromServer(req);
@@ -203,13 +208,64 @@ public class PLCNetwork extends TcpClientBasic {
         return ack;
     }
 
+    private byte[] readFromServer(byte[] sendData) {
+        if (this.comCallback != null) {
+            this.comCallback.accept(sendData);
+        }
+
+        // 将报文中的TPKT和COTP减掉，剩下PDU的内容，7=4(tpkt)+3(cotp)
+        if (this.pduLength > 0 && sendData.length - 7 > this.pduLength) {
+            throw new S7CommException(String.format("发送请求的字节数过长[%d]，已经大于最大的PDU长度[%d]", sendData.length, this.pduLength));
+        }
+
+        TPKT tpkt;
+        int len;
+        byte[] total;
+        synchronized (this.objLock) {
+            this.write(sendData);
+
+            byte[] data = new byte[TPKT.BYTE_LENGTH];
+            len = this.read(data);
+            if (len < TPKT.BYTE_LENGTH) {
+                throw new S7CommException(" TPKT 无效，长度不一致");
+            }
+            tpkt = TPKT.fromBytes(data);
+            total = new byte[tpkt.getLength()];
+            System.arraycopy(data, 0, total, 0, data.length);
+            len = this.read(total, TPKT.BYTE_LENGTH, tpkt.getLength() - TPKT.BYTE_LENGTH);
+        }
+        if (len < total.length - TPKT.BYTE_LENGTH) {
+            throw new S7CommException(" TPKT后面的数据长度，长度不一致");
+        }
+        if (this.comCallback != null) {
+            this.comCallback.accept(total);
+        }
+        return total;
+    }
+
     /**
      * 包含持久化的从服务器读取数据，外部继承使用该方法进行交互，内部不使用
      *
      * @param req 请求数据
      * @return 响应数据
      */
-    protected S7Data readFromServerWithPersistence(S7Data req) {
+    public S7Data readFromServerByPersistence(S7Data req) {
+        try {
+            return this.readFromServer(req);
+        } finally {
+            if (!this.persistence) {
+                this.close();
+            }
+        }
+    }
+
+    /**
+     * 包含持久化的从服务器读取数据，外部继承使用该方法进行交互，内部不使用
+     *
+     * @param req 请求数据
+     * @return 响应数据
+     */
+    public byte[] readFromServerByPersistence(byte[] req) {
         try {
             return this.readFromServer(req);
         } finally {
@@ -378,6 +434,32 @@ public class PLCNetwork extends TcpClientBasic {
                 this.close();
             }
         }
+    }
+
+    //endregion
+
+    //region 读取NCK数据
+
+    /**
+     * 读取S7协议NCK数据
+     *
+     * @param requestItem 请求项
+     * @return 数据项
+     */
+    public DataItem readS7NckData(RequestNckItem requestItem) {
+        return this.readS7NckData(Collections.singletonList(requestItem)).get(0);
+    }
+
+    /**
+     * 读取S7协议NCK数据
+     *
+     * @param requestItems 请求项列表
+     * @return 数据项
+     */
+    public List<DataItem> readS7NckData(List<RequestNckItem> requestItems) {
+        S7Data s7Data = NckRequestBuilder.creatNckRequest(requestItems);
+        S7Data ack = this.readFromServerByPersistence(s7Data);
+        return ack.getDatum().getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
     }
 
     //endregion

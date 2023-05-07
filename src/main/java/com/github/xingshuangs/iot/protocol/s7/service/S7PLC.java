@@ -2,13 +2,9 @@ package com.github.xingshuangs.iot.protocol.s7.service;
 
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
-import com.github.xingshuangs.iot.protocol.s7.enums.EArea;
-import com.github.xingshuangs.iot.protocol.s7.enums.EDataVariableType;
-import com.github.xingshuangs.iot.protocol.s7.enums.EParamVariableType;
-import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
-import com.github.xingshuangs.iot.protocol.s7.model.DataItem;
-import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
-import com.github.xingshuangs.iot.protocol.s7.model.S7Data;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.protocol.s7.enums.*;
+import com.github.xingshuangs.iot.protocol.s7.model.*;
 import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
 import com.github.xingshuangs.iot.utils.*;
 
@@ -18,6 +14,7 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author xingshuang
@@ -660,35 +657,190 @@ public class S7PLC extends PLCNetwork {
      * 热重启
      */
     public void hotRestart() {
-        this.readFromServerWithPersistence(S7Data.createHotRestart());
+        this.readFromServerByPersistence(S7Data.createHotRestart());
     }
 
     /**
      * 冷重启
      */
     public void coldRestart() {
-        this.readFromServerWithPersistence(S7Data.createColdRestart());
+        this.readFromServerByPersistence(S7Data.createColdRestart());
     }
 
     /**
      * PLC停止
      */
     public void plcStop() {
-        this.readFromServerWithPersistence(S7Data.createPlcStop());
+        this.readFromServerByPersistence(S7Data.createPlcStop());
     }
 
     /**
      * 将ram复制到rom
      */
     public void copyRamToRom() {
-        this.readFromServerWithPersistence(S7Data.createCopyRamToRom());
+        this.readFromServerByPersistence(S7Data.createCopyRamToRom());
     }
 
     /**
      * 压缩
      */
     public void compress() {
-        this.readFromServerWithPersistence(S7Data.createCompress());
+        this.readFromServerByPersistence(S7Data.createCompress());
+    }
+
+    //endregion
+
+    //region NCK
+
+    /**
+     * 获取机械坐标系<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 02 00 01 74 01<br/>
+     * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 13 00 02 00 0C 00 00 04 01 FF 09 00 08 CD CC CC CC CC 6C 61 40
+     *
+     * @return S7Data
+     */
+    public List<Double> machinePosition() {
+        // 12 08 82 41 00 02 00 01 74 01
+        // 12 08 82 41 00 02 00 02 74 01
+        // 12 08 82 41 00 02 00 03 74 01
+        List<RequestNckItem> requestNckItems = IntStream.of(1, 2, 3)
+                .mapToObj(x -> new RequestNckItem(ENckArea.C_CHANNEL, 1, 2, x, ENckModule.SMA, 1))
+                .collect(Collectors.toList());
+        S7Data s7Data = NckRequestBuilder.creatNckRequest(requestNckItems);
+        S7Data ack = this.readFromServerByPersistence(s7Data);
+        return ack.getDatum().getReturnItems().stream().map(DataItem.class::cast)
+                .map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat64())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 获取相对坐标系<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 19 00 01 70 01<br/>
+     * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 13 00 02 00 0C 00 00 04 01 FF 09 00 08 5B B6 D6 17 89 2D C8 40
+     *
+     * @return S7Data
+     */
+    public List<Double> relativePosition() {
+        // 12 08 82 41 00 19 00 01 70 01
+        // 12 08 82 41 00 19 00 02 70 01
+        // 12 08 82 41 00 19 00 03 70 01
+        List<RequestNckItem> requestNckItems = IntStream.of(1, 2, 3)
+                .mapToObj(x -> new RequestNckItem(ENckArea.C_CHANNEL, 1, 25, x, ENckModule.SEGA, 1))
+                .collect(Collectors.toList());
+        List<DataItem> dataItems = this.readS7NckData(requestNckItems);
+        return dataItems.stream().map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat64())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 刀具半径补偿编号<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 23 00 01 7F 01<br/>
+     * 接收[57]：03 00 00 39 02 F0 80 32 03 00 00 00 13 00 02 00 24 00 00 04 01 FF 09 00 20 32 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     *
+     * @return S7Data
+     */
+    public int toolRadiusCompensationNumber() {
+        // 12 08 82 41 00 23 00 01 7F 01
+        RequestNckItem requestNckItem = new RequestNckItem(ENckArea.C_CHANNEL, 1, 35, 1, ENckModule.S, 1);
+        DataItem dataItem = this.readS7NckData(requestNckItem);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getUInt16();
+    }
+
+    /**
+     * 刀具编号<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 17 00 01 7F 01<br/>
+     * 接收[27]：03 00 00 1B 02 F0 80 32 03 00 00 00 13 00 02 00 06 00 00 04 01 FF 09 00 02 01 00
+     *
+     * @return S7Data
+     */
+    public int toolNumber() {
+        // 12 08 82 41 00 17 00 01 7F 01
+        RequestNckItem requestNckItem = new RequestNckItem(ENckArea.C_CHANNEL, 1, 23, 1, ENckModule.S, 1);
+        DataItem dataItem = this.readS7NckData(requestNckItem);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getUInt16();
+    }
+
+    /**
+     * 实际主轴转速<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 02 00 01 72 01<br/>
+     * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 13 00 02 00 0C 00 00 04 01 FF 09 00 08 00 00 00 00 00 00 00 00
+     *
+     * @return S7Data
+     */
+    public int actSpindleSpeed() {
+        // 12 08 82 41 00 02 00 01 72 01
+        RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 2, 1, ENckModule.SSP, 1);
+        DataItem dataItem = this.readS7NckData(item);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getInt16();
+    }
+
+    /**
+     * 设定主轴转速<br/>
+     *
+     * @return S7Data
+     */
+    public int setSpindleSpeed() {
+        // 12 08 82 01 00 03 00 04 72 01
+        RequestNckItem item = new RequestNckItem(ENckArea.N_NCK, 1, 3, 4, ENckModule.SSP, 1);
+        DataItem dataItem = this.readS7NckData(item);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getInt16();
+    }
+
+    /**
+     * 进给速率<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 03 00 01 7F 01<br/>
+     * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 13 00 02 00 0C 00 00 04 01 FF 09 00 08 00 00 00 00 00 00 00 00
+     *
+     * @return S7Data
+     */
+    public double feedRate() {
+        // 12 08 82 41 00 03 00 01 7F 01
+        RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 3, 1, ENckModule.S, 1);
+        DataItem dataItem = this.readS7NckData(item);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getFloat64();
+    }
+
+    /**
+     * 获取设定进给速率<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 02 00 01 7F 01<br/>
+     * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 13 00 02 00 0C 00 00 04 01 FF 09 00 08 00 00 00 00 00 00 00 00
+     *
+     * @return S7Data
+     */
+    public double setFeedRate() {
+        // 12 08 82 41 00 02 00 01 7F 01
+        RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 2, 1, ENckModule.S, 1);
+        DataItem dataItem = this.readS7NckData(item);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getFloat64();
+    }
+
+    /**
+     * 获取实际进给速率<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 01 00 01 7F 01<br/>
+     * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 13 00 02 00 0C 00 00 04 01 FF 09 00 08 00 00 00 00 00 00 00 00
+     *
+     * @return S7Data
+     */
+    public double actFeedRate() {
+        // 12 08 82 41 00 01 00 01 7F 01
+        RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 1, 1, ENckModule.S, 1);
+        DataItem dataItem = this.readS7NckData(item);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getFloat64();
+    }
+
+
+    /**
+     * 工作模式的请求<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 00 00 0C 00 00 04 01 12 08 82 21 00 03 00 01 7F 01<br/>
+     * 接收[27]：03 00 00 1B 02 F0 80 32 03 00 00 00 00 00 02 00 06 00 00 04 01 FF 09 00 02 00 00
+     *
+     * @return S7Data
+     */
+    public int workMode() {
+        // 12 08 82 21 00 03 00 01 7F 01
+        RequestNckItem item = new RequestNckItem(ENckArea.B_MODE_GROUP, 1, 3, 1, ENckModule.S, 1);
+        DataItem dataItem = this.readS7NckData(item);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getUInt16();
     }
 
     //endregion

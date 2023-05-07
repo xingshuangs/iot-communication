@@ -1,45 +1,29 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.s7.enums.EArea;
 import com.github.xingshuangs.iot.protocol.s7.enums.EParamVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.ESyntaxID;
-import com.github.xingshuangs.iot.utils.*;
+import com.github.xingshuangs.iot.utils.IntegerUtil;
 import lombok.Data;
 
 /**
- * 请求项
+ * 标准数据读取请求项
  *
  * @author xingshuang
  */
 @Data
-public class RequestItem implements IObjectByteArray {
+public class RequestItem extends RequestBaseItem {
 
     public static final int BYTE_LENGTH = 12;
 
-    /**
-     * 变量规范，对于读/写消息，它总是具有值0x12 <br>
-     * 字节大小：1 <br>
-     * 字节序数：0
-     */
-    private byte specificationType = (byte) 0x12;
-
-    /**
-     * 其余部分的长度规范 <br>
-     * 字节大小：1 <br>
-     * 字节序数：1
-     */
-    private int lengthOfFollowing = 0x0A;
-
-    /**
-     * 寻址模式和项结构其余部分的格式，它具有任意类型寻址的常量值0x10 <br>
-     * 字节大小：1 <br>
-     * 字节序数：2
-     */
-    private ESyntaxID syntaxId = ESyntaxID.S7ANY;
+    public RequestItem() {
+        this.specificationType = (byte) 0x12;
+        this.lengthOfFollowing = 0x0A;
+        this.syntaxId = ESyntaxID.S7ANY;
+    }
 
     /**
      * 变量的类型和长度BIT，BYTE，WORD，DWORD，COUNTER <br>
@@ -127,7 +111,18 @@ public class RequestItem implements IObjectByteArray {
      * @return RequestItem
      */
     public static RequestItem fromBytes(final byte[] data) {
-        ByteReadBuff buff = new ByteReadBuff(data);
+        return fromBytes(data, 0);
+    }
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return RequestItem
+     */
+    public static RequestItem fromBytes(final byte[] data, final int offset) {
+        ByteReadBuff buff = new ByteReadBuff(data, offset);
         RequestItem requestItem = new RequestItem();
         requestItem.specificationType = buff.getByte();
         requestItem.lengthOfFollowing = buff.getByteToInt();
@@ -136,8 +131,8 @@ public class RequestItem implements IObjectByteArray {
         requestItem.count = buff.getUInt16();
         requestItem.dbNumber = buff.getUInt16();
         requestItem.area = EArea.from(buff.getByte());
-        requestItem.byteAddress = IntegerUtil.toInt32In3Bytes(data, 9) >> 3;
-        requestItem.bitAddress = buff.getByte(11) & 0x07;
+        requestItem.byteAddress = IntegerUtil.toInt32In3Bytes(data, 9 + offset) >> 3;
+        requestItem.bitAddress = buff.getByte(11 + offset) & 0x07;
         return requestItem;
     }
 

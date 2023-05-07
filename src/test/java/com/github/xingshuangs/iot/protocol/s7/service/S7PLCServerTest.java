@@ -4,6 +4,8 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import com.github.xingshuangs.iot.protocol.s7.serializer.DemoBean;
 import com.github.xingshuangs.iot.protocol.s7.serializer.DemoLargeBean;
 import com.github.xingshuangs.iot.protocol.s7.serializer.S7Serializer;
+import com.github.xingshuangs.iot.utils.HexUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +15,7 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
+@Slf4j
 public class S7PLCServerTest {
 
     private S7PLCServer server;
@@ -24,6 +27,7 @@ public class S7PLCServerTest {
         server.addDBArea(1, 2, 3, 4);
         this.server.start();
         this.s7PLC = new S7PLC(EPlcType.S1200);
+        this.s7PLC.setComCallback(x -> log.debug("长度[{}]：{}", x.length, HexUtil.toHexString(x)));
 //        this.s7PLC.setPersistence(false);
     }
 

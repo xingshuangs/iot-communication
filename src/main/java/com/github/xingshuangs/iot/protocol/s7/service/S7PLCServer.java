@@ -146,7 +146,8 @@ public class S7PLCServer extends TcpServerBasic {
         List<ReturnItem> returnItems = new ArrayList<>();
         try {
             this.rwLock.readLock().lock();
-            parameter.getRequestItems().forEach(p -> {
+            parameter.getRequestItems().forEach(p1 -> {
+                RequestItem p = (RequestItem) p1;
                 // 判定该区域的数据是否存在
                 String area = AddressUtil.parseArea(p);
                 if (!this.dataMap.containsKey(area)) {
@@ -190,7 +191,7 @@ public class S7PLCServer extends TcpServerBasic {
         try {
             this.rwLock.writeLock().lock();
             for (int i = 0; i < parameter.getItemCount(); i++) {
-                RequestItem p = parameter.getRequestItems().get(i);
+                RequestItem p = (RequestItem) (parameter.getRequestItems().get(i));
                 DataItem d = dataItems.get(i);
                 // 判定该区域的数据是否存在
                 String area = AddressUtil.parseArea(p);
