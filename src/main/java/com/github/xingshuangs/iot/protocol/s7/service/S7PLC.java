@@ -692,24 +692,99 @@ public class S7PLC extends PLCNetwork {
 
     //region NCK
 
+    //    04.08.07.00.020
+    //    828D_04.08
+    //    16/11/21 20:34:20
+    //    828D-ME42
+    //    SOC2
+    //    machineTool
+
+    /**
+     * CNC的ID<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 00 00 0C 00 00 04 01 12 08 82 01 46 6E 00 01 1A 01 <br/>
+     * 接收[57]：03 00 00 39 02 F0 80 32 03 00 00 00 00 00 02 00 24 00 00 04 01 FF 09 00 20 30 30 30 30 36 30 31 39 33 30 38 38 46 43 30 30 30 30 37 35 00 00 00 00 00 00 00 00 00 00 00 00
+     *
+     * @return 数据
+     */
+    public String readCncId() {
+        // 12 08 82 01 46 6E 00 01 1A 01
+        RequestNckItem requestNckItem = new RequestNckItem(ENckArea.N_NCK, 1, 18030, 1, ENckModule.M, 1);
+        DataItem dataItem = this.readS7NckData(requestNckItem);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getString(dataItem.getCount()).trim();
+    }
+
+    /**
+     * CNC的Version<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 00 00 0C 00 00 04 01 12 08 82 01 46 78 00 01 1A 01 <br/>
+     * 接收[45]：03 00 00 2D 02 F0 80 32 03 00 00 00 00 00 02 00 18 00 00 04 01 FF 09 00 14 30 34 2E 30 38 2E 30 37 2E 30 30 2E 30 32 30 20 20 20 20 00
+     *
+     * @return 数据
+     */
+    public String readCncVersion() {
+        // 12 08 82 01 46 78 00 01 1A 01
+        RequestNckItem requestNckItem = new RequestNckItem(ENckArea.N_NCK, 1, 18040, 1, ENckModule.M, 1);
+        DataItem dataItem = this.readS7NckData(requestNckItem);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getString(dataItem.getCount()).trim();
+    }
+
+    /**
+     * 类型<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 00 00 0C 00 00 04 01 12 08 82 01 46 78 00 02 1A 01<br/>
+     * 接收[45]：03 00 00 2D 02 F0 80 32 03 00 00 00 00 00 02 00 18 00 00 04 01 FF 09 00 14 38 32 38 44 5F 30 34 2E 30 38 20 20 20 20 20 00 00 00 00 00
+     *
+     * @return 数据
+     */
+    public String readCncType1() {
+        // 12 08 82 01 46 78 00 01 1A 01
+        RequestNckItem requestNckItem = new RequestNckItem(ENckArea.N_NCK, 1, 18040, 2, ENckModule.M, 1);
+        DataItem dataItem = this.readS7NckData(requestNckItem);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getString(dataItem.getCount()).trim();
+    }
+
+    /**
+     * CNC的Version<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 00 00 0C 00 00 04 01 12 08 82 01 46 78 00 01 1A 01<br/>
+     * 接收[45]：03 00 00 2D 02 F0 80 32 03 00 00 00 00 00 02 00 18 00 00 04 01 FF 09 00 14 30 34 2E 30 38 2E 30 37 2E 30 30 2E 30 32 30 20 20 20 20 00
+     *
+     * @return 数据
+     */
+    public String readCncManufactureDate() {
+        // 12 08 82 01 46 78 00 03 1A 01
+        RequestNckItem requestNckItem = new RequestNckItem(ENckArea.N_NCK, 1, 18040, 3, ENckModule.M, 1);
+        DataItem dataItem = this.readS7NckData(requestNckItem);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getString(dataItem.getCount()).trim();
+    }
+
+    /**
+     * CNC的Type<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 00 00 0C 00 00 04 01 12 08 82 01 46 78 00 04 1A 01<br/>
+     * 接收[45]：03 00 00 2D 02 F0 80 32 03 00 00 00 00 00 02 00 18 00 00 04 01 FF 09 00 14 38 32 38 44 2D 4D 45 34 32 00 00 00 00 00 00 00 00 00 00 00
+     *
+     * @return 数据
+     */
+    public String readCncType() {
+        // 12 08 82 01 46 78 00 04 1A 01
+        RequestNckItem requestNckItem = new RequestNckItem(ENckArea.N_NCK, 1, 18040, 4, ENckModule.M, 1);
+        DataItem dataItem = this.readS7NckData(requestNckItem);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getString(dataItem.getCount()).trim();
+    }
+
     /**
      * 获取机械坐标系<br/>
      * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 02 00 01 74 01<br/>
      * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 13 00 02 00 0C 00 00 04 01 FF 09 00 08 CD CC CC CC CC 6C 61 40
      *
-     * @return S7Data
+     * @return 数据
      */
-    public List<Double> machinePosition() {
+    public List<Double> readMachinePosition() {
         // 12 08 82 41 00 02 00 01 74 01
         // 12 08 82 41 00 02 00 02 74 01
         // 12 08 82 41 00 02 00 03 74 01
-        List<RequestNckItem> requestNckItems = IntStream.of(1, 2, 3)
+        List<RequestNckItem> requestNckItems = IntStream.of(1, 2, 3, 4)
                 .mapToObj(x -> new RequestNckItem(ENckArea.C_CHANNEL, 1, 2, x, ENckModule.SMA, 1))
                 .collect(Collectors.toList());
-        S7Data s7Data = NckRequestBuilder.creatNckRequest(requestNckItems);
-        S7Data ack = this.readFromServerByPersistence(s7Data);
-        return ack.getDatum().getReturnItems().stream().map(DataItem.class::cast)
-                .map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat64())
+        List<DataItem> dataItems = this.readS7NckData(requestNckItems);
+        return dataItems.stream().map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat64())
                 .collect(Collectors.toList());
     }
 
@@ -718,14 +793,52 @@ public class S7PLC extends PLCNetwork {
      * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 19 00 01 70 01<br/>
      * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 13 00 02 00 0C 00 00 04 01 FF 09 00 08 5B B6 D6 17 89 2D C8 40
      *
-     * @return S7Data
+     * @return 数据
      */
-    public List<Double> relativePosition() {
+    public List<Double> readRelativePosition() {
         // 12 08 82 41 00 19 00 01 70 01
         // 12 08 82 41 00 19 00 02 70 01
         // 12 08 82 41 00 19 00 03 70 01
-        List<RequestNckItem> requestNckItems = IntStream.of(1, 2, 3)
+        List<RequestNckItem> requestNckItems = IntStream.of(1, 2, 3, 4)
                 .mapToObj(x -> new RequestNckItem(ENckArea.C_CHANNEL, 1, 25, x, ENckModule.SEGA, 1))
+                .collect(Collectors.toList());
+        List<DataItem> dataItems = this.readS7NckData(requestNckItems);
+        return dataItems.stream().map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat64())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 获取剩余坐标系<br/>
+     * 发送[59]：03 00 00 3B 02 F0 80 32 01 00 00 00 00 00 2A 00 00 04 04 12 08 82 41 00 03 00 01 74 01 12 08 82 41 00 03 00 02 74 01 12 08 82 41 00 03 00 03 74 01 12 08 82 41 00 03 00 04 74 01<br/>
+     * 接收[69]：03 00 00 45 02 F0 80 32 03 00 00 00 00 00 02 00 30 00 00 04 04 FF 09 00 08 00 00 00 00 00 00 00 00 FF 09 00 08 00 00 00 00 00 00 00 00 FF 09 00 08 00 00 00 00 00 00 00 00 FF 09 00 08 00 00 00 00 00 00 00 00
+     *
+     * @return 数据
+     */
+    public List<Double> readRemainPosition() {
+        // 12 08 82 41 00 03 00 01 74 01
+        // 12 08 82 41 00 03 00 02 74 01
+        // 12 08 82 41 00 03 00 03 74 01
+        List<RequestNckItem> requestNckItems = IntStream.of(1, 2, 3, 4)
+                .mapToObj(x -> new RequestNckItem(ENckArea.C_CHANNEL, 1, 3, x, ENckModule.SMA, 1))
+                .collect(Collectors.toList());
+        List<DataItem> dataItems = this.readS7NckData(requestNckItems);
+        return dataItems.stream().map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat64())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * T工件坐标<br/>
+     * 发送[49]：03 00 00 31 02 F0 80 32 01 00 00 00 00 00 20 00 00 04 03 12 08 82 41 00 01 00 04 12 01 12 08 82 41 00 01 00 05 12 01 12 08 82 41 00 01 00 06 12 01<br/>
+     * 接收[57]：03 00 00 39 02 F0 80 32 03 00 00 00 00 00 02 00 24 00 00 04 03 FF 09 00 08 00 00 00 00 00 00 00 80 FF 09 00 08 00 00 00 00 00 00 00 80 FF 09 00 08 00 00 00 00 00 00 00 80
+     *
+     * @return 数据
+     */
+    public List<Double> readTWorkPiecePosition() {
+        // 12 08 82 41 00 01 00 04 12 01
+        // 12 08 82 41 00 01 00 05 12 01
+        // 12 08 82 41 00 01 00 06 12 01
+        List<RequestNckItem> requestNckItems = IntStream.of(4, 5, 6)
+                .mapToObj(x -> new RequestNckItem(ENckArea.C_CHANNEL, 1, 1, x, ENckModule.FU, 1))
                 .collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7NckData(requestNckItems);
         return dataItems.stream().map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat64())
@@ -737,9 +850,9 @@ public class S7PLC extends PLCNetwork {
      * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 23 00 01 7F 01<br/>
      * 接收[57]：03 00 00 39 02 F0 80 32 03 00 00 00 13 00 02 00 24 00 00 04 01 FF 09 00 20 32 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
      *
-     * @return S7Data
+     * @return 数据
      */
-    public int toolRadiusCompensationNumber() {
+    public int readToolRadiusCompensationNumber() {
         // 12 08 82 41 00 23 00 01 7F 01
         RequestNckItem requestNckItem = new RequestNckItem(ENckArea.C_CHANNEL, 1, 35, 1, ENckModule.S, 1);
         DataItem dataItem = this.readS7NckData(requestNckItem);
@@ -751,9 +864,9 @@ public class S7PLC extends PLCNetwork {
      * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 17 00 01 7F 01<br/>
      * 接收[27]：03 00 00 1B 02 F0 80 32 03 00 00 00 13 00 02 00 06 00 00 04 01 FF 09 00 02 01 00
      *
-     * @return S7Data
+     * @return 数据
      */
-    public int toolNumber() {
+    public int readToolNumber() {
         // 12 08 82 41 00 17 00 01 7F 01
         RequestNckItem requestNckItem = new RequestNckItem(ENckArea.C_CHANNEL, 1, 23, 1, ENckModule.S, 1);
         DataItem dataItem = this.readS7NckData(requestNckItem);
@@ -765,25 +878,41 @@ public class S7PLC extends PLCNetwork {
      * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 02 00 01 72 01<br/>
      * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 13 00 02 00 0C 00 00 04 01 FF 09 00 08 00 00 00 00 00 00 00 00
      *
-     * @return S7Data
+     * @return 数据
      */
-    public int actSpindleSpeed() {
+    public double readActSpindleSpeed() {
         // 12 08 82 41 00 02 00 01 72 01
         RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 2, 1, ENckModule.SSP, 1);
         DataItem dataItem = this.readS7NckData(item);
-        return ByteReadBuff.newInstance(dataItem.getData(), true).getInt16();
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getFloat64();
     }
 
     /**
      * 设定主轴转速<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 00 00 0C 00 00 04 01 12 08 82 41 00 04 00 01 72 01<br/>
+     * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 00 00 02 00 0C 00 00 04 01 FF 09 00 08 00 00 00 00 00 00 59 40
      *
-     * @return S7Data
+     * @return 数据
      */
-    public int setSpindleSpeed() {
+    public double readSetSpindleSpeed() {
         // 12 08 82 01 00 03 00 04 72 01
         RequestNckItem item = new RequestNckItem(ENckArea.N_NCK, 1, 3, 4, ENckModule.SSP, 1);
         DataItem dataItem = this.readS7NckData(item);
-        return ByteReadBuff.newInstance(dataItem.getData(), true).getInt16();
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getFloat64();
+    }
+
+    /**
+     * 主轴速率<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 00 00 0C 00 00 04 01 12 08 82 41 00 04 00 01 72 01<br/>
+     * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 00 00 02 00 0C 00 00 04 01 FF 09 00 08 00 00 00 00 00 00 59 40
+     *
+     * @return 数据
+     */
+    public double readSpindleRate() {
+        // 12 08 82 41 00 04 00 01 72 01
+        RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 4, 1, ENckModule.SSP, 1);
+        DataItem dataItem = this.readS7NckData(item);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getFloat64();
     }
 
     /**
@@ -791,9 +920,9 @@ public class S7PLC extends PLCNetwork {
      * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 03 00 01 7F 01<br/>
      * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 13 00 02 00 0C 00 00 04 01 FF 09 00 08 00 00 00 00 00 00 00 00
      *
-     * @return S7Data
+     * @return 数据
      */
-    public double feedRate() {
+    public double readFeedRate() {
         // 12 08 82 41 00 03 00 01 7F 01
         RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 3, 1, ENckModule.S, 1);
         DataItem dataItem = this.readS7NckData(item);
@@ -805,9 +934,9 @@ public class S7PLC extends PLCNetwork {
      * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 02 00 01 7F 01<br/>
      * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 13 00 02 00 0C 00 00 04 01 FF 09 00 08 00 00 00 00 00 00 00 00
      *
-     * @return S7Data
+     * @return 数据
      */
-    public double setFeedRate() {
+    public double readSetFeedRate() {
         // 12 08 82 41 00 02 00 01 7F 01
         RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 2, 1, ENckModule.S, 1);
         DataItem dataItem = this.readS7NckData(item);
@@ -819,28 +948,113 @@ public class S7PLC extends PLCNetwork {
      * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 13 00 0C 00 00 04 01 12 08 82 41 00 01 00 01 7F 01<br/>
      * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 13 00 02 00 0C 00 00 04 01 FF 09 00 08 00 00 00 00 00 00 00 00
      *
-     * @return S7Data
+     * @return 数据
      */
-    public double actFeedRate() {
+    public double readActFeedRate() {
         // 12 08 82 41 00 01 00 01 7F 01
         RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 1, 1, ENckModule.S, 1);
         DataItem dataItem = this.readS7NckData(item);
         return ByteReadBuff.newInstance(dataItem.getData(), true).getFloat64();
     }
 
-
     /**
-     * 工作模式的请求<br/>
+     * 工作模式的请求，0:JOG, 1:MDA, 2:AUTO, 其他<br/>
      * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 00 00 0C 00 00 04 01 12 08 82 21 00 03 00 01 7F 01<br/>
      * 接收[27]：03 00 00 1B 02 F0 80 32 03 00 00 00 00 00 02 00 06 00 00 04 01 FF 09 00 02 00 00
      *
-     * @return S7Data
+     * @return 数据
      */
-    public int workMode() {
+    public int readWorkMode() {
         // 12 08 82 21 00 03 00 01 7F 01
         RequestNckItem item = new RequestNckItem(ENckArea.B_MODE_GROUP, 1, 3, 1, ENckModule.S, 1);
         DataItem dataItem = this.readS7NckData(item);
         return ByteReadBuff.newInstance(dataItem.getData(), true).getUInt16();
+    }
+
+    /**
+     * 状态<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 00 00 0C 00 00 04 01 12 08 82 41 00 0B 00 01 7F 01<br/>
+     * 接收[27]：03 00 00 1B 02 F0 80 32 03 00 00 00 00 00 02 00 06 00 00 04 01 FF 09 00 02 02 00
+     *
+     * @return 数据
+     */
+    public int readStatus() {
+        // 2:stop, 1:start, 0:reset
+        // 12 08 82 41 00 0b 00 01 7F 01
+        RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 11, 1, ENckModule.S, 1);
+        DataItem dataItem = this.readS7NckData(item);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getUInt16();
+    }
+
+    /**
+     * 运行时间<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 00 00 0C 00 00 04 01 12 08 82 41 01 29 00 01 7F 01<br/>
+     * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 00 00 02 00 0C 00 00 04 01 FF 09 00 08 00 00 00 00 00 00 00 00
+     *
+     * @return 数据
+     */
+    public double readRunTime() {
+        // 12 08 82 41 01 29 00 01 7F 01
+        RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 297, 1, ENckModule.S, 1);
+        DataItem dataItem = this.readS7NckData(item);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getFloat64();
+    }
+
+    /**
+     * 剩余时间<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 00 00 0C 00 00 04 01 12 08 82 41 01 2A 00 01 7F 01<br/>
+     * 接收[33]：03 00 00 21 02 F0 80 32 03 00 00 00 00 00 02 00 0C 00 00 04 01 FF 09 00 08 00 00 00 00 00 00 00 00
+     *
+     * @return 数据
+     */
+    public double readRemainTime() {
+        // 12 08 82 41 01 2A 00 01 7F 01
+        RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 298, 1, ENckModule.S, 1);
+        DataItem dataItem = this.readS7NckData(item);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getFloat64();
+    }
+
+    /**
+     * 程序名<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 00 00 0C 00 00 04 01 12 08 82 41 00 0C 00 01 7A 01<br/>
+     * 接收[185]：03 00 00 B9 02 F0 80 32 03 00 00 00 00 00 02 00 A4 00 00 04 01 FF 09 00 A0 2F 5F 4E 5F 4D 50 46 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     *
+     * @return 数据
+     */
+    public String readProgramName() {
+        // 12 08 82 41 00 0C 00 01 7A 01
+        RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 12, 1, ENckModule.SPARPP, 1);
+        DataItem dataItem = this.readS7NckData(item);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getString(dataItem.getCount()).trim();
+    }
+
+    /**
+     * 报警数量<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 00 00 0C 00 00 04 01 12 08 82 01 00 07 00 01 7F 01<br/>
+     * 接收[27]：03 00 00 1B 02 F0 80 32 03 00 00 00 00 00 02 00 06 00 00 04 01 FF 09 00 02 05 00
+     *
+     * @return 数据
+     */
+    public int readAlarmNumber() {
+        // 12 08 82 01 00 07 00 01 7F 01
+        RequestNckItem item = new RequestNckItem(ENckArea.N_NCK, 1, 7, 1, ENckModule.S, 1);
+        DataItem dataItem = this.readS7NckData(item);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getUInt16();
+    }
+
+    /**
+     * 报警信息<br/>
+     * 发送[29]：03 00 00 1D 02 F0 80 32 01 00 00 00 00 00 0C 00 00 04 01 12 08 82 01 00 07 00 01 7F 01<br/>
+     * 接收[27]：03 00 00 1B 02 F0 80 32 03 00 00 00 00 00 02 00 06 00 00 04 01 FF 09 00 02 05 00
+     *
+     * @return 数据
+     */
+    public long readAlarmInfo() {
+        // 12 08 82 01 00 01 00 01 77 01
+        // 12 08 82 01 00 04 00 01 77 01
+        RequestNckItem item = new RequestNckItem(ENckArea.N_NCK, 1, 1, 1, ENckModule.SALA, 1);
+        DataItem dataItem = this.readS7NckData(item);
+        return ByteReadBuff.newInstance(dataItem.getData(), true).getUInt32();
     }
 
     //endregion

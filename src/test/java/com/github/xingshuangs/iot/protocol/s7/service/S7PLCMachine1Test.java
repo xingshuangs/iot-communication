@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Ignore
-public class S7PLCMachineTest {
+public class S7PLCMachine1Test {
     private final S7PLC s7PLC = new S7PLC(EPlcType.SINUMERIK_828D, "192.168.101.16");
 //    private final S7PLC s7PLC = new S7PLC(EPlcType.S1200);
 
