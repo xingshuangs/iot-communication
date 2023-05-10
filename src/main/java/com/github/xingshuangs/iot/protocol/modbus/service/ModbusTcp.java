@@ -50,8 +50,8 @@ public class ModbusTcp extends ModbusNetwork {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
-        if (quantity < 1 || quantity > 200) {
-            throw new IllegalArgumentException("quantity<1||quantity>200");
+        if (quantity < 1 || quantity > 2000) {
+            throw new IllegalArgumentException("quantity<1||quantity>2000");
         }
         MbReadCoilRequest reqPdu = new MbReadCoilRequest(address, quantity);
         MbReadCoilResponse resPdu = (MbReadCoilResponse) this.readModbusData(reqPdu);
@@ -68,7 +68,6 @@ public class ModbusTcp extends ModbusNetwork {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
-
         MbWriteSingleCoilRequest reqPdu = new MbWriteSingleCoilRequest(address, coilStatus);
         this.readModbusData(reqPdu);
     }
@@ -102,8 +101,8 @@ public class ModbusTcp extends ModbusNetwork {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
-        if (quantity < 1 || quantity > 200) {
-            throw new IllegalArgumentException("quantity<1||quantity>200");
+        if (quantity < 1 || quantity > 2000) {
+            throw new IllegalArgumentException("quantity<1||quantity>2000");
         }
         MbReadDiscreteInputRequest reqPdu = new MbReadDiscreteInputRequest(address, quantity);
         MbReadDiscreteInputResponse resPdu = (MbReadDiscreteInputResponse) this.readModbusData(reqPdu);

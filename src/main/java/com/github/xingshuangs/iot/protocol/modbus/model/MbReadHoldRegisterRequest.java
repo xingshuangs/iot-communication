@@ -23,7 +23,7 @@ public final class MbReadHoldRegisterRequest extends MbPdu {
     private int address = 0;
 
     /**
-     * 寄存器数量，该功能码读取线圈的 1 至 2000 连续状态，1 至 2000（0x7D0）
+     * 寄存器数量，1 至 125（0x7D）
      * 字节大小：2个字节
      */
     private int quantity = 0;
