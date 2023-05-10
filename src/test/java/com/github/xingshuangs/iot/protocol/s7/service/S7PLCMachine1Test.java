@@ -18,6 +18,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * 握手
@@ -245,6 +246,14 @@ public class S7PLCMachine1Test {
         for (DataItem dataItem : dataItems) {
             log.debug("位置坐标：{}", ByteReadBuff.newInstance(dataItem.getData(), true).getFloat64());
         }
+
+        item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 2, 1, ENckModule.SMA, 3);
+        s7Data = NckRequestBuilder.creatNckRequest(Arrays.asList(item));
+        ack = this.s7PLC.readFromServerByPersistence(s7Data);
+        dataItems = ack.getDatum().getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
+        for (DataItem dataItem : dataItems) {
+            log.debug("位置坐标：{}", ByteReadBuff.newInstance(dataItem.getData(), true).getFloat64());
+        }
     }
 
     @Test
@@ -311,6 +320,17 @@ public class S7PLCMachine1Test {
             // 0000:JOG, 0100:MDA, 0200:AUTO, 其他
             log.debug("模式：{}", ByteReadBuff.newInstance(dataItem.getData(), true).getUInt16());
         }
+    }
+
+    @Test
+    public void modeTest1() {
+        List<RequestNckItem> requestNckItems = IntStream.range(1, 8)
+                .mapToObj(x -> new RequestNckItem(ENckArea.B_MODE_GROUP, 1, x, 1, ENckModule.S, 1))
+                .collect(Collectors.toList());
+        List<DataItem> dataItems = this.s7PLC.readS7NckData(requestNckItems);
+        List<Integer> collect = dataItems.stream().map(x -> ByteReadBuff.newInstance(x.getData(), true).getUInt16())
+                .collect(Collectors.toList());
+        collect.forEach(x -> log.debug("数据：{}", x));
     }
 
 }
