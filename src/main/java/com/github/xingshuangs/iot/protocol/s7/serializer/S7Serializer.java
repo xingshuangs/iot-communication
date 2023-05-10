@@ -108,7 +108,7 @@ public class S7Serializer implements IPLCSerializable {
                 s7ParseData.setRequestItem(AddressUtil.parseBit(s7Variable.address()));
             } else if (s7Variable.type() == EDataType.STRING) {
                 s7ParseData.setRequestItem(AddressUtil.parseByte(s7Variable.address(),
-                        2 + s7Variable.count() * s7Variable.type().getByteLength()));
+                        1 + s7Variable.count() * s7Variable.type().getByteLength()));
             } else {
                 s7ParseData.setRequestItem(AddressUtil.parseByte(s7Variable.address(),
                         s7Variable.count() * s7Variable.type().getByteLength()));
@@ -180,7 +180,7 @@ public class S7Serializer implements IPLCSerializable {
                         break;
                     case STRING:
                         int length = buff.getByteToInt(1);
-                        item.getField().set(result, buff.getString(2, Math.min(length, item.getCount())));
+                        item.getField().set(result, buff.getString(1, Math.min(length, item.getCount())));
                         break;
                     default:
                         throw new S7CommException("无法识别数据类型");
@@ -242,11 +242,12 @@ public class S7Serializer implements IPLCSerializable {
                                 .putDouble((Double) data).getData()));
                         break;
                     case STRING:
+                        // 偏移+1，总数不能写入
+                        item.getRequestItem().setByteAddress(item.getRequestItem().getByteAddress() + 1);
                         byte[] bytes = ((String) data).getBytes(StandardCharsets.US_ASCII);
-                        byte[] targetBytes = new byte[2 + item.getCount()];
-                        targetBytes[0] = (byte) 0xFE;
-                        targetBytes[1] = (byte) item.getCount();
-                        System.arraycopy(bytes, 0, targetBytes, 2, Math.min(bytes.length, item.getCount()));
+                        byte[] targetBytes = new byte[1 + item.getCount()];
+                        targetBytes[0] = (byte) item.getCount();
+                        System.arraycopy(bytes, 0, targetBytes, 1, Math.min(bytes.length, item.getCount()));
                         item.setDataItem(DataItem.createReqByByte(targetBytes));
                         break;
                     default:

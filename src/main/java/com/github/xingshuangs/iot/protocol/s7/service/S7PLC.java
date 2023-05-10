@@ -356,10 +356,10 @@ public class S7PLC extends PLCNetwork {
      */
     public String readString(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 2));
-        int type = ByteUtil.toUInt8(dataItem.getData(), 0);
-        if (type == 0 || type == 255) {
-            throw new S7CommException("该地址的值不是字符串类型");
-        }
+        int total = ByteUtil.toUInt8(dataItem.getData(), 0);
+//        if (total == 0 || total == 255) {
+//            throw new S7CommException("该地址的值不是字符串类型");
+//        }
         int length = ByteUtil.toUInt8(dataItem.getData(), 1);
         dataItem = this.readS7Data(AddressUtil.parseByte(address, 2 + length));
         return ByteUtil.toStr(dataItem.getData(), 2);
@@ -377,10 +377,10 @@ public class S7PLC extends PLCNetwork {
             throw new IllegalArgumentException("length <= 0 || length > 254");
         }
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 2 + length));
-        int type = ByteUtil.toUInt8(dataItem.getData(), 0);
-        if (type == 0 || type == 255) {
-            throw new S7CommException("该地址的值不是字符串类型");
-        }
+        int total = ByteUtil.toUInt8(dataItem.getData(), 0);
+//        if (total == 0 || total == 255) {
+//            throw new S7CommException("该地址的值不是字符串类型");
+//        }
         int actLength = ByteUtil.toUInt8(dataItem.getData(), 1);
         return ByteUtil.toStr(dataItem.getData(), 2, Math.min(actLength, length));
     }
@@ -582,15 +582,19 @@ public class S7PLC extends PLCNetwork {
      * @param data    字符串数据
      */
     public void writeString(String address, String data) {
-        if (data.length() > 254) {
-            throw new IllegalArgumentException("data字符串参数过长，超过254");
+        if (data.length() == 0) {
+            throw new IllegalArgumentException("data字符串参数长度为0");
         }
+        // 填充字节长度数据
         byte[] dataBytes = data.getBytes(StandardCharsets.US_ASCII);
-        byte[] tmp = new byte[2 + dataBytes.length];
-        tmp[0] = (byte) 0xFE;
-        tmp[1] = ByteUtil.toByte(dataBytes.length);
-        System.arraycopy(dataBytes, 0, tmp, 2, dataBytes.length);
-        this.writeByte(address, tmp);
+        byte[] tmp = new byte[1 + dataBytes.length];
+        tmp[0] = ByteUtil.toByte(dataBytes.length);
+        System.arraycopy(dataBytes, 0, tmp, 1, dataBytes.length);
+        // 字节索引+1
+        RequestItem requestItem = AddressUtil.parseByte(address, tmp.length);
+        requestItem.setByteAddress(requestItem.getByteAddress() + 1);
+        // 通信交互
+        this.writeS7Data(requestItem, DataItem.createReqByByte(tmp));
     }
 
 //    /**

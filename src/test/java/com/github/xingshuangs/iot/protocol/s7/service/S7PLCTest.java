@@ -19,10 +19,10 @@ import static org.junit.Assert.*;
 @Slf4j
 @Ignore
 public class S7PLCTest {
-//    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
+    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
 //    private S7PLC s7PLC = new S7PLC(EPlcType.S1500, "192.168.3.201");
 //    private S7PLC s7PLC = new S7PLC(EPlcType.S200_SMART, "192.168.3.102");
-    private final S7PLC s7PLC = new S7PLC(EPlcType.S1200);
+//    private final S7PLC s7PLC = new S7PLC(EPlcType.S1200);
 
     @Before
     public void before() {
@@ -142,8 +142,8 @@ public class S7PLCTest {
 
     @Test
     public void writeString() {
-        s7PLC.writeString("DB2.4", "demo");
-        String str = s7PLC.readString("DB2.4");
+        s7PLC.writeString("DB4.304", "demo");
+        String str = s7PLC.readString("DB4.304");
         assertEquals("demo", str);
     }
 
