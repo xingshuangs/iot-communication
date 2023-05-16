@@ -252,31 +252,41 @@ class Demo {
 public class DemoBean {
 
     @S7Variable(address = "DB1.0.1", type = EDataType.BOOL)
-    private boolean bitData;
+    private Boolean bitData;
 
     @S7Variable(address = "DB1.4", type = EDataType.UINT16)
-    private int uint16Data;
+    private Integer uint16Data;
 
     @S7Variable(address = "DB1.6", type = EDataType.INT16)
-    private short int16Data;
+    private Short int16Data;
 
     @S7Variable(address = "DB1.8", type = EDataType.UINT32)
-    private long uint32Data;
+    private Long uint32Data;
 
     @S7Variable(address = "DB1.12", type = EDataType.INT32)
-    private int int32Data;
+    private Integer int32Data;
 
     @S7Variable(address = "DB1.16", type = EDataType.FLOAT32)
-    private float float32Data;
+    private Float float32Data;
 
     @S7Variable(address = "DB1.20", type = EDataType.FLOAT64)
-    private double float64Data;
+    private Double float64Data;
 
     @S7Variable(address = "DB1.28", type = EDataType.BYTE, count = 3)
     private byte[] byteData;
 
+    // 注意：实际总长度为12，不是10，31 + 12 = 43， 如果字符串后面还有其他字段，需要多预留2个字节数据
     @S7Variable(address = "DB1.31", type = EDataType.STRING, count = 10)
     private String stringData;
+
+    @S7Variable(address = "DB1.43", type = EDataType.TIME)
+    private Long timeData;
+
+    @S7Variable(address = "DB1.47", type = EDataType.DATE)
+    private LocalDate dateData;
+
+    @S7Variable(address = "DB1.49", type = EDataType.TIME_OF_DAY)
+    private LocalTime timeOfDayData;
 }
 ```
 
@@ -326,7 +336,7 @@ class Demo {
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
 
         // 小数据量的读写
-        DemoBean bean = s7Serializer.read(DemoBean.class);
+        DemoBean bean = new DemoBean();
         bean.setBitData(true);
         bean.setUint16Data(42767);
         bean.setInt16Data((short) 32767);
@@ -336,7 +346,11 @@ class Demo {
         bean.setFloat64Data(4.15);
         bean.setByteData(new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03});
         bean.setStringData("1234567890");
+        bean.setTimeData(12L);
+        bean.setDateData(LocalDate.of(2023, 5, 15));
+        bean.setTimeOfDayData(LocalTime.of(20, 22, 13));
         s7Serializer.write(bean);
+        bean = s7Serializer.read(DemoBean.class);
 
         // 大数据量的读写
         DemoLargeBean largeBean = s7Serializer.read(DemoLargeBean.class);
@@ -409,7 +423,7 @@ class Demo {
 class Demo {
     public static void main(String[] args) {
         S7PLC s7PLC = new S7PLC(EPlcType.SINUMERIK_828D, "127.0.0.1");
-        
+
         String cncId = s7PLC.readCncId();
         String cncVersion = s7PLC.readCncVersion();
         String cncType = s7PLC.readCncType();
@@ -427,7 +441,7 @@ class Demo {
         double remainTime = s7PLC.readRemainTime();
         String programName = s7PLC.readProgramName();
         int alarmNumber = s7PLC.readAlarmNumber();
-        
+
         s7PLC.close();
     }
 }

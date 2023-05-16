@@ -10,6 +10,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 
@@ -75,17 +77,24 @@ public class S7PLCServerTest {
         bean.setFloat32Data(3.14f);
         bean.setFloat64Data(4.15);
         bean.setByteData(bytes);
-        bean.setStringData("12345");
+        bean.setStringData("1234567890");
+        bean.setTimeData(12L);
+        bean.setDateData(LocalDate.of(2023, 5, 15));
+        bean.setTimeOfDayData(LocalTime.of(20, 22, 13));
         s7Serializer.write(bean);
         bean = s7Serializer.read(DemoBean.class);
-        assertTrue(bean.isBitData());
-        assertEquals(42767, bean.getUint16Data());
-        assertEquals((short) 32767, bean.getInt16Data());
-        assertEquals(3147483647L, bean.getUint32Data());
-        assertEquals(2147483647, bean.getInt32Data());
+        assertTrue(bean.getBitData());
+        assertEquals(42767, bean.getUint16Data().intValue());
+        assertEquals((short) 32767, bean.getInt16Data().intValue());
+        assertEquals(3147483647L, bean.getUint32Data().longValue());
+        assertEquals(2147483647, bean.getInt32Data().intValue());
         assertEquals(3.14f, bean.getFloat32Data(), 0.001);
         assertEquals(4.15, bean.getFloat64Data(), 0.001);
         assertArrayEquals(bytes, bean.getByteData());
+        assertEquals("1234567890", bean.getStringData());
+        assertEquals(12, bean.getTimeData().longValue());
+        assertEquals(LocalDate.of(2023, 5, 15), bean.getDateData());
+        assertEquals(LocalTime.of(20, 22, 13), bean.getTimeOfDayData());
     }
 
     @Test
@@ -110,7 +119,7 @@ public class S7PLCServerTest {
 
     @Test
     public void writeStringTest() {
-        this.s7PLC.writeString("DB1.10","123456");
+        this.s7PLC.writeString("DB1.10", "123456");
         String actual = this.s7PLC.readString("DB1.10", 6);
         assertEquals("123456", actual);
     }

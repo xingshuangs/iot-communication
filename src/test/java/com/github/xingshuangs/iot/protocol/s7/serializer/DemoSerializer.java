@@ -4,6 +4,9 @@ package com.github.xingshuangs.iot.protocol.s7.serializer;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import com.github.xingshuangs.iot.protocol.s7.service.S7PLC;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 /**
  * 测试
  *
@@ -18,7 +21,7 @@ public class DemoSerializer {
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
 
         // 小数据量的读写
-        DemoBean bean = s7Serializer.read(DemoBean.class);
+        DemoBean bean = new DemoBean();
         bean.setBitData(true);
         bean.setUint16Data(42767);
         bean.setInt16Data((short) 32767);
@@ -28,7 +31,11 @@ public class DemoSerializer {
         bean.setFloat64Data(4.15);
         bean.setByteData(new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03});
         bean.setStringData("1234567890");
+        bean.setTimeData(12L);
+        bean.setDateData(LocalDate.of(2023, 5, 15));
+        bean.setTimeOfDayData(LocalTime.of(20, 22, 13));
         s7Serializer.write(bean);
+        bean = s7Serializer.read(DemoBean.class);
 
         // 大数据量的读写
         DemoLargeBean largeBean = s7Serializer.read(DemoLargeBean.class);

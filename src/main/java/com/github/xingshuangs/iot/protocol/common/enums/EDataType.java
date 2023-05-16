@@ -27,7 +27,22 @@ public enum EDataType {
 
     FLOAT64("float64", 8),
 
-    STRING("string", 1);
+    STRING("string", 1),
+
+    /**
+     * 目前只对S7协议使用，对应的JAVA类型long
+     */
+    TIME("time", 4),
+
+    /**
+     * 目前只对S7协议使用，对应的JAVA类型LocalDate
+     */
+    DATE("date", 2),
+
+    /**
+     * 目前只对S7协议使用，对应的JAVA类型LocalTime
+     */
+    TIME_OF_DAY("timeOfDay", 4);
 
 //    UNKNOWN("unknown", 0);
 

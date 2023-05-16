@@ -356,7 +356,7 @@ public class S7PLC extends PLCNetwork {
      */
     public String readString(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 2));
-        int total = ByteUtil.toUInt8(dataItem.getData(), 0);
+//        int total = ByteUtil.toUInt8(dataItem.getData(), 0);
 //        if (total == 0 || total == 255) {
 //            throw new S7CommException("该地址的值不是字符串类型");
 //        }
@@ -377,7 +377,7 @@ public class S7PLC extends PLCNetwork {
             throw new IllegalArgumentException("length <= 0 || length > 254");
         }
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 2 + length));
-        int total = ByteUtil.toUInt8(dataItem.getData(), 0);
+//        int total = ByteUtil.toUInt8(dataItem.getData(), 0);
 //        if (total == 0 || total == 255) {
 //            throw new S7CommException("该地址的值不是字符串类型");
 //        }
