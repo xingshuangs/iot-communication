@@ -19,7 +19,8 @@ public class S7SerializerTest {
 
     @Test
     public void read() {
-        s7PLC.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
+        s7PLC.setComCallback(x -> System.out.printf("长度[%d]:%s%n", x.length, HexUtil.toHexString(x)));
+//        s7PLC.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
         DemoBean bean = s7Serializer.read(DemoBean.class);
         log.info(bean.toString());
@@ -65,6 +66,7 @@ public class S7SerializerTest {
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
         DemoLargeBean bean = s7Serializer.read(DemoLargeBean.class);
         System.out.println("-------------------------------");
+        bean.setBitData(true);
         bean.getByteData2()[0] = (byte) 0x05;
         bean.getByteData3()[0] = (byte) 0x05;
         bean.getByteData4()[0] = (byte) 0x05;

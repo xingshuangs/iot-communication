@@ -4,6 +4,13 @@
 
 ## Foreword
 
+- Read-write single data and multi data, large data automatic subcontracting.
+- Read-write serialized batch multiple addresses and discontinuous address.
+- Read-write **DB**, **I**, **Q**, **M**, and **V**.
+- Read-write Siemens **S1500**, **S1200**, **S200Smart**, **Siemens Machine Tool 828D**. (**S300, S400 not tested, but
+  same as S1200**)
+- Support automatic PLC reconnection.
+
 1. You can check this [address](https://blog.csdn.net/XS_YOUYOU/article/details/124870209) if
    you're not familiar with the S7 protocol. <br>
 2. 200smartPLC, V Area == DB1.X. Example: **V1=DB1.1, V100=DB1.100**
@@ -12,20 +19,20 @@
 
 > Tips1: Format and meaning of the address, case compatible.
 
-| Abbr    | Area | Byte Index | Bit Index | PLC Type |
-|---------|:----:|:----------:|:---------:|----------|
-| DB1.1.2 | DB1  |     1      |     2     | 1200     |
-| DB2     | DB2  |     0      |     0     | 1200     |
-| DB3.3   | DB3  |     3      |     0     | 1200     |
-| D1.1.2  | DB1  |     1      |     2     | 1200     |
-| Q1.6    |  Q   |     1      |     6     | 1200     |
-| Q1      |  Q   |     1      |     0     | 1200     |
-| I2.5    |  I   |     2      |     5     | 1200     |
-| I2      |  I   |     2      |     0     | 1200     |
-| M3.2    |  M   |     3      |     2     | 1200     |
-| M3      |  M   |     3      |     0     | 1200     |
-| V2.1    |  V   |     2      |     1     | 200Smart |
-| V2      |  V   |     2      |     0     | 200Smart |
+| Abbr    | Area | Byte Index | Bit Index | PLC Type    |
+|:--------|:----:|:----------:|:---------:|:------------|
+| DB1.1.2 | DB1  |     1      |     2     | S1200/S1500 |
+| DB2     | DB2  |     0      |     0     | S1200/S1500 |
+| DB3.3   | DB3  |     3      |     0     | S1200/S1500 |
+| D1.1.2  | DB1  |     1      |     2     | S1200/S1500 |
+| Q1.6    |  Q   |     1      |     6     | S1200/S1500 |
+| Q1      |  Q   |     1      |     0     | S1200/S1500 |
+| I2.5    |  I   |     2      |     5     | S1200/S1500 |
+| I2      |  I   |     2      |     0     | S1200/S1500 |
+| M3.2    |  M   |     3      |     2     | S1200/S1500 |
+| M3      |  M   |     3      |     0     | S1200/S1500 |
+| V2.1    |  V   |     2      |     1     | S200Smart   |
+| V2      |  V   |     2      |     0     | S200Smart   |
 
 > Tips2: Access data types mapping to JAVA data types and PLC data types.
 
@@ -44,12 +51,45 @@
 | date             |        16        |         2         | LocalDate      | Date          | 2023-04-03 |
 | timeOfDay        |        32        |         4         | LocalTime      | TimeOfDay     | 10:22:11   |
 
+> Tip3: The PLC address mapping to the project address and data type
+
+| PLC Address  | Data Size in Bit | Data Size in Byte | Access Address | Access Data Type     |  PLC Type   |
+|--------------|:----------------:|:-----------------:|:---------------|:---------------------|:-----------:|
+| DB100.DBX0.0 |        1         |        1/8        | DB100.0.0      | boolean              | S1200/S1500 |
+| DB100.DBB5   |        8         |         1         | DB100.5        | byte                 | S1200/S1500 |
+| DB100.DBW6   |        16        |         2         | DB100.6        | uint16/int16         | S1200/S1500 |
+| DB100.DBD3   |        32        |         4         | DB100.3        | uint32/int32/float32 | S1200/S1500 |
+| VB100        |        8         |         1         | V100           | byte                 |  S200Smart  |
+| VW100        |        16        |         2         | V100           | uint16/int16         |  S200Smart  |
+| VD100        |        32        |         4         | V100           | uint32/int32/float32 |  S200Smart  |
+| MB1          |        8         |         1         | M1             | byte                 |      -      |
+| MW1          |        16        |         2         | M1             | uint16/int16         |      -      |
+| MD1          |        32        |         4         | M1             | uint32/int32/float32 |      -      |
+
+![S200Smart](http://www.ad.siemens.com.cn/productportal/Prods/s7-200-smart-portal/200SmartTop/programming/images/4.2.jpg)
+
+## Print Message
+
+If you want to know the actual input and output of packets during communication, you can print packet information.
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+        // print message
+        s7PLC.setComCallback(x -> System.out.printf("Length[%d]:%s%n", x.length, HexUtil.toHexString(x)));
+        s7PLC.readByte("DB2.1");
+        s7PLC.close();
+    }
+}
+```
+
 ## Communication Connection
 
 - By default, the long connection mode is adopted. You need to close connection manually when it is not in use.
 - If a short connection is required, you need to set it manually.
 
-### 1. Long Connection Mode
+### 1. Long Connection Mode (**Recommend**)
 
 ```java
 class Demo {
@@ -58,7 +98,7 @@ class Demo {
         S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
         s7PLC.writeByte("DB2.1", (byte) 0x11);
         s7PLC.readByte("DB2.1");
-        // close it manually
+        // close it manually, if you want to use it all the time, you do not need to close it
         s7PLC.close();
     }
 }
@@ -79,7 +119,7 @@ class Demo {
 }
 ```
 
-## Client Tutorial
+## Client Tutorial (S7Any address)
 
 ### 1. Direct Mode Read-write
 
@@ -226,16 +266,38 @@ class Demo {
 class Demo {
     public static void main(String[] args) {
         S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+
         // bit data read-write
         byte[] expect = new byte[]{(byte) 0x00};
-        this.s7PLC.writeRaw(EParamVariableType.BIT, 1, EArea.DATA_BLOCKS, 1, 0, 3,
+        s7PLC.writeRaw(EParamVariableType.BIT, 1, EArea.DATA_BLOCKS, 1, 0, 3,
                 EDataVariableType.BIT, expect);
-        byte[] actual = this.s7PLC.readRaw(EParamVariableType.BIT, 1, EArea.DATA_BLOCKS, 1, 0, 3);
+        byte[] actual = s7PLC.readRaw(EParamVariableType.BIT, 1, EArea.DATA_BLOCKS, 1, 0, 3);
+
         // byte data read-write
         expect = new byte[]{(byte) 0x02, (byte) 0x03};
-        this.s7PLC.writeRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0,
+        s7PLC.writeRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0,
                 EDataVariableType.BYTE_WORD_DWORD, expect);
-        actual = this.s7PLC.readRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0);
+        byte[] actual1 = s7PLC.readRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0);
+
+        // send with object
+        RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 23, 1, ENckModule.S, 1);
+        S7Data s7Data = NckRequestBuilder.creatNckRequest(item);
+        S7Data ackData = s7PLC.readFromServerByPersistence(s7Data);
+
+        // send with raw message
+        byte[] sendByteArray = new byte[]{
+                // tpkt
+                (byte) 0x03, (byte) 0x00, (byte) 0x00, (byte) 0x1D,
+                // cotp DT Data
+                (byte) 0x02, (byte) 0xF0, (byte) 0x80,
+                // header
+                (byte) 0x32, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x0C, (byte) 0x00, (byte) 0x00,
+                // parameter
+                (byte) 0x04, (byte) 0x01,
+                // request item
+                (byte) 0x12, (byte) 0x08, (byte) 0x82, (byte) 0x41, (byte) 0x00, (byte) 0x03, (byte) 0x00, (byte) 0x01, (byte) 0x7f, (byte) 0x01
+        };
+        byte[] recByteArray = s7PLC.readFromServerByPersistence(sendByteArray);
 
         s7PLC.close();
     }
@@ -374,7 +436,7 @@ class Demo {
 }
 ```
 
-## Server Tutorial
+## Server Tutorial (S7Any address)
 
 - By default, the server supports area I, Q, M, T, C and DB1, each includes 65536 bytes.
 - The server can customize the DB area and add it at will.
@@ -419,7 +481,7 @@ class Demo {
 }
 ```
 
-## Siemens Machine Tool Tutorial
+## Siemens Machine Tool Tutorial(NCK address)
 
 ```java
 class Demo {
@@ -448,3 +510,31 @@ class Demo {
     }
 }
 ```
+
+## Q&A
+
+> 1、Why can PLC write data but checkConnected return always false?
+
+Communication uses lazy loading. The connection is triggered only when reading or writing.<br> CheckConnected return
+true
+after reading or writing.
+
+> 2、Maximum read/write data byte size during PLC communication?
+
+According to different types of PLC PDULength, S1200=240, S1500=960. In a word there are 240, 480, 960<br>
+The maximum read byte array size is 240-18=222, 480-18=462, 960-18=942<br>
+
+```text
+According to the test S1200[CPU 1214C], read multiple bytes in a single time
+Send：The maximum byte read length is 216 = 240 - 24, 24(request PDU)=10(header)+14(parameter)
+Receive：The maximum byte read length is 222 = 240 - 18, 18(response PDU)=12(header)+2(parameter)+4(dataItem)
+
+According to the test S1200[CPU 1214C], write multiple bytes in a single time
+Send：The maximum byte write length is 212 = 240 - 28, 28(request PDU)=10(header)+14(parameter)+4(dataItem)
+Receive：The maximum byte write length is 225 = 240 - 15, 15(response PDU)=12(header)+2(parameter)+1(dataItem)
+```
+
+> 3、What about getting exceptions after PLC shutdown and automatically connecting after PLC restart?
+
+Internal support for disconnection reconnects.<br> If the PLC has been disconnected, the reconnection is
+triggered in each time of reading and writing operation.

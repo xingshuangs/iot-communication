@@ -1,6 +1,6 @@
 # IOT-COMMUNICATION
 
-![Maven-v1.2.7](https://img.shields.io/badge/Maven-v1.2.7-brightgreen)
+[![Maven-v1.3.0](https://img.shields.io/badge/Maven-v1.3.0-brightgreen)](https://mvnrepository.com/artifact/com.github.xingshuangs/iot-communication)
 ![Language-java8](https://img.shields.io/badge/Language-java8-blue)
 ![Idea-2022.02.03](https://img.shields.io/badge/Idea-2022.02.03-lightgrey)
 ![CopyRight-Oscura](https://img.shields.io/badge/CopyRight-Oscura-yellow)
@@ -14,7 +14,7 @@
 
 目前它只是一个物联网通信的工具，包含
 
-- 西门子S7通信协议(可以访问西门子S1500，S1200，S200smart);
+- 西门子S7通信协议(可以访问西门子**S1500**，**S1200**，**S200smart**，**西门子机床828D**);
 - ModbusTCP通信协议;
 - 基础字节数组解析转换工具;
 
@@ -28,7 +28,7 @@
 <dependency>
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
-    <version>1.2.7</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
