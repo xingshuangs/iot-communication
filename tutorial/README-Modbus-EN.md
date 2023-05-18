@@ -10,6 +10,7 @@
 - **1** register address = **2** bytes;
 - [ register start address = **0001** ] equal to [ access address = **0** ], there is a **1** address offset;
 - The encoding format of **4 bytes** data = **BA_DC**; (big-endian mode = **DC_BA**，little-endian mode = **AB_CD**)
+- Supports automatic reconnection
 
 > Area
 
