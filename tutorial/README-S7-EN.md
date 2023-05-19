@@ -339,7 +339,8 @@ public class DemoBean {
     @S7Variable(address = "DB1.28", type = EDataType.BYTE, count = 3)
     private byte[] byteData;
 
-    // Note: The actual total length is 12, not 10, 31 + 12 = 43. If there are other fields after the string, you need to reserve 2 more bytes of data
+    // Note: The actual total length is 12, not 10, 31 + 12 = 43. 
+    // If there are other fields after the string, you need to reserve 2 more bytes of data
     @S7Variable(address = "DB1.31", type = EDataType.STRING, count = 10)
     private String stringData;
 
@@ -516,22 +517,21 @@ class Demo {
 > 1、Why can PLC write data but checkConnected return always false?
 
 Communication uses lazy loading. The connection is triggered only when reading or writing.<br> CheckConnected return
-true
-after reading or writing.
+true after reading or writing.
 
 > 2、Maximum read/write data byte size during PLC communication?
 
-According to different types of PLC PDULength, S1200=240, S1500=960. In a word there are 240, 480, 960<br>
-The maximum read byte array size is 240-18=222, 480-18=462, 960-18=942<br>
+According to different types of PLC PDULength, S1200=240, S1500=960. In a word there are 240, 480, 960.<br>
+The maximum read byte array size is 240-18=222, 480-18=462, 960-18=942.<br>
 
 ```text
 According to the test S1200[CPU 1214C], read multiple bytes in a single time
-Send：The maximum byte read length is 216 = 240 - 24, 24(request PDU)=10(header)+14(parameter)
-Receive：The maximum byte read length is 222 = 240 - 18, 18(response PDU)=12(header)+2(parameter)+4(dataItem)
+Send：The maximum byte read length is 216 = 240 - 24, 24(request PDU) = 10(header) + 14(parameter)
+Receive：The maximum byte read length is 222 = 240 - 18, 18(response PDU) = 12(header) + 2(parameter) + 4(dataItem)
 
 According to the test S1200[CPU 1214C], write multiple bytes in a single time
-Send：The maximum byte write length is 212 = 240 - 28, 28(request PDU)=10(header)+14(parameter)+4(dataItem)
-Receive：The maximum byte write length is 225 = 240 - 15, 15(response PDU)=12(header)+2(parameter)+1(dataItem)
+Send：The maximum byte write length is 212 = 240 - 28, 28(request PDU) = 10(header) + 14(parameter) + 4(dataItem)
+Receive：The maximum byte write length is 225 = 240 - 15, 15(response PDU) = 12(header) + 2(parameter) + 1(dataItem)
 ```
 
 > 3、What about getting exceptions after PLC shutdown and automatically connecting after PLC restart?
