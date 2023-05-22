@@ -4,10 +4,10 @@
 
 ## Foreword
 
-- Read-write single data and multi data, large data automatic subcontracting.
-- Read-write serialized batch multiple addresses and discontinuous address.
-- Read-write **DB**, **I**, **Q**, **M**, and **V**.
-- Read-write Siemens **S1500**, **S1200**, **S200Smart**, **Siemens Machine Tool 828D**. (**S300, S400 not tested, but
+- Read/write single data and multi data, large data automatic subcontracting.
+- Read/write serialized batch multiple addresses and discontinuous address.
+- Read/write **DB**, **I**, **Q**, **M**, and **V**.
+- Read/write Siemens **S1500**, **S1200**, **S200Smart**, **Siemens Machine Tool 828D**. (**S300, S400 not tested, but
   same as S1200**)
 - Support automatic PLC reconnection.
 
@@ -70,7 +70,8 @@
 
 ## Print Message
 
-If you want to know the actual input and output of packets during communication, you can print packet information.
+If you want to know the actual input and output of packets during communication, you can print packet information by
+yourself.
 
 ```java
 class Demo {
@@ -306,7 +307,7 @@ class Demo {
 
 ### 3. Serializer Mode Read-write
 
-Support BOOL UINT16 INT16 UINT32 INT32 FLOAT32 FLOAT64 STRING read-write.
+Support BOOL, UINT16, INT16, UINT32, INT32, FLOAT32, FLOAT64, STRING, TIME, DATE, TIME_OF_DAY read-write.
 
 Create small size data class.
 
@@ -390,7 +391,7 @@ public class DemoLargeBean {
 }
 ```
 
-Read and write
+Read and write.
 
 ```java
 class Demo {
@@ -439,7 +440,7 @@ class Demo {
 
 ## Server Tutorial (S7Any address)
 
-- By default, the server supports area I, Q, M, T, C and DB1, each includes 65536 bytes.
+- By default, the server supports area I, Q, M, T, C and DB1, each area includes 65536 bytes.
 - The server can customize the DB area and add it at will.
 - Currently, only read and write operations are supported.
 
@@ -514,15 +515,15 @@ class Demo {
 
 ## Q&A
 
-> 1、Why can PLC write data but checkConnected return always false?
+> 1、Why can PLC write data but checkConnected function return always false?
 
-Communication uses lazy loading. The connection is triggered only when reading or writing.<br> CheckConnected return
-true after reading or writing.
+Communication uses lazy loading. The connection is triggered only when reading or writing. CheckConnected function
+will return true after reading or writing.
 
 > 2、Maximum read/write data byte size during PLC communication?
 
-According to different types of PLC PDULength, S1200=240, S1500=960. In a word there are 240, 480, 960.<br>
-The maximum read byte array size is 240-18=222, 480-18=462, 960-18=942.<br>
+Depend on different types of PLC PDULength, S1200 = 240, S1500 = 960. In a word there are 240, 480, 960.<br>
+The maximum read byte array size is  222 = 240 - 18, 462 = 480 - 18, 942 = 960 - 18.<br>
 
 ```text
 According to the test S1200[CPU 1214C], read multiple bytes in a single time
@@ -534,7 +535,7 @@ Send：The maximum byte write length is 212 = 240 - 28, 28(request PDU) = 10(hea
 Receive：The maximum byte write length is 225 = 240 - 15, 15(response PDU) = 12(header) + 2(parameter) + 1(dataItem)
 ```
 
-> 3、What about getting exceptions after PLC shutdown and automatically connecting after PLC restart?
+> 3、What about getting exceptions after PLC shutdown and automatically connecting after PLC restarts?
 
-Internal support for disconnection reconnects.<br> If the PLC has been disconnected, the reconnection is
+Disconnection reconnects is supported. If the PLC has been disconnected, the reconnection is
 triggered in each time of reading and writing operation.

@@ -6,11 +6,11 @@
 
 > Tips
 
-- **1** coil = **1** bit
-- **1** register address = **2** bytes;
-- [ register start address = **0001** ] equal to [ access address = **0** ], there is a **1** address offset;
-- The encoding format of **4 bytes** data = **BA_DC**; (big-endian mode = **DC_BA**，little-endian mode = **AB_CD**)
-- Supports automatic reconnection
+- **1** coil = **1** bit.
+- **1** register address = **2** bytes.
+- [ register start address = **0001** ] equal to [ access address = **0** ], there is a **1** address offset.
+- The encoding format of **4 bytes** data = **BA_DC**. (big-endian mode = **DC_BA**，little-endian mode = **AB_CD**)
+- Support automatic reconnection.
 
 > Area
 
@@ -56,7 +56,7 @@
 
 ## Print Message
 
-If you want to know the actual input and output of packets during communication, you can print packet information.
+If you want to know the actual input and output of packets during communication, you can print packet information by yourself.
 
 ```java
 class Demo {

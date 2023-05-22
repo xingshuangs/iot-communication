@@ -304,7 +304,7 @@ class Demo {
 
 ### 3. 序列化方式读写
 
-支持BOOL UINT16 INT16 UINT32 INT32 FLOAT32 FLOAT64 STRING等数据类型读写
+支持BOOL UINT16 INT16 UINT32 INT32 FLOAT32 FLOAT64 STRING TIME DATE TIME_OF_DAY等数据类型读写
 
 构建数据量比较小的数据类
 
@@ -513,12 +513,12 @@ class Demo {
 
 > 1、为什么PLC能写入数据，但是checkConnected 却是false呢？
 
-通信采用懒加载，读写的时候才会触发连接，将checkConnected放在write或read后就变成true
+通信采用懒加载，读写的时候才会触发连接，将checkConnected放在write或read后就变成true。
 
 > 2、PLC通信过程中最大的读写数据字节大小？
 
-PLC的网络通信，根据不同型号PLC的PDULength而定，S1200=240，S1500=960，总之有240,480,960<br>
-最大读取字节数组大小是240-18=222，480-18=462，960-18=942<br>
+PLC的网络通信，根据不同型号PLC的PDULength而定，S1200=240，S1500=960，总之有240, 480, 960。<br>
+最大读取字节数组大小是222 = 240 - 18, 462 = 480 - 18, 942 = 960 - 18。<br>
 
 ```text
 根据测试S1200[CPU 1214C]，单次读多字节

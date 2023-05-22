@@ -10,11 +10,11 @@
 
 ## Overview
 
-**If this helps you, please give the author a :star: .**<br>
+**If this project helps you, please give the author a :star: .**<br>
 
 Now, it is a tool for iot communication, it includes
 
-- Siemens S7 protocol, it can access to **S1500**, **S1200**, **S200smart**, **Siemens Machine Tool 828D**.
+- Siemens S7 protocol.
 - ModbusTCP protocol.
 - Parse byte array data.
 
@@ -22,7 +22,7 @@ Now, it is a tool for iot communication, it includes
 
 ### 1. How to get
 
-Add the dependency to pom.xml in the JAVA project
+Add the dependency to pom.xml in the JAVA project.
 
 ```xml
 <dependency>
@@ -53,9 +53,9 @@ class Demo {
 
 ## Tutorial
 
-- [Siemens S7 Protocol Tutorial](./tutorial/README-S7-EN.md)
-- [ModbusTCP Protocol Tutorial](./tutorial/README-Modbus-EN.md)
-- [Tool for Byte Array Data Parse Tutorial](./tutorial/README-ByteArray-EN.md)
+- [Siemens S7 Protocol Tutorial.](./tutorial/README-S7-EN.md)
+- [ModbusTCP Protocol Tutorial.](./tutorial/README-Modbus-EN.md)
+- [Tool for Byte Array Data Parse Tutorial.](./tutorial/README-ByteArray-EN.md)
 
 ## Contact
 

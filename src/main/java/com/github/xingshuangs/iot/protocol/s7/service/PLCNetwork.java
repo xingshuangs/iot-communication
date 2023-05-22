@@ -334,8 +334,8 @@ public class PLCNetwork extends TcpClientBasic {
                 .collect(Collectors.toList());
 
         // 根据顺序分组算法得出分组结果，
-        // 发送： 12=10(header)+2(parameter前),12(parameter后) （采用)
-        // 接收： 14=12(header)+2(parameter),5(DataItem)，dataItem可能4或5，统一采用5  (不采用)
+        // 发送： 12=10(header)+2(parameter前),12(parameter后)
+        // 接收： 14=12(header)+2(parameter),5(DataItem)，dataItem可能4或5，统一采用5
         List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.readRecombination(rawNumbers, this.pduLength - 14, 5, 12);
         try {
             s7ComGroups.forEach(x -> {
@@ -404,8 +404,8 @@ public class PLCNetwork extends TcpClientBasic {
         List<Integer> rawNumbers = requestItems.stream().map(RequestItem::getCount).collect(Collectors.toList());
 
         // 根据顺序分组算法得出分组结果
-        // 发送：12=10(header)+2(parameter前),17=12(parameter后)+5(dataItem)，dataItem可能4或5，统一采用5 （采用)
-        // 接收：14=12(header)+2(parameter),1(DataItem)  (不采用)
+        // 发送：12=10(header)+2(parameter前),17=12(parameter后)+5(dataItem)，dataItem可能4或5，统一采用5
+        // 接收：14=12(header)+2(parameter),1(DataItem)
         List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.writeRecombination(rawNumbers, this.pduLength - 12, 17);
         try {
             s7ComGroups.forEach(x -> {
