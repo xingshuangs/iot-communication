@@ -57,5 +57,6 @@ public class RtspClient extends RtspNetwork {
     public void disconnect() {
         this.teardown();
         this.alive = false;
+        this.close();
     }
 }

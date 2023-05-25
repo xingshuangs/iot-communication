@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Transport: RTP/AVP;unicast;client_port=57844-57845
+ *
  * @author xingshuang
  */
 @Data

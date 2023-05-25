@@ -4,8 +4,10 @@ package com.github.xingshuangs.iot.protocol.rtsp.service;
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import com.github.xingshuangs.iot.net.ICommunicable;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
-import com.github.xingshuangs.iot.net.client.UdpClientSample;
 import com.github.xingshuangs.iot.protocol.rtcp.service.RtcpUdpClient;
+import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
+import com.github.xingshuangs.iot.protocol.rtp.model.frame.RawFrame;
+import com.github.xingshuangs.iot.protocol.rtp.service.RtpUdpClient;
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.DigestAuthenticator;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspAcceptContent;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspMethod;
@@ -16,7 +18,6 @@ import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspSessionInfo;
 import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspTransport;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdp;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdpMedia;
-import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.attribute.RtspSdpMediaAttrControl;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -83,12 +84,16 @@ public class RtspNetwork extends TcpClientBasic {
      */
     private Consumer<String> commCallback;
 
-    private Consumer<byte[]> rtpCallback;
+    private Consumer<RawFrame> rtpCallback;
 
     private Consumer<byte[]> rtcpCallback;
 
     public void setCommCallback(Consumer<String> commCallback) {
         this.commCallback = commCallback;
+    }
+
+    public void setRtpCallback(Consumer<RawFrame> rtpCallback) {
+        this.rtpCallback = rtpCallback;
     }
 
     public RtspNetwork(URI uri) {
@@ -100,6 +105,13 @@ public class RtspNetwork extends TcpClientBasic {
         super(uri.getHost(), uri.getPort());
         this.uri = uri;
         this.authenticator = authenticator;
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        this.socketClients.forEach((key, value) -> value.close());
+        this.socketClients.clear();
     }
 
     private RtspMessageResponse readFromServer(RtspMessageRequest req) {
@@ -214,10 +226,9 @@ public class RtspNetwork extends TcpClientBasic {
                 continue;
             }
 
-            UdpClientSample rtpClient = new UdpClientSample();
+            RtpUdpClient rtpClient = new RtpUdpClient();
             RtcpUdpClient rtcpClient = new RtcpUdpClient();
-            RtspSdpMediaAttrControl control = media.getAttributeControl();
-            URI actualUri = URI.create(control.getUri());
+            URI actualUri = URI.create(media.getAttributeControl().getUri());
             RtspTransport reqTransport = new RtspTransport();
             reqTransport.setProtocol(this.sdp.getMedias().get(0).getMediaDesc().getProtocol());
             reqTransport.setCastMode("unicast");
@@ -234,9 +245,15 @@ public class RtspNetwork extends TcpClientBasic {
             this.sessionInfo = response.getSessionInfo();
             // socket客户端配置
             rtpClient.bindServer(this.uri.getHost(), this.transport.getRtpServerPort());
-            rtpClient.bindServer(this.uri.getHost(), this.transport.getRtcpServerPort());
+            rtcpClient.bindServer(this.uri.getHost(), this.transport.getRtcpServerPort());
+
+            if (this.rtpCallback != null && media.getMediaDesc().getType().equals("video")) {
+                this.rtpCallback.accept(H264VideoFrame.createSpsFrame(media.getAttributeFmtp().getSps()));
+                this.rtpCallback.accept(H264VideoFrame.createPpsFrame(media.getAttributeFmtp().getPps()));
+            }
             rtpClient.triggerReceive();
             rtcpClient.triggerReceive();
+            // 设置成功后，存储一下
             this.socketClients.put(rtpClient.getLocalPort(), rtcpClient);
             this.socketClients.put(rtcpClient.getLocalPort(), rtcpClient);
         }
