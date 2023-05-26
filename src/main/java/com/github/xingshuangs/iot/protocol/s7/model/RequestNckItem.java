@@ -24,13 +24,13 @@ public class RequestNckItem extends RequestBaseItem {
         this.syntaxId = ESyntaxID.NCK;
     }
 
-    public RequestNckItem(ENckArea area, int uint, int columnNumber, int lineNumber, ENckModule module, int lineCount) {
+    public RequestNckItem(ENckArea area, int unit, int columnNumber, int lineNumber, ENckModule module, int lineCount) {
         this.specificationType = (byte) 0x12;
         this.lengthOfFollowing = 0x08;
         this.syntaxId = ESyntaxID.NCK;
 
         this.area = area;
-        this.uint = uint;
+        this.unit = unit;
         this.columnNumber = columnNumber;
         this.lineNumber = lineNumber;
         this.module = module;
@@ -45,11 +45,11 @@ public class RequestNckItem extends RequestBaseItem {
     private ENckArea area = ENckArea.N_NCK;
 
     /**
-     * 单位 <br>
+     * 通道编号 <br>
      * 字节大小：1 <br>
      * 字节序数：4
      */
-    private int uint = 0x0000;
+    private int unit = 0x0000;
 
     /**
      * 列编号 <br>
@@ -87,7 +87,7 @@ public class RequestNckItem extends RequestBaseItem {
     @Override
     public byte[] toByteArray() {
         byte areaAndUint = (byte) (((this.area.getCode() << 5) & (byte) 0xE0)
-                | (this.uint & (byte) 0x1F));
+                | (this.unit & (byte) 0x1F));
         return ByteWriteBuff.newInstance(BYTE_LENGTH)
                 .putByte(this.specificationType)
                 .putByte(this.lengthOfFollowing)
@@ -111,7 +111,7 @@ public class RequestNckItem extends RequestBaseItem {
         requestItem.lengthOfFollowing = this.lengthOfFollowing;
         requestItem.syntaxId = this.syntaxId;
         requestItem.area = this.area;
-        requestItem.uint = this.uint;
+        requestItem.unit = this.unit;
         requestItem.columnNumber = this.columnNumber;
         requestItem.lineNumber = this.lineNumber;
         requestItem.module = this.module;
@@ -138,7 +138,7 @@ public class RequestNckItem extends RequestBaseItem {
         requestItem.syntaxId = ESyntaxID.from(buff.getByte());
         byte areaAndUnit = buff.getByte();
         requestItem.area = ENckArea.from((byte) ((areaAndUnit & (byte) 0xE0) >> 5));
-        requestItem.uint = areaAndUnit & (byte) 0x1F;
+        requestItem.unit = areaAndUnit & (byte) 0x1F;
         requestItem.columnNumber = buff.getUInt16();
         requestItem.lineNumber = buff.getUInt16();
         requestItem.module = ENckModule.from(buff.getByte());
@@ -150,7 +150,7 @@ public class RequestNckItem extends RequestBaseItem {
     public static RequestNckItem createByParams(ENckArea area, int unit, int columnNumber, int lineNumber, ENckModule module, int lineCount) {
         RequestNckItem requestItem = new RequestNckItem();
         requestItem.area = area;
-        requestItem.uint = unit;
+        requestItem.unit = unit;
         requestItem.columnNumber = columnNumber;
         requestItem.lineNumber = lineNumber;
         requestItem.module = module;
