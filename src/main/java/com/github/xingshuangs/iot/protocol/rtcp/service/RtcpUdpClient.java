@@ -45,7 +45,7 @@ public class RtcpUdpClient extends UdpClientBasic {
     }
 
     private void waitForReceiveData() {
-        log.debug("开启接收数据线程，远程的IP:{}，端口号：{}", this.serverAddress.getHostName(), this.serverAddress.getPort());
+        log.debug("RTCP开启接收数据线程，远程的IP:{}，端口号：{}", this.serverAddress.getHostName(), this.serverAddress.getPort());
         while (!this.terminal) {
             try {
                 byte[] data = this.getReceiveData();
@@ -54,6 +54,14 @@ public class RtcpUdpClient extends UdpClientBasic {
                 }
                 List<RtcpBasePackage> basePackages = RtcpPackageBuilder.fromBytes(data);
                 basePackages.forEach(x -> log.debug("RTCP接收数据，{}", x));
+                for (RtcpBasePackage basePackage : basePackages) {
+                    switch (basePackage.getHeader().getPackageType()){
+                        case SR:
+                            break;
+                        case BYE:
+                            break;
+                    }
+                }
             } catch (Exception e) {
                 log.error(e.getMessage());
             }

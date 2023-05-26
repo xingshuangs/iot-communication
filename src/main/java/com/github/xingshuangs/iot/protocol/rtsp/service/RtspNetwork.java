@@ -7,6 +7,8 @@ import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.protocol.rtcp.service.RtcpUdpClient;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.RawFrame;
+import com.github.xingshuangs.iot.protocol.rtp.service.H264VideoParser;
+import com.github.xingshuangs.iot.protocol.rtp.service.IPayloadParser;
 import com.github.xingshuangs.iot.protocol.rtp.service.RtpUdpClient;
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.DigestAuthenticator;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspAcceptContent;
@@ -84,7 +86,7 @@ public class RtspNetwork extends TcpClientBasic {
      */
     private Consumer<String> commCallback;
 
-    private Consumer<RawFrame> rtpCallback;
+    private Consumer<RawFrame> frameHandle;
 
     private Consumer<byte[]> rtcpCallback;
 
@@ -92,8 +94,8 @@ public class RtspNetwork extends TcpClientBasic {
         this.commCallback = commCallback;
     }
 
-    public void setRtpCallback(Consumer<RawFrame> rtpCallback) {
-        this.rtpCallback = rtpCallback;
+    public void setFrameHandle(Consumer<RawFrame> frameHandle) {
+        this.frameHandle = frameHandle;
     }
 
     public RtspNetwork(URI uri) {
@@ -110,8 +112,7 @@ public class RtspNetwork extends TcpClientBasic {
     @Override
     public void close() {
         super.close();
-        this.socketClients.forEach((key, value) -> value.close());
-        this.socketClients.clear();
+        this.clearSocketConnection();
     }
 
     private RtspMessageResponse readFromServer(RtspMessageRequest req) {
@@ -225,9 +226,13 @@ public class RtspNetwork extends TcpClientBasic {
             if (!media.getMediaDesc().getType().equals("video")) {
                 continue;
             }
-
-            RtpUdpClient rtpClient = new RtpUdpClient();
+            // TODO: 这里可能存在不同的负载解析器
+            IPayloadParser iPayloadParser = new H264VideoParser();
+            RtpUdpClient rtpClient = new RtpUdpClient(iPayloadParser);
+            rtpClient.setFrameHandle(this::doFrameHandle);
             RtcpUdpClient rtcpClient = new RtcpUdpClient();
+
+            // 构建RtspTransport
             URI actualUri = URI.create(media.getAttributeControl().getUri());
             RtspTransport reqTransport = new RtspTransport();
             reqTransport.setProtocol(this.sdp.getMedias().get(0).getMediaDesc().getProtocol());
@@ -235,21 +240,22 @@ public class RtspNetwork extends TcpClientBasic {
             reqTransport.setRtpClientPort(rtpClient.getLocalPort());
             reqTransport.setRtcpClientPort(rtcpClient.getLocalPort());
 
+            // 发送Setup
             RtspSetupRequest request = this.needAuthorization ? new RtspSetupRequest(actualUri, reqTransport, this.authenticator)
                     : new RtspSetupRequest(actualUri, reqTransport);
             RtspSetupResponse response = (RtspSetupResponse) this.readFromServer(request);
-
             this.checkAfterResponse(response, ERtspMethod.SETUP);
-
+            // 更新Transport和Session信息
             this.transport = response.getTransport();
             this.sessionInfo = response.getSessionInfo();
+
             // socket客户端配置
             rtpClient.bindServer(this.uri.getHost(), this.transport.getRtpServerPort());
             rtcpClient.bindServer(this.uri.getHost(), this.transport.getRtcpServerPort());
-
-            if (this.rtpCallback != null && media.getMediaDesc().getType().equals("video")) {
-                this.rtpCallback.accept(H264VideoFrame.createSpsFrame(media.getAttributeFmtp().getSps()));
-                this.rtpCallback.accept(H264VideoFrame.createPpsFrame(media.getAttributeFmtp().getPps()));
+            // 发送SPS和PPS
+            if (this.frameHandle != null && media.getMediaDesc().getType().equals("video")) {
+                this.frameHandle.accept(H264VideoFrame.createSpsFrame(media.getAttributeFmtp().getSps()));
+                this.frameHandle.accept(H264VideoFrame.createPpsFrame(media.getAttributeFmtp().getPps()));
             }
             rtpClient.triggerReceive();
             rtcpClient.triggerReceive();
@@ -335,6 +341,12 @@ public class RtspNetwork extends TcpClientBasic {
     private void checkAfterResponse(RtspMessageResponse response, ERtspMethod method) {
         if (response.getStatusCode() != ERtspStatusCode.OK) {
             throw new RtspCommException(String.format("RTSP[%s]交互返回状态为[%s]", method.getCode(), response.getStatusCode().getCode()));
+        }
+    }
+
+    private void doFrameHandle(RawFrame frame) {
+        if (this.frameHandle != null) {
+            this.frameHandle.accept(frame);
         }
     }
 }

@@ -34,11 +34,10 @@ public class RtpUdpClient extends UdpClientBasic {
      */
     private Consumer<RawFrame> frameHandle;
 
+    /**
+     * 负载解析器
+     */
     private IPayloadParser iPayloadParser;
-
-    public void setPayloadParser(IPayloadParser payloadParser) {
-        this.iPayloadParser = payloadParser;
-    }
 
     public void setCommCallback(Consumer<byte[]> commCallback) {
         this.commCallback = commCallback;
@@ -48,7 +47,8 @@ public class RtpUdpClient extends UdpClientBasic {
         this.frameHandle = frameHandle;
     }
 
-    public RtpUdpClient() {
+    public RtpUdpClient(IPayloadParser iPayloadParser) {
+        this.iPayloadParser = iPayloadParser;
     }
 
     public RtpUdpClient(String ip, int port) {
