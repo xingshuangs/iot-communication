@@ -485,6 +485,8 @@ class Demo {
 
 ## Siemens Machine Tool Tutorial(NCK address)
 
+### 1、Simple Mode
+
 ```java
 class Demo {
     public static void main(String[] args) {
@@ -513,6 +515,35 @@ class Demo {
 }
 ```
 
+### 2、Custom Mode
+
+The data content is in little-endian mode.
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        S7PLC s7PLC = new S7PLC(EPlcType.SINUMERIK_828D, "127.0.0.1");
+
+        // single request
+        RequestNckItem requestNckItem = new RequestNckItem(ENckArea.N_NCK, 1, 18040, 4, ENckModule.M, 1);
+        DataItem dataItem = s7PLC.readS7NckData(requestNckItem);
+        String cncType = ByteReadBuff.newInstance(dataItem.getData(), true).getString(dataItem.getCount()).trim();
+        System.out.println(cncType);
+
+        // multi request
+        List<RequestNckItem> requestNckItems = IntStream.of(1, 2, 3, 4)
+                .mapToObj(x -> new RequestNckItem(ENckArea.C_CHANNEL, 1, 2, x, ENckModule.SMA, 1))
+                .collect(Collectors.toList());
+        List<DataItem> dataItems = s7PLC.readS7NckData(requestNckItems);
+        List<Double> positions = dataItems.stream().map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat64())
+                .collect(Collectors.toList());
+        positions.forEach(System.out::println);
+
+        s7PLC.close();
+    }
+}
+```
+
 ## Q&A
 
 > 1、Why can PLC write data but checkConnected function return always false?
@@ -523,7 +554,7 @@ will return true after reading or writing.
 > 2、Maximum read/write data byte size during PLC communication?
 
 Depend on different types of PLC PDULength, S1200 = 240, S1500 = 960. In a word there are 240, 480, 960.<br>
-The maximum read byte array size is  222 = 240 - 18, 462 = 480 - 18, 942 = 960 - 18.<br>
+The maximum read byte array size is 222 = 240 - 18, 462 = 480 - 18, 942 = 960 - 18.<br>
 
 ```text
 According to the test S1200[CPU 1214C], read multiple bytes in a single time

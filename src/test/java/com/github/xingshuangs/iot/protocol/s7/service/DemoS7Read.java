@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.s7.service;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -56,6 +57,8 @@ public class DemoS7Read {
         LocalDate localDateData = s7PLC.readDate("DB1.0");
         // read time of day
         LocalTime localTimeOfDayData = s7PLC.readTimeOfDay("DB1.0");
+        // read DTL
+        LocalDateTime dateTime = s7PLC.readDTL("DB1.0");
 
         // read multi address
         MultiAddressRead addressRead = new MultiAddressRead();

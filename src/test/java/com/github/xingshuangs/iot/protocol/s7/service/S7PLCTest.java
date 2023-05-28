@@ -11,6 +11,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -19,10 +20,10 @@ import static org.junit.Assert.*;
 @Slf4j
 @Ignore
 public class S7PLCTest {
-    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
+    //    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
 //    private S7PLC s7PLC = new S7PLC(EPlcType.S1500, "192.168.3.201");
 //    private S7PLC s7PLC = new S7PLC(EPlcType.S200_SMART, "192.168.3.102");
-//    private final S7PLC s7PLC = new S7PLC(EPlcType.S1200);
+    private final S7PLC s7PLC = new S7PLC(EPlcType.S1200);
 
     @Before
     public void before() {
@@ -164,9 +165,18 @@ public class S7PLCTest {
 
     @Test
     public void writeTimeOfDay() {
-        LocalTime expect = LocalTime.of(20,15,11);
+        LocalTime expect = LocalTime.of(20, 15, 11);
         s7PLC.writeTimeOfDay("DB4.298", expect);
         LocalTime actual = s7PLC.readTimeOfDay("DB4.298");
+        assertEquals(expect, actual);
+    }
+
+    @Test
+    public void writeDTL() {
+        LocalDateTime expect = LocalDateTime.of(2023, 5, 27, 12, 11, 22, 333225555);
+        s7PLC.writeDTL("DB1.0", expect);
+
+        LocalDateTime actual = s7PLC.readDTL("DB1.0");
         assertEquals(expect, actual);
     }
 
