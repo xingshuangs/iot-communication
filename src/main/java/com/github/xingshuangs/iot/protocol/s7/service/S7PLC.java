@@ -1,15 +1,19 @@
 package com.github.xingshuangs.iot.protocol.s7.service;
 
 
-import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.s7.enums.*;
-import com.github.xingshuangs.iot.protocol.s7.model.*;
+import com.github.xingshuangs.iot.protocol.s7.model.DataItem;
+import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
+import com.github.xingshuangs.iot.protocol.s7.model.RequestNckItem;
+import com.github.xingshuangs.iot.protocol.s7.model.S7Data;
 import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
 import com.github.xingshuangs.iot.utils.*;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
@@ -436,6 +440,26 @@ public class S7PLC extends PLCNetwork {
         return LocalTime.ofSecondOfDay(value / 1000);
     }
 
+    /**
+     * 日期和时间的数据类型
+     *
+     * @param address 地址
+     * @return 日期时间
+     */
+    public LocalDateTime readDTL(String address) {
+        byte[] bytes = this.readByte(address, 12);
+        ByteReadBuff buff = ByteReadBuff.newInstance(bytes);
+        int year = buff.getUInt16();
+        int month = buff.getByteToInt();
+        int dayOfMonth = buff.getByteToInt();
+        int week = buff.getByteToInt();
+        int hour = buff.getByteToInt();
+        int minute = buff.getByteToInt();
+        int second = buff.getByteToInt();
+        long nanoOfSecond = buff.getUInt32();
+        return LocalDateTime.of(year, month, dayOfMonth, hour, minute, second, (int) nanoOfSecond);
+    }
+
     //endregion
 
     //region 写入数据
@@ -651,6 +675,26 @@ public class S7PLC extends PLCNetwork {
     public void writeTimeOfDay(String address, LocalTime time) {
         int value = time.toSecondOfDay();
         this.writeUInt32(address, (long) value * 1000);
+    }
+
+    /**
+     * 写入具体的时间
+     *
+     * @param address  地址
+     * @param dateTime LocalDateTime对象
+     */
+    public void writeDTL(String address, LocalDateTime dateTime) {
+        byte[] data = ByteWriteBuff.newInstance(12)
+                .putShort(dateTime.getYear())
+                .putByte(dateTime.getMonthValue())
+                .putByte(dateTime.getDayOfMonth())
+                .putByte(dateTime.getDayOfWeek().getValue())
+                .putByte(dateTime.getHour())
+                .putByte(dateTime.getMinute())
+                .putByte(dateTime.getSecond())
+                .putInteger(dateTime.getNano())
+                .getData();
+        this.writeByte(address, data);
     }
 
     //endregion

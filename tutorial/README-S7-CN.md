@@ -481,6 +481,8 @@ class Demo {
 
 ## 西门子机床教程(NCK寻址)
 
+### 1、简单方式
+
 ```java
 class Demo {
     public static void main(String[] args) {
@@ -503,6 +505,35 @@ class Demo {
         double remainTime = s7PLC.readRemainTime();
         String programName = s7PLC.readProgramName();
         int alarmNumber = s7PLC.readAlarmNumber();
+
+        s7PLC.close();
+    }
+}
+```
+
+### 2、自定义方式
+
+数据内容采用小端模式
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        S7PLC s7PLC = new S7PLC(EPlcType.SINUMERIK_828D, "127.0.0.1");
+
+        // single request
+        RequestNckItem requestNckItem = new RequestNckItem(ENckArea.N_NCK, 1, 18040, 4, ENckModule.M, 1);
+        DataItem dataItem = s7PLC.readS7NckData(requestNckItem);
+        String cncType = ByteReadBuff.newInstance(dataItem.getData(), true).getString(dataItem.getCount()).trim();
+        System.out.println(cncType);
+
+        // multi request
+        List<RequestNckItem> requestNckItems = IntStream.of(1, 2, 3, 4)
+                .mapToObj(x -> new RequestNckItem(ENckArea.C_CHANNEL, 1, 2, x, ENckModule.SMA, 1))
+                .collect(Collectors.toList());
+        List<DataItem> dataItems = s7PLC.readS7NckData(requestNckItems);
+        List<Double> positions = dataItems.stream().map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat64())
+                .collect(Collectors.toList());
+        positions.forEach(System.out::println);
 
         s7PLC.close();
     }
