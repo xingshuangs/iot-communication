@@ -46,12 +46,12 @@ public class RtspClientTest {
         client.setCommCallback(x -> log.debug(x));
         client.setFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
-            log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
+//            log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
         });
         client.connect();
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(3);
+                TimeUnit.SECONDS.sleep(30);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

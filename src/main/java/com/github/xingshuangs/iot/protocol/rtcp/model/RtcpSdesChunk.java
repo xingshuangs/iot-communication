@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.rtcp.model;
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.rtcp.enums.ERtcpSdesItemType;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -83,6 +84,11 @@ public class RtcpSdesChunk implements IObjectByteArray {
         len += 4;
 
         while (data.length > len + 2) {
+            // 判定是否结束
+            ERtcpSdesItemType type = ERtcpSdesItemType.from(buff.getByte(len));
+            if (type == ERtcpSdesItemType.END) {
+                break;
+            }
             RtcpSdesItem item = RtcpSdesItem.fromBytes(data, len);
             res.sdesItems.add(item);
             len += item.byteArrayLength();

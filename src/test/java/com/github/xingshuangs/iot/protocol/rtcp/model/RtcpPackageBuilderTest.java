@@ -186,4 +186,36 @@ public class RtcpPackageBuilderTest {
         actual = bye.toByteArray();
         assertArrayEquals(byeExpect, actual);
     }
+
+    @Test
+    public void receiveAndByeFromBytes1() {
+        byte[] expect = new byte[]{(byte) 0x80, (byte) 0xC8, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, (byte) 0xE8, 0x1F,
+                0x1F, (byte) 0x6B, (byte) 0xD8, 0x32, (byte) 0x87, 0x3B, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)0x81, (byte) 0xCA, 0x00, 0x07,
+                0x00, 0x00, 0x00, 0x00, 0x01, 0x09, 0x31, 0x32, 0x37, 0x2E, 0x30, 0x2E, 0x30, 0x2E,
+                0x31, 0x06, 0x09, 0x76, 0x6C, 0x63, 0x20, 0x33, 0x2E, 0x30, 0x2E, 0x35, 0x00, 0x00,
+                (byte) 0x81, (byte) 0xCB, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00};
+        List<RtcpBasePackage> basePackages = RtcpPackageBuilder.fromBytes(expect);
+        RtcpSenderReport senderReport = (RtcpSenderReport) basePackages.get(0);
+        assertEquals(2, senderReport.getHeader().getVersion());
+        assertFalse(senderReport.getHeader().isPadding());
+        assertEquals(0, senderReport.getHeader().getReceptionCount());
+        assertEquals(ERtcpPackageType.SR, senderReport.getHeader().getPackageType());
+        assertEquals(6, senderReport.getHeader().getLength());
+        assertEquals(0L, senderReport.getSourceId());
+        RtcpSdesReport sdesReport = (RtcpSdesReport) basePackages.get(1);
+        assertEquals(2, sdesReport.getHeader().getVersion());
+        assertFalse(sdesReport.getHeader().isPadding());
+        assertEquals(1, sdesReport.getHeader().getReceptionCount());
+        assertEquals(ERtcpPackageType.SDES, sdesReport.getHeader().getPackageType());
+        assertEquals(7, sdesReport.getHeader().getLength());
+
+        RtcpBye bye = (RtcpBye) basePackages.get(2);
+        assertEquals(2, bye.getHeader().getVersion());
+        assertFalse(bye.getHeader().isPadding());
+        assertEquals(1, bye.getHeader().getReceptionCount());
+        assertEquals(ERtcpPackageType.BYE, bye.getHeader().getPackageType());
+        assertEquals(1, bye.getHeader().getLength());
+        assertEquals(0L, bye.getSourceId());
+    }
 }

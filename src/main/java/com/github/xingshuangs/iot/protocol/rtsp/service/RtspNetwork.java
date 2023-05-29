@@ -29,8 +29,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CRLF;
-
 /**
  * @author xingshuang
  */

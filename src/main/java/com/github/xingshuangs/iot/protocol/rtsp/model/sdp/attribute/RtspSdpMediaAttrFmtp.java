@@ -21,7 +21,7 @@ public class RtspSdpMediaAttrFmtp {
 
     private Integer number;
 
-    private Integer profileLevelId;
+    private String profileLevelId;
 
     private Integer packetizationMode;
 
@@ -60,7 +60,7 @@ public class RtspSdpMediaAttrFmtp {
             }
             String tmp = item.substring(i1 + 1);
             if (item.substring(0, i1).equals("profile-level-id")) {
-                rtpMap.profileLevelId = Integer.parseInt(tmp);
+                rtpMap.profileLevelId = tmp;
             } else if (item.substring(0, i1).equals("packetization-mode")) {
                 rtpMap.packetizationMode = Integer.parseInt(tmp);
             } else if (item.substring(0, i1).equals("sprop-parameter-sets")) {

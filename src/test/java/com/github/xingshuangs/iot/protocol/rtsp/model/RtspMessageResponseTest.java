@@ -94,7 +94,7 @@ public class RtspMessageResponseTest {
         assertEquals(90000, media.getAttributeRtpMap().getClockFrequency().intValue());
         assertEquals("H264", media.getAttributeRtpMap().getPayloadFormat());
         assertEquals(96, media.getAttributeFmtp().getNumber().intValue());
-        assertEquals(420029, media.getAttributeFmtp().getProfileLevelId().intValue());
+        assertEquals("420029", media.getAttributeFmtp().getProfileLevelId());
         assertEquals(1, media.getAttributeFmtp().getPacketizationMode().intValue());
         assertEquals("Z00AH5Y1QKALdNwEBAQI,aO48gA==", media.getAttributeFmtp().getSpropParameterSets());
         byte[] sps = new byte[]{(byte) 0x67, (byte) 0x4D, (byte) 0x00, (byte) 0x1F, (byte) 0x96, (byte) 0x35, (byte) 0x40, (byte) 0xA0, (byte) 0x0B, (byte) 0x74, (byte) 0xDC, (byte) 0x04, (byte) 0x04, (byte) 0x04, (byte) 0x08};

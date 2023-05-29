@@ -38,11 +38,17 @@ public class RtspClient extends RtspNetwork {
 
     public void receive() {
         try {
-            if (this.methods.contains(ERtspMethod.GET_PARAMETER)) {
-                while (this.alive) {
-                    TimeUnit.SECONDS.sleep(this.sessionInfo.getTimeout() / 2);
+            if (!this.methods.contains(ERtspMethod.GET_PARAMETER)) {
+                return;
+            }
+            long lastTime = System.currentTimeMillis();
+            while (this.alive) {
+                TimeUnit.MILLISECONDS.sleep(500);
+                if (System.currentTimeMillis() - lastTime > this.sessionInfo.getTimeout() / 2) {
+                    lastTime = System.currentTimeMillis();
                     this.getParameter();
                 }
+
             }
         } catch (Exception e) {
             throw new RtspCommException(e);
@@ -58,7 +64,7 @@ public class RtspClient extends RtspNetwork {
      * 断开
      */
     public void disconnect() {
-        this.alive = false;
         this.teardown();
+        this.alive = false;
     }
 }

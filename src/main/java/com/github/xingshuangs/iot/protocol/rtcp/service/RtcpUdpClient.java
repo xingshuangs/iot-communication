@@ -65,24 +65,19 @@ public class RtcpUdpClient extends UdpClientBasic {
                 if (this.commCallback != null) {
                     this.commCallback.accept(data);
                 }
-                log.debug("{}", data);
                 List<RtcpBasePackage> basePackages = RtcpPackageBuilder.fromBytes(data);
+                basePackages.forEach(x -> log.debug("RTCP接收[{}]数据，{}", x.getHeader().getPackageType(), x));
                 for (RtcpBasePackage basePackage : basePackages) {
                     switch (basePackage.getHeader().getPackageType()) {
                         case SR:
                             this.statistics.processRtcpPackage((RtcpSenderReport) basePackage);
-                            log.debug("RTCP接收SR数据，{}", basePackage);
-                            break;
-                        case BYE:
-                            log.debug("RTCP接收BYTE数据，{}", basePackage);
                             break;
                         default:
-                            log.debug("RTCP接收其他数据，{}", basePackage);
                             break;
                     }
                 }
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                log.error(e.getMessage());
             }
         }
     }
@@ -119,11 +114,12 @@ public class RtcpUdpClient extends UdpClientBasic {
      * @param basePackage    描述
      */
     private void sendReceiverAndSdes(RtcpBasePackage receiverReport, RtcpBasePackage basePackage) {
+        log.debug("RTCP发送[{}]数据，{}", receiverReport.getHeader().getPackageType(), receiverReport);
+        log.debug("RTCP发送[{}]数据，{}", basePackage.getHeader().getPackageType(), basePackage);
         byte[] res = new byte[receiverReport.byteArrayLength() + basePackage.byteArrayLength()];
         System.arraycopy(receiverReport.toByteArray(), 0, res, 0, receiverReport.byteArrayLength());
         System.arraycopy(basePackage.toByteArray(), 0, res, receiverReport.byteArrayLength(), basePackage.byteArrayLength());
         this.write(res);
-        log.debug("发送数据1：{}，发送数据2：{}", receiverReport, basePackage);
     }
 
     /**
@@ -139,8 +135,8 @@ public class RtcpUdpClient extends UdpClientBasic {
             RtcpReceiverReport receiverReport = this.statistics.createReceiverReport();
             RtcpSdesReport sdesReport = this.statistics.createSdesReport();
             this.sendReceiverAndSdes(receiverReport, sdesReport);
+            this.lastTimeReceiveRtp = System.currentTimeMillis();
         }
-        this.lastTimeReceiveRtp = System.currentTimeMillis();
     }
 
     public void sendByte() {
