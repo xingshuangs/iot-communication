@@ -4,12 +4,14 @@ package com.github.xingshuangs.iot.protocol.rtp.model.frame;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EFrameType;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264NaluType;
+import lombok.Data;
 
 /**
  * 普通帧
  *
  * @author xingshuang
  */
+@Data
 public class H264VideoFrame extends RawFrame {
 
     /**

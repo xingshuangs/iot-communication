@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.rtcp.model;
 
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.rtcp.enums.ERtcpPackageType;
 import lombok.Data;
 
 /**
@@ -28,6 +29,19 @@ public final class RtcpBye extends RtcpBasePackage {
      * 同步源（SSRC of sender）：32比特，SR包发送者的同步源标识符。与对应RTP包中的SSRC一样。
      */
     private long sourceId;
+
+    public RtcpBye() {
+    }
+
+    public RtcpBye(long sourceId) {
+        this.header = new RtcpHeader();
+        this.header.version = 2;
+        this.header.padding = false;
+        this.header.receptionCount = 1;
+        this.header.packageType = ERtcpPackageType.BYE;
+        this.header.length = 1;
+        this.sourceId = sourceId;
+    }
 
     @Override
     public int byteArrayLength() {

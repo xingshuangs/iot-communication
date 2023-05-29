@@ -64,8 +64,8 @@ public class H264VideoParser implements IPayloadParser {
                 break;
             case FU_A:
                 H264NaluFuA naluFuA = (H264NaluFuA) h264Nalu;
-                log.debug("Mark[{}], Type[{}], start[{}], end[{}], unitType[{}]", rtp.getHeader().isMarker(), naluType,
-                        naluFuA.getFuHeader().isStart(), naluFuA.getFuHeader().isEnd(), naluFuA.getFuHeader().getType());
+//                log.debug("Mark[{}], Type[{}], start[{}], end[{}], unitType[{}]", rtp.getHeader().isMarker(), naluType,
+//                        naluFuA.getFuHeader().isStart(), naluFuA.getFuHeader().isEnd(), naluFuA.getFuHeader().getType());
 
                 if (naluFuA.getFuHeader().isStart()) {
                     this.resetBuffers();

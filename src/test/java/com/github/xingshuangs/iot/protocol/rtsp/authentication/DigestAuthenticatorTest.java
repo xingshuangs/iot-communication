@@ -51,4 +51,16 @@ public class DigestAuthenticatorTest {
         String actual = authenticator.createResponse();
         assertEquals(expect, actual);
     }
+
+    @Test
+    public void createResponse4() {
+        String expect = "Digest username=\"admin\", realm=\"IP Camera(G5366)\", nonce=\"00ea0e5bc0d4bee565d77d40502f9229\"," +
+                " uri=\"rtsp://192.168.3.142:554/h264/ch1/main/av_stream\", response=\"f5592b62173d44ecc24738e0b0ed8dfd\"";
+        UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "kilox1234");
+        DigestAuthenticator authenticator = new DigestAuthenticator(credential);
+        authenticator.addServerInfoByString("Digest realm=\"IP Camera(G5366)\", nonce=\"00ea0e5bc0d4bee565d77d40502f9229\", stale=\"FALSE\"");
+        authenticator.addClientInfo("rtsp://192.168.3.142:554/h264/ch1/main/av_stream", "DESCRIBE");
+        String actual = authenticator.createResponse();
+        assertEquals(expect, actual);
+    }
 }

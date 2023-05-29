@@ -17,8 +17,14 @@ import java.time.LocalDateTime;
 @Data
 public class RtcpSenderInfo implements IObjectByteArray {
 
+    /**
+     * NTP时间包括两部分组成，高位32bit表示秒钟：从1970开始计算
+     */
     private long mswTimestamp;
 
+    /**
+     * 低位表示剩余时间精度，一般按照1代表232皮秒来计算。
+     */
     private long lswTimestamp;
 
     /**

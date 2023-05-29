@@ -25,6 +25,17 @@ public class RtcpSdesChunk implements IObjectByteArray {
      */
     private List<RtcpSdesItem> sdesItems = new ArrayList<>();
 
+    public void addRtcpSdesItem(RtcpSdesItem item) {
+        this.sdesItems.add(item);
+    }
+
+    public RtcpSdesChunk() {
+    }
+
+    public RtcpSdesChunk(long sourceId) {
+        this.sourceId = sourceId;
+    }
+
     @Override
     public int byteArrayLength() {
         // item结束的时候会多一个字节

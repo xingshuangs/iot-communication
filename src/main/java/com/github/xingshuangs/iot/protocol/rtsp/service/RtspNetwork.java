@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.service;
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import com.github.xingshuangs.iot.net.ICommunicable;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
+import com.github.xingshuangs.iot.protocol.rtcp.service.RtcpDataStatistics;
 import com.github.xingshuangs.iot.protocol.rtcp.service.RtcpUdpClient;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.RawFrame;
@@ -28,6 +29,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CRLF;
+
 /**
  * @author xingshuang
  */
@@ -44,6 +47,9 @@ public class RtspNetwork extends TcpClientBasic {
      */
     private boolean needAuthorization = false;
 
+    /**
+     * socket客户端列表
+     */
     private final Map<Integer, ICommunicable> socketClients = new HashMap<>();
 
     /**
@@ -230,7 +236,9 @@ public class RtspNetwork extends TcpClientBasic {
             IPayloadParser iPayloadParser = new H264VideoParser();
             RtpUdpClient rtpClient = new RtpUdpClient(iPayloadParser);
             rtpClient.setFrameHandle(this::doFrameHandle);
-            RtcpUdpClient rtcpClient = new RtcpUdpClient();
+            RtcpDataStatistics statistics = new RtcpDataStatistics();
+            RtcpUdpClient rtcpClient = new RtcpUdpClient(statistics);
+            rtpClient.setRtcpUdpClient(rtcpClient);
 
             // 构建RtspTransport
             URI actualUri = URI.create(media.getAttributeControl().getUri());
@@ -313,6 +321,12 @@ public class RtspNetwork extends TcpClientBasic {
     private void clearSocketConnection() {
         if (this.socketClients.isEmpty()) {
             return;
+        }
+        for (ICommunicable value : this.socketClients.values()) {
+            if (value instanceof RtcpUdpClient) {
+                ((RtcpUdpClient) value).sendByte();
+                break;
+            }
         }
         this.socketClients.values().forEach(ICommunicable::close);
         this.socketClients.clear();

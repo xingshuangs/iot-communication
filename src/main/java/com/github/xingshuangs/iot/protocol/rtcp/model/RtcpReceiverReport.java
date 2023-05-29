@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.rtcp.model;
 
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.rtcp.enums.ERtcpPackageType;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -50,6 +51,25 @@ public final class RtcpReceiverReport extends RtcpBasePackage {
      * 报告数据块
      */
     private List<RtcpReportBlock> reportBlocks = new ArrayList<>();
+
+    public RtcpReceiverReport() {
+    }
+
+    public RtcpReceiverReport(long sourceId) {
+        this.header = new RtcpHeader();
+        this.header.version = 2;
+        this.header.padding = false;
+        this.header.receptionCount = 0;
+        this.header.packageType = ERtcpPackageType.RR;
+        this.header.length = 1;
+        this.sourceId = sourceId;
+    }
+
+    public void addRtcpReportBlock(RtcpReportBlock reportBlock) {
+        this.reportBlocks.add(reportBlock);
+        this.header.receptionCount = this.reportBlocks.size();
+        this.header.length = this.byteArrayLength() / 4 - 1;
+    }
 
     @Override
     public int byteArrayLength() {

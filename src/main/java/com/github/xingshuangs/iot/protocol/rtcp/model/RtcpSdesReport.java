@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.rtcp.model;
 
 
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.rtcp.enums.ERtcpPackageType;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -38,6 +39,21 @@ import java.util.List;
 public final class RtcpSdesReport extends RtcpBasePackage {
 
     private List<RtcpSdesChunk> sdesChunks = new ArrayList<>();
+
+    public RtcpSdesReport() {
+        this.header = new RtcpHeader();
+        this.header.version = 2;
+        this.header.padding = false;
+        this.header.receptionCount = 0;
+        this.header.packageType = ERtcpPackageType.SDES;
+        this.header.length = 1;
+    }
+
+    public void addRtcpSdesChunk(RtcpSdesChunk chunk) {
+        this.sdesChunks.add(chunk);
+        this.header.receptionCount = this.sdesChunks.size();
+        this.header.length = this.byteArrayLength() / 4 - 1;
+    }
 
     @Override
     public int byteArrayLength() {

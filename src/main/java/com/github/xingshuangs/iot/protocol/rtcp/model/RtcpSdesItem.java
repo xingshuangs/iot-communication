@@ -15,8 +15,14 @@ public class RtcpSdesItem implements IObjectByteArray {
 
     private ERtcpSdesItemType type;
 
+    /**
+     * 文本长度
+     */
     private int length;
 
+    /**
+     * 文本内容
+     */
     private String text = "";
 
     @Override

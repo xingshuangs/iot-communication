@@ -24,4 +24,12 @@ public class UsernamePasswordCredential {
      * 密码
      */
     private String password;
+
+    public static UsernamePasswordCredential createBy(String str) {
+        String[] split = str.split(":");
+        if (split.length != 2) {
+            throw new IllegalArgumentException("str");
+        }
+        return new UsernamePasswordCredential(split[0], split[1]);
+    }
 }

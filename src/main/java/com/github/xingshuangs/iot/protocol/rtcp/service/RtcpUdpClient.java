@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.rtcp.service;
 
 import com.github.xingshuangs.iot.net.client.UdpClientBasic;
 import com.github.xingshuangs.iot.protocol.rtcp.model.*;
+import com.github.xingshuangs.iot.protocol.rtp.model.RtpPackage;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -23,6 +24,16 @@ public class RtcpUdpClient extends UdpClientBasic {
     private boolean terminal = false;
 
     /**
+     * RTP和RTCP的数据统计
+     */
+    private RtcpDataStatistics statistics;
+
+    /**
+     * 上一次接收到RTP的时间
+     */
+    private long lastTimeReceiveRtp;
+
+    /**
      * 数据收发前自定义处理接口
      */
     private Consumer<byte[]> commCallback;
@@ -31,7 +42,9 @@ public class RtcpUdpClient extends UdpClientBasic {
         this.commCallback = commCallback;
     }
 
-    public RtcpUdpClient() {
+    public RtcpUdpClient(RtcpDataStatistics statistics) {
+        this.statistics = statistics;
+        this.lastTimeReceiveRtp = System.currentTimeMillis();
     }
 
     public RtcpUdpClient(String ip, int port) {
@@ -52,18 +65,24 @@ public class RtcpUdpClient extends UdpClientBasic {
                 if (this.commCallback != null) {
                     this.commCallback.accept(data);
                 }
+                log.debug("{}", data);
                 List<RtcpBasePackage> basePackages = RtcpPackageBuilder.fromBytes(data);
-                basePackages.forEach(x -> log.debug("RTCP接收数据，{}", x));
                 for (RtcpBasePackage basePackage : basePackages) {
-                    switch (basePackage.getHeader().getPackageType()){
+                    switch (basePackage.getHeader().getPackageType()) {
                         case SR:
+                            this.statistics.processRtcpPackage((RtcpSenderReport) basePackage);
+                            log.debug("RTCP接收SR数据，{}", basePackage);
                             break;
                         case BYE:
+                            log.debug("RTCP接收BYTE数据，{}", basePackage);
+                            break;
+                        default:
+                            log.debug("RTCP接收其他数据，{}", basePackage);
                             break;
                     }
                 }
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error(e.getMessage(), e);
             }
         }
     }
@@ -97,12 +116,36 @@ public class RtcpUdpClient extends UdpClientBasic {
      * 发送接收者和描述信息
      *
      * @param receiverReport 接收者
-     * @param sdesReport     描述
+     * @param basePackage    描述
      */
-    public void sendReceiverAndSdes(RtcpReceiverReport receiverReport, RtcpSdesReport sdesReport) {
-        byte[] res = new byte[receiverReport.byteArrayLength() + sdesReport.byteArrayLength()];
+    private void sendReceiverAndSdes(RtcpBasePackage receiverReport, RtcpBasePackage basePackage) {
+        byte[] res = new byte[receiverReport.byteArrayLength() + basePackage.byteArrayLength()];
         System.arraycopy(receiverReport.toByteArray(), 0, res, 0, receiverReport.byteArrayLength());
-        System.arraycopy(sdesReport.toByteArray(), 0, res, receiverReport.byteArrayLength(), sdesReport.byteArrayLength());
+        System.arraycopy(basePackage.toByteArray(), 0, res, receiverReport.byteArrayLength(), basePackage.byteArrayLength());
         this.write(res);
+        log.debug("发送数据1：{}，发送数据2：{}", receiverReport, basePackage);
+    }
+
+    /**
+     * 处理RTP的数据包
+     *
+     * @param rtpPackage RTP数据包
+     */
+    public void processRtpPackage(RtpPackage rtpPackage) {
+        this.statistics.processRtpPackage(rtpPackage);
+//        log.debug("统计数据：{}", this.statistics);
+        // 时间间隔超过5s的发一次RR数据
+        if (System.currentTimeMillis() - this.lastTimeReceiveRtp > 5_000) {
+            RtcpReceiverReport receiverReport = this.statistics.createReceiverReport();
+            RtcpSdesReport sdesReport = this.statistics.createSdesReport();
+            this.sendReceiverAndSdes(receiverReport, sdesReport);
+        }
+        this.lastTimeReceiveRtp = System.currentTimeMillis();
+    }
+
+    public void sendByte() {
+        RtcpReceiverReport receiverReport = this.statistics.createReceiverReport();
+        RtcpBye sdesReport = this.statistics.createByte();
+        this.sendReceiverAndSdes(receiverReport, sdesReport);
     }
 }

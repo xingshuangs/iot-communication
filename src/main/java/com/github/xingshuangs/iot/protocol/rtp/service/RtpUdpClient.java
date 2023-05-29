@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.rtp.service;
 
 
 import com.github.xingshuangs.iot.net.client.UdpClientBasic;
+import com.github.xingshuangs.iot.protocol.rtcp.service.RtcpUdpClient;
 import com.github.xingshuangs.iot.protocol.rtp.model.RtpPackage;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.RawFrame;
 import lombok.extern.slf4j.Slf4j;
@@ -39,12 +40,21 @@ public class RtpUdpClient extends UdpClientBasic {
      */
     private IPayloadParser iPayloadParser;
 
+    /**
+     * rtcp的客户端
+     */
+    private RtcpUdpClient rtcpUdpClient;
+
     public void setCommCallback(Consumer<byte[]> commCallback) {
         this.commCallback = commCallback;
     }
 
     public void setFrameHandle(Consumer<RawFrame> frameHandle) {
         this.frameHandle = frameHandle;
+    }
+
+    public void setRtcpUdpClient(RtcpUdpClient rtcpUdpClient) {
+        this.rtcpUdpClient = rtcpUdpClient;
     }
 
     public RtpUdpClient(IPayloadParser iPayloadParser) {
@@ -71,6 +81,9 @@ public class RtpUdpClient extends UdpClientBasic {
                     this.commCallback.accept(data);
                 }
                 RtpPackage rtp = RtpPackage.fromBytes(data);
+                if (this.rtcpUdpClient != null) {
+                    this.rtcpUdpClient.processRtpPackage(rtp);
+                }
                 this.iPayloadParser.processPackage(rtp, this::processFrame);
             } catch (Exception e) {
                 log.error(e.getMessage());
