@@ -27,6 +27,16 @@ public class RtspInterleavedTransport extends RtspTransport {
      */
     private Integer interleaved2 = 1;
 
+    public RtspInterleavedTransport() {
+    }
+
+    public RtspInterleavedTransport(Integer interleaved1, Integer interleaved2) {
+        this.protocol = "RTP/AVP/TCP";
+        this.castMode = "unicast";
+        this.interleaved1 = interleaved1;
+        this.interleaved2 = interleaved2;
+    }
+
     public static RtspInterleavedTransport fromString(String src) {
         if (src == null || src.equals("")) {
             throw new IllegalArgumentException("RtspTransport部分数据解析错误");

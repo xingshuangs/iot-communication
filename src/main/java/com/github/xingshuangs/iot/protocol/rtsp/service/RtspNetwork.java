@@ -4,7 +4,6 @@ package com.github.xingshuangs.iot.protocol.rtsp.service;
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import com.github.xingshuangs.iot.net.ICommunicable;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
-import com.github.xingshuangs.iot.protocol.rtcp.service.RtcpDataStatistics;
 import com.github.xingshuangs.iot.protocol.rtcp.service.RtcpUdpClient;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.RawFrame;
@@ -15,11 +14,9 @@ import com.github.xingshuangs.iot.protocol.rtsp.authentication.DigestAuthenticat
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspAcceptContent;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspMethod;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspStatusCode;
+import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspTransportProtocol;
 import com.github.xingshuangs.iot.protocol.rtsp.model.*;
-import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspClientPortTransport;
-import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspRtpInfo;
-import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspSessionInfo;
-import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspTransport;
+import com.github.xingshuangs.iot.protocol.rtsp.model.base.*;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdp;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdpMedia;
 import lombok.Getter;
@@ -98,6 +95,10 @@ public class RtspNetwork extends TcpClientBasic {
 
     private Consumer<byte[]> rtcpCallback;
 
+    private ERtspTransportProtocol transportProtocol;
+
+    private RtspTpktClient rtspTpktClient;
+
     public void setCommCallback(Consumer<String> commCallback) {
         this.commCallback = commCallback;
     }
@@ -107,14 +108,24 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     public RtspNetwork(URI uri) {
+        this(uri, ERtspTransportProtocol.UDP);
+    }
+
+    public RtspNetwork(URI uri, ERtspTransportProtocol transportProtocol) {
         super(uri.getHost(), uri.getPort());
         this.uri = uri;
+        this.transportProtocol = transportProtocol;
     }
 
     public RtspNetwork(URI uri, DigestAuthenticator authenticator) {
+        this(uri, authenticator, ERtspTransportProtocol.UDP);
+    }
+
+    public RtspNetwork(URI uri, DigestAuthenticator authenticator, ERtspTransportProtocol transportProtocol) {
         super(uri.getHost(), uri.getPort());
         this.uri = uri;
         this.authenticator = authenticator;
+        this.transportProtocol = transportProtocol;
     }
 
     @Override
@@ -123,7 +134,7 @@ public class RtspNetwork extends TcpClientBasic {
         super.close();
     }
 
-    private RtspMessageResponse readFromServer(RtspMessageRequest req) {
+    public RtspMessageResponse readFromServer(RtspMessageRequest req) {
         String reqString = req.toObjectString();
         if (this.commCallback != null) {
             this.commCallback.accept(reqString);
@@ -190,9 +201,7 @@ public class RtspNetwork extends TcpClientBasic {
         RtspOptionRequest request = new RtspOptionRequest(this.uri);
         RtspOptionResponse response = (RtspOptionResponse) this.readFromServer(request);
         this.checkAfterResponse(response, ERtspMethod.OPTIONS);
-
         this.methods = response.getPublicMethods();
-
         // 清空客户端
         this.clearSocketConnection();
     }
@@ -234,45 +243,35 @@ public class RtspNetwork extends TcpClientBasic {
      */
     protected void setup() {
         this.checkBeforeRequest(ERtspMethod.SETUP);
+        if (this.transportProtocol == ERtspTransportProtocol.UDP) {
+            this.setupUdp();
+        } else {
+            this.setupTcp();
+        }
+    }
 
+    private void setupUdp() {
         for (RtspSdpMedia media : this.sdp.getMedias()) {
             if (!media.getMediaDesc().getType().equals("video")) {
                 continue;
             }
             // TODO: 这里可能存在不同的负载解析器
             IPayloadParser iPayloadParser = new H264VideoParser();
+            URI actualUri = URI.create(media.getAttributeControl().getUri());
             RtpUdpClient rtpClient = new RtpUdpClient(iPayloadParser);
             rtpClient.setFrameHandle(this::doFrameHandle);
-            RtcpDataStatistics statistics = new RtcpDataStatistics();
-            RtcpUdpClient rtcpClient = new RtcpUdpClient(statistics);
+            RtcpUdpClient rtcpClient = new RtcpUdpClient();
             rtpClient.setRtcpUdpClient(rtcpClient);
-
-            // 构建RtspTransport
-            URI actualUri = URI.create(media.getAttributeControl().getUri());
-            RtspClientPortTransport reqTransport = new RtspClientPortTransport();
-            reqTransport.setProtocol(this.sdp.getMedias().get(0).getMediaDesc().getProtocol());
-            reqTransport.setCastMode("unicast");
-            reqTransport.setRtpClientPort(rtpClient.getLocalPort());
-            reqTransport.setRtcpClientPort(rtcpClient.getLocalPort());
+            RtspTransport reqTransport = new RtspClientPortTransport(rtpClient.getLocalPort(), rtcpClient.getLocalPort());
 
             // 发送Setup
-            RtspSetupRequest request = this.needAuthorization ? new RtspSetupRequest(actualUri, reqTransport, this.authenticator)
-                    : new RtspSetupRequest(actualUri, reqTransport);
-            RtspSetupResponse response = (RtspSetupResponse) this.readFromServer(request);
-            this.checkAfterResponse(response, ERtspMethod.SETUP);
-            // 更新Transport和Session信息
-            this.transport = response.getTransport();
-            this.sessionInfo = response.getSessionInfo();
+            this.doSetup(actualUri, reqTransport, media);
 
             RtspClientPortTransport ackTransport = (RtspClientPortTransport) this.transport;
             // socket客户端配置
             rtpClient.bindServer(this.uri.getHost(), ackTransport.getRtpServerPort());
             rtcpClient.bindServer(this.uri.getHost(), ackTransport.getRtcpServerPort());
-            // 发送SPS和PPS
-            if (this.frameHandle != null && media.getMediaDesc().getType().equals("video")) {
-                this.frameHandle.accept(H264VideoFrame.createSpsPpsFrame(media.getAttributeFmtp().getSps()));
-                this.frameHandle.accept(H264VideoFrame.createSpsPpsFrame(media.getAttributeFmtp().getPps()));
-            }
+
             rtpClient.triggerReceive();
             rtcpClient.triggerReceive();
 
@@ -284,7 +283,45 @@ public class RtspNetwork extends TcpClientBasic {
         try {
             TimeUnit.MILLISECONDS.sleep(100);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            // NOOP
+        }
+    }
+
+    private void setupTcp() {
+        int interleavedCount = 0;
+        for (RtspSdpMedia media : this.sdp.getMedias()) {
+            if (!media.getMediaDesc().getType().equals("video")) {
+                continue;
+            }
+            // TODO: 这里可能存在不同的负载解析器
+            IPayloadParser iPayloadParser = new H264VideoParser();
+            int rtpChannelNumber = interleavedCount++;
+            int rtcpChannelNumber = interleavedCount++;
+            RtspTransport reqTransport = new RtspInterleavedTransport(rtpChannelNumber, rtcpChannelNumber);
+            URI actualUri = URI.create(media.getAttributeControl().getUri());
+
+            this.doSetup(actualUri, reqTransport, media);
+
+            RtspInterleavedTransport ackTransport = (RtspInterleavedTransport) this.transport;
+            this.rtspTpktClient = new RtspTpktClient(iPayloadParser);
+            this.rtspTpktClient.setChannelNumber(ackTransport.getInterleaved1(), ackTransport.getInterleaved2());
+        }
+    }
+
+    private void doSetup(URI actualUri, RtspTransport reqTransport, RtspSdpMedia media) {
+        // 发送Setup
+        RtspSetupRequest request = this.needAuthorization ? new RtspSetupRequest(actualUri, reqTransport, this.authenticator)
+                : new RtspSetupRequest(actualUri, reqTransport);
+        RtspSetupResponse response = (RtspSetupResponse) this.readFromServer(request);
+        this.checkAfterResponse(response, ERtspMethod.SETUP);
+        // 更新Transport和Session信息
+        this.transport = response.getTransport();
+        this.sessionInfo = response.getSessionInfo();
+
+        // 发送SPS和PPS
+        if (this.frameHandle != null && media.getMediaDesc().getType().equals("video")) {
+            this.frameHandle.accept(H264VideoFrame.createSpsPpsFrame(media.getAttributeFmtp().getSps()));
+            this.frameHandle.accept(H264VideoFrame.createSpsPpsFrame(media.getAttributeFmtp().getPps()));
         }
     }
 

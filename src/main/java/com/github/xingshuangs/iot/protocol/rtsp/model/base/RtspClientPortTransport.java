@@ -40,6 +40,16 @@ public class RtspClientPortTransport extends RtspTransport {
      */
     private Integer rtcpServerPort;
 
+    public RtspClientPortTransport() {
+    }
+
+    public RtspClientPortTransport(Integer rtpClientPort, Integer rtcpClientPort) {
+        this.protocol = "RTP/AVP";
+        this.castMode = "unicast";
+        this.rtpClientPort = rtpClientPort;
+        this.rtcpClientPort = rtcpClientPort;
+    }
+
     public static RtspClientPortTransport fromString(String src) {
         if (src == null || src.equals("")) {
             throw new IllegalArgumentException("RtspTransport部分数据解析错误");

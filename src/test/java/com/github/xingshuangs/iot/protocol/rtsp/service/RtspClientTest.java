@@ -53,7 +53,7 @@ public class RtspClientTest {
         client.connect();
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(20);
+                TimeUnit.SECONDS.sleep(10);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

@@ -26,7 +26,7 @@ public class RtcpUdpClient extends UdpClientBasic {
     /**
      * RTP和RTCP的数据统计
      */
-    private RtcpDataStatistics statistics;
+    private final RtcpDataStatistics statistics = new RtcpDataStatistics();
 
     /**
      * 上一次接收到RTP的时间
@@ -47,8 +47,8 @@ public class RtcpUdpClient extends UdpClientBasic {
         this.commCallback = commCallback;
     }
 
-    public RtcpUdpClient(RtcpDataStatistics statistics) {
-        this.statistics = statistics;
+    public RtcpUdpClient() {
+
     }
 
     public RtcpUdpClient(String ip, int port) {

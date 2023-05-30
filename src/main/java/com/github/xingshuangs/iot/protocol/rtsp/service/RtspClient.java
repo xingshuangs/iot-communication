@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.service;
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.DigestAuthenticator;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspMethod;
+import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspTransportProtocol;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
@@ -23,8 +24,16 @@ public class RtspClient extends RtspNetwork {
         super(uri);
     }
 
+    public RtspClient(URI uri, ERtspTransportProtocol transportProtocol) {
+        super(uri, transportProtocol);
+    }
+
     public RtspClient(URI uri, DigestAuthenticator authenticator) {
         super(uri, authenticator);
+    }
+
+    public RtspClient(URI uri, DigestAuthenticator authenticator, ERtspTransportProtocol transportProtocol) {
+        super(uri, authenticator, transportProtocol);
     }
 
     /**
