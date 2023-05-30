@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.service;
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.DigestAuthenticator;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspMethod;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +14,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author xingshuang
  */
+@Slf4j
 public class RtspClient extends RtspNetwork {
 
     private boolean alive;
@@ -43,7 +45,7 @@ public class RtspClient extends RtspNetwork {
             }
             long lastTime = System.currentTimeMillis();
             while (this.alive) {
-                TimeUnit.MILLISECONDS.sleep(500);
+                TimeUnit.MILLISECONDS.sleep(200);
                 if (System.currentTimeMillis() - lastTime > this.sessionInfo.getTimeout() / 2) {
                     lastTime = System.currentTimeMillis();
                     this.getParameter();
@@ -54,8 +56,7 @@ public class RtspClient extends RtspNetwork {
             throw new RtspCommException(e);
         } finally {
             if (this.alive) {
-                this.teardown();
-                this.alive = false;
+                this.disconnect();
             }
         }
     }
@@ -66,5 +67,6 @@ public class RtspClient extends RtspNetwork {
     public void disconnect() {
         this.teardown();
         this.alive = false;
+        this.close();
     }
 }

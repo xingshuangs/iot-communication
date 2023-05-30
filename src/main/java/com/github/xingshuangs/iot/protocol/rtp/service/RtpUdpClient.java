@@ -72,15 +72,15 @@ public class RtpUdpClient extends UdpClientBasic {
     }
 
     private void waitForReceiveData() {
-        log.debug("RTP开启接收数据线程，远程的IP:{}，端口号：{}", this.serverAddress.getHostName(), this.serverAddress.getPort());
+        log.debug("RTP开启接收数据线程，远程的IP[{}]，端口号[{}]", this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
         while (!this.terminal) {
             try {
                 byte[] data = this.getReceiveData();
-//                log.debug("数据长度：{}", data.length);
                 if (this.commCallback != null) {
                     this.commCallback.accept(data);
                 }
                 RtpPackage rtp = RtpPackage.fromBytes(data);
+//                log.debug("数据长度[{}], 时间戳[{}], 序列号[{}]", rtp.byteArrayLength(), rtp.getHeader().getTimestamp(), rtp.getHeader().getSequenceNumber());
                 if (this.rtcpUdpClient != null) {
                     this.rtcpUdpClient.processRtpPackage(rtp);
                 }

@@ -4,6 +4,8 @@ package com.github.xingshuangs.iot.protocol.rtp.model.frame;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EFrameType;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264NaluType;
+import com.github.xingshuangs.iot.protocol.rtp.model.payload.H264NaluBuilder;
+import com.github.xingshuangs.iot.protocol.rtp.model.payload.H264NaluSingle;
 import lombok.Data;
 
 /**
@@ -43,11 +45,14 @@ public class H264VideoFrame extends RawFrame {
                 .getData();
     }
 
-    public static H264VideoFrame createSpsFrame(byte[] frameSegment) {
-        return new H264VideoFrame(EH264NaluType.SPS, System.currentTimeMillis(), frameSegment);
-    }
-
-    public static H264VideoFrame createPpsFrame(byte[] frameSegment) {
-        return new H264VideoFrame(EH264NaluType.PPS, System.currentTimeMillis(), frameSegment);
+    /**
+     * 创建
+     *
+     * @param frameSegment 帧字节数组
+     * @return 视频帧
+     */
+    public static H264VideoFrame createSpsPpsFrame(byte[] frameSegment) {
+        H264NaluSingle naluSingle = (H264NaluSingle) H264NaluBuilder.parsePackage(frameSegment);
+        return new H264VideoFrame(naluSingle.getHeader().getType(), System.currentTimeMillis(), naluSingle.getPayload());
     }
 }

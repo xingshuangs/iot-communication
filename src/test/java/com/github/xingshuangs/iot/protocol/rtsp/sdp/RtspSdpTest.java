@@ -5,6 +5,8 @@ import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdpMedia;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdpSession;
 import org.junit.Test;
 
+import java.util.Base64;
+
 import static org.junit.Assert.*;
 
 
@@ -75,5 +77,14 @@ public class RtspSdpTest {
         byte[] pps = new byte[]{(byte) 0x68, (byte) 0xEE, (byte) 0x3C, (byte) 0x80};
         assertArrayEquals(pps, media.getAttributeFmtp().getPps());
         assertEquals("494D4B48010200000400000100000000000000000000000000000000000000000000000000000000", media.getAttributeHeader().getMediaInfo());
+    }
+
+    @Test
+    public void base64() {
+        Base64.Decoder decoder = Base64.getDecoder();
+        byte[] sps = decoder.decode("Z2QAKqwrUDwBE/LNwEBAQIA=");
+        System.out.println(sps);
+        byte[] pps = decoder.decode("aO48sA==");
+        System.out.println(pps);
     }
 }

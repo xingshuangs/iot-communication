@@ -19,17 +19,19 @@ public class RtspClientTest {
 
     @Test
     public void connect() {
-//        URI uri = URI.create("rtsp://127.0.0.1:8554/11");
         URI uri = URI.create("rtsp://192.168.3.142:554/h264/ch1/main/av_stream");
         UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "kilox1234");
         DigestAuthenticator authenticator = new DigestAuthenticator(credential);
         RtspClient client = new RtspClient(uri, authenticator);
-        client.setCommCallback(x -> log.debug(x));
-        client.setFrameHandle(x -> log.debug(x.getFrameType().toString()));
+        client.setCommCallback(log::info);
+        client.setFrameHandle(x -> {
+            H264VideoFrame f = (H264VideoFrame) x;
+            log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
+        });
         client.connect();
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(8);
+                TimeUnit.SECONDS.sleep(5);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -40,18 +42,18 @@ public class RtspClientTest {
     }
 
     @Test
-    public void connect1() {
+    public void connectWithoutAuthenticator() {
         URI uri = URI.create("rtsp://127.0.0.1:8554/11");
         RtspClient client = new RtspClient(uri);
-        client.setCommCallback(x -> log.debug(x));
+        client.setCommCallback(log::info);
         client.setFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
-//            log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
+            log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
         });
         client.connect();
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(30);
+                TimeUnit.SECONDS.sleep(20);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

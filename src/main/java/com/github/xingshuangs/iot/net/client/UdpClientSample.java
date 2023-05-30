@@ -42,7 +42,7 @@ public class UdpClientSample extends UdpClientBasic {
     }
 
     private void waitForReceiveData() {
-        log.debug("开启接收数据线程，远程的IP:{}，端口号：{}", this.serverAddress.getHostName(), this.serverAddress.getPort());
+        log.debug("开启接收数据线程，远程的IP:{}，端口号：{}", this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
         while (!this.terminal) {
             try {
                 byte[] data = this.getReceiveData();

@@ -16,6 +16,7 @@ import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspAcceptContent;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspMethod;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspStatusCode;
 import com.github.xingshuangs.iot.protocol.rtsp.model.*;
+import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspClientPortTransport;
 import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspRtpInfo;
 import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspSessionInfo;
 import com.github.xingshuangs.iot.protocol.rtsp.model.base.RtspTransport;
@@ -27,7 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CRLF;
 
 /**
  * @author xingshuang
@@ -115,8 +119,8 @@ public class RtspNetwork extends TcpClientBasic {
 
     @Override
     public void close() {
-        super.close();
         this.clearSocketConnection();
+        super.close();
     }
 
     private RtspMessageResponse readFromServer(RtspMessageRequest req) {
@@ -127,33 +131,38 @@ public class RtspNetwork extends TcpClientBasic {
         byte[] reqBytes = reqString.getBytes(StandardCharsets.US_ASCII);
 
         int headerLen;
-        byte[] header;
-        byte[] body = null;
-        String headerString = "";
-        String bodyString = "";
+        String contentString = "";
         RtspMessageResponse ack;
         synchronized (this.objLock) {
             this.write(reqBytes);
             // 读取并解析头
-            header = new byte[1024];
+            byte[] header = new byte[1024];
             headerLen = this.read(header);
-            headerString = new String(header, 0, headerLen, StandardCharsets.US_ASCII);
-            ack = RtspMessageResponseBuilder.fromString(headerString, req);
+            contentString = new String(header, 0, headerLen, StandardCharsets.US_ASCII);
+            ack = RtspMessageResponseBuilder.fromString(contentString, req);
             // 读取并解析body
             if (ack.getContentLength() != null && ack.getContentLength() > 0) {
-                body = new byte[ack.getContentLength()];
-                this.read(body);
+                // 是否包含内容体，通过两个换行符来判定，如果没有就再读一次，摄像头和VLC的情况不一样
+                String bodyString = "";
+                int i = contentString.indexOf(CRLF + CRLF);
+                if (contentString.length() > i + 5) {
+                    bodyString = contentString.substring(i + 4);
+                } else {
+                    byte[] body = new byte[ack.getContentLength()];
+                    this.read(body);
+                    bodyString = new String(body, StandardCharsets.US_ASCII);
+                    contentString += bodyString;
+                }
+                if (!bodyString.isEmpty()) {
+                    ack.addBodyFromString(bodyString);
+                }
             }
         }
         if (headerLen == 0) {
             throw new RtspCommException("RTSP数据接收长度为0，错误");
         }
-        if (body != null) {
-            bodyString = new String(body, StandardCharsets.US_ASCII);
-            ack.addBodyFromString(bodyString);
-        }
         if (this.commCallback != null) {
-            this.commCallback.accept(headerString + bodyString);
+            this.commCallback.accept(contentString);
         }
         this.checkPostedCom(req, ack);
         return ack;
@@ -240,7 +249,7 @@ public class RtspNetwork extends TcpClientBasic {
 
             // 构建RtspTransport
             URI actualUri = URI.create(media.getAttributeControl().getUri());
-            RtspTransport reqTransport = new RtspTransport();
+            RtspClientPortTransport reqTransport = new RtspClientPortTransport();
             reqTransport.setProtocol(this.sdp.getMedias().get(0).getMediaDesc().getProtocol());
             reqTransport.setCastMode("unicast");
             reqTransport.setRtpClientPort(rtpClient.getLocalPort());
@@ -255,19 +264,27 @@ public class RtspNetwork extends TcpClientBasic {
             this.transport = response.getTransport();
             this.sessionInfo = response.getSessionInfo();
 
+            RtspClientPortTransport ackTransport = (RtspClientPortTransport) this.transport;
             // socket客户端配置
-            rtpClient.bindServer(this.uri.getHost(), this.transport.getRtpServerPort());
-            rtcpClient.bindServer(this.uri.getHost(), this.transport.getRtcpServerPort());
+            rtpClient.bindServer(this.uri.getHost(), ackTransport.getRtpServerPort());
+            rtcpClient.bindServer(this.uri.getHost(), ackTransport.getRtcpServerPort());
             // 发送SPS和PPS
             if (this.frameHandle != null && media.getMediaDesc().getType().equals("video")) {
-                this.frameHandle.accept(H264VideoFrame.createSpsFrame(media.getAttributeFmtp().getSps()));
-                this.frameHandle.accept(H264VideoFrame.createPpsFrame(media.getAttributeFmtp().getPps()));
+                this.frameHandle.accept(H264VideoFrame.createSpsPpsFrame(media.getAttributeFmtp().getSps()));
+                this.frameHandle.accept(H264VideoFrame.createSpsPpsFrame(media.getAttributeFmtp().getPps()));
             }
             rtpClient.triggerReceive();
             rtcpClient.triggerReceive();
+
             // 设置成功后，存储一下
             this.socketClients.put(rtpClient.getLocalPort(), rtcpClient);
             this.socketClients.put(rtcpClient.getLocalPort(), rtcpClient);
+        }
+        // 为了保证RtpUdpClient和RtcpUdpClient的接收数据线程都开启
+        try {
+            TimeUnit.MILLISECONDS.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -319,12 +336,6 @@ public class RtspNetwork extends TcpClientBasic {
     private void clearSocketConnection() {
         if (this.socketClients.isEmpty()) {
             return;
-        }
-        for (ICommunicable value : this.socketClients.values()) {
-            if (value instanceof RtcpUdpClient) {
-                ((RtcpUdpClient) value).sendByte();
-                break;
-            }
         }
         this.socketClients.values().forEach(ICommunicable::close);
         this.socketClients.clear();

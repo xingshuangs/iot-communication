@@ -148,8 +148,8 @@ public class RtcpDataStatistics {
         RtcpSdesChunk chunk = new RtcpSdesChunk(this.sourceId);
         RtcpSdesItem item = new RtcpSdesItem();
         item.setType(ERtcpSdesItemType.CNAME);
-        item.setText("demo");
-        item.setLength(4);
+        item.setText("iot-communication");
+        item.setLength(17);
         chunk.addRtcpSdesItem(item);
         sdesReport.addRtcpSdesChunk(chunk);
         return sdesReport;

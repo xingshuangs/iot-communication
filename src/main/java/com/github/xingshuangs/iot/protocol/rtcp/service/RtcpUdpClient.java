@@ -31,12 +31,17 @@ public class RtcpUdpClient extends UdpClientBasic {
     /**
      * 上一次接收到RTP的时间
      */
-    private long lastTimeReceiveRtp;
+    private long lastTimeReceiveRtp = 0;
 
     /**
      * 数据收发前自定义处理接口
      */
     private Consumer<byte[]> commCallback;
+
+    /**
+     * 异步执行对象
+     */
+    private CompletableFuture<Void> future;
 
     public void setCommCallback(Consumer<byte[]> commCallback) {
         this.commCallback = commCallback;
@@ -44,7 +49,6 @@ public class RtcpUdpClient extends UdpClientBasic {
 
     public RtcpUdpClient(RtcpDataStatistics statistics) {
         this.statistics = statistics;
-        this.lastTimeReceiveRtp = System.currentTimeMillis();
     }
 
     public RtcpUdpClient(String ip, int port) {
@@ -53,12 +57,18 @@ public class RtcpUdpClient extends UdpClientBasic {
 
     @Override
     public void close() {
-        this.terminal = true;
+        if (!this.terminal) {
+            this.sendByte();
+            this.terminal = true;
+            if (this.future != null) {
+                this.future.cancel(true);
+            }
+        }
         super.close();
     }
 
     private void waitForReceiveData() {
-        log.debug("RTCP开启接收数据线程，远程的IP:{}，端口号：{}", this.serverAddress.getHostName(), this.serverAddress.getPort());
+        log.debug("RTCP开启接收数据线程，远程的IP[{}]，端口号[{}]", this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
         while (!this.terminal) {
             try {
                 byte[] data = this.getReceiveData();
@@ -104,7 +114,7 @@ public class RtcpUdpClient extends UdpClientBasic {
      * 触发接收
      */
     public void triggerReceive() {
-        CompletableFuture.runAsync(this::waitForReceiveData);
+        this.future = CompletableFuture.runAsync(this::waitForReceiveData);
     }
 
     /**
@@ -130,6 +140,10 @@ public class RtcpUdpClient extends UdpClientBasic {
     public void processRtpPackage(RtpPackage rtpPackage) {
         this.statistics.processRtpPackage(rtpPackage);
 //        log.debug("统计数据：{}", this.statistics);
+        // 第一次接收RTP数据包
+        if (this.lastTimeReceiveRtp == 0) {
+            this.lastTimeReceiveRtp = System.currentTimeMillis();
+        }
         // 时间间隔超过5s的发一次RR数据
         if (System.currentTimeMillis() - this.lastTimeReceiveRtp > 5_000) {
             RtcpReceiverReport receiverReport = this.statistics.createReceiverReport();
@@ -139,7 +153,10 @@ public class RtcpUdpClient extends UdpClientBasic {
         }
     }
 
-    public void sendByte() {
+    /**
+     * 发送BYTE
+     */
+    private void sendByte() {
         RtcpReceiverReport receiverReport = this.statistics.createReceiverReport();
         RtcpBye sdesReport = this.statistics.createByte();
         this.sendReceiverAndSdes(receiverReport, sdesReport);
