@@ -37,35 +37,35 @@ public class RtspClient extends RtspNetwork {
     }
 
     /**
-     * 连接
+     * 启动
      */
-    public void connect() {
-        this.option();
-        this.describe();
-        this.setup();
-        this.play();
+    public void start() {
+        log.info("开启RTSP连接，地址[{}]，通信模式[{}]", this.uri, this.transportProtocol);
         this.alive = true;
-    }
+        this.connect();
 
-    public void receive() {
         try {
             if (!this.methods.contains(ERtspMethod.GET_PARAMETER)) {
+                this.socketClientJoinForFinished();
                 return;
             }
             long lastTime = System.currentTimeMillis();
             while (this.alive) {
                 TimeUnit.MILLISECONDS.sleep(200);
+                // 所有线程都已经完成
+                if (this.socketClientIsAllDone()) {
+                    break;
+                }
                 if (System.currentTimeMillis() - lastTime > this.sessionInfo.getTimeout() / 2) {
                     lastTime = System.currentTimeMillis();
                     this.getParameter();
                 }
-
             }
         } catch (Exception e) {
             throw new RtspCommException(e);
         } finally {
             if (this.alive) {
-                this.disconnect();
+                this.stop();
             }
         }
     }
@@ -73,7 +73,7 @@ public class RtspClient extends RtspNetwork {
     /**
      * 断开
      */
-    public void disconnect() {
+    public void stop() {
         this.teardown();
         this.alive = false;
         this.close();

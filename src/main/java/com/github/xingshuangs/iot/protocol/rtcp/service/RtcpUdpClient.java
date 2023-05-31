@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.rtcp.service;
 import com.github.xingshuangs.iot.net.client.UdpClientBasic;
 import com.github.xingshuangs.iot.protocol.rtcp.model.*;
 import com.github.xingshuangs.iot.protocol.rtp.model.RtpPackage;
+import com.github.xingshuangs.iot.protocol.rtsp.service.IRtspDataStream;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.function.Consumer;
  * @author xingshuang
  */
 @Slf4j
-public class RtcpUdpClient extends UdpClientBasic {
+public class RtcpUdpClient extends UdpClientBasic implements IRtspDataStream {
 
     /**
      * 是否终止线程
@@ -47,6 +48,7 @@ public class RtcpUdpClient extends UdpClientBasic {
         this.commCallback = commCallback;
     }
 
+
     public RtcpUdpClient() {
 
     }
@@ -56,19 +58,22 @@ public class RtcpUdpClient extends UdpClientBasic {
     }
 
     @Override
+    public CompletableFuture<Void> getFuture() {
+        return future;
+    }
+
+    @Override
     public void close() {
         if (!this.terminal) {
             this.sendByte();
             this.terminal = true;
-            if (this.future != null) {
-                this.future.cancel(true);
-            }
         }
         super.close();
     }
 
     private void waitForReceiveData() {
-        log.debug("RTCP开启接收数据线程，远程的IP[{}]，端口号[{}]", this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
+        log.info("[RTSP+UDP] RTCP 开启异步接收数据线程，远程的IP[{}]，端口号[{}]",
+                this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
         while (!this.terminal) {
             try {
                 byte[] data = this.getReceiveData();
@@ -113,23 +118,9 @@ public class RtcpUdpClient extends UdpClientBasic {
     /**
      * 触发接收
      */
+    @Override
     public void triggerReceive() {
         this.future = CompletableFuture.runAsync(this::waitForReceiveData);
-    }
-
-    /**
-     * 发送接收者和描述信息
-     *
-     * @param receiverReport 接收者
-     * @param basePackage    描述
-     */
-    private void sendReceiverAndSdes(RtcpBasePackage receiverReport, RtcpBasePackage basePackage) {
-        log.debug("RTCP发送[{}]数据，{}", receiverReport.getHeader().getPackageType(), receiverReport);
-        log.debug("RTCP发送[{}]数据，{}", basePackage.getHeader().getPackageType(), basePackage);
-        byte[] res = new byte[receiverReport.byteArrayLength() + basePackage.byteArrayLength()];
-        System.arraycopy(receiverReport.toByteArray(), 0, res, 0, receiverReport.byteArrayLength());
-        System.arraycopy(basePackage.toByteArray(), 0, res, receiverReport.byteArrayLength(), basePackage.byteArrayLength());
-        this.write(res);
     }
 
     /**
@@ -146,9 +137,8 @@ public class RtcpUdpClient extends UdpClientBasic {
         }
         // 时间间隔超过5s的发一次RR数据
         if (System.currentTimeMillis() - this.lastTimeReceiveRtp > 5_000) {
-            RtcpReceiverReport receiverReport = this.statistics.createReceiverReport();
-            RtcpSdesReport sdesReport = this.statistics.createSdesReport();
-            this.sendReceiverAndSdes(receiverReport, sdesReport);
+            byte[] receiverAndSdesContent = this.statistics.createReceiverAndSdesContent();
+            this.write(receiverAndSdesContent);
             this.lastTimeReceiveRtp = System.currentTimeMillis();
         }
     }
@@ -157,8 +147,7 @@ public class RtcpUdpClient extends UdpClientBasic {
      * 发送BYTE
      */
     private void sendByte() {
-        RtcpReceiverReport receiverReport = this.statistics.createReceiverReport();
-        RtcpBye sdesReport = this.statistics.createByte();
-        this.sendReceiverAndSdes(receiverReport, sdesReport);
+        byte[] receiverAndByteContent = this.statistics.createReceiverAndByteContent();
+        this.write(receiverAndByteContent);
     }
 }

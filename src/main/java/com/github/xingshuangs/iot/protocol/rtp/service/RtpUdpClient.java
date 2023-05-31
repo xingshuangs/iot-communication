@@ -5,6 +5,7 @@ import com.github.xingshuangs.iot.net.client.UdpClientBasic;
 import com.github.xingshuangs.iot.protocol.rtcp.service.RtcpUdpClient;
 import com.github.xingshuangs.iot.protocol.rtp.model.RtpPackage;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.RawFrame;
+import com.github.xingshuangs.iot.protocol.rtsp.service.IRtspDataStream;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CompletableFuture;
@@ -16,7 +17,7 @@ import java.util.function.Consumer;
  * @author xingshuang
  */
 @Slf4j
-public class RtpUdpClient extends UdpClientBasic {
+public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
 
     public static final Integer BUFFER_SIZE = 4096;
 
@@ -39,6 +40,11 @@ public class RtpUdpClient extends UdpClientBasic {
      * 负载解析器
      */
     private IPayloadParser iPayloadParser;
+
+    /**
+     * 异步执行对象
+     */
+    private CompletableFuture<Void> future;
 
     /**
      * rtcp的客户端
@@ -66,13 +72,19 @@ public class RtpUdpClient extends UdpClientBasic {
     }
 
     @Override
+    public CompletableFuture<Void> getFuture() {
+        return future;
+    }
+
+    @Override
     public void close() {
         this.terminal = true;
         super.close();
     }
 
     private void waitForReceiveData() {
-        log.debug("RTP开启接收数据线程，远程的IP[{}]，端口号[{}]", this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
+        log.info("[RTSP+UDP] RTP 开启异步接收数据线程，远程的IP[{}]，端口号[{}]",
+                this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
         while (!this.terminal) {
             try {
                 byte[] data = this.getReceiveData();
@@ -119,7 +131,8 @@ public class RtpUdpClient extends UdpClientBasic {
         }
     }
 
+    @Override
     public void triggerReceive() {
-        CompletableFuture.runAsync(this::waitForReceiveData);
+        this.future = CompletableFuture.runAsync(this::waitForReceiveData);
     }
 }

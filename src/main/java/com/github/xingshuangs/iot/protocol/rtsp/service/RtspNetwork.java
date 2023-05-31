@@ -2,8 +2,8 @@ package com.github.xingshuangs.iot.protocol.rtsp.service;
 
 
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
-import com.github.xingshuangs.iot.net.ICommunicable;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.rtcp.service.RtcpUdpClient;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.RawFrame;
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CRLF;
@@ -49,17 +49,17 @@ public class RtspNetwork extends TcpClientBasic {
     /**
      * socket客户端列表
      */
-    private final Map<Integer, ICommunicable> socketClients = new HashMap<>();
+    private final Map<Integer, IRtspDataStream> socketClients = new HashMap<>();
 
     /**
      * 地址
      */
-    private final URI uri;
+    protected final URI uri;
 
     /**
      * 认证器
      */
-    private DigestAuthenticator authenticator;
+    protected DigestAuthenticator authenticator;
 
     /**
      * 支持的方法
@@ -91,13 +91,15 @@ public class RtspNetwork extends TcpClientBasic {
      */
     private Consumer<String> commCallback;
 
+    /**
+     * 数据帧处理
+     */
     private Consumer<RawFrame> frameHandle;
 
-    private Consumer<byte[]> rtcpCallback;
-
-    private ERtspTransportProtocol transportProtocol;
-
-    private RtspTpktClient rtspTpktClient;
+    /**
+     * 通信协议，TCP、UDP
+     */
+    protected ERtspTransportProtocol transportProtocol;
 
     public void setCommCallback(Consumer<String> commCallback) {
         this.commCallback = commCallback;
@@ -126,6 +128,14 @@ public class RtspNetwork extends TcpClientBasic {
         this.uri = uri;
         this.authenticator = authenticator;
         this.transportProtocol = transportProtocol;
+    }
+
+    @Override
+    protected void doAfterConnected() {
+        this.option();
+        this.describe();
+        this.setup();
+        this.play();
     }
 
     @Override
@@ -178,6 +188,45 @@ public class RtspNetwork extends TcpClientBasic {
         this.checkPostedCom(req, ack);
         return ack;
     }
+
+    public void sendToServer(RtspMessageRequest req) {
+        String reqString = req.toObjectString();
+        if (this.commCallback != null) {
+            this.commCallback.accept(reqString);
+        }
+        byte[] reqBytes = reqString.getBytes(StandardCharsets.US_ASCII);
+        // 后续的发送不需要加锁，因为read不再接收响应
+        this.write(reqBytes);
+    }
+
+    /**
+     * 获取接收的数据
+     *
+     * @return 字节数组
+     */
+    public byte[] readFromServer() {
+        byte[] header = new byte[4];
+        int readLength = this.read(header, 0);
+        if (readLength != 4) {
+            throw new RtspCommException("头读取长度有误");
+        }
+        int length = ByteReadBuff.newInstance(header, 2).getUInt16();
+        byte[] total = new byte[length + 4];
+        System.arraycopy(header, 0, total, 0, header.length);
+        // 存在分包的情况，循环读取，保证数据准确性
+        int offset = 4;
+        int len = length;
+        while (offset < length) {
+            int read = this.read(total, offset, len, 0);
+            offset += read;
+            len -= read;
+        }
+        if (offset != length + 4) {
+            throw new RtspCommException("数据体读取长度有误，原来长度[" + (length + 4) + "], 现在长度[" + offset + "]");
+        }
+        return total;
+    }
+
 
     /**
      * 通信后置校验
@@ -242,7 +291,6 @@ public class RtspNetwork extends TcpClientBasic {
      * 设置
      */
     protected void setup() {
-        this.checkBeforeRequest(ERtspMethod.SETUP);
         if (this.transportProtocol == ERtspTransportProtocol.UDP) {
             this.setupUdp();
         } else {
@@ -272,18 +320,9 @@ public class RtspNetwork extends TcpClientBasic {
             rtpClient.bindServer(this.uri.getHost(), ackTransport.getRtpServerPort());
             rtcpClient.bindServer(this.uri.getHost(), ackTransport.getRtcpServerPort());
 
-            rtpClient.triggerReceive();
-            rtcpClient.triggerReceive();
-
             // 设置成功后，存储一下
-            this.socketClients.put(rtpClient.getLocalPort(), rtcpClient);
+            this.socketClients.put(rtpClient.getLocalPort(), rtpClient);
             this.socketClients.put(rtcpClient.getLocalPort(), rtcpClient);
-        }
-        // 为了保证RtpUdpClient和RtcpUdpClient的接收数据线程都开启
-        try {
-            TimeUnit.MILLISECONDS.sleep(100);
-        } catch (InterruptedException e) {
-            // NOOP
         }
     }
 
@@ -303,12 +342,16 @@ public class RtspNetwork extends TcpClientBasic {
             this.doSetup(actualUri, reqTransport, media);
 
             RtspInterleavedTransport ackTransport = (RtspInterleavedTransport) this.transport;
-            this.rtspTpktClient = new RtspTpktClient(iPayloadParser);
-            this.rtspTpktClient.setChannelNumber(ackTransport.getInterleaved1(), ackTransport.getInterleaved2());
+            RtspInterleavedClient rtspInterleavedClient = new RtspInterleavedClient(iPayloadParser, this);
+            rtspInterleavedClient.setFrameHandle(this::doFrameHandle);
+            rtspInterleavedClient.setRtpVideoChannelNumber(ackTransport.getInterleaved1());
+            rtspInterleavedClient.setRtcpVideoChannelNumber(ackTransport.getInterleaved2());
+            this.socketClients.put(rtspInterleavedClient.getRtpVideoChannelNumber(), rtspInterleavedClient);
         }
     }
 
     private void doSetup(URI actualUri, RtspTransport reqTransport, RtspSdpMedia media) {
+        this.checkBeforeRequest(ERtspMethod.SETUP);
         // 发送Setup
         RtspSetupRequest request = this.needAuthorization ? new RtspSetupRequest(actualUri, reqTransport, this.authenticator)
                 : new RtspSetupRequest(actualUri, reqTransport);
@@ -337,20 +380,25 @@ public class RtspNetwork extends TcpClientBasic {
         this.checkAfterResponse(response, ERtspMethod.PLAY);
 
         this.rtpInfos = response.getRtpInfo();
+        // play命令之后触发接收数据
+        this.socketClients.values().forEach(IRtspDataStream::triggerReceive);
     }
 
     /**
      * 关闭
      */
     protected void teardown() {
+        this.clearSocketConnection();
         this.checkBeforeRequest(ERtspMethod.TEARDOWN);
 
         RtspTeardownRequest request = this.needAuthorization ? new RtspTeardownRequest(this.uri, this.sessionInfo.getSessionId())
                 : new RtspTeardownRequest(this.uri, this.sessionInfo.getSessionId(), this.authenticator);
-        RtspTeardownResponse response = (RtspTeardownResponse) this.readFromServer(request);
-
-        this.checkAfterResponse(response, ERtspMethod.TEARDOWN);
-        this.clearSocketConnection();
+        if (this.transportProtocol == ERtspTransportProtocol.UDP) {
+            RtspTeardownResponse response = (RtspTeardownResponse) this.readFromServer(request);
+            this.checkAfterResponse(response, ERtspMethod.TEARDOWN);
+        } else {
+            this.sendToServer(request);
+        }
     }
 
     /**
@@ -362,9 +410,12 @@ public class RtspNetwork extends TcpClientBasic {
         RtspGetParameterRequest request = this.needAuthorization ?
                 new RtspGetParameterRequest(this.uri, this.sessionInfo.getSessionId())
                 : new RtspGetParameterRequest(this.uri, this.sessionInfo.getSessionId(), this.authenticator);
-        RtspGetParameterResponse response = (RtspGetParameterResponse) this.readFromServer(request);
-
-        this.checkAfterResponse(response, ERtspMethod.GET_PARAMETER);
+        if (this.transportProtocol == ERtspTransportProtocol.UDP) {
+            RtspGetParameterResponse response = (RtspGetParameterResponse) this.readFromServer(request);
+            this.checkAfterResponse(response, ERtspMethod.GET_PARAMETER);
+        } else {
+            this.sendToServer(request);
+        }
     }
 
     /**
@@ -374,7 +425,8 @@ public class RtspNetwork extends TcpClientBasic {
         if (this.socketClients.isEmpty()) {
             return;
         }
-        this.socketClients.values().forEach(ICommunicable::close);
+        this.socketClients.values().forEach(IRtspDataStream::close);
+        this.socketClientJoinForFinished();
         this.socketClients.clear();
     }
 
@@ -404,9 +456,36 @@ public class RtspNetwork extends TcpClientBasic {
         }
     }
 
+    /**
+     * 处理帧数据
+     *
+     * @param frame 帧数据
+     */
     private void doFrameHandle(RawFrame frame) {
         if (this.frameHandle != null) {
             this.frameHandle.accept(frame);
         }
+    }
+
+    /**
+     * 等待所有socket客户端结束
+     */
+    protected void socketClientJoinForFinished() {
+        CompletableFuture<?>[] futures = this.socketClients.values().stream()
+                .map(IRtspDataStream::getFuture)
+                .toArray(CompletableFuture[]::new);
+        CompletableFuture<Void> all = CompletableFuture.allOf(futures);
+        all.join();
+    }
+
+    /**
+     * socket客户端线程是否都已经结束
+     *
+     * @return true：结束，false：未结束
+     */
+    protected boolean socketClientIsAllDone() {
+        return this.socketClients.values().stream()
+                .map(IRtspDataStream::getFuture)
+                .allMatch(CompletableFuture::isDone);
     }
 }

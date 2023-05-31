@@ -85,6 +85,13 @@ public class TcpClientBasic implements ICommunicable {
     }
 
     /**
+     * 连接
+     */
+    public void connect() {
+        this.getAvailableSocket();
+    }
+
+    /**
      * 获取有效的socket对象
      *
      * @return socket对象

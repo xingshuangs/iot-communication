@@ -5,12 +5,14 @@ import com.github.xingshuangs.iot.protocol.rtcp.enums.ERtcpSdesItemType;
 import com.github.xingshuangs.iot.protocol.rtcp.model.*;
 import com.github.xingshuangs.iot.protocol.rtp.model.RtpPackage;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * RTP接收数据统计
  *
  * @author xingshuang
  */
+@Slf4j
 @Data
 public class RtcpDataStatistics {
 
@@ -157,5 +159,27 @@ public class RtcpDataStatistics {
 
     public RtcpBye createByte() {
         return new RtcpBye(this.sourceId);
+    }
+
+    public byte[] createReceiverAndSdesContent() {
+        RtcpReceiverReport receiverReport = this.createReceiverReport();
+        RtcpSdesReport sdesReport = this.createSdesReport();
+        log.debug("RTCP发送[{}]数据，{}", receiverReport.getHeader().getPackageType(), receiverReport);
+        log.debug("RTCP发送[{}]数据，{}", sdesReport.getHeader().getPackageType(), sdesReport);
+        byte[] res = new byte[receiverReport.byteArrayLength() + sdesReport.byteArrayLength()];
+        System.arraycopy(receiverReport.toByteArray(), 0, res, 0, receiverReport.byteArrayLength());
+        System.arraycopy(sdesReport.toByteArray(), 0, res, receiverReport.byteArrayLength(), sdesReport.byteArrayLength());
+        return res;
+    }
+
+    public byte[] createReceiverAndByteContent() {
+        RtcpReceiverReport receiverReport = this.createReceiverReport();
+        RtcpBye aByte = this.createByte();
+        log.debug("RTCP发送[{}]数据，{}", receiverReport.getHeader().getPackageType(), receiverReport);
+        log.debug("RTCP发送[{}]数据，{}", aByte.getHeader().getPackageType(), aByte);
+        byte[] res = new byte[receiverReport.byteArrayLength() + aByte.byteArrayLength()];
+        System.arraycopy(receiverReport.toByteArray(), 0, res, 0, receiverReport.byteArrayLength());
+        System.arraycopy(aByte.toByteArray(), 0, res, receiverReport.byteArrayLength(), aByte.byteArrayLength());
+        return res;
     }
 }
