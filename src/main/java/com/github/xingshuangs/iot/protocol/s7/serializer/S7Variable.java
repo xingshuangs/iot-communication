@@ -30,7 +30,7 @@ public @interface S7Variable {
 
     /**
      * 数量
-     * 除字节Byte类型外，其他类型对应的count必须为1
+     * 除字节Byte和String类型外，其他类型对应的count必须为1
      *
      * @return 数量
      */

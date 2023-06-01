@@ -53,15 +53,15 @@ public enum EReturnCode {
 
     ;
 
-    private static final Map<Byte, EReturnCode> map = new HashMap<>();
-
-    static {
-        for (EReturnCode item : EReturnCode.values()) {
-            map.put(item.code, item);
-        }
-    }
+    private static Map<Byte, EReturnCode> map;
 
     public static EReturnCode from(byte data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (EReturnCode item : EReturnCode.values()) {
+                map.put(item.code, item);
+            }
+        }
         return map.get(data);
     }
 

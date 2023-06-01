@@ -15,7 +15,7 @@ public class S7DataTest {
 
     @Test
     public void createConnectRequest() {
-        S7Data s7Data = S7Data.createConnectRequest(0x0100,0x0100);
+        S7Data s7Data = S7Data.createConnectRequest(0x0100, 0x0100);
         assertEquals(22, s7Data.byteArrayLength());
     }
 
@@ -233,8 +233,9 @@ public class S7DataTest {
         ReadWriteParameter parameter = (ReadWriteParameter) s7Data.getParameter();
         assertEquals(EFunctionCode.READ_VARIABLE, parameter.getFunctionCode());
         assertEquals(1, parameter.getItemCount());
-        List<RequestItem> requestItems = parameter.getRequestItems();
-        for (RequestItem requestItem : requestItems) {
+        List<RequestBaseItem> requestItems = parameter.getRequestItems();
+        for (RequestBaseItem item : requestItems) {
+            RequestItem requestItem = (RequestItem) item;
             assertEquals((byte) 0x12, requestItem.getSpecificationType());
             assertEquals(10, requestItem.getLengthOfFollowing());
             assertEquals(ESyntaxID.S7ANY, requestItem.getSyntaxId());
@@ -356,8 +357,9 @@ public class S7DataTest {
         ReadWriteParameter parameter = (ReadWriteParameter) s7Data.getParameter();
         assertEquals(EFunctionCode.WRITE_VARIABLE, parameter.getFunctionCode());
         assertEquals(1, parameter.getItemCount());
-        List<RequestItem> requestItems = parameter.getRequestItems();
-        for (RequestItem requestItem : requestItems) {
+        List<RequestBaseItem> requestItems = parameter.getRequestItems();
+        for (RequestBaseItem item : requestItems) {
+            RequestItem requestItem = (RequestItem)item;
             assertEquals((byte) 0x12, requestItem.getSpecificationType());
             assertEquals(10, requestItem.getLengthOfFollowing());
             assertEquals(ESyntaxID.S7ANY, requestItem.getSyntaxId());
@@ -471,11 +473,11 @@ public class S7DataTest {
         List<ReturnItem> returnItems = s7Data.getDatum().getReturnItems();
         for (int i = 0; i < returnItems.size(); i++) {
             DataItem item = (DataItem) returnItems.get(i);
-            if(i<3){
+            if (i < 3) {
                 assertEquals(EReturnCode.SUCCESS, item.getReturnCode());
                 assertEquals(EDataVariableType.BYTE_WORD_DWORD, item.getVariableType());
                 assertEquals(2, item.getCount());
-            }else {
+            } else {
                 assertEquals(EReturnCode.OBJECT_DOES_NOT_EXIST, item.getReturnCode());
                 assertEquals(EDataVariableType.NULL, item.getVariableType());
                 assertEquals(0, item.getCount());

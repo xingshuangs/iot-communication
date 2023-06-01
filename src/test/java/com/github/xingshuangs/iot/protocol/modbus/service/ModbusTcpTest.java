@@ -1,6 +1,9 @@
 package com.github.xingshuangs.iot.protocol.modbus.service;
 
+import com.github.xingshuangs.iot.utils.HexUtil;
 import com.github.xingshuangs.iot.utils.ShortUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -9,10 +12,16 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+@Slf4j
 @Ignore
 public class ModbusTcpTest {
 
     private final ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+
+    @Before
+    public void before() {
+        this.plc.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
+    }
 
     @Test
     public void readCoil() {
@@ -76,6 +85,23 @@ public class ModbusTcpTest {
         plc.writeHoldRegister(3, list);
     }
 
+    @Test
+    public void readBoolean() {
+        byte[] expect = new byte[]{(byte) 0x22, (byte) 0xF0};
+        plc.writeHoldRegister(0, expect);
+        boolean b = this.plc.readBoolean(0, 1);
+        assertTrue(b);
+        b = this.plc.readBoolean(0, 5);
+        assertTrue(b);
+        b = this.plc.readBoolean(0, 6);
+        assertFalse(b);
+        b = this.plc.readBoolean(0, 9);
+        assertFalse(b);
+        b = this.plc.readBoolean(0, 12);
+        assertTrue(b);
+        b = this.plc.readBoolean(0, 15);
+        assertTrue(b);
+    }
 
     @Test
     public void readWriteData() {

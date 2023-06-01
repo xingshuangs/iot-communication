@@ -80,13 +80,15 @@ public class ReadWriteParameterTest {
         };
 
         ReadWriteParameter parameter = ReadWriteParameter.fromBytes(data);
-        assertEquals(EParamVariableType.BYTE, parameter.getRequestItems().get(0).getVariableType());
-        assertEquals(1, parameter.getRequestItems().get(0).getBitAddress());
-        assertEquals(3, parameter.getRequestItems().get(0).getByteAddress());
-        assertEquals(1, parameter.getRequestItems().get(0).getDbNumber());
-        assertEquals(EParamVariableType.WORD, parameter.getRequestItems().get(1).getVariableType());
-        assertEquals(0, parameter.getRequestItems().get(1).getBitAddress());
-        assertEquals(1, parameter.getRequestItems().get(1).getByteAddress());
-        assertEquals(3, parameter.getRequestItems().get(1).getDbNumber());
+        RequestItem r0 = (RequestItem) parameter.getRequestItems().get(0);
+        RequestItem r1 = (RequestItem) parameter.getRequestItems().get(1);
+        assertEquals(EParamVariableType.BYTE, r0.getVariableType());
+        assertEquals(1, r0.getBitAddress());
+        assertEquals(3, r0.getByteAddress());
+        assertEquals(1, r0.getDbNumber());
+        assertEquals(EParamVariableType.WORD, r1.getVariableType());
+        assertEquals(0, r1.getBitAddress());
+        assertEquals(1, r1.getByteAddress());
+        assertEquals(3, r1.getDbNumber());
     }
 }

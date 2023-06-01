@@ -12,5 +12,6 @@ public enum EPlcType {
     S300,
     S400,
     S1200,
-    S1500
+    S1500,
+    SINUMERIK_828D,
 }

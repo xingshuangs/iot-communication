@@ -4,6 +4,12 @@
 
 ## 前言
 
+- 支持单数据读写，多数据读写，大数据量自动分包读写
+- 支持序列化批量多地址且地址不连续的读写
+- 支持读写**DB**区，**I**区，**Q**区，**M**区，**V**区
+- 支持读写西门子**S1500**，**S1200**，**S200Smart**，**西门子机床828D** (**S300，S400未测试过，但同S1200**)
+- 支持PLC自动重连
+
 1. 如果你不熟悉S7协议可以查看这个[地址](https://blog.csdn.net/XS_YOUYOU/article/details/124870209)
 2. 对于200smartPLC的V区，就是DB1.X，例如，**V1=DB1.1，V100=DB1.100**
 
@@ -11,41 +17,77 @@
 
 > 知识点1：地址的格式以及对应含义，兼容大小写
 
-| 简写      |  区域  | 字节索引 | 位索引 | PLC类型    |
-|---------|:----:|:----:|:---:|----------|
-| DB1.1.2 | DB1区 |  1   |  2  | 1200     |
-| DB2     | DB2区 |  0   |  0  | 1200     |
-| DB3.3   | DB3区 |  3   |  0  | 1200     |
-| D1.1.2  | DB1区 |  1   |  2  | 1200     |
-| Q1.6    |  Q区  |  1   |  6  | 1200     |
-| Q1      |  Q区  |  1   |  0  | 1200     |
-| I2.5    |  I区  |  2   |  5  | 1200     |
-| I2      |  I区  |  2   |  0  | 1200     |
-| M3.2    |  M区  |  3   |  2  | 1200     |
-| M3      |  M区  |  3   |  0  | 1200     |
-| V2.1    |  V区  |  2   |  1  | 200Smart |
-| V2      |  V区  |  2   |  0  | 200Smart |
+| 简写      |  区域  | 字节索引 | 位索引 | PLC类型       |
+|---------|:----:|:----:|:---:|-------------|
+| DB1.1.2 | DB1区 |  1   |  2  | S1200/S1500 |
+| DB2     | DB2区 |  0   |  0  | S1200/S1500 |
+| DB3.3   | DB3区 |  3   |  0  | S1200/S1500 |
+| D1.1.2  | DB1区 |  1   |  2  | S1200/S1500 |
+| Q1.6    |  Q区  |  1   |  6  | S1200/S1500 |
+| Q1      |  Q区  |  1   |  0  | S1200/S1500 |
+| I2.5    |  I区  |  2   |  5  | S1200/S1500 |
+| I2      |  I区  |  2   |  0  | S1200/S1500 |
+| M3.2    |  M区  |  3   |  2  | S1200/S1500 |
+| M3      |  M区  |  3   |  0  | S1200/S1500 |
+| V2.1    |  V区  |  2   |  1  | S200Smart   |
+| V2      |  V区  |  2   |  0  | S200Smart   |
 
 > 知识点2：访问数据类型与JAVA数据类型和PLC数据类型对应关系
 
-| 访问数据类型  | 数据类型名称   | 数据大小[位] | 数据大小[字节] | JAVA数据类型 | PLC数据类型     | 示例     |
-|---------|----------|:-------:|:--------:|----------|-------------|--------|
-| boolean | 布尔类型     |    1    |   1/8    | Boolean  | BOOL        | true   |
-| byte    | 字节类型     |    8    |    1     | Byte     | BYTE        | 0x11   |
-| uint16  | 无符号2字节整型 |   16    |    2     | Integer  | WORD/UINT   | 65535  |
-| int16   | 有符号2字节整型 |   16    |    2     | Short    | WORD/INT    | -32760 |
-| uint32  | 无符号4字节整型 |   32    |    4     | Long     | DWORD/UDINT | 70000  |
-| int32   | 有符号4字节整型 |   32    |    4     | Integer  | DWORD/DINT  | -70000 |
-| float32 | 4字节浮点型   |   32    |    4     | Float    | REAL        | 3.14   |
-| float64 | 8字节浮点型   |   64    |    8     | Double   | LREAL       | 3.14   |
-| string  | 字符型      |    8    |    1     | String   | String      | ABC    |
+| 访问数据类型    | 数据类型名称   | 数据大小[位] | 数据大小[字节] | JAVA数据类型  | PLC数据类型     | 示例         |
+|-----------|----------|:-------:|:--------:|-----------|-------------|------------|
+| boolean   | 布尔类型     |    1    |   1/8    | Boolean   | BOOL        | true       |
+| byte      | 字节类型     |    8    |    1     | Byte      | BYTE        | 0x11       |
+| uint16    | 无符号2字节整型 |   16    |    2     | Integer   | WORD/UINT   | 65535      |
+| int16     | 有符号2字节整型 |   16    |    2     | Short     | WORD/INT    | -32760     |
+| uint32    | 无符号4字节整型 |   32    |    4     | Long      | DWORD/UDINT | 70000      |
+| int32     | 有符号4字节整型 |   32    |    4     | Integer   | DWORD/DINT  | -70000     |
+| float32   | 4字节浮点型   |   32    |    4     | Float     | REAL        | 3.14       |
+| float64   | 8字节浮点型   |   64    |    8     | Double    | LREAL       | 3.14       |
+| string    | 字符型      |    8    |    1     | String    | String      | ABC        |
+| time      | 时间/耗时    |   32    |    4     | Long      | Time        | 100ms      |
+| date      | 日期       |   16    |    2     | LocalDate | Date        | 2023-04-03 |
+| timeOfDay | 一天中的时间   |   32    |    4     | LocalTime | TimeOfDay   | 10:22:11   |
+
+> 知识点3：PLC地址与本项目地址和数据类型的对应关系
+
+| PLC地址        | 位大小 | 字节大小 | 访问地址      | 访问数据类型               |    PLC类型    |
+|--------------|:---:|:----:|:----------|:---------------------|:-----------:|
+| DB100.DBX0.0 |  1  | 1/8  | DB100.0.0 | boolean              | S1200/S1500 |
+| DB100.DBB5   |  8  |  1   | DB100.5   | byte                 | S1200/S1500 |
+| DB100.DBW6   | 16  |  2   | DB100.6   | uint16/int16         | S1200/S1500 |
+| DB100.DBD3   | 32  |  4   | DB100.3   | uint32/int32/float32 | S1200/S1500 |
+| VB100        |  8  |  1   | V100      | byte                 |  S200Smart  |
+| VW100        | 16  |  2   | V100      | uint16/int16         |  S200Smart  |
+| VD100        | 32  |  4   | V100      | uint32/int32/float32 |  S200Smart  |
+| MB1          |  8  |  1   | M1        | byte                 |      -      |
+| MW1          | 16  |  2   | M1        | uint16/int16         |      -      |
+| MD1          | 32  |  4   | M1        | uint32/int32/float32 |      -      |
+
+![S200Smart](http://www.ad.siemens.com.cn/productportal/Prods/s7-200-smart-portal/200SmartTop/programming/images/4.2.jpg)
+
+## 打印报文
+
+如果想知道通信过程中的实际输入输出报文内容，可以添加报文信息打印
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+        // 报文输出设置
+        s7PLC.setComCallback(x -> System.out.printf("长度[%d]:%s%n", x.length, HexUtil.toHexString(x)));
+        s7PLC.readByte("DB2.1");
+        s7PLC.close();
+    }
+}
+```
 
 ## 通信连接
 
 - PLC默认采用长连接的方式，不用的时候需要手动关闭；
 - 若需要短连接，则需要手动设置；
 
-### 1. 长连接方式
+### 1. 长连接方式(推荐)
 
 ```java
 class Demo {
@@ -54,7 +96,7 @@ class Demo {
         S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
         s7PLC.writeByte("DB2.1", (byte) 0x11);
         s7PLC.readByte("DB2.1");
-        // 需要手动关闭
+        // 需要手动关闭，若一直要使用，则不需要关闭
         s7PLC.close();
     }
 }
@@ -75,7 +117,7 @@ class Demo {
 }
 ```
 
-## 客户端教程
+## 客户端教程(S7Any寻址)
 
 ### 1. 直接方式读写
 
@@ -119,6 +161,14 @@ class Demo {
 
         // read String
         String strData = s7PLC.readString("DB14.4");
+        String strData1 = s7PLC.readString("DB14.4", 10);
+
+        // read time
+        long timeData = s7PLC.readTime("DB1.0");
+        // read date
+        LocalDate localDateData = s7PLC.readDate("DB1.0");
+        // read time of day
+        LocalTime localTimeOfDayData = s7PLC.readTimeOfDay("DB1.0");
 
         // read multi address
         MultiAddressRead addressRead = new MultiAddressRead();
@@ -162,6 +212,13 @@ class Demo {
 
         // write String
         s7PLC.writeString("DB14.4", "demo");
+
+        // write time
+        s7PLC.writeTime("DB1.0", 1000);
+        // write date
+        s7PLC.writeDate("DB1.0", LocalDate.now());
+        // write time of day
+        s7PLC.writeTimeOfDay("DB1.0", LocalTime.now());
 
         // write multi address
         MultiAddressWrite addressWrite = new MultiAddressWrite();
@@ -207,16 +264,39 @@ class Demo {
 class Demo {
     public static void main(String[] args) {
         S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+
         // bit数据读写
         byte[] expect = new byte[]{(byte) 0x00};
-        this.s7PLC.writeRaw(EParamVariableType.BIT, 1, EArea.DATA_BLOCKS, 1, 0, 3,
+        s7PLC.writeRaw(EParamVariableType.BIT, 1, EArea.DATA_BLOCKS, 1, 0, 3,
                 EDataVariableType.BIT, expect);
-        byte[] actual = this.s7PLC.readRaw(EParamVariableType.BIT, 1, EArea.DATA_BLOCKS, 1, 0, 3);
+        byte[] actual = s7PLC.readRaw(EParamVariableType.BIT, 1, EArea.DATA_BLOCKS, 1, 0, 3);
+
         // byte数据读写
         expect = new byte[]{(byte) 0x02, (byte) 0x03};
-        this.s7PLC.writeRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0,
+        s7PLC.writeRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0,
                 EDataVariableType.BYTE_WORD_DWORD, expect);
-        actual = this.s7PLC.readRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0);
+        byte[] actual1 = s7PLC.readRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0);
+
+        // 对象形式发送
+        RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 23, 1, ENckModule.S, 1);
+        S7Data s7Data = NckRequestBuilder.creatNckRequest(item);
+        S7Data ackData = s7PLC.readFromServerByPersistence(s7Data);
+
+        // 裸报文发送
+        byte[] sendByteArray = new byte[]{
+                // tpkt
+                (byte) 0x03, (byte) 0x00, (byte) 0x00, (byte) 0x1D,
+                // cotp DT Data
+                (byte) 0x02, (byte) 0xF0, (byte) 0x80,
+                // header
+                (byte) 0x32, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x0C, (byte) 0x00, (byte) 0x00,
+                // parameter
+                (byte) 0x04, (byte) 0x01,
+                // request item
+                (byte) 0x12, (byte) 0x08, (byte) 0x82, (byte) 0x41, (byte) 0x00, (byte) 0x03, (byte) 0x00, (byte) 0x01, (byte) 0x7f, (byte) 0x01
+        };
+        byte[] recByteArray = s7PLC.readFromServerByPersistence(sendByteArray);
+
         s7PLC.close();
     }
 }
@@ -224,7 +304,7 @@ class Demo {
 
 ### 3. 序列化方式读写
 
-支持BOOL UINT16 INT16 UINT32 INT32 FLOAT32 FLOAT64等数据类型读写
+支持BOOL UINT16 INT16 UINT32 INT32 FLOAT32 FLOAT64 STRING TIME DATE TIME_OF_DAY等数据类型读写
 
 构建数据量比较小的数据类
 
@@ -234,28 +314,41 @@ class Demo {
 public class DemoBean {
 
     @S7Variable(address = "DB1.0.1", type = EDataType.BOOL)
-    private boolean bitData;
+    private Boolean bitData;
 
     @S7Variable(address = "DB1.4", type = EDataType.UINT16)
-    private int uint16Data;
+    private Integer uint16Data;
 
     @S7Variable(address = "DB1.6", type = EDataType.INT16)
-    private short int16Data;
+    private Short int16Data;
 
     @S7Variable(address = "DB1.8", type = EDataType.UINT32)
-    private long uint32Data;
+    private Long uint32Data;
 
     @S7Variable(address = "DB1.12", type = EDataType.INT32)
-    private int int32Data;
+    private Integer int32Data;
 
     @S7Variable(address = "DB1.16", type = EDataType.FLOAT32)
-    private float float32Data;
+    private Float float32Data;
 
     @S7Variable(address = "DB1.20", type = EDataType.FLOAT64)
-    private double float64Data;
+    private Double float64Data;
 
     @S7Variable(address = "DB1.28", type = EDataType.BYTE, count = 3)
     private byte[] byteData;
+
+    // 注意：实际总长度为12，不是10，31 + 12 = 43， 如果字符串后面还有其他字段，需要多预留2个字节数据
+    @S7Variable(address = "DB1.31", type = EDataType.STRING, count = 10)
+    private String stringData;
+
+    @S7Variable(address = "DB1.43", type = EDataType.TIME)
+    private Long timeData;
+
+    @S7Variable(address = "DB1.47", type = EDataType.DATE)
+    private LocalDate dateData;
+
+    @S7Variable(address = "DB1.49", type = EDataType.TIME_OF_DAY)
+    private LocalTime timeOfDayData;
 }
 ```
 
@@ -305,7 +398,7 @@ class Demo {
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
 
         // 小数据量的读写
-        DemoBean bean = s7Serializer.read(DemoBean.class);
+        DemoBean bean = new DemoBean();
         bean.setBitData(true);
         bean.setUint16Data(42767);
         bean.setInt16Data((short) 32767);
@@ -314,7 +407,12 @@ class Demo {
         bean.setFloat32Data(3.14f);
         bean.setFloat64Data(4.15);
         bean.setByteData(new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03});
+        bean.setStringData("1234567890");
+        bean.setTimeData(12L);
+        bean.setDateData(LocalDate.of(2023, 5, 15));
+        bean.setTimeOfDayData(LocalTime.of(20, 22, 13));
         s7Serializer.write(bean);
+        bean = s7Serializer.read(DemoBean.class);
 
         // 大数据量的读写
         DemoLargeBean largeBean = s7Serializer.read(DemoLargeBean.class);
@@ -336,7 +434,7 @@ class Demo {
 }
 ```
 
-## 服务端教程
+## 服务端教程(S7Any寻址)
 
 - 服务端支持默认支持I区，Q区，M区，T区，C区以及DB1区，每个区都包含65536个字节；
 - 服务端可以自定义DB区，随意添加；
@@ -380,3 +478,90 @@ class Demo {
     }
 }
 ```
+
+## 西门子机床教程(NCK寻址)
+
+### 1、简单方式
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        S7PLC s7PLC = new S7PLC(EPlcType.SINUMERIK_828D, "127.0.0.1");
+
+        String cncId = s7PLC.readCncId();
+        String cncVersion = s7PLC.readCncVersion();
+        String cncType = s7PLC.readCncType();
+        String cncManufactureDate = s7PLC.readCncManufactureDate();
+        List<Double> machinePosition = s7PLC.readMachinePosition();
+        List<Double> readRelativePosition = s7PLC.readRelativePosition();
+        List<Double> readRemainPosition = s7PLC.readRemainPosition();
+        List<Double> tWorkPiecePosition = s7PLC.readTWorkPiecePosition();
+        int toolRadiusCompensationNumber = s7PLC.readToolRadiusCompensationNumber();
+        int toolNumber = s7PLC.readToolNumber();
+        double actSpindleSpeed = s7PLC.readActSpindleSpeed();
+        double feedRate = s7PLC.readFeedRate();
+        int workMode = s7PLC.readWorkMode();
+        double runTime = s7PLC.readRunTime();
+        double remainTime = s7PLC.readRemainTime();
+        String programName = s7PLC.readProgramName();
+        int alarmNumber = s7PLC.readAlarmNumber();
+
+        s7PLC.close();
+    }
+}
+```
+
+### 2、自定义方式
+
+数据内容采用小端模式
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        S7PLC s7PLC = new S7PLC(EPlcType.SINUMERIK_828D, "127.0.0.1");
+
+        // single request
+        RequestNckItem requestNckItem = new RequestNckItem(ENckArea.N_NCK, 1, 18040, 4, ENckModule.M, 1);
+        DataItem dataItem = s7PLC.readS7NckData(requestNckItem);
+        String cncType = ByteReadBuff.newInstance(dataItem.getData(), true).getString(dataItem.getCount()).trim();
+        System.out.println(cncType);
+
+        // multi request
+        List<RequestNckItem> requestNckItems = IntStream.of(1, 2, 3, 4)
+                .mapToObj(x -> new RequestNckItem(ENckArea.C_CHANNEL, 1, 2, x, ENckModule.SMA, 1))
+                .collect(Collectors.toList());
+        List<DataItem> dataItems = s7PLC.readS7NckData(requestNckItems);
+        List<Double> positions = dataItems.stream().map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat64())
+                .collect(Collectors.toList());
+        positions.forEach(System.out::println);
+
+        s7PLC.close();
+    }
+}
+```
+
+## 常见问题
+
+> 1、为什么PLC能写入数据，但是checkConnected 却是false呢？
+
+通信采用懒加载，读写的时候才会触发连接，将checkConnected放在write或read后就变成true。
+
+> 2、PLC通信过程中最大的读写数据字节大小？
+
+PLC的网络通信，根据不同型号PLC的PDULength而定，S1200=240，S1500=960，总之有240, 480, 960。<br>
+最大读取字节数组大小是222 = 240 - 18, 462 = 480 - 18, 942 = 960 - 18。<br>
+
+```text
+根据测试S1200[CPU 1214C]，单次读多字节
+发送：最大字节读取长度是 216 = 240 - 24, 24(请求报文的PDU)=10(header)+14(parameter)
+接收：最大字节读取长度是 222 = 240 - 18, 18(响应报文的PDU)=12(header)+2(parameter)+4(dataItem)
+
+根据测试S1200[CPU 1214C]，单次写多字节
+发送：最大字节写入长度是 212 = 240 - 28, 28(请求报文的PDU)=10(header)+14(parameter)+4(dataItem)
+接收：最大字节写入长度是 225 = 240 - 15, 15(响应报文的PDU)=12(header)+2(parameter)+1(dataItem)
+```
+
+> 3、在PLC关闭之后获取异常，在PLC重启之后自动连入该怎么处理？
+
+内部支持断线重连，每次触发读写操作的时候，若PLC已经断线，则触发重连操作。
+

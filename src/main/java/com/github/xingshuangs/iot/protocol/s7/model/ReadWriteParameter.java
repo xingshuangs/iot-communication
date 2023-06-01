@@ -6,10 +6,12 @@ import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.s7.enums.ESyntaxID;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -31,14 +33,14 @@ public class ReadWriteParameter extends Parameter implements IObjectByteArray {
     /**
      * 可重复的请求项
      */
-    private List<RequestItem> requestItems = new ArrayList<>();
+    private List<RequestBaseItem> requestItems = new ArrayList<>();
 
     /**
      * 添加请求项
      *
      * @param item 项
      */
-    public void addItem(RequestItem item) {
+    public void addItem(RequestBaseItem item) {
         this.requestItems.add(item);
         this.itemCount = this.requestItems.size();
     }
@@ -48,23 +50,23 @@ public class ReadWriteParameter extends Parameter implements IObjectByteArray {
      *
      * @param items 请求项列表
      */
-    public void addItem(List<RequestItem> items) {
+    public void addItem(Collection<? extends RequestBaseItem> items) {
         this.requestItems.addAll(items);
         this.itemCount = this.requestItems.size();
     }
 
     @Override
     public int byteArrayLength() {
-        return 2 + this.requestItems.stream().mapToInt(RequestItem::byteArrayLength).sum();
+        return 2 + this.requestItems.stream().mapToInt(RequestBaseItem::byteArrayLength).sum();
     }
 
     @Override
     public byte[] toByteArray() {
-        int length = 2 + this.requestItems.stream().mapToInt(RequestItem::byteArrayLength).sum();
+        int length = 2 + this.requestItems.stream().mapToInt(RequestBaseItem::byteArrayLength).sum();
         ByteWriteBuff buff = ByteWriteBuff.newInstance(length)
                 .putByte(this.functionCode.getCode())
                 .putByte(this.itemCount);
-        for (RequestItem requestItem : this.requestItems) {
+        for (RequestBaseItem requestItem : this.requestItems) {
             buff.putBytes(requestItem.toByteArray());
         }
         return buff.getData();
@@ -91,11 +93,34 @@ public class ReadWriteParameter extends Parameter implements IObjectByteArray {
         if (data.length == 2) {
             return readWriteParameter;
         }
-        for (int i = 1; i <= readWriteParameter.itemCount; i++) {
-            byte[] bytes = buff.getBytes(RequestItem.BYTE_LENGTH);
-            readWriteParameter.requestItems.add(RequestItem.fromBytes(bytes));
+        int off = 2;
+        for (int i = 0; i < readWriteParameter.itemCount; i++) {
+            RequestBaseItem item = parserItem(data, off);
+            readWriteParameter.requestItems.add(item);
+            off += item.byteArrayLength();
         }
         return readWriteParameter;
+    }
+
+    /**
+     * 解析字节数组数据
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return RequestBaseItem
+     */
+    public static RequestBaseItem parserItem(final byte[] data, final int offset) {
+        ByteReadBuff buff = new ByteReadBuff(data, offset);
+        byte aByte = buff.getByte(2 + offset);
+        ESyntaxID syntaxID = ESyntaxID.from(aByte);
+        switch (syntaxID) {
+            case S7ANY:
+                return RequestItem.fromBytes(data, offset);
+            case NCK:
+                return RequestNckItem.fromBytes(data, offset);
+            default:
+                throw new S7CommException("无法解析RequestBaseItem对应的类型");
+        }
     }
 
     /**
@@ -105,7 +130,7 @@ public class ReadWriteParameter extends Parameter implements IObjectByteArray {
      * @param requestItems 请求项
      * @return ReadWriteParameter
      */
-    public static ReadWriteParameter createReqParameter(EFunctionCode functionCode, List<RequestItem> requestItems) {
+    public static ReadWriteParameter createReqParameter(EFunctionCode functionCode, Collection<? extends RequestBaseItem> requestItems) {
         ReadWriteParameter parameter = new ReadWriteParameter();
         parameter.functionCode = functionCode;
         parameter.addItem(requestItems);

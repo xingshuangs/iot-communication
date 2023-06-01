@@ -4,6 +4,13 @@
 
 ## Foreword
 
+- Read/write single data and multi data, large data automatic subcontracting.
+- Read/write serialized batch multiple addresses and discontinuous address.
+- Read/write **DB**, **I**, **Q**, **M**, and **V**.
+- Read/write Siemens **S1500**, **S1200**, **S200Smart**, **Siemens Machine Tool 828D**. (**S300, S400 not tested, but
+  same as S1200**)
+- Support automatic PLC reconnection.
+
 1. You can check this [address](https://blog.csdn.net/XS_YOUYOU/article/details/124870209) if
    you're not familiar with the S7 protocol. <br>
 2. 200smartPLC, V Area == DB1.X. Example: **V1=DB1.1, V100=DB1.100**
@@ -12,41 +19,78 @@
 
 > Tips1: Format and meaning of the address, case compatible.
 
-| Abbr    | Area | Byte Index | Bit Index | PLC Type |
-|---------|:----:|:----------:|:---------:|----------|
-| DB1.1.2 | DB1  |     1      |     2     | 1200     |
-| DB2     | DB2  |     0      |     0     | 1200     |
-| DB3.3   | DB3  |     3      |     0     | 1200     |
-| D1.1.2  | DB1  |     1      |     2     | 1200     |
-| Q1.6    |  Q   |     1      |     6     | 1200     |
-| Q1      |  Q   |     1      |     0     | 1200     |
-| I2.5    |  I   |     2      |     5     | 1200     |
-| I2      |  I   |     2      |     0     | 1200     |
-| M3.2    |  M   |     3      |     2     | 1200     |
-| M3      |  M   |     3      |     0     | 1200     |
-| V2.1    |  V   |     2      |     1     | 200Smart |
-| V2      |  V   |     2      |     0     | 200Smart |
+| Abbr    | Area | Byte Index | Bit Index | PLC Type    |
+|:--------|:----:|:----------:|:---------:|:------------|
+| DB1.1.2 | DB1  |     1      |     2     | S1200/S1500 |
+| DB2     | DB2  |     0      |     0     | S1200/S1500 |
+| DB3.3   | DB3  |     3      |     0     | S1200/S1500 |
+| D1.1.2  | DB1  |     1      |     2     | S1200/S1500 |
+| Q1.6    |  Q   |     1      |     6     | S1200/S1500 |
+| Q1      |  Q   |     1      |     0     | S1200/S1500 |
+| I2.5    |  I   |     2      |     5     | S1200/S1500 |
+| I2      |  I   |     2      |     0     | S1200/S1500 |
+| M3.2    |  M   |     3      |     2     | S1200/S1500 |
+| M3      |  M   |     3      |     0     | S1200/S1500 |
+| V2.1    |  V   |     2      |     1     | S200Smart   |
+| V2      |  V   |     2      |     0     | S200Smart   |
 
 > Tips2: Access data types mapping to JAVA data types and PLC data types.
 
-| Access Data Type | Data Size in Bit | Data Size in Byte | JAVA Data Type | PLC Data Type | Instance |
-|------------------|:----------------:|:-----------------:|----------------|---------------|----------|
-| boolean          |        1         |        1/8        | Boolean        | BOOL          | true     |
-| byte             |        8         |         1         | Byte           | BYTE          | 0x11     |
-| uint16           |        16        |         2         | Integer        | WORD/UINT     | 65535    |
-| int16            |        16        |         2         | Short          | WORD/INT      | -32760   |
-| uint32           |        32        |         4         | Long           | DWORD/UDINT   | 70000    |
-| int32            |        32        |         4         | Integer        | DWORD/DINT    | -70000   |
-| float32          |        32        |         4         | Float          | REAL          | 3.14     |
-| float64          |        64        |         8         | Double         | LREAL         | 3.14     |
-| string           |        8         |         1         | String         | String        | ABC      |
+| Access Data Type | Data Size in Bit | Data Size in Byte | JAVA Data Type | PLC Data Type | Instance   |
+|------------------|:----------------:|:-----------------:|----------------|---------------|------------|
+| boolean          |        1         |        1/8        | Boolean        | BOOL          | true       |
+| byte             |        8         |         1         | Byte           | BYTE          | 0x11       |
+| uint16           |        16        |         2         | Integer        | WORD/UINT     | 65535      |
+| int16            |        16        |         2         | Short          | WORD/INT      | -32760     |
+| uint32           |        32        |         4         | Long           | DWORD/UDINT   | 70000      |
+| int32            |        32        |         4         | Integer        | DWORD/DINT    | -70000     |
+| float32          |        32        |         4         | Float          | REAL          | 3.14       |
+| float64          |        64        |         8         | Double         | LREAL         | 3.14       |
+| string           |        8         |         1         | String         | String        | ABC        |
+| time             |        32        |         4         | Long           | Time          | 100ms      |
+| date             |        16        |         2         | LocalDate      | Date          | 2023-04-03 |
+| timeOfDay        |        32        |         4         | LocalTime      | TimeOfDay     | 10:22:11   |
+
+> Tip3: The PLC address mapping to the project address and data type
+
+| PLC Address  | Data Size in Bit | Data Size in Byte | Access Address | Access Data Type     |  PLC Type   |
+|--------------|:----------------:|:-----------------:|:---------------|:---------------------|:-----------:|
+| DB100.DBX0.0 |        1         |        1/8        | DB100.0.0      | boolean              | S1200/S1500 |
+| DB100.DBB5   |        8         |         1         | DB100.5        | byte                 | S1200/S1500 |
+| DB100.DBW6   |        16        |         2         | DB100.6        | uint16/int16         | S1200/S1500 |
+| DB100.DBD3   |        32        |         4         | DB100.3        | uint32/int32/float32 | S1200/S1500 |
+| VB100        |        8         |         1         | V100           | byte                 |  S200Smart  |
+| VW100        |        16        |         2         | V100           | uint16/int16         |  S200Smart  |
+| VD100        |        32        |         4         | V100           | uint32/int32/float32 |  S200Smart  |
+| MB1          |        8         |         1         | M1             | byte                 |      -      |
+| MW1          |        16        |         2         | M1             | uint16/int16         |      -      |
+| MD1          |        32        |         4         | M1             | uint32/int32/float32 |      -      |
+
+![S200Smart](http://www.ad.siemens.com.cn/productportal/Prods/s7-200-smart-portal/200SmartTop/programming/images/4.2.jpg)
+
+## Print Message
+
+If you want to know the actual input and output of packets during communication, you can print packet information by
+yourself.
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+        // print message
+        s7PLC.setComCallback(x -> System.out.printf("Length[%d]:%s%n", x.length, HexUtil.toHexString(x)));
+        s7PLC.readByte("DB2.1");
+        s7PLC.close();
+    }
+}
+```
 
 ## Communication Connection
 
 - By default, the long connection mode is adopted. You need to close connection manually when it is not in use.
 - If a short connection is required, you need to set it manually.
 
-### 1. Long Connection Mode
+### 1. Long Connection Mode (**Recommend**)
 
 ```java
 class Demo {
@@ -55,7 +99,7 @@ class Demo {
         S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
         s7PLC.writeByte("DB2.1", (byte) 0x11);
         s7PLC.readByte("DB2.1");
-        // close it manually
+        // close it manually, if you want to use it all the time, you do not need to close it
         s7PLC.close();
     }
 }
@@ -76,7 +120,7 @@ class Demo {
 }
 ```
 
-## Client Tutorial
+## Client Tutorial (S7Any address)
 
 ### 1. Direct Mode Read-write
 
@@ -120,6 +164,14 @@ class Demo {
 
         // read String
         String strData = s7PLC.readString("DB14.4");
+        String strData1 = s7PLC.readString("DB14.4", 10);
+
+        // read time
+        long timeData = s7PLC.readTime("DB1.0");
+        // read date
+        LocalDate localDateData = s7PLC.readDate("DB1.0");
+        // read time of day
+        LocalTime localTimeOfDayData = s7PLC.readTimeOfDay("DB1.0");
 
         // read multi address
         MultiAddressRead addressRead = new MultiAddressRead();
@@ -163,6 +215,13 @@ class Demo {
 
         // write String
         s7PLC.writeString("DB14.4", "demo");
+
+        // write time
+        s7PLC.writeTime("DB1.0", 1000);
+        // write date
+        s7PLC.writeDate("DB1.0", LocalDate.now());
+        // write time of day
+        s7PLC.writeTimeOfDay("DB1.0", LocalTime.now());
 
         // write multi address
         MultiAddressWrite addressWrite = new MultiAddressWrite();
@@ -208,16 +267,38 @@ class Demo {
 class Demo {
     public static void main(String[] args) {
         S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+
         // bit data read-write
         byte[] expect = new byte[]{(byte) 0x00};
-        this.s7PLC.writeRaw(EParamVariableType.BIT, 1, EArea.DATA_BLOCKS, 1, 0, 3,
+        s7PLC.writeRaw(EParamVariableType.BIT, 1, EArea.DATA_BLOCKS, 1, 0, 3,
                 EDataVariableType.BIT, expect);
-        byte[] actual = this.s7PLC.readRaw(EParamVariableType.BIT, 1, EArea.DATA_BLOCKS, 1, 0, 3);
+        byte[] actual = s7PLC.readRaw(EParamVariableType.BIT, 1, EArea.DATA_BLOCKS, 1, 0, 3);
+
         // byte data read-write
         expect = new byte[]{(byte) 0x02, (byte) 0x03};
-        this.s7PLC.writeRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0,
+        s7PLC.writeRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0,
                 EDataVariableType.BYTE_WORD_DWORD, expect);
-        actual = this.s7PLC.readRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0);
+        byte[] actual1 = s7PLC.readRaw(EParamVariableType.BYTE, 2, EArea.DATA_BLOCKS, 1, 1, 0);
+
+        // send with object
+        RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 23, 1, ENckModule.S, 1);
+        S7Data s7Data = NckRequestBuilder.creatNckRequest(item);
+        S7Data ackData = s7PLC.readFromServerByPersistence(s7Data);
+
+        // send with raw message
+        byte[] sendByteArray = new byte[]{
+                // tpkt
+                (byte) 0x03, (byte) 0x00, (byte) 0x00, (byte) 0x1D,
+                // cotp DT Data
+                (byte) 0x02, (byte) 0xF0, (byte) 0x80,
+                // header
+                (byte) 0x32, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x0C, (byte) 0x00, (byte) 0x00,
+                // parameter
+                (byte) 0x04, (byte) 0x01,
+                // request item
+                (byte) 0x12, (byte) 0x08, (byte) 0x82, (byte) 0x41, (byte) 0x00, (byte) 0x03, (byte) 0x00, (byte) 0x01, (byte) 0x7f, (byte) 0x01
+        };
+        byte[] recByteArray = s7PLC.readFromServerByPersistence(sendByteArray);
 
         s7PLC.close();
     }
@@ -226,7 +307,7 @@ class Demo {
 
 ### 3. Serializer Mode Read-write
 
-Support BOOL UINT16 INT16 UINT32 INT32 FLOAT32 FLOAT64 read-write.
+Support BOOL, UINT16, INT16, UINT32, INT32, FLOAT32, FLOAT64, STRING, TIME, DATE, TIME_OF_DAY read-write.
 
 Create small size data class.
 
@@ -236,28 +317,42 @@ Create small size data class.
 public class DemoBean {
 
     @S7Variable(address = "DB1.0.1", type = EDataType.BOOL)
-    private boolean bitData;
+    private Boolean bitData;
 
     @S7Variable(address = "DB1.4", type = EDataType.UINT16)
-    private int uint16Data;
+    private Integer uint16Data;
 
     @S7Variable(address = "DB1.6", type = EDataType.INT16)
-    private short int16Data;
+    private Short int16Data;
 
     @S7Variable(address = "DB1.8", type = EDataType.UINT32)
-    private long uint32Data;
+    private Long uint32Data;
 
     @S7Variable(address = "DB1.12", type = EDataType.INT32)
-    private int int32Data;
+    private Integer int32Data;
 
     @S7Variable(address = "DB1.16", type = EDataType.FLOAT32)
-    private float float32Data;
+    private Float float32Data;
 
     @S7Variable(address = "DB1.20", type = EDataType.FLOAT64)
-    private double float64Data;
+    private Double float64Data;
 
     @S7Variable(address = "DB1.28", type = EDataType.BYTE, count = 3)
     private byte[] byteData;
+
+    // Note: The actual total length is 12, not 10, 31 + 12 = 43. 
+    // If there are other fields after the string, you need to reserve 2 more bytes of data
+    @S7Variable(address = "DB1.31", type = EDataType.STRING, count = 10)
+    private String stringData;
+
+    @S7Variable(address = "DB1.43", type = EDataType.TIME)
+    private Long timeData;
+
+    @S7Variable(address = "DB1.47", type = EDataType.DATE)
+    private LocalDate dateData;
+
+    @S7Variable(address = "DB1.49", type = EDataType.TIME_OF_DAY)
+    private LocalTime timeOfDayData;
 }
 ```
 
@@ -296,7 +391,7 @@ public class DemoLargeBean {
 }
 ```
 
-Read and write
+Read and write.
 
 ```java
 class Demo {
@@ -307,7 +402,7 @@ class Demo {
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
 
         // small size data read-write
-        DemoBean bean = s7Serializer.read(DemoBean.class);
+        DemoBean bean = new DemoBean();
         bean.setBitData(true);
         bean.setUint16Data(42767);
         bean.setInt16Data((short) 32767);
@@ -316,7 +411,12 @@ class Demo {
         bean.setFloat32Data(3.14f);
         bean.setFloat64Data(4.15);
         bean.setByteData(new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03});
+        bean.setStringData("1234567890");
+        bean.setTimeData(12L);
+        bean.setDateData(LocalDate.of(2023, 5, 15));
+        bean.setTimeOfDayData(LocalTime.of(20, 22, 13));
         s7Serializer.write(bean);
+        bean = s7Serializer.read(DemoBean.class);
 
         // big size data read-write
         DemoLargeBean largeBean = s7Serializer.read(DemoLargeBean.class);
@@ -338,9 +438,9 @@ class Demo {
 }
 ```
 
-## Server Tutorial
+## Server Tutorial (S7Any address)
 
-- By default, the server supports area I, Q, M, T, C and DB1, each includes 65536 bytes.
+- By default, the server supports area I, Q, M, T, C and DB1, each area includes 65536 bytes.
 - The server can customize the DB area and add it at will.
 - Currently, only read and write operations are supported.
 
@@ -382,3 +482,91 @@ class Demo {
     }
 }
 ```
+
+## Siemens Machine Tool Tutorial(NCK address)
+
+### 1、Simple Mode
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        S7PLC s7PLC = new S7PLC(EPlcType.SINUMERIK_828D, "127.0.0.1");
+
+        String cncId = s7PLC.readCncId();
+        String cncVersion = s7PLC.readCncVersion();
+        String cncType = s7PLC.readCncType();
+        String cncManufactureDate = s7PLC.readCncManufactureDate();
+        List<Double> machinePosition = s7PLC.readMachinePosition();
+        List<Double> readRelativePosition = s7PLC.readRelativePosition();
+        List<Double> readRemainPosition = s7PLC.readRemainPosition();
+        List<Double> tWorkPiecePosition = s7PLC.readTWorkPiecePosition();
+        int toolRadiusCompensationNumber = s7PLC.readToolRadiusCompensationNumber();
+        int toolNumber = s7PLC.readToolNumber();
+        double actSpindleSpeed = s7PLC.readActSpindleSpeed();
+        double feedRate = s7PLC.readFeedRate();
+        int workMode = s7PLC.readWorkMode();
+        double runTime = s7PLC.readRunTime();
+        double remainTime = s7PLC.readRemainTime();
+        String programName = s7PLC.readProgramName();
+        int alarmNumber = s7PLC.readAlarmNumber();
+
+        s7PLC.close();
+    }
+}
+```
+
+### 2、Custom Mode
+
+The data content is in little-endian mode.
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        S7PLC s7PLC = new S7PLC(EPlcType.SINUMERIK_828D, "127.0.0.1");
+
+        // single request
+        RequestNckItem requestNckItem = new RequestNckItem(ENckArea.N_NCK, 1, 18040, 4, ENckModule.M, 1);
+        DataItem dataItem = s7PLC.readS7NckData(requestNckItem);
+        String cncType = ByteReadBuff.newInstance(dataItem.getData(), true).getString(dataItem.getCount()).trim();
+        System.out.println(cncType);
+
+        // multi request
+        List<RequestNckItem> requestNckItems = IntStream.of(1, 2, 3, 4)
+                .mapToObj(x -> new RequestNckItem(ENckArea.C_CHANNEL, 1, 2, x, ENckModule.SMA, 1))
+                .collect(Collectors.toList());
+        List<DataItem> dataItems = s7PLC.readS7NckData(requestNckItems);
+        List<Double> positions = dataItems.stream().map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat64())
+                .collect(Collectors.toList());
+        positions.forEach(System.out::println);
+
+        s7PLC.close();
+    }
+}
+```
+
+## Q&A
+
+> 1、Why can PLC write data but checkConnected function return always false?
+
+Communication uses lazy loading. The connection is triggered only when reading or writing. CheckConnected function
+will return true after reading or writing.
+
+> 2、Maximum read/write data byte size during PLC communication?
+
+Depend on different types of PLC PDULength, S1200 = 240, S1500 = 960. In a word there are 240, 480, 960.<br>
+The maximum read byte array size is 222 = 240 - 18, 462 = 480 - 18, 942 = 960 - 18.<br>
+
+```text
+According to the test S1200[CPU 1214C], read multiple bytes in a single time
+Send：The maximum byte read length is 216 = 240 - 24, 24(request PDU) = 10(header) + 14(parameter)
+Receive：The maximum byte read length is 222 = 240 - 18, 18(response PDU) = 12(header) + 2(parameter) + 4(dataItem)
+
+According to the test S1200[CPU 1214C], write multiple bytes in a single time
+Send：The maximum byte write length is 212 = 240 - 28, 28(request PDU) = 10(header) + 14(parameter) + 4(dataItem)
+Receive：The maximum byte write length is 225 = 240 - 15, 15(response PDU) = 12(header) + 2(parameter) + 1(dataItem)
+```
+
+> 3、What about getting exceptions after PLC shutdown and automatically connecting after PLC restarts?
+
+Disconnection reconnects is supported. If the PLC has been disconnected, the reconnection is
+triggered in each time of reading and writing operation.

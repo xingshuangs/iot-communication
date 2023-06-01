@@ -12,6 +12,9 @@ import com.github.xingshuangs.iot.protocol.s7.service.S7PLC;
 import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
 
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -105,6 +108,11 @@ public class S7Serializer implements IPLCSerializable {
             s7ParseData.setField(field);
             if (s7Variable.type() == EDataType.BOOL) {
                 s7ParseData.setRequestItem(AddressUtil.parseBit(s7Variable.address()));
+            } else if (s7Variable.type() == EDataType.STRING) {
+                RequestItem requestItem = AddressUtil.parseByte(s7Variable.address(), 1 + s7Variable.count() * s7Variable.type().getByteLength());
+                // 为什么字节索引+1，为了避免修改PLC中string[60]类型的第一个字节数据，该数据为字符串的允许最大长度
+                requestItem.setByteAddress(requestItem.getByteAddress() + 1);
+                s7ParseData.setRequestItem(requestItem);
             } else {
                 s7ParseData.setRequestItem(AddressUtil.parseByte(s7Variable.address(),
                         s7Variable.count() * s7Variable.type().getByteLength()));
@@ -127,8 +135,11 @@ public class S7Serializer implements IPLCSerializable {
         if (s7Variable.count() < 0) {
             throw new S7CommException("S7参数注解中[count]不能为负数");
         }
-        if (s7Variable.type() != EDataType.BYTE && s7Variable.count() > 1) {
-            throw new S7CommException("S7参数注解中只有[type]=字节类型数据的[count]才能大于1，其他必须等于1");
+        if (s7Variable.type() == EDataType.STRING && s7Variable.count() > 254) {
+            throw new S7CommException("S7参数注解中字符串类型类型数据的[count]不能大于254");
+        }
+        if (s7Variable.type() != EDataType.BYTE && s7Variable.type() != EDataType.STRING && s7Variable.count() > 1) {
+            throw new S7CommException("S7参数注解中只有[type]=字节和字符串类型数据的[count]才能大于1，其他必须等于1");
         }
     }
 
@@ -159,6 +170,7 @@ public class S7Serializer implements IPLCSerializable {
                     case INT16:
                         item.getField().set(result, buff.getInt16());
                         break;
+                    case TIME:
                     case UINT32:
                         item.getField().set(result, buff.getUInt32());
                         break;
@@ -170,6 +182,18 @@ public class S7Serializer implements IPLCSerializable {
                         break;
                     case FLOAT64:
                         item.getField().set(result, buff.getFloat64());
+                        break;
+                    case STRING:
+                        int length = buff.getByteToInt(0);
+                        item.getField().set(result, buff.getString(1, Math.min(length, item.getCount())));
+                        break;
+                    case DATE:
+                        LocalDate date = LocalDate.of(1990, 1, 1).plusDays(buff.getUInt16());
+                        item.getField().set(result, date);
+                        break;
+                    case TIME_OF_DAY:
+                        LocalTime time = LocalTime.ofSecondOfDay(buff.getUInt32() / 1000);
+                        item.getField().set(result, time);
                         break;
                     default:
                         throw new S7CommException("无法识别数据类型");
@@ -214,6 +238,7 @@ public class S7Serializer implements IPLCSerializable {
                         item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(2)
                                 .putShort((Short) data).getData()));
                         break;
+                    case TIME:
                     case UINT32:
                         item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)
                                 .putInteger((Long) data).getData()));
@@ -229,6 +254,25 @@ public class S7Serializer implements IPLCSerializable {
                     case FLOAT64:
                         item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(8)
                                 .putDouble((Double) data).getData()));
+                        break;
+                    case STRING:
+                        byte[] bytes = ((String) data).getBytes(StandardCharsets.US_ASCII);
+                        byte[] targetBytes = new byte[1 + item.getCount()];
+                        targetBytes[0] = (byte) item.getCount();
+                        System.arraycopy(bytes, 0, targetBytes, 1, Math.min(bytes.length, item.getCount()));
+                        item.setDataItem(DataItem.createReqByByte(targetBytes));
+                        break;
+                    case DATE:
+                        // TODO: 后面时间采用工具类
+                        LocalDate start = LocalDate.of(1990, 1, 1);
+                        long date = ((LocalDate) data).toEpochDay() - start.toEpochDay();
+                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(2)
+                                .putShort((short) date).getData()));
+                        break;
+                    case TIME_OF_DAY:
+                        long timeOfDay = ((LocalTime) data).toSecondOfDay() * 1000L;
+                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)
+                                .putInteger(timeOfDay).getData()));
                         break;
                     default:
                         throw new S7CommException("无法识别数据类型");

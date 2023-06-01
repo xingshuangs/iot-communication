@@ -2,7 +2,110 @@
 
 [HOME BACK](../README.md)
 
-## 1. Read data
+## Foreword
+
+> Tips
+
+- **1** coil = **1** bit.
+- **1** register address = **2** bytes.
+- [ register start address = **0001** ] equal to [ access address = **0** ], there is a **1** address offset.
+- The encoding format of **4 bytes** data = **BA_DC**. (big-endian mode = **DC_BA**，little-endian mode = **AB_CD**)
+- Support automatic reconnection.
+
+> Area
+
+| Area Number | Name           | Read/Write | Address Range | Method                               |
+|:-----------:|:---------------|:-----------|:-------------:|:-------------------------------------|
+|   0 area    | output coil    | read/write |  00001-09999  | readCoil / writeCoil                 |
+|   1 area    | input coil     | read       |  10001-19999  | readDiscreteInput                    |
+|   3 area    | input register | read       |  30001-39999  | readInputRegister                    |
+|   4 area    | hold register  | read/write |  40001-49999  | readHoldRegister / writeHoldRegister |
+
+> Function Code
+
+| Function Code | Description             | Method            |
+|:-------------:|:------------------------|:------------------|
+|      01H      | read output coil        | readCoil          |
+|      02H      | read input coil         | readDiscreteInput |
+|      03H      | read hold register      | readHoldRegister  |
+|      04H      | read input register     | readInputRegister |
+|      05H      | write single coil       | writeCoil         |
+|      06H      | write single register   | writeHoldRegister |
+|      0FH      | write multiple coil     | writeCoil         |
+|      10H      | write multiple register | writeHoldRegister |
+
+> Hold Register Quick Access
+
+| Method       | Register Count | Size in Byte | Size in Bit |   Register    |
+|:-------------|:--------------:|:------------:|:-----------:|:-------------:|
+| readBoolean  |       1        |     1/8      |      1      | hold register |
+| readInt16    |       1        |      2       |     16      | hold register |
+| readUInt16   |       1        |      2       |     16      | hold register |
+| readInt32    |       2        |      4       |     32      | hold register |
+| readUInt32   |       2        |      4       |     32      | hold register |
+| readFloat32  |       2        |      4       |     32      | hold register |
+| readFloat64  |       4        |      8       |     64      | hold register |
+| readString   |       n        |      2n      |     16n     | hold register |
+| writeInt16   |       1        |      2       |     16      | hold register |
+| writeUInt16  |       1        |      2       |     16      | hold register |
+| writeInt32   |       2        |      4       |     32      | hold register |
+| writeUInt32  |       2        |      4       |     32      | hold register |
+| writeFloat32 |       2        |      4       |     32      | hold register |
+| writeFloat64 |       4        |      8       |     64      | hold register |
+| writeString  |       n        |      2n      |     16n     | hold register |
+
+## Print Message
+
+If you want to know the actual input and output of packets during communication, you can print packet information by yourself.
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        // print message
+        plc.setComCallback(x -> System.out.printf("Length[%d]:%s%n", x.length, HexUtil.toHexString(x)));
+        plc.writeInt16(2, (short) 10);
+        plc.close();
+    }
+}
+```
+
+## Communication Connection
+
+- By default, the long connection mode is adopted. You need to close connection manually when it is not in use.
+- If a short connection is required, you need to set it manually.
+
+### 1. Long Connection Mode
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        // long connection mode, persistence = true
+        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        plc.writeInt16(2, (short) 10);
+        short data = plc.readInt16(2);
+        // close it manually
+        plc.close();
+    }
+}
+```
+
+### 2. Short Connection Mode
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        // short connection mode
+        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        // set short connection mode, persistence = false
+        plc.setPersistence(false);
+        plc.writeInt16(2, (short) 10);
+        short data = plc.readInt16(2);
+    }
+}
+```
+
+## Read data
 
 ```java
 class Demo {
@@ -41,11 +144,13 @@ class Demo {
 
         // hold register read String
         String readString = plc.readString(2, 4);
+
+        plc.close();
     }
 }
 ```
 
-## 2. Write data
+## Write data
 
 ```java
 class Demo {
@@ -85,8 +190,10 @@ class Demo {
         // hold register write float64
         plc.writeFloat64(2, 33.21);
 
-        // hold register write String
+        // hold register write String, even length
         plc.writeString(2, "1234");
+
+        plc.close();
     }
 }
 ```

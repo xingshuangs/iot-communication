@@ -27,32 +27,46 @@ public enum EDataType {
 
     FLOAT64("float64", 8),
 
-    // S7协议字符串比较特殊，暂不实现
-    STRING("string", 1);
+    STRING("string", 1),
+
+    /**
+     * 目前只对S7协议使用，对应的JAVA类型long
+     */
+    TIME("time", 4),
+
+    /**
+     * 目前只对S7协议使用，对应的JAVA类型LocalDate
+     */
+    DATE("date", 2),
+
+    /**
+     * 目前只对S7协议使用，对应的JAVA类型LocalTime
+     */
+    TIME_OF_DAY("timeOfDay", 4);
 
 //    UNKNOWN("unknown", 0);
 
-    private static final Map<String, EDataType> map = new HashMap<>();
-
-    static {
-        for (EDataType item : EDataType.values()) {
-            map.put(item.name, item);
-        }
-    }
+    private static Map<String, EDataType> map;
 
     public static EDataType from(String data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (EDataType item : EDataType.values()) {
+                map.put(item.name, item);
+            }
+        }
         return map.get(data);
     }
 
     /**
      * 字节长度
      */
-    private int byteLength;
+    private final int byteLength;
 
     /**
      * 名称
      */
-    private String name;
+    private final String name;
 
     EDataType(String name, int byteLength) {
         this.name = name;

@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
+import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.s7.enums.EDataVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EReturnCode;
@@ -48,13 +49,27 @@ public class DataItem extends ReturnItem implements IObjectByteArray {
     public byte[] toByteArray() {
         // 如果数据长度为奇数，S7协议会多填充一个字节，使其保持为偶数（最后一个奇数长度数据不需要填充）
         int length = 4 + this.data.length + (this.data.length % 2 == 0 ? 0 : 1);
-        return ByteWriteBuff.newInstance(length)
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(length)
                 .putByte(this.returnCode.getCode())
-                .putByte(this.variableType.getCode())
-                // 如果数据类型是位，不需要 * 8，如果是其他类型，需要 * 8
-                .putShort((this.count * (this.variableType == EDataVariableType.BIT ? 1 : 8)))
-                .putBytes(this.data)
-                .getData();
+                .putByte(this.variableType.getCode());
+        // 如果数据类型是位，不需要 * 8，如果是其他类型，需要 * 8
+        switch (this.variableType) {
+            case NULL:
+            case BYTE_WORD_DWORD:
+            case INTEGER:
+                buff.putShort(this.count * 8);
+                break;
+            case BIT:
+            case DINTEGER:
+            case REAL:
+            case OCTET_STRING:
+                buff.putShort(this.count);
+                break;
+            default:
+                throw new S7CommException("无法识别数据类型");
+        }
+        buff.putBytes(this.data);
+        return buff.getData();
     }
 
     /**
@@ -83,7 +98,21 @@ public class DataItem extends ReturnItem implements IObjectByteArray {
         dataItem.returnCode = EReturnCode.from(buff.getByte());
         dataItem.variableType = EDataVariableType.from(buff.getByte());
         // 如果是bit，正常解析，如果是字节，则需要除8操作
-        dataItem.count = buff.getUInt16() / (dataItem.variableType == EDataVariableType.BIT ? 1 : 8);
+        switch (dataItem.variableType) {
+            case NULL:
+            case BYTE_WORD_DWORD:
+            case INTEGER:
+                dataItem.count = buff.getUInt16() / 8;
+                break;
+            case BIT:
+            case DINTEGER:
+            case REAL:
+            case OCTET_STRING:
+                dataItem.count = buff.getUInt16();
+                break;
+            default:
+                throw new S7CommException("无法识别数据类型");
+        }
         // 返回数据类型为null，那就是没有数据
         if (dataItem.variableType != EDataVariableType.NULL) {
             dataItem.data = buff.getBytes(dataItem.count);

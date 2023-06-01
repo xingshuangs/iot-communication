@@ -33,7 +33,7 @@ public class TcpServerBasic {
     /**
      * 客户端MAP
      */
-    private final ConcurrentHashMap<String, Socket> clientMap = new ConcurrentHashMap<>();
+    protected final ConcurrentHashMap<String, Socket> clientMap = new ConcurrentHashMap<>();
 
     //region 服务端
 
@@ -134,7 +134,7 @@ public class TcpServerBasic {
         SocketAddress address = client.getRemoteSocketAddress();
         this.clientMap.put(address.toString(), client);
         log.debug("有客户端[{}]连入，当前客户端数量[{}]", address, this.clientMap.size());
-
+        this.clientConnected(client);
         try {
             if (this.checkHandshake(client)) {
                 while (SocketUtils.isConnected(client)) {
@@ -153,6 +153,25 @@ public class TcpServerBasic {
 
         this.clientMap.remove(address.toString());
         log.debug("有客户端[{}]断开，当前客户端数量[{}]", address, this.clientMap.size());
+        this.clientDisconnected(client);
+    }
+
+    /**
+     * 客户端连入
+     *
+     * @param socket 客户端
+     */
+    protected void clientConnected(Socket socket) {
+        // NOOP
+    }
+
+    /**
+     * 客户端断开
+     *
+     * @param socket 客户端
+     */
+    protected void clientDisconnected(Socket socket) {
+        // NOOP
     }
 
     /**

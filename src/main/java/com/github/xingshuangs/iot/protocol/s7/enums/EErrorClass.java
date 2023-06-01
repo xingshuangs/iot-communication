@@ -47,15 +47,15 @@ public enum EErrorClass {
     ACCESS_ERROR((byte) 0x87, "访问错误"),
     ;
 
-    private static final Map<Byte, EErrorClass> map = new HashMap<>();
-
-    static {
-        for (EErrorClass item : EErrorClass.values()) {
-            map.put(item.code, item);
-        }
-    }
+    private static Map<Byte, EErrorClass> map;
 
     public static EErrorClass from(byte data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (EErrorClass item : EErrorClass.values()) {
+                map.put(item.code, item);
+            }
+        }
         return map.get(data);
     }
 

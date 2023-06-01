@@ -93,15 +93,15 @@ public enum EArea {
 
     ;
 
-    private static final Map<Byte, EArea> map = new HashMap<>();
-
-    static {
-        for (EArea item : EArea.values()) {
-            map.put(item.code, item);
-        }
-    }
+    private static Map<Byte, EArea> map;
 
     public static EArea from(byte data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (EArea item : EArea.values()) {
+                map.put(item.code, item);
+            }
+        }
         return map.get(data);
     }
 

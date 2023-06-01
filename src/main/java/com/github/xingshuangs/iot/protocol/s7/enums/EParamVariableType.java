@@ -102,15 +102,15 @@ public enum EParamVariableType {
     HS_COUNTER((byte) 0x20),
     ;
 
-    private static final Map<Byte, EParamVariableType> map = new HashMap<>();
-
-    static {
-        for (EParamVariableType item : EParamVariableType.values()) {
-            map.put(item.code, item);
-        }
-    }
+    private static Map<Byte, EParamVariableType> map;
 
     public static EParamVariableType from(byte data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (EParamVariableType item : EParamVariableType.values()) {
+                map.put(item.code, item);
+            }
+        }
         return map.get(data);
     }
 

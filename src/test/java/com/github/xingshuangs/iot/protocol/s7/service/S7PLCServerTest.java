@@ -4,15 +4,20 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import com.github.xingshuangs.iot.protocol.s7.serializer.DemoBean;
 import com.github.xingshuangs.iot.protocol.s7.serializer.DemoLargeBean;
 import com.github.xingshuangs.iot.protocol.s7.serializer.S7Serializer;
+import com.github.xingshuangs.iot.utils.HexUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
 
+@Slf4j
 public class S7PLCServerTest {
 
     private S7PLCServer server;
@@ -24,6 +29,7 @@ public class S7PLCServerTest {
         server.addDBArea(1, 2, 3, 4);
         this.server.start();
         this.s7PLC = new S7PLC(EPlcType.S1200);
+        this.s7PLC.setComCallback(x -> log.debug("长度[{}]：{}", x.length, HexUtil.toHexString(x)));
 //        this.s7PLC.setPersistence(false);
     }
 
@@ -71,16 +77,24 @@ public class S7PLCServerTest {
         bean.setFloat32Data(3.14f);
         bean.setFloat64Data(4.15);
         bean.setByteData(bytes);
+        bean.setStringData("1234567890");
+        bean.setTimeData(12L);
+        bean.setDateData(LocalDate.of(2023, 5, 15));
+        bean.setTimeOfDayData(LocalTime.of(20, 22, 13));
         s7Serializer.write(bean);
         bean = s7Serializer.read(DemoBean.class);
-        assertTrue(bean.isBitData());
-        assertEquals(42767, bean.getUint16Data());
-        assertEquals((short) 32767, bean.getInt16Data());
-        assertEquals(3147483647L, bean.getUint32Data());
-        assertEquals(2147483647, bean.getInt32Data());
+        assertTrue(bean.getBitData());
+        assertEquals(42767, bean.getUint16Data().intValue());
+        assertEquals((short) 32767, bean.getInt16Data().intValue());
+        assertEquals(3147483647L, bean.getUint32Data().longValue());
+        assertEquals(2147483647, bean.getInt32Data().intValue());
         assertEquals(3.14f, bean.getFloat32Data(), 0.001);
         assertEquals(4.15, bean.getFloat64Data(), 0.001);
         assertArrayEquals(bytes, bean.getByteData());
+        assertEquals("1234567890", bean.getStringData());
+        assertEquals(12, bean.getTimeData().longValue());
+        assertEquals(LocalDate.of(2023, 5, 15), bean.getDateData());
+        assertEquals(LocalTime.of(20, 22, 13), bean.getTimeOfDayData());
     }
 
     @Test
@@ -101,5 +115,12 @@ public class S7PLCServerTest {
         bean.getByteData6()[499] = (byte) 0x06;
         bean.getByteData7()[43] = (byte) 0x07;
         s7Serializer.write(bean);
+    }
+
+    @Test
+    public void writeStringTest() {
+        this.s7PLC.writeString("DB1.10", "123456");
+        String actual = this.s7PLC.readString("DB1.10", 6);
+        assertEquals("123456", actual);
     }
 }

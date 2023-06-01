@@ -1,6 +1,8 @@
 package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
+import com.github.xingshuangs.iot.utils.HexUtil;
+
 import java.util.List;
 
 /**
@@ -9,6 +11,7 @@ import java.util.List;
 public class DemoReadTest {
     public static void main(String[] args) {
         ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        plc.setComCallback(x -> System.out.printf("长度[%d]:%s%n", x.length, HexUtil.toHexString(x)));
 
         // read coil
         List<Boolean> readCoil = plc.readCoil(0, 2);
@@ -43,5 +46,6 @@ public class DemoReadTest {
         // hold register read String
         String readString = plc.readString(2, 4);
 
+        plc.close();
     }
 }

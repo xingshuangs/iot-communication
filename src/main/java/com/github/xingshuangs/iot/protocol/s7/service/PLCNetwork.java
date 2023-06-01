@@ -19,13 +19,13 @@ import java.util.stream.Collectors;
 
 /**
  * plc的网络通信
- * 最小字节数组大小是240-18=222，480-18=462,960-18=942
+ * 最大读取字节数组大小是240-18=222，480-18=462,960-18=942
  * 根据测试S1200[CPU 1214C]，单次读多字节
- * 发送：最大字节读取长度是 216 = 240 - 24, 18(响应报文的PDU)=10(header)+14(parameter)
+ * 发送：最大字节读取长度是 216 = 240 - 24, 24(请求报文的PDU)=10(header)+14(parameter)
  * 接收：最大字节读取长度是 222 = 240 - 18, 18(响应报文的PDU)=12(header)+2(parameter)+4(dataItem)
  * 根据测试S1200[CPU 1214C]，单次写多字节
  * 发送：最大字节写入长度是 212 = 240 - 28, 28(请求报文的PDU)=10(header)+14(parameter)+4(dataItem)
- * 接收：最大字节写入长度是 225 = 240 - 15, 28(请求报文的PDU)=12(header)+2(parameter)+1(dataItem)
+ * 接收：最大字节写入长度是 225 = 240 - 15, 15(响应报文的PDU)=12(header)+2(parameter)+1(dataItem)
  *
  * @author xingshuang
  */
@@ -127,6 +127,11 @@ public class PLCNetwork extends TcpClientBasic {
             case S1500:
                 remote += 0x20 * this.rack + this.slot;
                 break;
+            case SINUMERIK_828D:
+                local = 0x0400;
+                remote = 0x0D04;
+                remote += 0x20 * this.rack + this.slot;
+                break;
         }
         S7Data req = S7Data.createConnectRequest(local, remote);
         S7Data ack = this.readFromServer(req);
@@ -165,7 +170,7 @@ public class PLCNetwork extends TcpClientBasic {
      * @param req S7协议数据
      * @return S7协议数据
      */
-    protected S7Data readFromServer(S7Data req) {
+    private S7Data readFromServer(S7Data req) {
         byte[] sendData = req.toByteArray();
         if (this.comCallback != null) {
             this.comCallback.accept(sendData);
@@ -201,6 +206,73 @@ public class PLCNetwork extends TcpClientBasic {
         }
         this.checkPostedCom(req, ack);
         return ack;
+    }
+
+    private byte[] readFromServer(byte[] sendData) {
+        if (this.comCallback != null) {
+            this.comCallback.accept(sendData);
+        }
+
+        // 将报文中的TPKT和COTP减掉，剩下PDU的内容，7=4(tpkt)+3(cotp)
+        if (this.pduLength > 0 && sendData.length - 7 > this.pduLength) {
+            throw new S7CommException(String.format("发送请求的字节数过长[%d]，已经大于最大的PDU长度[%d]", sendData.length, this.pduLength));
+        }
+
+        TPKT tpkt;
+        int len;
+        byte[] total;
+        synchronized (this.objLock) {
+            this.write(sendData);
+
+            byte[] data = new byte[TPKT.BYTE_LENGTH];
+            len = this.read(data);
+            if (len < TPKT.BYTE_LENGTH) {
+                throw new S7CommException(" TPKT 无效，长度不一致");
+            }
+            tpkt = TPKT.fromBytes(data);
+            total = new byte[tpkt.getLength()];
+            System.arraycopy(data, 0, total, 0, data.length);
+            len = this.read(total, TPKT.BYTE_LENGTH, tpkt.getLength() - TPKT.BYTE_LENGTH);
+        }
+        if (len < total.length - TPKT.BYTE_LENGTH) {
+            throw new S7CommException(" TPKT后面的数据长度，长度不一致");
+        }
+        if (this.comCallback != null) {
+            this.comCallback.accept(total);
+        }
+        return total;
+    }
+
+    /**
+     * 包含持久化的从服务器读取数据，外部继承使用该方法进行交互，内部不使用
+     *
+     * @param req 请求数据
+     * @return 响应数据
+     */
+    public S7Data readFromServerByPersistence(S7Data req) {
+        try {
+            return this.readFromServer(req);
+        } finally {
+            if (!this.persistence) {
+                this.close();
+            }
+        }
+    }
+
+    /**
+     * 包含持久化的从服务器读取数据，外部继承使用该方法进行交互，内部不使用
+     *
+     * @param req 请求数据
+     * @return 响应数据
+     */
+    public byte[] readFromServerByPersistence(byte[] req) {
+        try {
+            return this.readFromServer(req);
+        } finally {
+            if (!this.persistence) {
+                this.close();
+            }
+        }
     }
 
     /**
@@ -262,8 +334,8 @@ public class PLCNetwork extends TcpClientBasic {
                 .collect(Collectors.toList());
 
         // 根据顺序分组算法得出分组结果，
-        // 发送： 12=10(header)+2(parameter前),12(parameter后) （采用)
-        // 接收： 14=12(header)+2(parameter),5(DataItem)，dataItem可能4或5，统一采用5  (不采用)
+        // 发送： 12=10(header)+2(parameter前),12(parameter后)
+        // 接收： 14=12(header)+2(parameter),5(DataItem)，dataItem可能4或5，统一采用5
         List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.readRecombination(rawNumbers, this.pduLength - 14, 5, 12);
         try {
             s7ComGroups.forEach(x -> {
@@ -292,7 +364,6 @@ public class PLCNetwork extends TcpClientBasic {
             return resultList;
         } finally {
             if (!this.persistence) {
-                log.debug("由于短连接方式，通信完毕触发关闭连接通道，服务端IP[{}]", this.socketAddress);
                 this.close();
             }
         }
@@ -333,8 +404,8 @@ public class PLCNetwork extends TcpClientBasic {
         List<Integer> rawNumbers = requestItems.stream().map(RequestItem::getCount).collect(Collectors.toList());
 
         // 根据顺序分组算法得出分组结果
-        // 发送：12=10(header)+2(parameter前),17=12(parameter后)+5(dataItem)，dataItem可能4或5，统一采用5 （采用)
-        // 接收：14=12(header)+2(parameter),1(DataItem)  (不采用)
+        // 发送：12=10(header)+2(parameter前),17=12(parameter后)+5(dataItem)，dataItem可能4或5，统一采用5
+        // 接收：14=12(header)+2(parameter),1(DataItem)
         List<S7ComGroup> s7ComGroups = S7SequentialGroupAlg.writeRecombination(rawNumbers, this.pduLength - 12, 17);
         try {
             s7ComGroups.forEach(x -> {
@@ -360,10 +431,35 @@ public class PLCNetwork extends TcpClientBasic {
             });
         } finally {
             if (!this.persistence) {
-                log.debug("由于短连接方式，通信完毕触发关闭连接通道，服务端IP[{}]", this.socketAddress);
                 this.close();
             }
         }
+    }
+
+    //endregion
+
+    //region 读取NCK数据
+
+    /**
+     * 读取S7协议NCK数据
+     *
+     * @param requestItem 请求项
+     * @return 数据项
+     */
+    public DataItem readS7NckData(RequestNckItem requestItem) {
+        return this.readS7NckData(Collections.singletonList(requestItem)).get(0);
+    }
+
+    /**
+     * 读取S7协议NCK数据
+     *
+     * @param requestItems 请求项列表
+     * @return 数据项
+     */
+    public List<DataItem> readS7NckData(List<RequestNckItem> requestItems) {
+        S7Data s7Data = NckRequestBuilder.creatNckRequest(requestItems);
+        S7Data ack = this.readFromServerByPersistence(s7Data);
+        return ack.getDatum().getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
     }
 
     //endregion

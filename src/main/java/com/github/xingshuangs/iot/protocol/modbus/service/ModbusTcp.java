@@ -50,8 +50,8 @@ public class ModbusTcp extends ModbusNetwork {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
-        if (quantity < 1 || quantity > 200) {
-            throw new IllegalArgumentException("quantity<1||quantity>200");
+        if (quantity < 1 || quantity > 2000) {
+            throw new IllegalArgumentException("quantity<1||quantity>2000");
         }
         MbReadCoilRequest reqPdu = new MbReadCoilRequest(address, quantity);
         MbReadCoilResponse resPdu = (MbReadCoilResponse) this.readModbusData(reqPdu);
@@ -68,7 +68,6 @@ public class ModbusTcp extends ModbusNetwork {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
-
         MbWriteSingleCoilRequest reqPdu = new MbWriteSingleCoilRequest(address, coilStatus);
         this.readModbusData(reqPdu);
     }
@@ -102,8 +101,8 @@ public class ModbusTcp extends ModbusNetwork {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
-        if (quantity < 1 || quantity > 200) {
-            throw new IllegalArgumentException("quantity<1||quantity>200");
+        if (quantity < 1 || quantity > 2000) {
+            throw new IllegalArgumentException("quantity<1||quantity>2000");
         }
         MbReadDiscreteInputRequest reqPdu = new MbReadDiscreteInputRequest(address, quantity);
         MbReadDiscreteInputResponse resPdu = (MbReadDiscreteInputResponse) this.readModbusData(reqPdu);
@@ -204,6 +203,23 @@ public class ModbusTcp extends ModbusNetwork {
     //endregion
 
     //region 通用保持寄存器 读取数据
+
+    /**
+     * 读取一个boolean类型数据，只有一个地址的数据，位索引[0,15]
+     *
+     * @param address  地址
+     * @param bitIndex 位索引[0,15]
+     * @return true, false
+     */
+    public boolean readBoolean(int address, int bitIndex) {
+        if (bitIndex < 0 || bitIndex > 15) {
+            throw new IllegalArgumentException("bitIndex < 0 || bitIndex > 15");
+        }
+        byte[] res = this.readHoldRegister(address, 1);
+        int byteOffset = bitIndex / 8;
+        int bitOffset = bitIndex % 8;
+        return ByteReadBuff.newInstance(res, EByteBuffFormat.BA_DC).getBoolean(byteOffset, bitOffset);
+    }
 
     /**
      * 读取一个Int16 2字节数据

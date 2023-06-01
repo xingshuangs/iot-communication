@@ -71,15 +71,15 @@ public enum EFunctionCode {
     SETUP_COMMUNICATION((byte) 0xF0),
     ;
 
-    private static final Map<Byte, EFunctionCode> map = new HashMap<>();
-
-    static {
-        for (EFunctionCode item : EFunctionCode.values()) {
-            map.put(item.code, item);
-        }
-    }
+    private static Map<Byte, EFunctionCode> map;
 
     public static EFunctionCode from(byte data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (EFunctionCode item : EFunctionCode.values()) {
+                map.put(item.code, item);
+            }
+        }
         return map.get(data);
     }
 

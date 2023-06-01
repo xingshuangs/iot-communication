@@ -4,12 +4,16 @@ package com.github.xingshuangs.iot.protocol.modbus.service;
 import com.github.xingshuangs.iot.exceptions.ModbusCommException;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.protocol.modbus.model.*;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.function.Consumer;
 
 /**
  * plc的网络通信
  *
  * @author xingshuang
  */
+@Slf4j
 public class ModbusNetwork extends TcpClientBasic {
 
     /**
@@ -21,6 +25,28 @@ public class ModbusNetwork extends TcpClientBasic {
      * 锁
      */
     private final Object objLock = new Object();
+
+    /**
+     * 通信回调
+     */
+    private Consumer<byte[]> comCallback;
+
+    /**
+     * 是否持久化，默认是持久化，对应长连接，true：长连接，false：短连接
+     */
+    private boolean persistence = true;
+
+    public void setComCallback(Consumer<byte[]> comCallback) {
+        this.comCallback = comCallback;
+    }
+
+    public boolean isPersistence() {
+        return persistence;
+    }
+
+    public void setPersistence(boolean persistence) {
+        this.persistence = persistence;
+    }
 
     public ModbusNetwork() {
         super();
@@ -40,6 +66,9 @@ public class ModbusNetwork extends TcpClientBasic {
      * @return modbus协议数据
      */
     protected MbTcpResponse readFromServer(MbTcpRequest req) {
+        if (this.comCallback != null) {
+            this.comCallback.accept(req.toByteArray());
+        }
         MbapHeader header;
         int len;
         byte[] remain;
@@ -59,6 +88,9 @@ public class ModbusNetwork extends TcpClientBasic {
             throw new ModbusCommException(" MbapHeader后面的数据长度，长度不一致");
         }
         MbTcpResponse ack = MbTcpResponse.fromBytes(header, remain);
+        if (this.comCallback != null) {
+            this.comCallback.accept(ack.toByteArray());
+        }
         this.checkResult(req, ack);
         return ack;
     }
@@ -99,7 +131,14 @@ public class ModbusNetwork extends TcpClientBasic {
         request.getHeader().setUnitId(this.unitId);
         request.setPdu(reqPdu);
         request.selfCheck();
-        MbTcpResponse response = this.readFromServer(request);
-        return response.getPdu();
+        try {
+            MbTcpResponse response = this.readFromServer(request);
+            return response.getPdu();
+        } finally {
+            if (!this.persistence) {
+                log.debug("由于短连接方式，通信完毕触发关闭连接通道，服务端IP[{}]", this.socketAddress);
+                this.close();
+            }
+        }
     }
 }

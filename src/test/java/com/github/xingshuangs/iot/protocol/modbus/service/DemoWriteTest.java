@@ -1,6 +1,8 @@
 package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
+import com.github.xingshuangs.iot.utils.HexUtil;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,6 +13,7 @@ public class DemoWriteTest {
 
     public static void main(String[] args) {
         ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        plc.setComCallback(x -> System.out.printf("长度[%d]:%s%n", x.length, HexUtil.toHexString(x)));
 
         // single write coil
         plc.writeCoil(0, true);
@@ -47,5 +50,7 @@ public class DemoWriteTest {
 
         // hold register write String
         plc.writeString(2, "1234");
+
+        plc.close();
     }
 }
