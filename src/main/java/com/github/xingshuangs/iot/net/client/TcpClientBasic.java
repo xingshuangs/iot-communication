@@ -44,6 +44,23 @@ public class TcpClientBasic implements ICommunicable {
      */
     private final AtomicBoolean socketError;
 
+    /**
+     * 自动重连，true:自动重连，false：不自动重连，默认自动重连
+     */
+    protected boolean enableReconnect = true;
+
+    public InetSocketAddress getSocketAddress() {
+        return socketAddress;
+    }
+
+    public boolean isEnableReconnect() {
+        return enableReconnect;
+    }
+
+    public void setEnableReconnect(boolean enableReconnect) {
+        this.enableReconnect = enableReconnect;
+    }
+
     public int getConnectTimeout() {
         return connectTimeout;
     }
@@ -88,6 +105,7 @@ public class TcpClientBasic implements ICommunicable {
      * 连接
      */
     public void connect() {
+        this.close();
         this.getAvailableSocket();
     }
 
@@ -97,6 +115,10 @@ public class TcpClientBasic implements ICommunicable {
      * @return socket对象
      */
     public Socket getAvailableSocket() {
+        // socket连接过了，同时又不支持自动重连，直接返回
+        if (this.socket != null && !this.enableReconnect) {
+            return this.socket;
+        }
 
         // 已连接的直接返回socket
         if (this.checkConnected()) {

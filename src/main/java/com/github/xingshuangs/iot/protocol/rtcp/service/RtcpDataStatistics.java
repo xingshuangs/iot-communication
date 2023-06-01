@@ -7,6 +7,9 @@ import com.github.xingshuangs.iot.protocol.rtp.model.RtpPackage;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+import java.util.function.Consumer;
+
 /**
  * RTP接收数据统计
  *
@@ -71,6 +74,11 @@ public class RtcpDataStatistics {
      */
     private long lastTimeRtcpReportReceived = 0;
 
+    /**
+     * 上一次接收到RTP的时间，本地当前的时间戳
+     */
+    private long lastLocalTimeReceiveRtp = 0;
+
     public RtcpDataStatistics() {
         this.sourceId = System.currentTimeMillis();
     }
@@ -79,8 +87,9 @@ public class RtcpDataStatistics {
      * 处理RTP数据包
      *
      * @param rtp RTP数据包
+     * @param send 回调发送字节数据
      */
-    public void processRtpPackage(RtpPackage rtp) {
+    public void processRtpPackage(RtpPackage rtp, Consumer<byte[]> send) {
         if (this.lastRtpSsrc > 0) {
             this.sampleTimestampSum += rtp.getHeader().getTimestamp() - this.lastRtpTimestamp;
             int delta = rtp.getHeader().getSequenceNumber() - this.highestSequenceNumber;
@@ -99,6 +108,18 @@ public class RtcpDataStatistics {
         this.highestSequenceNumber = rtp.getHeader().getSequenceNumber();
         this.lastRtpSsrc = rtp.getHeader().getSsrc();
         this.lastRtpTimestamp = rtp.getHeader().getTimestamp();
+
+        // 第一次接收rtp数据
+        if (this.lastLocalTimeReceiveRtp == 0) {
+            this.lastLocalTimeReceiveRtp = System.currentTimeMillis();
+        }
+
+        // 时间间隔超过5s的发一次RR数据，接收数据报告
+        if (System.currentTimeMillis() - this.lastLocalTimeReceiveRtp > 5_000) {
+            byte[] receiverAndByteContent = this.createReceiverAndSdesContent();
+            send.accept(receiverAndByteContent);
+            this.lastLocalTimeReceiveRtp = System.currentTimeMillis();
+        }
     }
 
     /**
@@ -112,13 +133,23 @@ public class RtcpDataStatistics {
     /**
      * 处理RTCP数据包
      *
-     * @param rtcp rtcp数据包
+     * @param basePackages rtcp数据包列表
      */
-    public void processRtcpPackage(RtcpSenderReport rtcp) {
-        this.lastNtpTimeSenderReportReceived = rtcp.getSenderInfo().getMswTimestamp();
-        this.lastTimeRtcpReportReceived = System.currentTimeMillis();
+    public void processRtcpPackage(List<RtcpBasePackage> basePackages) {
+        for (RtcpBasePackage rtcp : basePackages) {
+            log.debug("RTCP接收[{}]数据，{}", rtcp.getHeader().getPackageType(), rtcp);
+            if (rtcp instanceof RtcpSenderReport) {
+                this.lastNtpTimeSenderReportReceived = ((RtcpSenderReport) rtcp).getSenderInfo().getMswTimestamp();
+                this.lastTimeRtcpReportReceived = System.currentTimeMillis();
+            }
+        }
     }
 
+    /**
+     * 创建接收报告
+     *
+     * @return RtcpReceiverReport
+     */
     public RtcpReceiverReport createReceiverReport() {
         // 丢包率（8bit）:丢包率需要转换为0-255的占比；如20%丢包=20%*255=51
         int fractionLost = 0;
@@ -145,6 +176,11 @@ public class RtcpDataStatistics {
         return receiverReport;
     }
 
+    /**
+     * 创建SDES报告
+     *
+     * @return RtcpSdesReport
+     */
     public RtcpSdesReport createSdesReport() {
         RtcpSdesReport sdesReport = new RtcpSdesReport();
         RtcpSdesChunk chunk = new RtcpSdesChunk(this.sourceId);
@@ -157,10 +193,20 @@ public class RtcpDataStatistics {
         return sdesReport;
     }
 
+    /**
+     * 创建Byte
+     *
+     * @return RtcpBye
+     */
     public RtcpBye createByte() {
         return new RtcpBye(this.sourceId);
     }
 
+    /**
+     * 创建RR内容的报告字节数组
+     *
+     * @return 字节数组
+     */
     public byte[] createReceiverAndSdesContent() {
         RtcpReceiverReport receiverReport = this.createReceiverReport();
         RtcpSdesReport sdesReport = this.createSdesReport();
@@ -172,6 +218,11 @@ public class RtcpDataStatistics {
         return res;
     }
 
+    /**
+     * 创建byte的报告字节数组
+     *
+     * @return 字节数组
+     */
     public byte[] createReceiverAndByteContent() {
         RtcpReceiverReport receiverReport = this.createReceiverReport();
         RtcpBye aByte = this.createByte();

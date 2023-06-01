@@ -114,9 +114,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     public RtspNetwork(URI uri, ERtspTransportProtocol transportProtocol) {
-        super(uri.getHost(), uri.getPort());
-        this.uri = uri;
-        this.transportProtocol = transportProtocol;
+        this(uri, null, transportProtocol);
     }
 
     public RtspNetwork(URI uri, DigestAuthenticator authenticator) {
@@ -125,6 +123,8 @@ public class RtspNetwork extends TcpClientBasic {
 
     public RtspNetwork(URI uri, DigestAuthenticator authenticator, ERtspTransportProtocol transportProtocol) {
         super(uri.getHost(), uri.getPort());
+        // 不需要自动重连，连不上就停掉
+        this.enableReconnect = false;
         this.uri = uri;
         this.authenticator = authenticator;
         this.transportProtocol = transportProtocol;
@@ -144,6 +144,12 @@ public class RtspNetwork extends TcpClientBasic {
         super.close();
     }
 
+    /**
+     * 从服务器读取数据
+     *
+     * @param req 请求
+     * @return 响应
+     */
     public RtspMessageResponse readFromServer(RtspMessageRequest req) {
         String reqString = req.toObjectString();
         if (this.commCallback != null) {
@@ -189,6 +195,11 @@ public class RtspNetwork extends TcpClientBasic {
         return ack;
     }
 
+    /**
+     * 发送数据给服务器，但不返回
+     *
+     * @param req 请求数据
+     */
     public void sendToServer(RtspMessageRequest req) {
         String reqString = req.toObjectString();
         if (this.commCallback != null) {
@@ -198,35 +209,6 @@ public class RtspNetwork extends TcpClientBasic {
         // 后续的发送不需要加锁，因为read不再接收响应
         this.write(reqBytes);
     }
-
-    /**
-     * 获取接收的数据
-     *
-     * @return 字节数组
-     */
-    public byte[] readFromServer() {
-        byte[] header = new byte[4];
-        int readLength = this.read(header, 0);
-        if (readLength != 4) {
-            throw new RtspCommException("头读取长度有误");
-        }
-        int length = ByteReadBuff.newInstance(header, 2).getUInt16();
-        byte[] total = new byte[length + 4];
-        System.arraycopy(header, 0, total, 0, header.length);
-        // 存在分包的情况，循环读取，保证数据准确性
-        int offset = 4;
-        int len = length;
-        while (offset < length) {
-            int read = this.read(total, offset, len, 0);
-            offset += read;
-            len -= read;
-        }
-        if (offset != length + 4) {
-            throw new RtspCommException("数据体读取长度有误，原来长度[" + (length + 4) + "], 现在长度[" + offset + "]");
-        }
-        return total;
-    }
-
 
     /**
      * 通信后置校验
@@ -298,6 +280,9 @@ public class RtspNetwork extends TcpClientBasic {
         }
     }
 
+    /**
+     * UDP设置
+     */
     private void setupUdp() {
         for (RtspSdpMedia media : this.sdp.getMedias()) {
             if (!media.getMediaDesc().getType().equals("video")) {
@@ -326,6 +311,9 @@ public class RtspNetwork extends TcpClientBasic {
         }
     }
 
+    /**
+     * TCP设置
+     */
     private void setupTcp() {
         int interleavedCount = 0;
         for (RtspSdpMedia media : this.sdp.getMedias()) {
@@ -350,6 +338,13 @@ public class RtspNetwork extends TcpClientBasic {
         }
     }
 
+    /**
+     * 正在执行设置
+     *
+     * @param actualUri    实际URI
+     * @param reqTransport transport
+     * @param media        媒体信息
+     */
     private void doSetup(URI actualUri, RtspTransport reqTransport, RtspSdpMedia media) {
         this.checkBeforeRequest(ERtspMethod.SETUP);
         // 发送Setup

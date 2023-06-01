@@ -82,12 +82,28 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
         super.close();
     }
 
+    @Override
+    public void triggerReceive() {
+        this.future = CompletableFuture.runAsync(this::waitForReceiveData);
+    }
+
+    @Override
+    public void sendData(byte[] data) {
+        if (this.commCallback != null) {
+            this.commCallback.accept(data);
+        }
+        this.write(data);
+    }
+
+    /**
+     * 接收数据的线程
+     */
     private void waitForReceiveData() {
         log.info("[RTSP+UDP] RTP 开启异步接收数据线程，远程的IP[{}]，端口号[{}]",
                 this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
         while (!this.terminal) {
             try {
-                byte[] data = this.getReceiveData();
+                byte[] data = this.read();
                 if (this.commCallback != null) {
                     this.commCallback.accept(data);
                 }
@@ -104,23 +120,6 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
     }
 
     /**
-     * 获取接收的数据
-     *
-     * @return 字节数组
-     */
-    private byte[] getReceiveData() {
-        byte[] buffer = new byte[BUFFER_SIZE];
-        int length = this.read(buffer);
-        if (length < BUFFER_SIZE) {
-            byte[] data = new byte[length];
-            System.arraycopy(buffer, 0, data, 0, length);
-            return data;
-        } else {
-            return buffer;
-        }
-    }
-
-    /**
      * 处理帧数据
      *
      * @param frame 帧
@@ -129,10 +128,5 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
         if (this.frameHandle != null) {
             this.frameHandle.accept(frame);
         }
-    }
-
-    @Override
-    public void triggerReceive() {
-        this.future = CompletableFuture.runAsync(this::waitForReceiveData);
     }
 }

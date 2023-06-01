@@ -75,6 +75,7 @@ public class RtspMessage implements IObjectString {
     /**
      * 自定义最大值的最新序号
      *
+     * @param max 最大值
      * @return 序号
      */
     public static int getNumber(int max) {

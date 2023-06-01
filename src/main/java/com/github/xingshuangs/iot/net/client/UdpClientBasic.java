@@ -133,6 +133,22 @@ public class UdpClientBasic implements ICommunicable {
         }
     }
 
+    /**
+     * 读取数据，完全不知道待接收的数据长度
+     *
+     * @return 字节数组
+     */
+    public byte[] read() {
+        byte[] buffer = new byte[4096];
+        int length = this.read(buffer);
+        if (length < 4096) {
+            byte[] data = new byte[length];
+            System.arraycopy(buffer, 0, data, 0, length);
+            return data;
+        } else {
+            return buffer;
+        }
+    }
 
     /**
      * 读取数据
@@ -197,6 +213,5 @@ public class UdpClientBasic implements ICommunicable {
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
         }
-
     }
 }

@@ -51,7 +51,7 @@ public class RtspClient extends RtspNetwork {
             }
             long lastTime = System.currentTimeMillis();
             while (this.alive) {
-                TimeUnit.MILLISECONDS.sleep(200);
+                TimeUnit.MILLISECONDS.sleep(500);
                 // 所有线程都已经完成
                 if (this.socketClientIsAllDone()) {
                     break;

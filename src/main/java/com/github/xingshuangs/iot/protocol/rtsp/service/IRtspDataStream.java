@@ -26,4 +26,11 @@ public interface IRtspDataStream {
      * 触发接收数据
      */
     void triggerReceive();
+
+    /**
+     * 发送数据
+     *
+     * @param data 字节数组
+     */
+    void sendData(byte[] data);
 }
