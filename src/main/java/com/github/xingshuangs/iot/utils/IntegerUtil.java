@@ -57,7 +57,9 @@ public class IntegerUtil {
     /**
      * 将long转换为字节数组，并自定义获取字节数，默认采用大端模式
      *
-     * @param data long数据
+     * @param data   long数据
+     * @param offset 偏移量
+     * @param length 读取长度
      * @return 字节数组
      */
     public static byte[] toCustomByteArray(long data, int offset, int length) {
