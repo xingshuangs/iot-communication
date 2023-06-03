@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
@@ -81,6 +82,7 @@ public class S7PLCServerTest {
         bean.setTimeData(12L);
         bean.setDateData(LocalDate.of(2023, 5, 15));
         bean.setTimeOfDayData(LocalTime.of(20, 22, 13));
+        bean.setDateTimeData(LocalDateTime.of(2023, 5, 27, 12, 11, 22, 333225555));
         s7Serializer.write(bean);
         bean = s7Serializer.read(DemoBean.class);
         assertTrue(bean.getBitData());
@@ -95,6 +97,7 @@ public class S7PLCServerTest {
         assertEquals(12, bean.getTimeData().longValue());
         assertEquals(LocalDate.of(2023, 5, 15), bean.getDateData());
         assertEquals(LocalTime.of(20, 22, 13), bean.getTimeOfDayData());
+        assertEquals(LocalDateTime.of(2023, 5, 27, 12, 11, 22, 333225555), bean.getDateTimeData());
     }
 
     @Test

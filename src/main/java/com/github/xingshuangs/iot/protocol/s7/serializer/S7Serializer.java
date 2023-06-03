@@ -14,6 +14,7 @@ import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -195,6 +196,18 @@ public class S7Serializer implements IPLCSerializable {
                         LocalTime time = LocalTime.ofSecondOfDay(buff.getUInt32() / 1000);
                         item.getField().set(result, time);
                         break;
+                    case DTL:
+                        int year = buff.getUInt16();
+                        int month = buff.getByteToInt();
+                        int dayOfMonth = buff.getByteToInt();
+                        int week = buff.getByteToInt();
+                        int hour = buff.getByteToInt();
+                        int minute = buff.getByteToInt();
+                        int second = buff.getByteToInt();
+                        long nanoOfSecond = buff.getUInt32();
+                        LocalDateTime dateTime = LocalDateTime.of(year, month, dayOfMonth, hour, minute, second, (int) nanoOfSecond);
+                        item.getField().set(result, dateTime);
+                        break;
                     default:
                         throw new S7CommException("无法识别数据类型");
                 }
@@ -273,6 +286,20 @@ public class S7Serializer implements IPLCSerializable {
                         long timeOfDay = ((LocalTime) data).toSecondOfDay() * 1000L;
                         item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)
                                 .putInteger(timeOfDay).getData()));
+                        break;
+                    case DTL:
+                        LocalDateTime dateTime = (LocalDateTime) data;
+                        byte[] dateTimeData = ByteWriteBuff.newInstance(12)
+                                .putShort(dateTime.getYear())
+                                .putByte(dateTime.getMonthValue())
+                                .putByte(dateTime.getDayOfMonth())
+                                .putByte(dateTime.getDayOfWeek().getValue())
+                                .putByte(dateTime.getHour())
+                                .putByte(dateTime.getMinute())
+                                .putByte(dateTime.getSecond())
+                                .putInteger(dateTime.getNano())
+                                .getData();
+                        item.setDataItem(DataItem.createReqByByte(dateTimeData));
                         break;
                     default:
                         throw new S7CommException("无法识别数据类型");

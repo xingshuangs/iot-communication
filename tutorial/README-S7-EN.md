@@ -307,7 +307,7 @@ class Demo {
 
 ### 3. Serializer Mode Read-write
 
-Support BOOL, UINT16, INT16, UINT32, INT32, FLOAT32, FLOAT64, STRING, TIME, DATE, TIME_OF_DAY read-write.
+Support BOOL, UINT16, INT16, UINT32, INT32, FLOAT32, FLOAT64, STRING, TIME, DATE, TIME_OF_DAY, DTL read-write.
 
 Create small size data class.
 
@@ -353,6 +353,9 @@ public class DemoBean {
 
     @S7Variable(address = "DB1.49", type = EDataType.TIME_OF_DAY)
     private LocalTime timeOfDayData;
+
+    @S7Variable(address = "DB1.53", type = EDataType.DTL)
+    private LocalDateTime dateTimeData;
 }
 ```
 
@@ -415,6 +418,7 @@ class Demo {
         bean.setTimeData(12L);
         bean.setDateData(LocalDate.of(2023, 5, 15));
         bean.setTimeOfDayData(LocalTime.of(20, 22, 13));
+        bean.setDateTimeData(LocalDateTime.of(2023, 5, 27, 12, 11, 22, 333225555));
         s7Serializer.write(bean);
         bean = s7Serializer.read(DemoBean.class);
 

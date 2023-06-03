@@ -8,6 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import static org.junit.Assert.*;
@@ -44,6 +45,7 @@ public class S7SerializerTest {
         bean.setTimeData(12L);
         bean.setDateData(LocalDate.of(2023, 5, 15));
         bean.setTimeOfDayData(LocalTime.of(20, 22, 13));
+        bean.setDateTimeData(LocalDateTime.of(2023, 5, 27, 12, 11, 22, 333225555));
         s7Serializer.write(bean);
         DemoBean actual = s7Serializer.read(DemoBean.class);
         assertTrue(actual.getBitData());
@@ -58,6 +60,7 @@ public class S7SerializerTest {
         assertEquals(12, actual.getTimeData().longValue());
         assertEquals(LocalDate.of(2023, 5, 15), actual.getDateData());
         assertEquals(LocalTime.of(20, 22, 13), actual.getTimeOfDayData());
+        assertEquals(LocalDateTime.of(2023, 5, 27, 12, 11, 22, 333225555), actual.getDateTimeData());
     }
 
     @Test

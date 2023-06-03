@@ -5,6 +5,7 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import com.github.xingshuangs.iot.protocol.s7.service.S7PLC;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
@@ -34,6 +35,7 @@ public class DemoSerializer {
         bean.setTimeData(12L);
         bean.setDateData(LocalDate.of(2023, 5, 15));
         bean.setTimeOfDayData(LocalTime.of(20, 22, 13));
+        bean.setDateTimeData(LocalDateTime.of(2023, 5, 27, 12, 11, 22, 333225555));
         s7Serializer.write(bean);
         bean = s7Serializer.read(DemoBean.class);
 

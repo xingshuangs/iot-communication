@@ -5,6 +5,7 @@ import com.github.xingshuangs.iot.protocol.common.enums.EDataType;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
@@ -51,4 +52,7 @@ public class DemoBean {
 
     @S7Variable(address = "DB1.49", type = EDataType.TIME_OF_DAY)
     private LocalTime timeOfDayData;
+
+    @S7Variable(address = "DB1.53", type = EDataType.DTL)
+    private LocalDateTime dateTimeData;
 }

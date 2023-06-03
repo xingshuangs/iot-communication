@@ -42,7 +42,14 @@ public enum EDataType {
     /**
      * 目前只对S7协议使用，对应的JAVA类型LocalTime
      */
-    TIME_OF_DAY("timeOfDay", 4);
+    TIME_OF_DAY("timeOfDay", 4),
+
+    /**
+     * 目前只对S7协议使用，对应的JAVA类型LocalDateTime
+     */
+    DTL("dtl", 12),
+
+    ;
 
 //    UNKNOWN("unknown", 0);
 

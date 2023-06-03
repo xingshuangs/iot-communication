@@ -96,7 +96,8 @@ public class PLCNetwork extends TcpClientBasic {
     @Override
     protected void doAfterConnected() {
         this.connectionRequest();
-        this.connectDtData();
+        // 存在设置的PDULength != 实际PLC的PDULength，因此以PLC的为准
+        this.pduLength = this.connectDtData();
         log.debug("PLC[{}]握手成功，机架号[{}]，槽号[{}]，PDU长度[{}]", this.plcType, this.rack, this.slot, this.pduLength);
     }
 
