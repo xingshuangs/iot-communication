@@ -40,7 +40,14 @@ public class H264VideoParser implements IPayloadParser {
         ByteWriteBuff buff = new ByteWriteBuff(sum);
         buffers.forEach(x -> buff.putBytes(x.getPayload()));
         buffers.clear();
-        return new H264VideoFrame(naluFuA.getFuHeader().getType(), timestamp, buff.getData());
+
+        H264NaluSingle single = new H264NaluSingle();
+        single.getHeader().setForbiddenZeroBit(naluFuA.getHeader().isForbiddenZeroBit());
+        single.getHeader().setNri(naluFuA.getHeader().getNri());
+        single.getHeader().setType(naluFuA.getFuHeader().getType());
+        single.setPayload(buff.getData());
+
+        return new H264VideoFrame(single.getHeader().getType(), timestamp, single.toByteArray());
     }
 
     /**
@@ -60,7 +67,7 @@ public class H264VideoParser implements IPayloadParser {
             case IDR_SLICE:
                 H264NaluSingle naluSingle = (H264NaluSingle) h264Nalu;
 //                log.debug("Mark[{}], Type[{}]", rtp.getHeader().isMarker(), naluType);
-                frame = new H264VideoFrame(naluType, rtp.getHeader().getTimestamp(), naluSingle.getPayload());
+                frame = new H264VideoFrame(naluType, rtp.getHeader().getTimestamp(), naluSingle.toByteArray());
                 break;
             case FU_A:
                 H264NaluFuA naluFuA = (H264NaluFuA) h264Nalu;

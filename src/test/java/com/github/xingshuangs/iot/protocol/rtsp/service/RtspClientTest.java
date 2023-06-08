@@ -1,9 +1,11 @@
 package com.github.xingshuangs.iot.protocol.rtsp.service;
 
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.DigestAuthenticator;
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.UsernamePasswordCredential;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspTransportProtocol;
+import com.github.xingshuangs.iot.utils.HexUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -29,7 +31,7 @@ public class RtspClientTest {
         });
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(300);
+                TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -47,11 +49,14 @@ public class RtspClientTest {
         client.setCommCallback(log::info);
         client.setFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
+            ByteReadBuff buff = ByteReadBuff.newInstance(f.getFrameSegment());
+            byte[] bytes = f.getFrameSegment().length > 10 ? buff.getBytes(10) : buff.getBytes();
+            log.debug(HexUtil.toHexString(bytes));
 //            log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
         });
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(300);
+                TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

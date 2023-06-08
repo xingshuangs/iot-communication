@@ -53,6 +53,6 @@ public class H264VideoFrame extends RawFrame {
      */
     public static H264VideoFrame createSpsPpsFrame(byte[] frameSegment) {
         H264NaluSingle naluSingle = (H264NaluSingle) H264NaluBuilder.parsePackage(frameSegment);
-        return new H264VideoFrame(naluSingle.getHeader().getType(), System.currentTimeMillis(), naluSingle.getPayload());
+        return new H264VideoFrame(naluSingle.getHeader().getType(), System.currentTimeMillis(), naluSingle.toByteArray());
     }
 }

@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.rtp.model.payload;
 
 
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
 
 /**
@@ -23,11 +24,23 @@ import lombok.Data;
 @Data
 public class H264NaluSingle extends H264NaluBase {
 
-
     /**
      * 负载
      */
     protected byte[] payload;
+
+    @Override
+    public int byteArrayLength() {
+        return this.header.byteArrayLength() + this.payload.length;
+    }
+
+    @Override
+    public byte[] toByteArray() {
+        return ByteWriteBuff.newInstance(this.byteArrayLength())
+                .putBytes(this.header.toByteArray())
+                .putBytes(this.payload)
+                .getData();
+    }
 
     /**
      * 字节数组数据解析

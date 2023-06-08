@@ -16,7 +16,7 @@ public class H264NaluBase implements IObjectByteArray {
     /**
      * 头
      */
-    protected H264NaluHeader header;
+    protected H264NaluHeader header = new H264NaluHeader();
 
     @Override
     public int byteArrayLength() {

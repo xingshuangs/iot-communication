@@ -29,12 +29,12 @@ public class H264NaluFuA extends H264NaluBase {
     /**
      * Fu的头
      */
-    private H264NaluFuHeader fuHeader;
+    private H264NaluFuHeader fuHeader = new H264NaluFuHeader();
 
     /**
      * 负载
      */
-    protected byte[] payload;
+    protected byte[] payload = new byte[0];
 
     @Override
     public int byteArrayLength() {
