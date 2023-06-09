@@ -73,6 +73,17 @@ public class TimesUtil {
     //region UTC
 
     /**
+     * 获取UTC所有的秒时间
+     *
+     * @param dateTime 日期时间
+     * @return 秒
+     */
+    public static long getUTCTotalSecond(LocalDateTime dateTime) {
+        Duration between = Duration.between(getUTCOriginDateTime(), dateTime);
+        return between.getSeconds();
+    }
+
+    /**
      * 获取UTC日期
      *
      * @param day 天
