@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.sdp;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdp;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdpMedia;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdpSession;
+import com.github.xingshuangs.iot.utils.HexUtil;
 import org.junit.Test;
 
 import java.util.Base64;
@@ -83,8 +84,17 @@ public class RtspSdpTest {
     public void base64() {
         Base64.Decoder decoder = Base64.getDecoder();
         byte[] sps = decoder.decode("Z2QAKqwrUDwBE/LNwEBAQIA=");
-        System.out.println(sps);
+        System.out.println(HexUtil.toHexString(sps));
         byte[] pps = decoder.decode("aO48sA==");
+        System.out.println(HexUtil.toHexString(pps));
+    }
+
+    @Test
+    public void base641() {
+        Base64.Decoder decoder = Base64.getDecoder();
+        byte[] sps = decoder.decode("Z00AH5Y1QKALdNwEBAQI");
+        System.out.println(sps);
+        byte[] pps = decoder.decode("aO48gA==");
         System.out.println(pps);
     }
 }
