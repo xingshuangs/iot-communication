@@ -5,36 +5,42 @@ import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
- * Chunk Offset Box(stbl-stco),Chunk的偏移量表，指定了每个chunk在文件中的位置。fmp4方式，此box不必赋值
+ * Sample Size Boxes (stbl-stsz),指定了每个sample的size,针对fmp4这里无需赋值
  *
  * @author xingshuang
  */
-public class Mp4StcoBox extends Mp4Box {
+public class Mp4StszBox extends Mp4Box {
     /**
      * 1字节，版本
      */
-    protected int version;
+    private final int version;
 
     /**
      * 3字节为flags
      */
-    protected byte[] flags;
+    private final byte[] flags;
 
     /**
      * 4字节
      */
-    protected int entryCount;
+    private final int sampleSize;
 
-    public Mp4StcoBox() {
-        this.mp4Type = EMp4Type.STCO;
+    /**
+     * 4字节
+     */
+    private final int sampleCount;
+
+    public Mp4StszBox() {
+        this.mp4Type = EMp4Type.STSZ;
         this.version = 0;
         this.flags = new byte[3];
-        this.entryCount = 0;
+        this.sampleSize = 0;
+        this.sampleCount = 0;
     }
 
     @Override
     public int byteArrayLength() {
-        return 16;
+        return 20;
     }
 
     @Override
@@ -45,7 +51,8 @@ public class Mp4StcoBox extends Mp4Box {
                 .putBytes(this.mp4Type.getByteArray())
                 .putByte(this.version)
                 .putBytes(this.flags)
-                .putInteger(this.entryCount)
+                .putInteger(this.sampleSize)
+                .putInteger(this.sampleCount)
                 .getData();
     }
 }

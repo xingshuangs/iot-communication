@@ -44,15 +44,15 @@ public class Mp4HdlrBox extends Mp4Box {
      */
     private final String name;
 
-    public Mp4HdlrBox(boolean video) {
+    public Mp4HdlrBox(Mp4TrackInfo trackInfo) {
         this.mp4Type = EMp4Type.MDHD;
         this.version = 0;
         this.flags = new byte[3];
         this.preDefined = new byte[4];
         this.reserved = new byte[12];
 
-        this.handlerType = video ? "vide" : "soun";
-        this.name = video ? "VideoHandler" : "SoundHandler";
+        this.handlerType = trackInfo.getType().equals("video") ? "vide" : "soun";
+        this.name = trackInfo.getType().equals("video") ? "VideoHandler" : "SoundHandler";
     }
 
     @Override

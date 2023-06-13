@@ -54,14 +54,14 @@ public class Mp4MdhdBox extends Mp4Box {
      */
     private final byte[] preDefined;
 
-    public Mp4MdhdBox(int timescale, int duration) {
+    public Mp4MdhdBox(Mp4TrackInfo trackInfo) {
         this.mp4Type = EMp4Type.MDHD;
         this.version = 0;
         this.flags = new byte[3];
         this.creationTime = TimesUtil.getUTCDateTime(2);
         this.modificationTime = TimesUtil.getUTCDateTime(3);
-        this.timescale = timescale;
-        this.duration = duration;
+        this.timescale = trackInfo.getTimescale();
+        this.duration = trackInfo.getDuration();
         this.language = new byte[]{0x55, (byte) 0xC4};
         this.preDefined = new byte[2];
     }

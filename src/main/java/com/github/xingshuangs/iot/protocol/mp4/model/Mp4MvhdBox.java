@@ -74,14 +74,14 @@ public class Mp4MvhdBox extends Mp4Box {
      */
     private final int nextTrackId;
 
-    public Mp4MvhdBox(int timescale, int duration) {
+    public  Mp4MvhdBox(Mp4TrackInfo trackInfo) {
         this.mp4Type = EMp4Type.MVHD;
         this.version = 0;
         this.flags = new byte[3];
         this.creationTime = TimesUtil.getUTCDateTime(1);
         this.modificationTime = TimesUtil.getUTCDateTime(2);
-        this.timescale = timescale;
-        this.duration = duration;
+        this.timescale = trackInfo.getTimescale();
+        this.duration = trackInfo.getDuration();
         this.rate = 1;
         this.volume = 1;
         this.reserved = new byte[10];

@@ -29,23 +29,19 @@ public class Mp4StsdBox extends Mp4Box {
     /**
      * 待定
      */
-    private byte[] entryBox;
+    private Mp4Box entryBox;
 
-    public Mp4StsdBox() {
+    public Mp4StsdBox(Mp4TrackInfo trackInfo) {
         this.mp4Type = EMp4Type.STSD;
         this.version = 0;
         this.flags = new byte[3];
         this.entryCount = 1;
-        this.entryBox = new byte[0];
-    }
-
-    public void setEntryBox(byte[] entryBox) {
-        this.entryBox = entryBox;
+        this.entryBox = trackInfo.getType().equals("video") ? new Mp4Avc1Box(trackInfo) : new Mp4Mp4aBox(trackInfo);
     }
 
     @Override
     public int byteArrayLength() {
-        return 16 + this.entryBox.length;
+        return 16 + this.entryBox.byteArrayLength();
     }
 
     @Override
@@ -57,7 +53,7 @@ public class Mp4StsdBox extends Mp4Box {
                 .putByte(this.version)
                 .putBytes(this.flags)
                 .putInteger(this.entryCount)
-                .putBytes(this.entryBox)
+                .putBytes(this.entryBox.toByteArray())
                 .getData();
     }
 }
