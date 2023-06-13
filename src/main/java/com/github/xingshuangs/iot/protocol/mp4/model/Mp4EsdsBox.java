@@ -91,7 +91,7 @@ public class Mp4EsdsBox extends Mp4Box {
     private final byte[] lastData;
 
     public Mp4EsdsBox(Mp4TrackInfo trackInfo) {
-        this.mp4Type = EMp4Type.MP4A;
+        this.mp4Type = EMp4Type.ESDS;
         this.version = 0;
         this.flags = new byte[3];
         this.descriptorType1 = 0x03;

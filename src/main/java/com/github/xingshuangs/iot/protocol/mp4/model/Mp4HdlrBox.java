@@ -45,7 +45,7 @@ public class Mp4HdlrBox extends Mp4Box {
     private final String name;
 
     public Mp4HdlrBox(Mp4TrackInfo trackInfo) {
-        this.mp4Type = EMp4Type.MDHD;
+        this.mp4Type = EMp4Type.HDLR;
         this.version = 0;
         this.flags = new byte[3];
         this.preDefined = new byte[4];

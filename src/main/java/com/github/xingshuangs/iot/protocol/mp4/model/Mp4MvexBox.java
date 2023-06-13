@@ -25,7 +25,7 @@ public class Mp4MvexBox extends Mp4Box {
 
     @Override
     public int byteArrayLength() {
-        return 32;
+        return 8 + this.boxes.stream().mapToInt(Mp4Box::byteArrayLength).sum();
     }
 
     @Override

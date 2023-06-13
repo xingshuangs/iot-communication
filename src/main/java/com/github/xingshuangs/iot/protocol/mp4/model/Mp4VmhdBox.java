@@ -24,19 +24,19 @@ public class Mp4VmhdBox extends Mp4Box {
     /**
      * 2字节 graphicsmode
      */
-    private final byte[] graphicsmode;
+    private final byte[] graphicsMode;
 
     /**
      * 6字节 opcolor
      */
-    private final byte[] opcolor;
+    private final byte[] opColor;
 
     public Mp4VmhdBox() {
         this.mp4Type = EMp4Type.VMHD;
         this.version = 0;
         this.flags = new byte[]{0x00, 0x00, 0x01};
-        this.graphicsmode = new byte[2];
-        this.opcolor = new byte[6];
+        this.graphicsMode = new byte[2];
+        this.opColor = new byte[6];
     }
 
     @Override
@@ -52,8 +52,8 @@ public class Mp4VmhdBox extends Mp4Box {
                 .putBytes(this.mp4Type.getByteArray())
                 .putByte(this.version)
                 .putBytes(this.flags)
-                .putBytes(this.graphicsmode)
-                .putBytes(this.opcolor)
+                .putBytes(this.graphicsMode)
+                .putBytes(this.opColor)
                 .getData();
     }
 }

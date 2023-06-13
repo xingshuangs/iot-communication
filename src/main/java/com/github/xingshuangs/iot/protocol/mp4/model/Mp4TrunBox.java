@@ -34,7 +34,7 @@ public class Mp4TrunBox extends Mp4Box {
     private final List<Mp4SampleData> samples;
 
     public Mp4TrunBox(List<Mp4SampleData> samples) {
-        this.mp4Type = EMp4Type.TFDT;
+        this.mp4Type = EMp4Type.TRUN;
         this.version = 0;
         // 表示每个sample都是用字节的参数
         this.flags = new byte[]{0x00, 0x0F, 0x01};
