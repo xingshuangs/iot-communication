@@ -6,13 +6,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
 
 
-public class Mp4BoxTest {
+public class Mp4MoofBoxTest {
 
     private List<Mp4SampleData> samples;
 
@@ -55,103 +54,6 @@ public class Mp4BoxTest {
     @Test
     public void mp4Type() {
         System.out.println(HexUtil.toHexString(EMp4Type.TFHD.getByteArray()));
-    }
-
-    @Test
-    public void mp4FtypBox() {
-        byte[] expect = new byte[]{
-                0x00, 0x00, 0x00, 0x18,
-                0x66, 0x74, 0x79, 0x70,
-                0x69, 0x73, 0x6F, 0x6D,
-                0x00, 0x00, 0x00, 0x01,
-                0x69, 0x73, 0x6F, 0x6D, 0x61, 0x76, 0x63, 0x31
-        };
-        Mp4FtypBox box = new Mp4FtypBox();
-        assertArrayEquals(expect, box.toByteArray());
-    }
-
-    @Test
-    public void mp4SttsBox() {
-        byte[] expect = new byte[]{
-                0x00, 0x00, 0x00, 0x10,
-                0x73, 0x74, 0x74, 0x73,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00,
-        };
-        Mp4SttsBox box = new Mp4SttsBox();
-        assertArrayEquals(expect, box.toByteArray());
-    }
-
-    @Test
-    public void mp4StscBox() {
-        byte[] expect = new byte[]{
-                0x00, 0x00, 0x00, 0x10,
-                0x73, 0x74, 0x73, 0x63,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00,
-        };
-        Mp4StscBox box = new Mp4StscBox();
-        assertArrayEquals(expect, box.toByteArray());
-    }
-
-    @Test
-    public void mp4StszBox() {
-        byte[] expect = new byte[]{
-                0x00, 0x00, 0x00, 0x14,
-                0x73, 0x74, 0x73, 0x7A,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00,
-        };
-        Mp4StszBox box = new Mp4StszBox();
-        assertArrayEquals(expect, box.toByteArray());
-    }
-
-    @Test
-    public void mp4StcoBox() {
-        byte[] expect = new byte[]{
-                0x00, 0x00, 0x00, 0x10,
-                0x73, 0x74, 0x63, 0x6F,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00,
-        };
-        Mp4StcoBox box = new Mp4StcoBox();
-        assertArrayEquals(expect, box.toByteArray());
-    }
-
-    @Test
-    public void mp4MvexBox() {
-        byte[] expect = new byte[]{
-                0x00, 0x00, 0x00, 0x28,
-                0x6D, 0x76, 0x65, 0x78,
-
-                0x00, 0x00, 0x00, 0x20,
-                0x74, 0x72, 0x65, 0x78,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x01,
-                0x00, 0x00, 0x00, 0x01,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x01, 0x00, 0x01,
-        };
-        Mp4MvexBox box = new Mp4MvexBox(Collections.singletonList(this.trackInfo));
-        assertArrayEquals(expect, box.toByteArray());
-    }
-
-    @Test
-    public void mp4TrexBox() {
-        byte[] expect = new byte[]{
-                0x00, 0x00, 0x00, 0x20,
-                0x74, 0x72, 0x65, 0x78,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x01,
-                0x00, 0x00, 0x00, 0x01,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x01, 0x00, 0x01,
-        };
-        Mp4TrexBox box = new Mp4TrexBox(1);
-        assertArrayEquals(expect, box.toByteArray());
     }
 
     @Test

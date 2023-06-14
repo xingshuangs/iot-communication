@@ -14,17 +14,20 @@ public class Mp4MinfBox extends Mp4Box {
 
     private final Mp4Box mhdBox;
 
+    private final Mp4DinfBox dinfBox;
+
     private final Mp4StblBox stblBox;
 
     public Mp4MinfBox(Mp4TrackInfo trackInfo) {
         this.mp4Type = EMp4Type.MINF;
         this.mhdBox = trackInfo.getType().equals("video") ? new Mp4VmhdBox() : new Mp4SmhdBox();
+        this.dinfBox = new Mp4DinfBox();
         this.stblBox = new Mp4StblBox(trackInfo);
     }
 
     @Override
     public int byteArrayLength() {
-        return 8 + this.mhdBox.byteArrayLength() + this.stblBox.byteArrayLength();
+        return 8 + this.mhdBox.byteArrayLength() + this.dinfBox.byteArrayLength() + this.stblBox.byteArrayLength();
     }
 
     @Override
@@ -34,6 +37,7 @@ public class Mp4MinfBox extends Mp4Box {
                 .putInteger(size)
                 .putBytes(this.mp4Type.getByteArray())
                 .putBytes(this.mhdBox.toByteArray())
+                .putBytes(this.dinfBox.toByteArray())
                 .putBytes(this.stblBox.toByteArray())
                 .getData();
     }

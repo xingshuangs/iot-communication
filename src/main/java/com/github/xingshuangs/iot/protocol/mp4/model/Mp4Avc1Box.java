@@ -117,7 +117,7 @@ public class Mp4Avc1Box extends Mp4Box {
 
     @Override
     public int byteArrayLength() {
-        return 78 + this.avcCBox.byteArrayLength() + this.btrtBox.byteArrayLength();
+        return 86 + this.avcCBox.byteArrayLength() + this.btrtBox.byteArrayLength();
     }
 
     @Override
