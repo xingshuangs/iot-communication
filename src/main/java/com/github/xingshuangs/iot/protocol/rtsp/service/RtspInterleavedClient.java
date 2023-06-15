@@ -40,11 +40,6 @@ public class RtspInterleavedClient implements IRtspDataStream {
     private Consumer<byte[]> commCallback;
 
     /**
-     * 帧处理回调事件
-     */
-    private Consumer<RawFrame> frameHandle;
-
-    /**
      * 负载解析器
      */
     private final IPayloadParser iPayloadParser;
@@ -76,10 +71,6 @@ public class RtspInterleavedClient implements IRtspDataStream {
 
     public void setCommCallback(Consumer<byte[]> commCallback) {
         this.commCallback = commCallback;
-    }
-
-    public void setFrameHandle(Consumer<RawFrame> frameHandle) {
-        this.frameHandle = frameHandle;
     }
 
     public int getRtpVideoChannelNumber() {
@@ -206,18 +197,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
     private void rtpVideoHandle(RtspInterleaved interleaved) {
         RtpPackage rtp = RtpPackage.fromBytes(interleaved.getPayload());
 //        log.debug("数据长度[{}], 时间戳[{}], 序列号[{}]", rtp.byteArrayLength(), rtp.getHeader().getTimestamp(), rtp.getHeader().getSequenceNumber());
-        this.iPayloadParser.processPackage(rtp, this::processFrame);
+        this.iPayloadParser.processPackage(rtp);
         this.statistics.processRtpPackage(rtp, this::sendData);
-    }
-
-    /**
-     * 处理帧数据
-     *
-     * @param frame 帧
-     */
-    private void processFrame(RawFrame frame) {
-        if (this.frameHandle != null) {
-            this.frameHandle.accept(frame);
-        }
     }
 }

@@ -8,6 +8,7 @@ import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspTransportProtocol;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -38,36 +39,40 @@ public class RtspClient extends RtspNetwork {
 
     /**
      * 启动
+     *
+     * @return 执行的future
      */
-    public void start() {
+    public CompletableFuture<Void> start() {
         log.info("开启RTSP连接，地址[{}]，通信模式[{}]", this.uri, this.transportProtocol);
         this.alive = true;
         this.connect();
 
-        try {
-            if (!this.methods.contains(ERtspMethod.GET_PARAMETER)) {
-                this.socketClientJoinForFinished();
-                return;
-            }
-            long lastTime = System.currentTimeMillis();
-            while (this.alive) {
-                TimeUnit.MILLISECONDS.sleep(500);
-                // 所有线程都已经完成
-                if (this.socketClientIsAllDone()) {
-                    break;
+        return CompletableFuture.runAsync(() -> {
+            try {
+                if (!this.methods.contains(ERtspMethod.GET_PARAMETER)) {
+                    this.socketClientJoinForFinished();
+                    return;
                 }
-                if (System.currentTimeMillis() - lastTime > this.sessionInfo.getTimeout() / 2) {
-                    lastTime = System.currentTimeMillis();
-                    this.getParameter();
+                long lastTime = System.currentTimeMillis();
+                while (this.alive) {
+                    TimeUnit.MILLISECONDS.sleep(500);
+                    // 所有线程都已经完成
+                    if (this.socketClientIsAllDone()) {
+                        break;
+                    }
+                    if (System.currentTimeMillis() - lastTime > this.sessionInfo.getTimeout() / 2) {
+                        lastTime = System.currentTimeMillis();
+                        this.getParameter();
+                    }
+                }
+            } catch (Exception e) {
+                throw new RtspCommException(e);
+            } finally {
+                if (this.alive) {
+                    this.stop();
                 }
             }
-        } catch (Exception e) {
-            throw new RtspCommException(e);
-        } finally {
-            if (this.alive) {
-                this.stop();
-            }
-        }
+        });
     }
 
     /**

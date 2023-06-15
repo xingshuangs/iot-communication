@@ -32,11 +32,6 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
     private Consumer<byte[]> commCallback;
 
     /**
-     * 帧处理回调事件
-     */
-    private Consumer<RawFrame> frameHandle;
-
-    /**
      * 负载解析器
      */
     private IPayloadParser iPayloadParser;
@@ -53,10 +48,6 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
 
     public void setCommCallback(Consumer<byte[]> commCallback) {
         this.commCallback = commCallback;
-    }
-
-    public void setFrameHandle(Consumer<RawFrame> frameHandle) {
-        this.frameHandle = frameHandle;
     }
 
     public void setRtcpUdpClient(RtcpUdpClient rtcpUdpClient) {
@@ -112,21 +103,10 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
                 if (this.rtcpUdpClient != null) {
                     this.rtcpUdpClient.processRtpPackage(rtp);
                 }
-                this.iPayloadParser.processPackage(rtp, this::processFrame);
+                this.iPayloadParser.processPackage(rtp);
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
-        }
-    }
-
-    /**
-     * 处理帧数据
-     *
-     * @param frame 帧
-     */
-    private void processFrame(RawFrame frame) {
-        if (this.frameHandle != null) {
-            this.frameHandle.accept(frame);
         }
     }
 }

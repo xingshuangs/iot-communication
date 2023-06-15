@@ -16,7 +16,13 @@ public interface IPayloadParser {
      * 处理数据包
      *
      * @param rtp         rtp数据包
-     * @param frameHandle 帧回调事件
      */
-    void processPackage(RtpPackage rtp, Consumer<RawFrame> frameHandle);
+    void processPackage(RtpPackage rtp);
+
+    /**
+     * 设置帧处理事件
+     *
+     * @param frameHandle 处理事件
+     */
+    void setFrameHandle(Consumer<RawFrame> frameHandle);
 }

@@ -32,10 +32,10 @@ public class Mp4TrafBox extends Mp4Box {
      */
     private final Mp4SdtpBox sdtpBox;
 
-    public Mp4TrafBox(Mp4TrackInfo trackInfo, int baseMediaDecodeTime) {
+    public Mp4TrafBox(Mp4TrackInfo trackInfo) {
         this.mp4Type = EMp4Type.TRAF;
         this.tfhdBox = new Mp4TfhdBox(trackInfo.getId());
-        this.tfdtBox = new Mp4TfdtBox(baseMediaDecodeTime);
+        this.tfdtBox = new Mp4TfdtBox(trackInfo.getBaseMediaDecodeTime());
         this.trunBox = new Mp4TrunBox(trackInfo.getSampleData());
         this.sdtpBox = new Mp4SdtpBox(trackInfo.getSampleData());
     }

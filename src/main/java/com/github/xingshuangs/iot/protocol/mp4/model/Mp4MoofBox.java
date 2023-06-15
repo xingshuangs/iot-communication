@@ -21,10 +21,10 @@ public class Mp4MoofBox extends Mp4Box {
      */
     private final Mp4TrafBox trafBox;
 
-    public Mp4MoofBox(int sequenceNumber, int baseMediaDecodeTime, Mp4TrackInfo trackInfo) {
+    public Mp4MoofBox(Mp4TrackInfo trackInfo) {
         this.mp4Type = EMp4Type.MOOF;
-        this.mfhdBox = new Mp4MfhdBox(sequenceNumber);
-        this.trafBox = new Mp4TrafBox(trackInfo, baseMediaDecodeTime);
+        this.mfhdBox = new Mp4MfhdBox(trackInfo.getSequenceNumber());
+        this.trafBox = new Mp4TrafBox(trackInfo);
     }
 
     @Override

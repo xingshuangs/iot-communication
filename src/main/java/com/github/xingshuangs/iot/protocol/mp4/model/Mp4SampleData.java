@@ -10,6 +10,11 @@ import lombok.Data;
 public class Mp4SampleData {
 
     /**
+     * 数据
+     */
+    private byte[] data;
+
+    /**
      * 数据大小，表示sample对应的数据帧的实际大小size=224251
      */
     private int size = 0;
@@ -31,5 +36,5 @@ public class Mp4SampleData {
      * sample.DegradPrio & 0xF0 << 8,
      * sample.DegradPrio & 0x0F,
      */
-    private Mp4SampleFlag flags;
+    private Mp4SampleFlag flags = new Mp4SampleFlag();
 }

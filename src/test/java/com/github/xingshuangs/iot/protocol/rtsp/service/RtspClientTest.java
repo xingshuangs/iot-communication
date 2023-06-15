@@ -27,7 +27,7 @@ public class RtspClientTest {
         client.setCommCallback(log::info);
         client.setFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
-//            log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
+            log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
         });
         CompletableFuture.runAsync(() -> {
             try {
@@ -35,9 +35,17 @@ public class RtspClientTest {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            log.debug("{}", client.getTrackInfo());
             client.stop();
         });
-        client.start();
+        CompletableFuture<Void> future = client.start();
+        while (!future.isDone()){
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @Test
@@ -49,10 +57,10 @@ public class RtspClientTest {
         client.setCommCallback(log::info);
         client.setFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
-            ByteReadBuff buff = ByteReadBuff.newInstance(f.getFrameSegment());
-            byte[] bytes = f.getFrameSegment().length > 10 ? buff.getBytes(10) : buff.getBytes();
-            log.debug(HexUtil.toHexString(bytes));
-//            log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
+//            ByteReadBuff buff = ByteReadBuff.newInstance(f.getFrameSegment());
+//            byte[] bytes = f.getFrameSegment().length > 10 ? buff.getBytes(10) : buff.getBytes();
+//            log.debug(HexUtil.toHexString(bytes));
+            log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
         });
         CompletableFuture.runAsync(() -> {
             try {
@@ -60,9 +68,17 @@ public class RtspClientTest {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            log.debug("{}", client.getTrackInfo());
             client.stop();
         });
-        client.start();
+        CompletableFuture<Void> future = client.start();
+        while (!future.isDone()){
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @Test
@@ -82,7 +98,14 @@ public class RtspClientTest {
             }
             client.stop();
         });
-        client.start();
+        CompletableFuture<Void> future = client.start();
+        while (!future.isDone()){
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
     }
 }

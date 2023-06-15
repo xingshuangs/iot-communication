@@ -25,6 +25,13 @@ import java.util.function.Consumer;
 @Slf4j
 public class H264VideoParser implements IPayloadParser {
 
+    /**
+     * 基准时间戳
+     */
+    private long baseTimestamp = 0;
+
+    private Consumer<RawFrame> frameHandle;
+
     private final List<H264NaluFuA> buffers = new ArrayList<>();
 
     private void resetBuffers() {
@@ -47,7 +54,7 @@ public class H264VideoParser implements IPayloadParser {
         single.getHeader().setType(naluFuA.getFuHeader().getType());
         single.setPayload(buff.getData());
 
-        return new H264VideoFrame(single.getHeader().getType(), timestamp, single.toByteArray());
+        return new H264VideoFrame(single.getHeader().getType(), timestamp - this.baseTimestamp, single.toByteArray());
     }
 
     /**
@@ -55,7 +62,12 @@ public class H264VideoParser implements IPayloadParser {
      *
      * @param rtp rtp数据包
      */
-    public void processPackage(RtpPackage rtp, Consumer<RawFrame> frameHandle) {
+    @Override
+    public void processPackage(RtpPackage rtp) {
+        // 第一次更新时间
+        if (this.baseTimestamp == 0) {
+            this.baseTimestamp = rtp.getHeader().getTimestamp();
+        }
         H264NaluBase h264Nalu = H264NaluBuilder.parsePackage(rtp.getPayload());
         EH264NaluType naluType = h264Nalu.getHeader().getType();
         H264VideoFrame frame = null;
@@ -67,7 +79,7 @@ public class H264VideoParser implements IPayloadParser {
             case IDR_SLICE:
                 H264NaluSingle naluSingle = (H264NaluSingle) h264Nalu;
 //                log.debug("Mark[{}], Type[{}]", rtp.getHeader().isMarker(), naluType);
-                frame = new H264VideoFrame(naluType, rtp.getHeader().getTimestamp(), naluSingle.toByteArray());
+                frame = new H264VideoFrame(naluType, rtp.getHeader().getTimestamp() - this.baseTimestamp, naluSingle.toByteArray());
                 break;
             case FU_A:
                 H264NaluFuA naluFuA = (H264NaluFuA) h264Nalu;
@@ -87,8 +99,13 @@ public class H264VideoParser implements IPayloadParser {
                 }
                 break;
         }
-        if (frameHandle != null && frame != null && frame.getFrameSegment().length > 0) {
-            frameHandle.accept(frame);
+        if (this.frameHandle != null && frame != null && frame.getFrameSegment().length > 0) {
+            this.frameHandle.accept(frame);
         }
+    }
+
+    @Override
+    public void setFrameHandle(Consumer<RawFrame> frameHandle) {
+        this.frameHandle = frameHandle;
     }
 }

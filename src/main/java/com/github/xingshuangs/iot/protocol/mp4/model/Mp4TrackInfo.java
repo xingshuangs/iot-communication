@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.mp4.model;
 
 
+import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
 
 import java.util.List;
@@ -13,9 +14,15 @@ import java.util.List;
 @Data
 public class Mp4TrackInfo {
 
+    private long sequenceNumber;
+
     private int id;
 
     private String type = "video";
+
+    private String codec = "avc1.64002a";
+
+    private long baseMediaDecodeTime;
 
     // region 视频
     private int timescale;
@@ -26,14 +33,15 @@ public class Mp4TrackInfo {
 
     private int height;
 
-    private int volume;
-
     private byte[] sps;
 
     private byte[] pps;
     // endregion
 
     // region 音频
+
+    private int volume;
+
     private int audioSampleRate;
 
     private int channelCount;
@@ -42,4 +50,11 @@ public class Mp4TrackInfo {
     // endregion
 
     private List<Mp4SampleData> sampleData;
+
+    public byte[] totalSampleData() {
+        int sum = this.sampleData.stream().mapToInt(Mp4SampleData::getSize).sum();
+        ByteWriteBuff buff = new ByteWriteBuff(sum);
+        sampleData.forEach(x -> buff.putBytes(x.getData()));
+        return buff.getData();
+    }
 }

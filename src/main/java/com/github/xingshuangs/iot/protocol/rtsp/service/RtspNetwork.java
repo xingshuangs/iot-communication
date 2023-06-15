@@ -19,6 +19,7 @@ import com.github.xingshuangs.iot.protocol.rtsp.model.*;
 import com.github.xingshuangs.iot.protocol.rtsp.model.base.*;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdp;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdpMedia;
+import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspTrackInfo;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -87,6 +88,11 @@ public class RtspNetwork extends TcpClientBasic {
     protected RtspSessionInfo sessionInfo;
 
     /**
+     * 轨道信息
+     */
+    protected RtspTrackInfo trackInfo;
+
+    /**
      * 数据收发前自定义处理接口
      */
     private Consumer<String> commCallback;
@@ -100,6 +106,10 @@ public class RtspNetwork extends TcpClientBasic {
      * 通信协议，TCP、UDP
      */
     protected ERtspTransportProtocol transportProtocol;
+
+    public RtspTrackInfo getTrackInfo() {
+        return trackInfo;
+    }
 
     public void setCommCallback(Consumer<String> commCallback) {
         this.commCallback = commCallback;
@@ -267,6 +277,7 @@ public class RtspNetwork extends TcpClientBasic {
             throw new RtspCommException(String.format("RTSP[%s]没有Media", ERtspMethod.DESCRIBE));
         }
         this.sdp = response.getSdp();
+        this.trackInfo = RtspTrackInfo.createTrackInfo(this.sdp);
     }
 
     /**
@@ -290,9 +301,9 @@ public class RtspNetwork extends TcpClientBasic {
             }
             // TODO: 这里可能存在不同的负载解析器
             IPayloadParser iPayloadParser = new H264VideoParser();
+            iPayloadParser.setFrameHandle(this::doFrameHandle);
             URI actualUri = URI.create(media.getAttributeControl().getUri());
             RtpUdpClient rtpClient = new RtpUdpClient(iPayloadParser);
-            rtpClient.setFrameHandle(this::doFrameHandle);
             RtcpUdpClient rtcpClient = new RtcpUdpClient();
             rtpClient.setRtcpUdpClient(rtcpClient);
             RtspTransport reqTransport = new RtspClientPortTransport(rtpClient.getLocalPort(), rtcpClient.getLocalPort());
@@ -321,7 +332,6 @@ public class RtspNetwork extends TcpClientBasic {
                 continue;
             }
             // TODO: 这里可能存在不同的负载解析器
-            IPayloadParser iPayloadParser = new H264VideoParser();
             int rtpChannelNumber = interleavedCount++;
             int rtcpChannelNumber = interleavedCount++;
             RtspTransport reqTransport = new RtspInterleavedTransport(rtpChannelNumber, rtcpChannelNumber);
@@ -329,9 +339,10 @@ public class RtspNetwork extends TcpClientBasic {
 
             this.doSetup(actualUri, reqTransport, media);
 
+            IPayloadParser iPayloadParser = new H264VideoParser();
+            iPayloadParser.setFrameHandle(this::doFrameHandle);
             RtspInterleavedTransport ackTransport = (RtspInterleavedTransport) this.transport;
             RtspInterleavedClient rtspInterleavedClient = new RtspInterleavedClient(iPayloadParser, this);
-            rtspInterleavedClient.setFrameHandle(this::doFrameHandle);
             rtspInterleavedClient.setRtpVideoChannelNumber(ackTransport.getInterleaved1());
             rtspInterleavedClient.setRtcpVideoChannelNumber(ackTransport.getInterleaved2());
             this.socketClients.put(rtspInterleavedClient.getRtpVideoChannelNumber(), rtspInterleavedClient);

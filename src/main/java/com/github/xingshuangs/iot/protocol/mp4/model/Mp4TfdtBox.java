@@ -27,9 +27,9 @@ public class Mp4TfdtBox extends Mp4Box {
      * 持续时间的总和，第一个分片的基准时间为0，例如每个分片包含一个sample，每个sample持续时间为3600，那么第一个分片的基准解码时间为0.
      * 第二个分片为0+3600=3600，第三个分片等于3600+3600=7200，如此类推
      */
-    private final int baseMediaDecodeTime;
+    private final long baseMediaDecodeTime;
 
-    public Mp4TfdtBox(int baseMediaDecodeTime) {
+    public Mp4TfdtBox(long baseMediaDecodeTime) {
         this.mp4Type = EMp4Type.TFDT;
         this.version = 0;
         this.flags = new byte[3];
