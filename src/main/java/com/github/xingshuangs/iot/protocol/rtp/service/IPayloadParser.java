@@ -24,5 +24,5 @@ public interface IPayloadParser {
      *
      * @param frameHandle 处理事件
      */
-    void setFrameHandle(Consumer<RawFrame> frameHandle);
+    void onFrameHandle(Consumer<RawFrame> frameHandle);
 }

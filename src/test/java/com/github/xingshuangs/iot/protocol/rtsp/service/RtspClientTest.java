@@ -1,11 +1,9 @@
 package com.github.xingshuangs.iot.protocol.rtsp.service;
 
-import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.DigestAuthenticator;
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.UsernamePasswordCredential;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspTransportProtocol;
-import com.github.xingshuangs.iot.utils.HexUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -24,8 +22,8 @@ public class RtspClientTest {
         UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "kilox1234");
         DigestAuthenticator authenticator = new DigestAuthenticator(credential);
         RtspClient client = new RtspClient(uri, authenticator);
-        client.setCommCallback(log::info);
-        client.setFrameHandle(x -> {
+        client.onCommCallback(log::info);
+        client.onFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
             log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
         });
@@ -54,8 +52,8 @@ public class RtspClientTest {
         UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "kilox1234");
         DigestAuthenticator authenticator = new DigestAuthenticator(credential);
         RtspClient client = new RtspClient(uri, authenticator, ERtspTransportProtocol.TCP);
-        client.setCommCallback(log::info);
-        client.setFrameHandle(x -> {
+        client.onCommCallback(log::info);
+        client.onFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
 //            ByteReadBuff buff = ByteReadBuff.newInstance(f.getFrameSegment());
 //            byte[] bytes = f.getFrameSegment().length > 10 ? buff.getBytes(10) : buff.getBytes();
@@ -85,8 +83,8 @@ public class RtspClientTest {
     public void connectUdpWithoutAuthenticator() {
         URI uri = URI.create("rtsp://127.0.0.1:8554/11");
         RtspClient client = new RtspClient(uri);
-        client.setCommCallback(log::info);
-        client.setFrameHandle(x -> {
+        client.onCommCallback(log::info);
+        client.onFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
             log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
         });

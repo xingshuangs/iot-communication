@@ -3,7 +3,6 @@ package com.github.xingshuangs.iot.protocol.rtsp.service;
 
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.rtcp.service.RtcpUdpClient;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.RawFrame;
@@ -111,11 +110,11 @@ public class RtspNetwork extends TcpClientBasic {
         return trackInfo;
     }
 
-    public void setCommCallback(Consumer<String> commCallback) {
+    public void onCommCallback(Consumer<String> commCallback) {
         this.commCallback = commCallback;
     }
 
-    public void setFrameHandle(Consumer<RawFrame> frameHandle) {
+    public void onFrameHandle(Consumer<RawFrame> frameHandle) {
         this.frameHandle = frameHandle;
     }
 
@@ -301,7 +300,7 @@ public class RtspNetwork extends TcpClientBasic {
             }
             // TODO: 这里可能存在不同的负载解析器
             IPayloadParser iPayloadParser = new H264VideoParser();
-            iPayloadParser.setFrameHandle(this::doFrameHandle);
+            iPayloadParser.onFrameHandle(this::doFrameHandle);
             URI actualUri = URI.create(media.getAttributeControl().getUri());
             RtpUdpClient rtpClient = new RtpUdpClient(iPayloadParser);
             RtcpUdpClient rtcpClient = new RtcpUdpClient();
@@ -340,7 +339,7 @@ public class RtspNetwork extends TcpClientBasic {
             this.doSetup(actualUri, reqTransport, media);
 
             IPayloadParser iPayloadParser = new H264VideoParser();
-            iPayloadParser.setFrameHandle(this::doFrameHandle);
+            iPayloadParser.onFrameHandle(this::doFrameHandle);
             RtspInterleavedTransport ackTransport = (RtspInterleavedTransport) this.transport;
             RtspInterleavedClient rtspInterleavedClient = new RtspInterleavedClient(iPayloadParser, this);
             rtspInterleavedClient.setRtpVideoChannelNumber(ackTransport.getInterleaved1());

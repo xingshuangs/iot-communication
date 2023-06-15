@@ -105,7 +105,7 @@ public class H264VideoParser implements IPayloadParser {
     }
 
     @Override
-    public void setFrameHandle(Consumer<RawFrame> frameHandle) {
+    public void onFrameHandle(Consumer<RawFrame> frameHandle) {
         this.frameHandle = frameHandle;
     }
 }
