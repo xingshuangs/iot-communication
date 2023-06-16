@@ -41,10 +41,8 @@ public class Mp4MoovBoxTest {
         this.samples.add(data);
 
         this.trackInfo = new Mp4TrackInfo();
-        this.trackInfo.setSequenceNumber(1L);
         this.trackInfo.setId(1);
         this.trackInfo.setType("video");
-        this.trackInfo.setBaseMediaDecodeTime(0L);
         this.trackInfo.setTimescale(90000);
         this.trackInfo.setDuration(90000);
         this.trackInfo.setWidth(1920);

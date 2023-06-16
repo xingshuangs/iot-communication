@@ -2,11 +2,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.service;
 
 
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
-import com.github.xingshuangs.iot.protocol.mp4.model.Mp4Header;
-import com.github.xingshuangs.iot.protocol.mp4.model.Mp4SampleData;
-import com.github.xingshuangs.iot.protocol.mp4.model.Mp4TrackInfo;
-import com.github.xingshuangs.iot.protocol.mp4.service.Mp4Generator;
+import com.github.xingshuangs.iot.protocol.mp4.model.*;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EFrameType;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264NaluType;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
@@ -16,9 +12,7 @@ import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspTrackInfo;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -27,6 +21,9 @@ import java.util.function.Consumer;
  */
 @Slf4j
 public class RtspFMp4Proxy {
+
+    private final Object objLock = new Object();
+
     /**
      * RTSP客户端
      */
@@ -40,17 +37,19 @@ public class RtspFMp4Proxy {
     /**
      * 接收帧数据的序列号
      */
-    private long sequenceNumber = 0;
+    private long sequenceNumber = 1;
 
     /**
      * 数据缓存
      */
-    private final List<IObjectByteArray> buffers = new LinkedList<>();
+    private final LinkedList<IObjectByteArray> buffers = new LinkedList<>();
 
     /**
      * FMp4数据事件
      */
     private Consumer<byte[]> fmp4DataHandle;
+
+    private Consumer<String> codecHandle;
 
     /**
      * 是否终止
@@ -62,7 +61,14 @@ public class RtspFMp4Proxy {
      */
     private Mp4Header mp4Header;
 
-//    private final CompletableFuture<Void> future;
+    private Mp4TrackInfo mp4TrackInfo;
+
+    /**
+     * 是否异步步发送
+     */
+    private boolean asyncSend = false;
+
+    private CompletableFuture<Void> future;
 
     public Mp4Header getMp4Header() {
         return mp4Header;
@@ -72,34 +78,45 @@ public class RtspFMp4Proxy {
         this.fmp4DataHandle = fmp4DataHandle;
     }
 
+    public void onCodecHandle(Consumer<String> codecHandle) {
+        this.codecHandle = codecHandle;
+    }
+
     public RtspFMp4Proxy(URI uri) {
-        this(uri, null, ERtspTransportProtocol.UDP);
+        this(uri, null, ERtspTransportProtocol.TCP, false);
     }
 
     public RtspFMp4Proxy(URI uri, DigestAuthenticator authenticator) {
-        this(uri, authenticator, ERtspTransportProtocol.UDP);
+        this(uri, authenticator, ERtspTransportProtocol.TCP, false);
     }
 
     public RtspFMp4Proxy(URI uri, ERtspTransportProtocol transportProtocol) {
-        this(uri, null, transportProtocol);
+        this(uri, null, transportProtocol, false);
     }
 
-    public RtspFMp4Proxy(URI uri, DigestAuthenticator authenticator, ERtspTransportProtocol transportProtocol) {
+    public RtspFMp4Proxy(URI uri, DigestAuthenticator authenticator,
+                         ERtspTransportProtocol transportProtocol, boolean asyncSend) {
         this.client = new RtspClient(uri, authenticator, transportProtocol);
         this.client.onFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
             this.initHeaderHandle();
             this.frameHandle(f);
         });
-//        this.future = CompletableFuture.runAsync(this::executeHandle);
+        this.asyncSend = asyncSend;
+        if (this.asyncSend) {
+            this.future = CompletableFuture.runAsync(this::executeHandle);
+        }
     }
 
     private void initHeaderHandle() {
         if (this.trackInfo == null) {
             this.trackInfo = this.client.getTrackInfo();
-            Mp4TrackInfo mp4TrackInfo = this.toMp4TrackInfo(0);
-            this.mp4Header = Mp4Generator.createMp4Header(mp4TrackInfo);
+            if (this.codecHandle != null) {
+                this.codecHandle.accept(this.trackInfo.getCodec());
+            }
 
+            this.mp4TrackInfo = this.toMp4TrackInfo();
+            this.mp4Header = new Mp4Header(mp4TrackInfo);
             this.addFMp4Data(mp4Header);
         }
     }
@@ -113,7 +130,6 @@ public class RtspFMp4Proxy {
                 || frame.getNaluType() == EH264NaluType.SEI) {
             return;
         }
-        Mp4TrackInfo mp4TrackInfo = this.toMp4TrackInfo(frame.getTimestamp());
         Mp4SampleData sampleData = new Mp4SampleData();
         sampleData.setData(frame.getFrameSegment());
         sampleData.setSize(frame.getFrameSegment().length);
@@ -124,19 +140,24 @@ public class RtspFMp4Proxy {
             sampleData.getFlags().setDependedOn(1);
             sampleData.getFlags().setIsNonSync(1);
         }
-        mp4TrackInfo.setSampleData(Collections.singletonList(sampleData));
-        this.sequenceNumber++;
-
-        this.addFMp4Data(Mp4Generator.createFMp4Body(mp4TrackInfo));
+        this.mp4TrackInfo.getSampleData().add(sampleData);
+        if (frame.getNaluType() == EH264NaluType.IDR_SLICE || this.mp4TrackInfo.getSampleData().size() >= 2) {
+            // chrome workaround, mark first sample as being a Random Access Point to avoid sourcebuffer append issue
+            // https://code.google.com/p/chromium/issues/detail?id=229412
+            Mp4SampleData first = this.mp4TrackInfo.getSampleData().get(0);
+            first.getFlags().setDependedOn(2);
+            first.getFlags().setIsNonSync(0);
+            this.addFMp4Data(new Mp4MoofBox(this.sequenceNumber, frame.getTimestamp(), this.mp4TrackInfo));
+            this.addFMp4Data(new Mp4MdatBox(this.mp4TrackInfo.totalSampleData()));
+            this.mp4TrackInfo.getSampleData().clear();
+        }
     }
 
-    private Mp4TrackInfo toMp4TrackInfo(long timestamp) {
-        Mp4TrackInfo mp4TrackInfo = new Mp4TrackInfo();
-        mp4TrackInfo.setSequenceNumber(this.sequenceNumber);
+    private Mp4TrackInfo toMp4TrackInfo() {
+        this.mp4TrackInfo = new Mp4TrackInfo();
         mp4TrackInfo.setId(this.trackInfo.getId());
         mp4TrackInfo.setType(this.trackInfo.getType());
         mp4TrackInfo.setCodec(this.trackInfo.getCodec());
-        mp4TrackInfo.setBaseMediaDecodeTime(timestamp);
         mp4TrackInfo.setTimescale(this.trackInfo.getTimescale());
         mp4TrackInfo.setDuration(this.trackInfo.getDuration());
         mp4TrackInfo.setWidth(this.trackInfo.getWidth());
@@ -147,57 +168,71 @@ public class RtspFMp4Proxy {
     }
 
     private void addFMp4Data(IObjectByteArray iObjectByteArray) {
-        if (this.fmp4DataHandle != null) {
-            this.fmp4DataHandle.accept(iObjectByteArray.toByteArray());
+        if (this.asyncSend) {
+            this.buffers.offer(iObjectByteArray);
+            synchronized (this.objLock) {
+                this.objLock.notifyAll();
+            }
+        } else {
+            if (this.fmp4DataHandle != null) {
+                this.fmp4DataHandle.accept(iObjectByteArray.toByteArray());
+            }
         }
-//        this.buffers.add(iObjectByteArray);
-//        synchronized (this.buffers) {
-//            this.buffers.notifyAll();
-//        }
     }
 
     private void executeHandle() {
-        log.info("开启代理服务端异步发送FMp4字节数据");
+        log.info("开启代理服务端发送FMp4字节数据的异步线程");
         while (!this.terminal) {
+            // 没数据的时候等待
             while (this.buffers.isEmpty() && !this.terminal) {
-                synchronized (this.buffers) {
+                synchronized (this.objLock) {
                     try {
-                        this.buffers.wait();
+                        this.objLock.wait();
                     } catch (InterruptedException e) {
-                        log.debug(e.getMessage(), e);
+                        // NOOP
                     }
                 }
             }
+            // 有数据的时候发送出去
             int size = this.buffers.size();
-            List<IObjectByteArray> list = this.buffers.subList(0, size);
-            int sum = list.stream().mapToInt(IObjectByteArray::byteArrayLength).sum();
-            ByteWriteBuff buff = new ByteWriteBuff(sum);
-            list.forEach(x -> buff.putBytes(x.toByteArray()));
-            list.clear();
-            log.debug("当前缓存数量：{}", this.buffers.size());
-
-            if (this.fmp4DataHandle != null) {
-                this.fmp4DataHandle.accept(buff.getData());
+            for (int i = 0; i < size; i++) {
+                IObjectByteArray pop = this.buffers.pop();
+                if (this.fmp4DataHandle != null) {
+                    try {
+                        this.fmp4DataHandle.accept(pop.toByteArray());
+                    } catch (Exception e) {
+                        log.error(e.getMessage(), e);
+                    }
+                }
             }
         }
-        log.info("关闭代理服务端异步发送FMp4字节数据");
+        log.info("关闭代理服务端发送FMp4字节数据的异步线程");
     }
 
     /**
      * 开始
+     *
+     * @return 异步结果
      */
-    public void start() {
-        this.client.start();
+    public CompletableFuture<Void> start() {
+        log.info("开启FMp4代理服务端");
+        return this.client.start();
     }
 
     /**
      * 结束
      */
     public void stop() {
-        this.terminal = true;
-//        synchronized (this.buffers) {
-//            this.buffers.notifyAll();
-//        }
+        if (this.asyncSend) {
+            this.terminal = true;
+            synchronized (this.objLock) {
+                this.objLock.notifyAll();
+            }
+            if (this.future != null && !this.future.isDone()) {
+                this.future.join();
+            }
+        }
         this.client.stop();
+        log.info("关闭FMp4代理服务端");
     }
 }

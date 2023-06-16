@@ -15,8 +15,8 @@ public class FMp4Body implements IObjectByteArray {
 
     private final Mp4MdatBox mdatBox;
 
-    public FMp4Body(Mp4TrackInfo trackInfo) {
-        this.moofBox = new Mp4MoofBox(trackInfo);
+    public FMp4Body(long sequenceNumber, long baseMediaDecodeTime, Mp4TrackInfo trackInfo) {
+        this.moofBox = new Mp4MoofBox(sequenceNumber, baseMediaDecodeTime, trackInfo);
         this.mdatBox = new Mp4MdatBox(trackInfo.totalSampleData());
     }
 

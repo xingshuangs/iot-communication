@@ -40,10 +40,8 @@ public class Mp4MoofBoxTest {
         this.samples.add(data);
 
         this.trackInfo = new Mp4TrackInfo();
-        this.trackInfo.setSequenceNumber(1L);
         this.trackInfo.setId(1);
         this.trackInfo.setType("video");
-        this.trackInfo.setBaseMediaDecodeTime(0L);
         this.trackInfo.setTimescale(90000);
         this.trackInfo.setDuration(90000);
         this.trackInfo.setWidth(1920);
@@ -101,7 +99,7 @@ public class Mp4MoofBoxTest {
                 0x00, 0x00, 0x00, 0x00,
                 0x20, 0x10
         };
-        Mp4MoofBox box = new Mp4MoofBox(this.trackInfo);
+        Mp4MoofBox box = new Mp4MoofBox(1, 0, this.trackInfo);
         assertArrayEquals(expect, box.toByteArray());
     }
 
@@ -152,7 +150,7 @@ public class Mp4MoofBoxTest {
                 0x00, 0x00, 0x00, 0x00,
                 0x20, 0x10
         };
-        Mp4TrafBox box = new Mp4TrafBox(this.trackInfo);
+        Mp4TrafBox box = new Mp4TrafBox(0, this.trackInfo);
         assertArrayEquals(expect, box.toByteArray());
     }
 

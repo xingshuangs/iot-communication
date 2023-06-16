@@ -100,7 +100,11 @@ public class H264VideoParser implements IPayloadParser {
                 break;
         }
         if (this.frameHandle != null && frame != null && frame.getFrameSegment().length > 0) {
-            this.frameHandle.accept(frame);
+            try {
+                this.frameHandle.accept(frame);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
         }
     }
 
