@@ -69,7 +69,8 @@ public class Mp4TrunBox extends Mp4Box {
         for (Mp4SampleData sample : this.samples) {
             Mp4SampleFlag flag = sample.getFlags();
             buff.putInteger(sample.getDuration())
-                    .putInteger(sample.getSize())
+                    // 比较重要：包含前面长度，长度为4个字节
+                    .putInteger(sample.getSize() + 4)
                     .putByte((flag.getIsLeading() << 2) | flag.getDependedOn())
                     .putByte((flag.getIsDependedOn() << 6)
                             | (flag.getHasRedundancy() << 4)
