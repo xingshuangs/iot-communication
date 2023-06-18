@@ -49,9 +49,9 @@ public class PLCNetwork extends TcpClientBasic {
     protected int rack = 0;
 
     /**
-     * PLC槽号
+     * PLC槽号，S7-300 = 2
      */
-    protected int slot = 0;
+    protected int slot = 1;
 
     /**
      * 最大的PDU长度，不同PLC对应不同值，有240,480,960，目前默认240

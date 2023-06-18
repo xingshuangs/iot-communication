@@ -32,15 +32,15 @@ public class S7PLC extends PLCNetwork {
     public static final String IP = "127.0.0.1";
 
     public S7PLC() {
-        this(EPlcType.S1200, IP, PORT, 0, 0, DEFAULT_PDU_LENGTH);
+        this(EPlcType.S1200, IP, PORT, 0, 1, DEFAULT_PDU_LENGTH);
     }
 
     public S7PLC(EPlcType plcType) {
-        this(plcType, IP, PORT, 0, 0, DEFAULT_PDU_LENGTH);
+        this(plcType, IP, PORT, 0, 1, DEFAULT_PDU_LENGTH);
     }
 
     public S7PLC(EPlcType plcType, String ip) {
-        this(plcType, ip, PORT, 0, 0, DEFAULT_PDU_LENGTH);
+        this(plcType, ip, PORT, 0, 1, DEFAULT_PDU_LENGTH);
     }
 
     public S7PLC(EPlcType plcType, String ip, int port, int rack, int slot) {
