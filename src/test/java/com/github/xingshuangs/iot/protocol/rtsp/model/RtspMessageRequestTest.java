@@ -36,7 +36,12 @@ public class RtspMessageRequestTest {
         assertEquals("rtsp://10.3.8.202:554", uri.toString());
         assertEquals("\r\n", CRLF);
         uri = URI.create("rtsp://admin:123456@192.168.8.5:554/h264/ch1/main/av_stream");
-        assertEquals("rtsp://admin:123456@192.168.8.5:554/h264/ch1/main/av_stream",uri.toString());
+        assertEquals("rtsp://admin:123456@192.168.8.5:554/h264/ch1/main/av_stream", uri.toString());
+        URI newUri = URI.create("rtsp://" + uri.getHost() + ":" + uri.getPort() + uri.getPath());
+        UsernamePasswordCredential credential = UsernamePasswordCredential.createBy(uri.getUserInfo());
+        assertEquals("rtsp://192.168.8.5:554/h264/ch1/main/av_stream", newUri.toString());
+        assertEquals("admin", credential.getUsername());
+        assertEquals("123456", credential.getPassword());
     }
 
     @Test

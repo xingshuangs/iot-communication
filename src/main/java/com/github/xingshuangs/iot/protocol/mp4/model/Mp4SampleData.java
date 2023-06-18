@@ -1,21 +1,25 @@
 package com.github.xingshuangs.iot.protocol.mp4.model;
 
 
-import lombok.Data;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 
 /**
  * @author xingshuang
  */
-@Data
 public class Mp4SampleData {
 
     /**
-     * 数据
+     * 时间
+     */
+    private long timestamp = 0;
+
+    /**
+     * 数据，帧数据+长度
      */
     private byte[] data;
 
     /**
-     * 数据大小，表示sample对应的数据帧的实际大小size=224251
+     * 数据大小，表示sample对应的数据帧的实际大小size=224251，帧数据字节+长度字节
      */
     private int size = 0;
 
@@ -37,4 +41,52 @@ public class Mp4SampleData {
      * sample.DegradPrio & 0x0F,
      */
     private Mp4SampleFlag flags = new Mp4SampleFlag();
+
+    public void setData(byte[] data) {
+        this.size = 4 + data.length;
+        ByteWriteBuff buff = new ByteWriteBuff(4 + data.length);
+        buff.putInteger(data.length)
+                .putBytes(data);
+        this.data = buff.getData();
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setFlags(Mp4SampleFlag flags) {
+        this.flags = flags;
+    }
+
+    public Mp4SampleFlag getFlags() {
+        return flags;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public int getCts() {
+        return cts;
+    }
+
+    public void setCts(int cts) {
+        this.cts = cts;
+    }
 }

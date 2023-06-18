@@ -49,6 +49,9 @@ public class RtspFMp4Proxy {
      */
     private Consumer<byte[]> fmp4DataHandle;
 
+    /**
+     * codec的处理事件
+     */
     private Consumer<String> codecHandle;
 
     /**
@@ -61,6 +64,9 @@ public class RtspFMp4Proxy {
      */
     private Mp4Header mp4Header;
 
+    /**
+     * 轨道信息
+     */
     private Mp4TrackInfo mp4TrackInfo;
 
     /**
@@ -108,6 +114,9 @@ public class RtspFMp4Proxy {
         }
     }
 
+    /**
+     * 初始化头部事件
+     */
     private void initHeaderHandle() {
         if (this.trackInfo == null) {
             this.trackInfo = this.client.getTrackInfo();
@@ -115,12 +124,17 @@ public class RtspFMp4Proxy {
                 this.codecHandle.accept(this.trackInfo.getCodec());
             }
 
-            this.mp4TrackInfo = this.toMp4TrackInfo();
+            this.mp4TrackInfo = this.toMp4TrackInfo(this.trackInfo);
             this.mp4Header = new Mp4Header(mp4TrackInfo);
             this.addFMp4Data(mp4Header);
         }
     }
 
+    /**
+     * 帧处理事件
+     *
+     * @param frame 数据帧
+     */
     private void frameHandle(H264VideoFrame frame) {
         if (frame.getFrameType() == EFrameType.AUDIO) {
             return;
@@ -132,7 +146,7 @@ public class RtspFMp4Proxy {
         }
         Mp4SampleData sampleData = new Mp4SampleData();
         sampleData.setData(frame.getFrameSegment());
-        sampleData.setSize(frame.getFrameSegment().length);
+        sampleData.setTimestamp(frame.getTimestamp());
         if (frame.getNaluType() == EH264NaluType.IDR_SLICE) {
             sampleData.getFlags().setDependedOn(2);
             sampleData.getFlags().setIsNonSync(0);
@@ -141,32 +155,41 @@ public class RtspFMp4Proxy {
             sampleData.getFlags().setIsNonSync(1);
         }
         this.mp4TrackInfo.getSampleData().add(sampleData);
-        if (frame.getNaluType() == EH264NaluType.IDR_SLICE || this.mp4TrackInfo.getSampleData().size() >= 2) {
-            // chrome workaround, mark first sample as being a Random Access Point to avoid sourcebuffer append issue
-            // https://code.google.com/p/chromium/issues/detail?id=229412
+        if (frame.getNaluType() == EH264NaluType.IDR_SLICE || this.mp4TrackInfo.getSampleData().size() >= 5) {
             Mp4SampleData first = this.mp4TrackInfo.getSampleData().get(0);
-            first.getFlags().setDependedOn(2);
-            first.getFlags().setIsNonSync(0);
-            this.addFMp4Data(new Mp4MoofBox(this.sequenceNumber, frame.getTimestamp(), this.mp4TrackInfo));
+            this.addFMp4Data(new Mp4MoofBox(this.sequenceNumber, first.getTimestamp(), this.mp4TrackInfo));
             this.addFMp4Data(new Mp4MdatBox(this.mp4TrackInfo.totalSampleData()));
-            this.mp4TrackInfo.getSampleData().clear();
+            // 更新mp4TrackInfo，用新的数据副本
+            this.mp4TrackInfo = this.toMp4TrackInfo(this.trackInfo);
+            this.sequenceNumber++;
         }
     }
 
-    private Mp4TrackInfo toMp4TrackInfo() {
-        this.mp4TrackInfo = new Mp4TrackInfo();
-        mp4TrackInfo.setId(this.trackInfo.getId());
-        mp4TrackInfo.setType(this.trackInfo.getType());
-        mp4TrackInfo.setCodec(this.trackInfo.getCodec());
-        mp4TrackInfo.setTimescale(this.trackInfo.getTimescale());
-        mp4TrackInfo.setDuration(this.trackInfo.getDuration());
-        mp4TrackInfo.setWidth(this.trackInfo.getWidth());
-        mp4TrackInfo.setHeight(this.trackInfo.getHeight());
-        mp4TrackInfo.setSps(this.trackInfo.getSps());
-        mp4TrackInfo.setPps(this.trackInfo.getPps());
-        return mp4TrackInfo;
+    /**
+     * 数据转换，包装成Mp4需要的轨道信息
+     *
+     * @param track 轨道信息
+     * @return Mp4TrackInfo
+     */
+    private Mp4TrackInfo toMp4TrackInfo(RtspTrackInfo track) {
+        Mp4TrackInfo info = new Mp4TrackInfo();
+        info.setId(track.getId());
+        info.setType(track.getType());
+        info.setCodec(track.getCodec());
+        info.setTimescale(track.getTimescale());
+        info.setDuration(track.getDuration());
+        info.setWidth(track.getWidth());
+        info.setHeight(track.getHeight());
+        info.setSps(track.getSps());
+        info.setPps(track.getPps());
+        return info;
     }
 
+    /**
+     * 添加FMp4数据
+     *
+     * @param iObjectByteArray 数据
+     */
     private void addFMp4Data(IObjectByteArray iObjectByteArray) {
         if (this.asyncSend) {
             this.buffers.offer(iObjectByteArray);
@@ -180,6 +203,9 @@ public class RtspFMp4Proxy {
         }
     }
 
+    /**
+     * 事件执行
+     */
     private void executeHandle() {
         log.info("开启代理服务端发送FMp4字节数据的异步线程");
         while (!this.terminal) {
@@ -197,7 +223,7 @@ public class RtspFMp4Proxy {
             int size = this.buffers.size();
             for (int i = 0; i < size; i++) {
                 IObjectByteArray pop = this.buffers.pop();
-                if (this.fmp4DataHandle != null) {
+                if (this.fmp4DataHandle != null && pop != null) {
                     try {
                         this.fmp4DataHandle.accept(pop.toByteArray());
                     } catch (Exception e) {

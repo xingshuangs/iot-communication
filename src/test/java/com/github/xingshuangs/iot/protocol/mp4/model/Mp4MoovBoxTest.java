@@ -22,7 +22,7 @@ public class Mp4MoovBoxTest {
     public void init() {
         this.samples = new ArrayList<>();
         Mp4SampleData data = new Mp4SampleData();
-        data.setSize(5463);
+        data.setData(new byte[5459]);
         data.setDuration(3600);
         data.setCts(0);
         Mp4SampleFlag flag = new Mp4SampleFlag();
@@ -31,7 +31,7 @@ public class Mp4MoovBoxTest {
         this.samples.add(data);
 
         data = new Mp4SampleData();
-        data.setSize(4998);
+        data.setData(new byte[4994]);
         data.setDuration(3600);
         data.setCts(0);
         flag = new Mp4SampleFlag();
