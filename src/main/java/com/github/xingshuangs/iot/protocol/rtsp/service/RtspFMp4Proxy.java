@@ -88,21 +88,12 @@ public class RtspFMp4Proxy {
         this.codecHandle = codecHandle;
     }
 
-    public RtspFMp4Proxy(URI uri) {
-        this(uri, null, ERtspTransportProtocol.TCP, false);
+    public RtspFMp4Proxy(RtspClient client) {
+        this(client, false);
     }
 
-    public RtspFMp4Proxy(URI uri, DigestAuthenticator authenticator) {
-        this(uri, authenticator, ERtspTransportProtocol.TCP, false);
-    }
-
-    public RtspFMp4Proxy(URI uri, ERtspTransportProtocol transportProtocol) {
-        this(uri, null, transportProtocol, false);
-    }
-
-    public RtspFMp4Proxy(URI uri, DigestAuthenticator authenticator,
-                         ERtspTransportProtocol transportProtocol, boolean asyncSend) {
-        this.client = new RtspClient(uri, authenticator, transportProtocol);
+    public RtspFMp4Proxy(RtspClient client, boolean asyncSend) {
+        this.client = client;
         this.client.onFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
             this.initHeaderHandle();
@@ -207,7 +198,7 @@ public class RtspFMp4Proxy {
      * 事件执行
      */
     private void executeHandle() {
-        log.info("开启代理服务端发送FMp4字节数据的异步线程");
+        log.debug("开启代理服务端发送FMp4字节数据的异步线程");
         while (!this.terminal) {
             // 没数据的时候等待
             while (this.buffers.isEmpty() && !this.terminal) {
@@ -232,7 +223,7 @@ public class RtspFMp4Proxy {
                 }
             }
         }
-        log.info("关闭代理服务端发送FMp4字节数据的异步线程");
+        log.debug("关闭代理服务端发送FMp4字节数据的异步线程");
     }
 
     /**

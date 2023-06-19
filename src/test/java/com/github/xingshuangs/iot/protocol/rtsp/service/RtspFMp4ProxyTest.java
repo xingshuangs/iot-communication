@@ -20,7 +20,8 @@ public class RtspFMp4ProxyTest {
         URI uri = URI.create("rtsp://192.168.3.142:554/h264/ch1/main/av_stream");
         UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "kilox1234");
         DigestAuthenticator authenticator = new DigestAuthenticator(credential);
-        RtspFMp4Proxy proxy = new RtspFMp4Proxy(uri, authenticator);
+        RtspClient client = new RtspClient(uri, authenticator, ERtspTransportProtocol.TCP);
+        RtspFMp4Proxy proxy = new RtspFMp4Proxy(client);
         proxy.onFmp4DataHandle(x -> {
             log.debug("length：{}", x.length);
         });
@@ -48,7 +49,8 @@ public class RtspFMp4ProxyTest {
         URI uri = URI.create("rtsp://192.168.3.142:554/h264/ch1/main/av_stream");
         UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "kilox1234");
         DigestAuthenticator authenticator = new DigestAuthenticator(credential);
-        RtspFMp4Proxy proxy = new RtspFMp4Proxy(uri, authenticator, ERtspTransportProtocol.TCP, true);
+        RtspClient client = new RtspClient(uri, authenticator, ERtspTransportProtocol.TCP);
+        RtspFMp4Proxy proxy = new RtspFMp4Proxy(client, true);
         proxy.onFmp4DataHandle(x -> {
             log.debug("length：{}", x.length);
         });
@@ -76,7 +78,8 @@ public class RtspFMp4ProxyTest {
         URI uri = URI.create("rtsp://192.168.3.142:554/h264/ch1/main/av_stream");
         UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "kilox1234");
         DigestAuthenticator authenticator = new DigestAuthenticator(credential);
-        RtspFMp4Proxy proxy = new RtspFMp4Proxy(uri, authenticator, ERtspTransportProtocol.UDP, false);
+        RtspClient client = new RtspClient(uri, authenticator, ERtspTransportProtocol.UDP);
+        RtspFMp4Proxy proxy = new RtspFMp4Proxy(client, false);
         proxy.onFmp4DataHandle(x -> {
             log.debug("length：{}", x.length);
         });
@@ -104,7 +107,8 @@ public class RtspFMp4ProxyTest {
         URI uri = URI.create("rtsp://192.168.3.142:554/h264/ch1/main/av_stream");
         UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "kilox1234");
         DigestAuthenticator authenticator = new DigestAuthenticator(credential);
-        RtspFMp4Proxy proxy = new RtspFMp4Proxy(uri, authenticator, ERtspTransportProtocol.UDP, true);
+        RtspClient client = new RtspClient(uri, authenticator, ERtspTransportProtocol.UDP);
+        RtspFMp4Proxy proxy = new RtspFMp4Proxy(client, true);
         proxy.onFmp4DataHandle(x -> {
             log.debug("length：{}", x.length);
         });

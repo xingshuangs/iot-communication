@@ -85,7 +85,7 @@ public class RtcpUdpClient extends UdpClientBasic implements IRtspDataStream {
     }
 
     private void waitForReceiveData() {
-        log.info("[RTSP+UDP] RTCP 开启异步接收数据线程，远程的IP[{}]，端口号[{}]",
+        log.debug("[RTSP + UDP] RTCP 开启异步接收数据线程，远程的IP[{}]，端口号[{}]",
                 this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
         while (!this.terminal) {
             try {
@@ -96,9 +96,13 @@ public class RtcpUdpClient extends UdpClientBasic implements IRtspDataStream {
                 List<RtcpBasePackage> basePackages = RtcpPackageBuilder.fromBytes(data);
                 this.statistics.processRtcpPackage(basePackages);
             } catch (Exception e) {
-                log.error(e.getMessage());
+                if (!this.terminal) {
+                    log.error(e.getMessage());
+                }
             }
         }
+        log.debug("[RTSP + UDP] RTCP 关闭异步接收数据线程，远程的IP[{}]，端口号[{}]",
+                this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
     }
 
     /**

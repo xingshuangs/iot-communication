@@ -128,7 +128,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
      */
     private void waitForReceiveData() {
         InetSocketAddress socketAddress = this.rtspClient.getSocketAddress();
-        log.info("[RTSP+TCP] Interleaved 开启异步接收数据线程，远程的IP[{}]，端口号[{}]",
+        log.debug("[RTSP + TCP] Interleaved 开启异步接收数据线程，远程的IP[{}]，端口号[{}]",
                 socketAddress.getAddress().getHostAddress(), socketAddress.getPort());
         while (!this.terminal) {
             try {
@@ -148,6 +148,8 @@ public class RtspInterleavedClient implements IRtspDataStream {
                 log.error(e.getMessage());
             }
         }
+        log.debug("[RTSP + TCP] Interleaved 关闭异步接收数据线程，远程的IP[{}]，端口号[{}]",
+                socketAddress.getAddress().getHostAddress(), socketAddress.getPort());
     }
 
     /**

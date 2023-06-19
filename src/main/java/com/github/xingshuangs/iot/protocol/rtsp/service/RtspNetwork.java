@@ -119,7 +119,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     public RtspNetwork(URI uri) {
-        this(uri, ERtspTransportProtocol.UDP);
+        this(uri, ERtspTransportProtocol.TCP);
     }
 
     public RtspNetwork(URI uri, ERtspTransportProtocol transportProtocol) {
@@ -127,7 +127,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     public RtspNetwork(URI uri, DigestAuthenticator authenticator) {
-        this(uri, authenticator, ERtspTransportProtocol.UDP);
+        this(uri, authenticator, ERtspTransportProtocol.TCP);
     }
 
     public RtspNetwork(URI uri, DigestAuthenticator authenticator, ERtspTransportProtocol transportProtocol) {
