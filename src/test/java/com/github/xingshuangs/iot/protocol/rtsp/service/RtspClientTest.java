@@ -82,7 +82,7 @@ public class RtspClientTest {
     @Test
     public void connectUdpWithoutAuthenticator() {
         URI uri = URI.create("rtsp://127.0.0.1:8554/11");
-        RtspClient client = new RtspClient(uri);
+        RtspClient client = new RtspClient(uri, ERtspTransportProtocol.UDP);
         client.onCommCallback(log::info);
         client.onFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;

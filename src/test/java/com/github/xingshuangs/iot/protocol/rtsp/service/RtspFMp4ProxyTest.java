@@ -16,6 +16,33 @@ import java.util.concurrent.TimeUnit;
 public class RtspFMp4ProxyTest {
 
     @Test
+    public void runTcpSync1() {
+        URI uri = URI.create("rtsp://127.0.0.1:8554/11");
+        RtspClient client = new RtspClient(uri, ERtspTransportProtocol.UDP);
+        RtspFMp4Proxy proxy = new RtspFMp4Proxy(client);
+        proxy.onFmp4DataHandle(x -> {
+            log.debug("length：{}", x.length);
+        });
+        proxy.onCodecHandle(log::debug);
+        CompletableFuture.runAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            proxy.stop();
+        });
+        CompletableFuture<Void> future = proxy.start();
+        while (!future.isDone()) {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @Test
     public void runTcpSync() {
         URI uri = URI.create("rtsp://192.168.3.142:554/h264/ch1/main/av_stream");
         UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "kilox1234");

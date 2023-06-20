@@ -51,8 +51,8 @@ public class RtspTrackInfo {
         trackInfo.timescale = rtpMap.getClockFrequency();
         trackInfo.duration = rtpMap.getClockFrequency();
         RtspSdpMediaAttrDimension dimension = media.getAttributeDimension();
-        trackInfo.width = dimension.getWidth();
-        trackInfo.height = dimension.getHeight();
+        trackInfo.width = dimension == null ? 1920 : dimension.getWidth();
+        trackInfo.height = dimension == null ? 1080 : dimension.getHeight();
         RtspSdpMediaAttrFmtp fmtp = media.getAttributeFmtp();
         trackInfo.sps = fmtp.getSps();
         trackInfo.pps = fmtp.getPps();
