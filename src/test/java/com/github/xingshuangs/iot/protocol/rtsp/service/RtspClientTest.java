@@ -55,9 +55,6 @@ public class RtspClientTest {
         client.onCommCallback(log::info);
         client.onFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
-//            ByteReadBuff buff = ByteReadBuff.newInstance(f.getFrameSegment());
-//            byte[] bytes = f.getFrameSegment().length > 10 ? buff.getBytes(10) : buff.getBytes();
-//            log.debug(HexUtil.toHexString(bytes));
             log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
         });
         CompletableFuture.runAsync(() -> {
@@ -104,6 +101,5 @@ public class RtspClientTest {
                 throw new RuntimeException(e);
             }
         }
-
     }
 }

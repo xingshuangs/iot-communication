@@ -1,6 +1,6 @@
 # IOT-COMMUNICATION
 
-[![Maven-v1.3.0](https://img.shields.io/badge/Maven-v1.3.0-brightgreen)](https://mvnrepository.com/artifact/com.github.xingshuangs/iot-communication)
+[![Maven-v1.4.0](https://img.shields.io/badge/Maven-v1.4.0-brightgreen)](https://mvnrepository.com/artifact/com.github.xingshuangs/iot-communication)
 ![Language-java8](https://img.shields.io/badge/Language-java8-blue)
 ![Idea-2022.02.03](https://img.shields.io/badge/Idea-2022.02.03-lightgrey)
 ![CopyRight-Oscura](https://img.shields.io/badge/CopyRight-Oscura-yellow)
@@ -14,9 +14,11 @@
 
 目前它只是一个物联网通信的工具，包含
 
-- 西门子S7通信协议;
-- ModbusTCP通信协议;
-- 基础字节数组解析转换工具;
+- 西门子S7通信协议
+- ModbusTCP通信协议
+- RTSP、RTCP、RTP、H264协议
+- MP4 (FMP4) 协议
+- 基础字节数组解析转换工具
 
 ## 使用指南
 
@@ -28,7 +30,7 @@
 <dependency>
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
 </dependency>
 ```
 
@@ -55,6 +57,8 @@ class Demo {
 
 - [西门子S7通信协议](./tutorial/README-S7-CN.md)
 - [ModbusTCP通信协议](./tutorial/README-Modbus-CN.md)
+- [RTSP/RTCP/RTP/H264协议](./tutorial/README-RTSP-CN.md)
+- [WEB视频监控](./tutorial/README-WebVideo-CN.md)
 - [字节数据解析转换工具](./tutorial/README-ByteArray-CN.md)
 
 ## 联系方式
