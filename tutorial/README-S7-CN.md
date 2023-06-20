@@ -169,6 +169,8 @@ class Demo {
         LocalDate localDateData = s7PLC.readDate("DB1.0");
         // read time of day
         LocalTime localTimeOfDayData = s7PLC.readTimeOfDay("DB1.0");
+        // read DTL
+        LocalDateTime dateTime = s7PLC.readDTL("DB1.0");
 
         // read multi address
         MultiAddressRead addressRead = new MultiAddressRead();
@@ -219,6 +221,8 @@ class Demo {
         s7PLC.writeDate("DB1.0", LocalDate.now());
         // write time of day
         s7PLC.writeTimeOfDay("DB1.0", LocalTime.now());
+        // write DTL
+        s7PLC.writeDTL("DB1.0", LocalDateTime.now());
 
         // write multi address
         MultiAddressWrite addressWrite = new MultiAddressWrite();
