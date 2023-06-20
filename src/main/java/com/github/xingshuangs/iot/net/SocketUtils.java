@@ -116,6 +116,10 @@ public class SocketUtils {
             }
             count += num;
             off += num;
+            // 比读取的数据长度还小，则证明已经读取完了
+            if (num < len) {
+                break;
+            }
         }
         return count;
     }

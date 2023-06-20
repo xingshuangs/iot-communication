@@ -35,9 +35,9 @@ public class IntegerUtil {
     }
 
     /**
-     * 将short转换为字节数组，默认采用大端模式
+     * 将int转换为字节数组，默认采用大端模式
      *
-     * @param data short数据
+     * @param data int数据
      * @return 字节数组
      */
     public static byte[] toByteArray(int data) {
@@ -45,13 +45,31 @@ public class IntegerUtil {
     }
 
     /**
-     * 将short转换为字节数组，默认采用大端模式
+     * 将long转换为字节数组，默认采用大端模式
      *
-     * @param data short数据
+     * @param data long数据
      * @return 字节数组
      */
     public static byte[] toByteArray(long data) {
         return toByteArray((int) data, false);
+    }
+
+    /**
+     * 将long转换为字节数组，并自定义获取字节数，默认采用大端模式
+     *
+     * @param data   long数据
+     * @param offset 偏移量
+     * @param length 读取长度
+     * @return 字节数组
+     */
+    public static byte[] toCustomByteArray(long data, int offset, int length) {
+        if (offset + length > 4) {
+            throw new IndexOutOfBoundsException("offset + length > 4");
+        }
+        byte[] bytes = toByteArray((int) data, false);
+        byte[] res = new byte[length];
+        System.arraycopy(bytes, offset, res, 0, length);
+        return res;
     }
 
     /**
@@ -101,8 +119,8 @@ public class IntegerUtil {
     /**
      * 将字节数组转换为int32
      *
-     * @param data         字节数组
-     * @param offset       偏移量
+     * @param data   字节数组
+     * @param offset 偏移量
      * @return int32数据
      */
     public static int toInt32In3Bytes(byte[] data, int offset) {

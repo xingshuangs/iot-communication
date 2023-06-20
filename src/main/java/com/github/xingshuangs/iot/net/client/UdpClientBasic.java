@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.net.client;
 
 
 import com.github.xingshuangs.iot.exceptions.SocketRuntimeException;
+import com.github.xingshuangs.iot.net.ICommunicable;
 
 import java.io.IOException;
 import java.net.*;
@@ -11,17 +12,27 @@ import java.net.*;
  *
  * @author xingshuang
  */
-public class UdpClientBasic {
+public class UdpClientBasic implements ICommunicable {
 
     /**
      * 服务端地址
      */
-    protected final InetSocketAddress serverAddress;
+    protected InetSocketAddress serverAddress;
 
     /**
      * socket对象
      */
     private DatagramSocket socket;
+
+    /**
+     * 获取本地端口号
+     *
+     * @return 本地端口号
+     */
+    public int getLocalPort() {
+        DatagramSocket availableSocket = this.getAvailableSocket();
+        return availableSocket.getLocalPort();
+    }
 
     public UdpClientBasic() {
         this("127.0.0.1", 8088);
@@ -41,6 +52,16 @@ public class UdpClientBasic {
         if (this.socket != null && !this.socket.isClosed()) {
             this.socket.close();
         }
+    }
+
+    /**
+     * 绑定服务器
+     *
+     * @param ip   IP地址
+     * @param port 端口号
+     */
+    public void bindServer(String ip, int port) {
+        this.serverAddress = new InetSocketAddress(ip, port);
     }
 
     /**
@@ -112,6 +133,22 @@ public class UdpClientBasic {
         }
     }
 
+    /**
+     * 读取数据，完全不知道待接收的数据长度
+     *
+     * @return 字节数组
+     */
+    public byte[] read() {
+        byte[] buffer = new byte[4096];
+        int length = this.read(buffer);
+        if (length < 4096) {
+            byte[] data = new byte[length];
+            System.arraycopy(buffer, 0, data, 0, length);
+            return data;
+        } else {
+            return buffer;
+        }
+    }
 
     /**
      * 读取数据
@@ -176,6 +213,5 @@ public class UdpClientBasic {
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
         }
-
     }
 }
