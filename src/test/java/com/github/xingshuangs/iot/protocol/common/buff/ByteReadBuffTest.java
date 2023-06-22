@@ -131,4 +131,20 @@ public class ByteReadBuffTest {
         String actual = buff.getString(4);
         assertEquals("0123", actual);
     }
+
+    @Test
+    public void getBitToInt() {
+        ByteReadBuff buff = new ByteReadBuff(new byte[]{(byte) 0x30, (byte) 0x31, (byte) 0x32, (byte) 0x33});
+        assertEquals(1, buff.getBitToInt(0, 4));
+        assertEquals(1, buff.getBitToInt(0, 5));
+        assertEquals(0, buff.getBitToInt(0, 6));
+    }
+
+    @Test
+    public void getByteToInt1(){
+        ByteReadBuff buff = new ByteReadBuff(new byte[]{(byte) 0x30, (byte) 0x31, (byte) 0x32, (byte) 0x33});
+        assertEquals(3, buff.getByteToInt(0, 4,2));
+        assertEquals(6, buff.getByteToInt(0, 3,3));
+        assertEquals(16, buff.getByteToInt(0, 0,5));
+    }
 }

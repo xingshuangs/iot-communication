@@ -61,6 +61,24 @@ public class ByteUtil {
     }
 
     /**
+     * 获取字节指定范围bit的数值
+     *
+     * @param data          字节数据
+     * @param startBitIndex 位索引
+     * @param bitLength     位长度
+     * @return int值
+     */
+    public static int toUInt8(byte data, int startBitIndex, int bitLength) {
+        if (startBitIndex < 0 || startBitIndex > 7) {
+            throw new IllegalArgumentException("起始位只能是[0,7]");
+        }
+        if (startBitIndex + bitLength > 8) {
+            throw new IllegalArgumentException("startBitIndex + length > 8");
+        }
+        return (data >> startBitIndex) & (((int) Math.pow(2, bitLength) - 1) & 0xFF);
+    }
+
+    /**
      * 将字节转换为字符串
      *
      * @param data 字节数组

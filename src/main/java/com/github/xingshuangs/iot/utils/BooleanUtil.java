@@ -58,6 +58,20 @@ public class BooleanUtil {
     }
 
     /**
+     * 获取字节指定位的状态
+     *
+     * @param data 字节数据
+     * @param bit  位数 0-7
+     * @return 结果状态，true，false
+     */
+    public static int getValueToInt(byte data, int bit) {
+        if (bit > 7 || bit < 0) {
+            throw new IndexOutOfBoundsException("0<=bit<=7");
+        }
+        return (((data & 0xFF) & (1 << bit)) >> bit);
+    }
+
+    /**
      * 提取指定数量的boolean值
      *
      * @param quantity 数量

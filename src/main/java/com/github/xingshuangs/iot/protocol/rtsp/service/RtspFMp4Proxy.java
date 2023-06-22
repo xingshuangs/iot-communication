@@ -6,13 +6,12 @@ import com.github.xingshuangs.iot.protocol.mp4.model.*;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EFrameType;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264NaluType;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
-import com.github.xingshuangs.iot.protocol.rtsp.authentication.DigestAuthenticator;
-import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspTransportProtocol;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspTrackInfo;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.URI;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -74,6 +73,8 @@ public class RtspFMp4Proxy {
      */
     private boolean asyncSend = false;
 
+    private List<H264VideoFrame> gop = new ArrayList<>();
+
     private CompletableFuture<Void> future;
 
     public Mp4Header getMp4Header() {
@@ -111,6 +112,7 @@ public class RtspFMp4Proxy {
     private void initHeaderHandle() {
         if (this.trackInfo == null) {
             this.trackInfo = this.client.getTrackInfo();
+            log.debug(this.trackInfo.toString());
             if (this.codecHandle != null) {
                 this.codecHandle.accept(this.trackInfo.getCodec());
             }
@@ -135,18 +137,22 @@ public class RtspFMp4Proxy {
                 || frame.getNaluType() == EH264NaluType.SEI) {
             return;
         }
-        Mp4SampleData sampleData = new Mp4SampleData();
-        sampleData.setData(frame.getFrameSegment());
-        sampleData.setTimestamp(frame.getTimestamp());
-        if (frame.getNaluType() == EH264NaluType.IDR_SLICE) {
-            sampleData.getFlags().setDependedOn(2);
-            sampleData.getFlags().setIsNonSync(0);
-        } else {
-            sampleData.getFlags().setDependedOn(1);
-            sampleData.getFlags().setIsNonSync(1);
+        // 这里的作用时缓存5个帧数据，因为可能收到的帧时间戳不是按时间顺序排列
+        this.gop.add(frame);
+        if (this.gop.size() < 5) {
+            return;
         }
+        this.gop.sort((a, b) -> (int) (a.getTimestamp() - b.getTimestamp()));
+        H264VideoFrame videoFrame = this.gop.remove(0);
+
+        Mp4SampleData sampleData = new Mp4SampleData();
+        sampleData.setData(videoFrame.getFrameSegment());
+        sampleData.setTimestamp(videoFrame.getTimestamp());
+        sampleData.getFlags().setDependedOn(videoFrame.getNaluType() == EH264NaluType.IDR_SLICE ? 2 : 1);
+        sampleData.getFlags().setIsNonSync(videoFrame.getNaluType() == EH264NaluType.IDR_SLICE ? 0 : 1);
+
         this.mp4TrackInfo.getSampleData().add(sampleData);
-        if (frame.getNaluType() == EH264NaluType.IDR_SLICE || this.mp4TrackInfo.getSampleData().size() >= 5) {
+        if (videoFrame.getNaluType() == EH264NaluType.IDR_SLICE || this.mp4TrackInfo.getSampleData().size() >= 5) {
             Mp4SampleData first = this.mp4TrackInfo.getSampleData().get(0);
             this.addFMp4Data(new Mp4MoofBox(this.sequenceNumber, first.getTimestamp(), this.mp4TrackInfo));
             this.addFMp4Data(new Mp4MdatBox(this.mp4TrackInfo.totalSampleData()));
@@ -232,7 +238,7 @@ public class RtspFMp4Proxy {
      * @return 异步结果
      */
     public CompletableFuture<Void> start() {
-        log.info("开启FMp4代理服务端");
+        log.info("开启FMp4代理服务端，模式：[{}]", this.asyncSend ? "异步" : "同步");
         return this.client.start();
     }
 

@@ -83,6 +83,9 @@ public class ByteReadBuff extends ByteBuffBase {
      * @param index 索引
      */
     private void checkCondition(int index) {
+        if (index < 0) {
+            throw new IndexOutOfBoundsException("索引不能小于0");
+        }
         if (index >= data.length) {
             throw new IndexOutOfBoundsException("超过字节数组最大容量");
         }
@@ -248,6 +251,18 @@ public class ByteReadBuff extends ByteBuffBase {
     }
 
     /**
+     * 获取一位的int值数据
+     *
+     * @param index 索引
+     * @param bit   位
+     * @return boolean数据
+     */
+    public int getBitToInt(int index, int bit) {
+        this.checkCondition(index);
+        return BooleanUtil.getValueToInt(this.data[index], bit);
+    }
+
+    /**
      * 获取字节数据
      *
      * @param index 索引
@@ -279,6 +294,19 @@ public class ByteReadBuff extends ByteBuffBase {
     public int getByteToInt(int index) {
         this.checkCondition(index);
         return ByteUtil.toUInt8(this.data, index);
+    }
+
+    /**
+     * 获取一个字节中几个位组合而成的数据
+     *
+     * @param index         字节索引
+     * @param startBitIndex 起始位索引
+     * @param bitLength     位长度
+     * @return 整形值
+     */
+    public int getByteToInt(int index, int startBitIndex, int bitLength) {
+        this.checkCondition(index);
+        return ByteUtil.toUInt8(this.data[index], startBitIndex, bitLength);
     }
 
     /**
