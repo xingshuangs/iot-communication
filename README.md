@@ -22,11 +22,10 @@ Now, it is a tool for iot communication, it includes
 
 ## Getting Started
 
-### 1. How to get
-
 Add the dependency to pom.xml in the JAVA project.
 
 ```xml
+
 <dependency>
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
@@ -34,30 +33,11 @@ Add the dependency to pom.xml in the JAVA project.
 </dependency>
 ```
 
-### 2. Basic examples
-
-```java
-class Demo {
-    public static void main(String[] args) {
-        // create PLC instance
-        S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
-        // read and write boolean
-        s7PLC.writeBoolean("DB1.2.0", true);
-        boolean boolData = s7PLC.readBoolean("DB1.2.0");
-        // read and write byte
-        s7PLC.writeByte("DB2.1", (byte) 0x11);
-        byte byteData = s7PLC.readByte("DB2.1");
-        // close
-        s7PLC.close();
-    }
-}
-```
-
 ## Tutorial
 
 - [Siemens S7 Protocol Tutorial.](./tutorial/README-S7-EN.md)
 - [ModbusTCP Protocol Tutorial.](./tutorial/README-Modbus-EN.md)
-- [RTSP/RTCP/RTP/H264 Protocol Tutorial](./tutorial/README-RTSP-EN.md)
+- [RTSP/RTCP/RTP/H264/FMP4 Protocol Tutorial](./tutorial/README-RTSP-EN.md)
 - [WEB Video Monitor Tutorial](./tutorial/README-WebVideo-EN.md)
 - [Tool for Byte Array Data Parse Tutorial.](./tutorial/README-ByteArray-EN.md)
 

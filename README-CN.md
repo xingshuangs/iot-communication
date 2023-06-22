@@ -22,11 +22,10 @@
 
 ## 使用指南
 
-### 1. 如何获取
-
 在JAVA工程的pom.xml文件中添加该依赖即可
 
 ```xml
+
 <dependency>
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
@@ -34,30 +33,11 @@
 </dependency>
 ```
 
-### 2. 简单示例
-
-```java
-class Demo {
-    public static void main(String[] args) {
-        // 创建PLC对象
-        S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
-        // 读写boolean
-        s7PLC.writeBoolean("DB1.2.0", true);
-        boolean boolData = s7PLC.readBoolean("DB1.2.0");
-        // 读写字节
-        s7PLC.writeByte("DB2.1", (byte) 0x11);
-        byte byteData = s7PLC.readByte("DB2.1");
-        // 关闭
-        s7PLC.close();
-    }
-}
-```
-
 ## 教程链接
 
 - [西门子S7通信协议](./tutorial/README-S7-CN.md)
 - [ModbusTCP通信协议](./tutorial/README-Modbus-CN.md)
-- [RTSP/RTCP/RTP/H264协议](./tutorial/README-RTSP-CN.md)
+- [RTSP/RTCP/RTP/H264/FMP4协议](./tutorial/README-RTSP-CN.md)
 - [WEB视频监控](./tutorial/README-WebVideo-CN.md)
 - [字节数据解析转换工具](./tutorial/README-ByteArray-CN.md)
 
