@@ -184,7 +184,7 @@ public class PLCNetwork extends TcpClientBasic {
 
         TPKT tpkt;
         int len;
-        byte[] remain;
+        byte[] total;
         synchronized (this.objLock) {
             this.write(sendData);
 
@@ -194,17 +194,18 @@ public class PLCNetwork extends TcpClientBasic {
                 throw new S7CommException(" TPKT 无效，长度不一致");
             }
             tpkt = TPKT.fromBytes(data);
-            remain = new byte[tpkt.getLength() - TPKT.BYTE_LENGTH];
-            len = this.read(remain);
+            total = new byte[tpkt.getLength()];
+            System.arraycopy(data, 0, total, 0, data.length);
+            len = this.read(total, data.length, tpkt.getLength() - data.length);
         }
-        if (len < remain.length) {
+        if (TPKT.BYTE_LENGTH + len < total.length) {
             throw new S7CommException(" TPKT后面的数据长度，长度不一致");
         }
-        S7Data ack = S7Data.fromBytes(tpkt, remain);
-
         if (this.comCallback != null) {
-            this.comCallback.accept(ack.toByteArray());
+            this.comCallback.accept(total);
         }
+        S7Data ack = S7Data.fromBytes(total);
+
         this.checkPostedCom(req, ack);
         return ack;
     }

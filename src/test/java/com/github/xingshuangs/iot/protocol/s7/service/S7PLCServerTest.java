@@ -36,8 +36,8 @@ public class S7PLCServerTest {
 
     @After
     public void destroy() {
-        this.server.stop();
         this.s7PLC.close();
+        this.server.stop();
     }
 
     @Test

@@ -96,7 +96,9 @@ public class TcpServerBasic {
                 }
                 CompletableFuture.runAsync(() -> this.doClientConnected(client));
             } catch (IOException e) {
-                log.error(e.getMessage());
+                if (this.isAlive()) {
+                    log.error(e.getMessage());
+                }
             }
         }
     }
@@ -142,7 +144,9 @@ public class TcpServerBasic {
                 }
             }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            if (SocketUtils.isConnected(client)) {
+                log.error(e.getMessage());
+            }
         } finally {
             try {
                 SocketUtils.close(client);
@@ -205,6 +209,7 @@ public class TcpServerBasic {
             InputStream in = socket.getInputStream();
             int firstByte = in.read();
             if (firstByte == -1) {
+                SocketUtils.close(socket);
                 throw new SocketRuntimeException("客户端主动断开");
             }
             byte[] data = new byte[in.available() + 1];
