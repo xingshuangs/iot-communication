@@ -210,8 +210,7 @@ public class RtcpDataStatistics {
     public byte[] createReceiverAndSdesContent() {
         RtcpReceiverReport receiverReport = this.createReceiverReport();
         RtcpSdesReport sdesReport = this.createSdesReport();
-        log.debug("RTCP发送[{}]数据，{}", receiverReport.getHeader().getPackageType(), receiverReport);
-        log.debug("RTCP发送[{}]数据，{}", sdesReport.getHeader().getPackageType(), sdesReport);
+        log.debug("RTCP发送[{}]，[{}]数据", receiverReport.getHeader().getPackageType(), sdesReport.getHeader().getPackageType());
         byte[] res = new byte[receiverReport.byteArrayLength() + sdesReport.byteArrayLength()];
         System.arraycopy(receiverReport.toByteArray(), 0, res, 0, receiverReport.byteArrayLength());
         System.arraycopy(sdesReport.toByteArray(), 0, res, receiverReport.byteArrayLength(), sdesReport.byteArrayLength());
@@ -226,8 +225,7 @@ public class RtcpDataStatistics {
     public byte[] createReceiverAndByteContent() {
         RtcpReceiverReport receiverReport = this.createReceiverReport();
         RtcpBye aByte = this.createByte();
-        log.debug("RTCP发送[{}]数据，{}", receiverReport.getHeader().getPackageType(), receiverReport);
-        log.debug("RTCP发送[{}]数据，{}", aByte.getHeader().getPackageType(), aByte);
+        log.debug("RTCP发送[{}]，[{}]数据", receiverReport.getHeader().getPackageType(), aByte.getHeader().getPackageType());
         byte[] res = new byte[receiverReport.byteArrayLength() + aByte.byteArrayLength()];
         System.arraycopy(receiverReport.toByteArray(), 0, res, 0, receiverReport.byteArrayLength());
         System.arraycopy(aByte.toByteArray(), 0, res, receiverReport.byteArrayLength(), aByte.byteArrayLength());

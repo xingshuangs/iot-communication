@@ -8,7 +8,6 @@ import com.github.xingshuangs.iot.protocol.rtcp.model.RtcpBasePackage;
 import com.github.xingshuangs.iot.protocol.rtcp.model.RtcpPackageBuilder;
 import com.github.xingshuangs.iot.protocol.rtcp.service.RtcpDataStatistics;
 import com.github.xingshuangs.iot.protocol.rtp.model.RtpPackage;
-import com.github.xingshuangs.iot.protocol.rtp.model.frame.RawFrame;
 import com.github.xingshuangs.iot.protocol.rtp.service.IPayloadParser;
 import com.github.xingshuangs.iot.protocol.rtsp.model.interleaved.RtspInterleaved;
 import com.github.xingshuangs.iot.utils.HexUtil;
@@ -132,6 +131,9 @@ public class RtspInterleavedClient implements IRtspDataStream {
                 socketAddress.getAddress().getHostAddress(), socketAddress.getPort());
         while (!this.terminal) {
             try {
+                if (!this.rtspClient.checkConnected()) {
+                    break;
+                }
                 byte[] data = this.readFromServer();
                 if (this.commCallback != null) {
                     this.commCallback.accept(data);
@@ -143,7 +145,6 @@ public class RtspInterleavedClient implements IRtspDataStream {
                 } else if (interleaved.getChannelId() == this.rtcpVideoChannelNumber) {
                     this.rtcpVideoHandle(interleaved);
                 }
-
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
