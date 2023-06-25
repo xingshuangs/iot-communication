@@ -132,6 +132,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
         while (!this.terminal) {
             try {
                 if (!this.rtspClient.checkConnected()) {
+                    this.terminal = true;
                     break;
                 }
                 byte[] data = this.readFromServer();

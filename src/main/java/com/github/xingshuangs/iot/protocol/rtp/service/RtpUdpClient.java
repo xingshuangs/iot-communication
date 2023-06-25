@@ -1,10 +1,10 @@
 package com.github.xingshuangs.iot.protocol.rtp.service;
 
 
+import com.github.xingshuangs.iot.exceptions.SocketRuntimeException;
 import com.github.xingshuangs.iot.net.client.UdpClientBasic;
 import com.github.xingshuangs.iot.protocol.rtcp.service.RtcpUdpClient;
 import com.github.xingshuangs.iot.protocol.rtp.model.RtpPackage;
-import com.github.xingshuangs.iot.protocol.rtp.model.frame.RawFrame;
 import com.github.xingshuangs.iot.protocol.rtsp.service.IRtspDataStream;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,8 +18,6 @@ import java.util.function.Consumer;
  */
 @Slf4j
 public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
-
-    public static final Integer BUFFER_SIZE = 4096;
 
     /**
      * 是否终止线程
@@ -99,11 +97,17 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
                     this.commCallback.accept(data);
                 }
                 RtpPackage rtp = RtpPackage.fromBytes(data);
-//                log.debug("数据长度[{}], 时间戳[{}], 序列号[{}]", rtp.byteArrayLength(), rtp.getHeader().getTimestamp(), rtp.getHeader().getSequenceNumber());
                 if (this.rtcpUdpClient != null) {
                     this.rtcpUdpClient.processRtpPackage(rtp);
                 }
                 this.iPayloadParser.processPackage(rtp);
+            } catch (SocketRuntimeException e) {
+                // SocketRuntimeException就是IO异常，网络断开了，结束线程
+                if (!this.terminal) {
+                    log.error(e.getMessage());
+                }
+                this.terminal = true;
+                break;
             } catch (Exception e) {
                 if (!this.terminal) {
                     log.error(e.getMessage());

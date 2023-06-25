@@ -22,17 +22,17 @@ public class TcpClientBasic implements ICommunicable {
     /**
      * socket对象
      */
-    private Socket socket;
+    protected Socket socket;
 
     /**
      * 连接超时时间，默认是10s
      */
-    private int connectTimeout = 10_000;
+    protected int connectTimeout = 10_000;
 
     /**
      * 接收数据超时时间，默认是10s
      */
-    private int receiveTimeout = 10_000;
+    protected int receiveTimeout = 10_000;
 
     /**
      * socket的地址
@@ -42,7 +42,7 @@ public class TcpClientBasic implements ICommunicable {
     /**
      * socket是否发生错误
      */
-    private final AtomicBoolean socketError;
+    protected final AtomicBoolean socketError;
 
     /**
      * 自动重连，true:自动重连，false：不自动重连，默认自动重连
@@ -262,7 +262,7 @@ public class TcpClientBasic implements ICommunicable {
         try {
             Socket availableSocket = this.getAvailableSocket();
             return SocketUtils.read(availableSocket, data, offset, length, maxLength, timeout);
-        } catch (Exception e) {
+        } catch (IOException e) {
             this.socketError.set(true);
             throw new SocketRuntimeException(e);
         }

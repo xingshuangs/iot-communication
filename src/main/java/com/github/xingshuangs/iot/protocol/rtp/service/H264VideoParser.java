@@ -78,23 +78,15 @@ public class H264VideoParser implements IPayloadParser {
             case NON_IDR_SLICE:
             case IDR_SLICE:
                 H264NaluSingle naluSingle = (H264NaluSingle) h264Nalu;
-//                log.debug("Mark[{}], Type[{}]", rtp.getHeader().isMarker(), naluType);
                 frame = new H264VideoFrame(naluType, rtp.getHeader().getTimestamp() - this.baseTimestamp, naluSingle.toByteArray());
                 break;
             case FU_A:
                 H264NaluFuA naluFuA = (H264NaluFuA) h264Nalu;
-//                log.debug("Mark[{}], Type[{}], start[{}], end[{}], unitType[{}]", rtp.getHeader().isMarker(), naluType,
-//                        naluFuA.getFuHeader().isStart(), naluFuA.getFuHeader().isEnd(), naluFuA.getFuHeader().getType());
-
                 if (naluFuA.getFuHeader().isStart()) {
                     this.resetBuffers();
-//                    log.debug("FuA开始：Mark[{}], Type[{}], start[{}], end[{}], unitType[{}], 时间戳[{}]", rtp.getHeader().isMarker(), naluType,
-//                            naluFuA.getFuHeader().isStart(), naluFuA.getFuHeader().isEnd(), naluFuA.getFuHeader().getType(), rtp.getHeader().getTimestamp());
                 }
                 this.buffers.add(naluFuA);
                 if (naluFuA.getFuHeader().isEnd()) {
-//                    log.debug("FuA结束：Mark[{}], Type[{}], start[{}], end[{}], unitType[{}], 时间戳[{}]", rtp.getHeader().isMarker(), naluType,
-//                            naluFuA.getFuHeader().isStart(), naluFuA.getFuHeader().isEnd(), naluFuA.getFuHeader().getType(), rtp.getHeader().getTimestamp());
                     frame = this.doBuffers(rtp.getHeader().getTimestamp());
                 }
                 break;

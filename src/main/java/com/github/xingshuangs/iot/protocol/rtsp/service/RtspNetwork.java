@@ -134,6 +134,8 @@ public class RtspNetwork extends TcpClientBasic {
         super(uri.getHost(), uri.getPort());
         // 不需要自动重连，连不上就停掉
         this.enableReconnect = false;
+        // 接收超时时间5s
+        this.receiveTimeout = 5_000;
         this.uri = uri;
         this.authenticator = authenticator;
         this.transportProtocol = transportProtocol;

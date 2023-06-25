@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.rtcp.service;
 
 
+import com.github.xingshuangs.iot.exceptions.SocketRuntimeException;
 import com.github.xingshuangs.iot.net.client.UdpClientBasic;
 import com.github.xingshuangs.iot.protocol.rtcp.model.*;
 import com.github.xingshuangs.iot.protocol.rtp.model.RtpPackage;
@@ -95,6 +96,13 @@ public class RtcpUdpClient extends UdpClientBasic implements IRtspDataStream {
                 }
                 List<RtcpBasePackage> basePackages = RtcpPackageBuilder.fromBytes(data);
                 this.statistics.processRtcpPackage(basePackages);
+            } catch (SocketRuntimeException e) {
+                // SocketRuntimeException就是IO异常，网络断开了，结束线程
+                if (!this.terminal) {
+                    log.error(e.getMessage());
+                }
+                this.terminal = true;
+                break;
             } catch (Exception e) {
                 if (!this.terminal) {
                     log.error(e.getMessage());

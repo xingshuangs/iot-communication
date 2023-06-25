@@ -22,7 +22,7 @@ public class UdpClientBasic implements ICommunicable {
     /**
      * socket对象
      */
-    private DatagramSocket socket;
+    protected DatagramSocket socket;
 
     /**
      * 获取本地端口号
