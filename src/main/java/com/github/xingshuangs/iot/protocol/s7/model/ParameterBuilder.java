@@ -30,11 +30,11 @@ public class ParameterBuilder {
             case READ_VARIABLE:
             case WRITE_VARIABLE:
                 return ReadWriteParameter.fromBytes(data);
-            case REQUEST_DOWNLOAD:
+            case START_DOWNLOAD:
                 return null;
-            case DOWNLOAD_BLOCK:
+            case DOWNLOAD:
                 return null;
-            case DOWNLOAD_ENDED:
+            case END_DOWNLOAD:
                 return null;
             case START_UPLOAD:
                 return null;

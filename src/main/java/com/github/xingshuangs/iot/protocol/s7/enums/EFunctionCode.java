@@ -28,17 +28,17 @@ public enum EFunctionCode {
     /**
      * 开始下载
      */
-    REQUEST_DOWNLOAD((byte) 0x1A),
+    START_DOWNLOAD((byte) 0x1A),
 
     /**
      * 下载阻塞
      */
-    DOWNLOAD_BLOCK((byte) 0x1B),
+    DOWNLOAD((byte) 0x1B),
 
     /**
      * 下载结束
      */
-    DOWNLOAD_ENDED((byte) 0x1C),
+    END_DOWNLOAD((byte) 0x1C),
 
     /**
      * 开始上传
