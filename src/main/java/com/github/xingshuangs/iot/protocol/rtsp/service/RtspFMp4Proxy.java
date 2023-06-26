@@ -73,6 +73,8 @@ public class RtspFMp4Proxy {
      */
     private boolean asyncSend = false;
 
+    private H264VideoFrame lastFrame;
+
     private List<H264VideoFrame> gop = new ArrayList<>();
 
     private CompletableFuture<Void> future;
@@ -144,6 +146,14 @@ public class RtspFMp4Proxy {
         }
         this.gop.sort((a, b) -> (int) (a.getTimestamp() - b.getTimestamp()));
         H264VideoFrame videoFrame = this.gop.remove(0);
+
+        if (this.lastFrame == null) {
+            this.lastFrame = videoFrame;
+        }
+        if (this.lastFrame.getTimestamp() > videoFrame.getTimestamp()) {
+            log.error("出现一帧数据时间戳小于之前的一帧的时间戳");
+        }
+        this.lastFrame = videoFrame;
 
         Mp4SampleData sampleData = new Mp4SampleData();
         sampleData.setData(videoFrame.getFrameSegment());

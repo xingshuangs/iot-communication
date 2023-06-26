@@ -66,7 +66,7 @@ public class RtspClient extends RtspNetwork {
                     }
                 }
             } catch (Exception e) {
-                throw new RtspCommException(e);
+                log.error(e.getMessage(), e);
             } finally {
                 if (this.alive) {
                     this.stop();

@@ -90,6 +90,9 @@ public class H264VideoParser implements IPayloadParser {
                     frame = this.doBuffers(rtp.getHeader().getTimestamp());
                 }
                 break;
+            default:
+                log.error("RTP解析未知数据类型[{}]，时间戳[{}]", naluType, rtp.getHeader().getTimestamp());
+                break;
         }
         if (this.frameHandle != null && frame != null && frame.getFrameSegment().length > 0) {
             try {

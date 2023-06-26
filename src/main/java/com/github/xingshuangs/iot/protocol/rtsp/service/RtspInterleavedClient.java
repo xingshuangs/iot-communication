@@ -127,7 +127,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
      */
     private void waitForReceiveData() {
         InetSocketAddress socketAddress = this.rtspClient.getSocketAddress();
-        log.debug("[RTSP + TCP] Interleaved 开启异步接收数据线程，远程的IP[{}]，端口号[{}]",
+        log.debug("[RTSP + TCP] Interleaved 开启异步接收数据线程，远程的IP[/{}:{}]",
                 socketAddress.getAddress().getHostAddress(), socketAddress.getPort());
         while (!this.terminal) {
             try {
@@ -150,7 +150,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
                 log.error(e.getMessage());
             }
         }
-        log.debug("[RTSP + TCP] Interleaved 关闭异步接收数据线程，远程的IP[{}]，端口号[{}]",
+        log.debug("[RTSP + TCP] Interleaved 关闭异步接收数据线程，远程的IP[/{}:{}]",
                 socketAddress.getAddress().getHostAddress(), socketAddress.getPort());
     }
 
@@ -161,7 +161,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
      */
     private byte[] readFromServer() {
         byte[] header = new byte[4];
-        int readLength = this.rtspClient.read(header, 0);
+        int readLength = this.rtspClient.read(header);
         if (readLength != 4) {
             throw new RtspCommException("头读取长度有误");
         }
@@ -172,7 +172,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
         int offset = 4;
         int len = length;
         while (offset < total.length) {
-            int read = this.rtspClient.read(total, offset, len, 0);
+            int read = this.rtspClient.read(total, offset, len);
             offset += read;
             len -= read;
         }
