@@ -161,15 +161,31 @@ public class RtspFMp4Proxy {
         sampleData.getFlags().setDependedOn(videoFrame.getNaluType() == EH264NaluType.IDR_SLICE ? 2 : 1);
         sampleData.getFlags().setIsNonSync(videoFrame.getNaluType() == EH264NaluType.IDR_SLICE ? 0 : 1);
 
-        this.mp4TrackInfo.getSampleData().add(sampleData);
-        if (videoFrame.getNaluType() == EH264NaluType.IDR_SLICE || this.mp4TrackInfo.getSampleData().size() >= 5) {
-            Mp4SampleData first = this.mp4TrackInfo.getSampleData().get(0);
-            this.addFMp4Data(new Mp4MoofBox(this.sequenceNumber, first.getTimestamp(), this.mp4TrackInfo));
-            this.addFMp4Data(new Mp4MdatBox(this.mp4TrackInfo.totalSampleData()));
-            // 更新mp4TrackInfo，用新的数据副本
-            this.mp4TrackInfo = this.toMp4TrackInfo(this.trackInfo);
-            this.sequenceNumber++;
+        if (videoFrame.getNaluType() == EH264NaluType.IDR_SLICE) {
+            // 当前是IDR帧，发送并清空之前的数据，然后发送IDR帧
+            if (!this.mp4TrackInfo.getSampleData().isEmpty()) {
+                this.addSampleData();
+            }
+            this.mp4TrackInfo.getSampleData().add(sampleData);
+            this.addSampleData();
+        } else {
+            // 当前不是IDR帧，等数据量足够的时候再发送
+            this.mp4TrackInfo.getSampleData().add(sampleData);
+            if (this.mp4TrackInfo.getSampleData().size() >= 7) {
+                this.addSampleData();
+            }
         }
+    }
+
+    private void addSampleData() {
+        Mp4SampleData first = this.mp4TrackInfo.getSampleData().get(0);
+        first.getFlags().setDependedOn(2);
+        first.getFlags().setIsNonSync(0);
+        this.addFMp4Data(new Mp4MoofBox(this.sequenceNumber, first.getTimestamp(), this.mp4TrackInfo));
+        this.addFMp4Data(new Mp4MdatBox(this.mp4TrackInfo.totalSampleData()));
+        // 更新mp4TrackInfo，用新的数据副本
+        this.mp4TrackInfo = this.toMp4TrackInfo(this.trackInfo);
+        this.sequenceNumber++;
     }
 
     /**

@@ -84,7 +84,7 @@ public class RtspFMp4ProxyTest {
         proxy.onCodecHandle(log::debug);
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(5);
+                TimeUnit.SECONDS.sleep(20);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
