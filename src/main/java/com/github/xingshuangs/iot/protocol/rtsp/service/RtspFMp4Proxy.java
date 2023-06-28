@@ -139,9 +139,9 @@ public class RtspFMp4Proxy {
                 || frame.getNaluType() == EH264NaluType.SEI) {
             return;
         }
-        // 这里的作用时缓存5个帧数据，因为可能收到的帧时间戳不是按时间顺序排列
+        // 这里的作用是缓存10个帧数据，重新排序，因为可能收到的帧时间戳不是按时间顺序排列
         this.gop.add(frame);
-        if (this.gop.size() < 5) {
+        if (this.gop.size() < 10) {
             return;
         }
         this.gop.sort((a, b) -> (int) (a.getTimestamp() - b.getTimestamp()));
@@ -171,7 +171,7 @@ public class RtspFMp4Proxy {
         } else {
             // 当前不是IDR帧，等数据量足够的时候再发送
             this.mp4TrackInfo.getSampleData().add(sampleData);
-            if (this.mp4TrackInfo.getSampleData().size() >= 7) {
+            if (this.mp4TrackInfo.getSampleData().size() >= 5) {
                 this.addSampleData();
             }
         }
@@ -179,8 +179,6 @@ public class RtspFMp4Proxy {
 
     private void addSampleData() {
         Mp4SampleData first = this.mp4TrackInfo.getSampleData().get(0);
-        first.getFlags().setDependedOn(2);
-        first.getFlags().setIsNonSync(0);
         this.addFMp4Data(new Mp4MoofBox(this.sequenceNumber, first.getTimestamp(), this.mp4TrackInfo));
         this.addFMp4Data(new Mp4MdatBox(this.mp4TrackInfo.totalSampleData()));
         // 更新mp4TrackInfo，用新的数据副本

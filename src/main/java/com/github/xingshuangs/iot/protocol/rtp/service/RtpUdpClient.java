@@ -97,6 +97,9 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
                     this.commCallback.accept(data);
                 }
                 RtpPackage rtp = RtpPackage.fromBytes(data);
+                if (data.length > rtp.byteArrayLength()) {
+                    log.error("rtp数据还有未处理部分，未处理字节个数[{}]", data.length - rtp.byteArrayLength());
+                }
                 if (this.rtcpUdpClient != null) {
                     this.rtcpUdpClient.processRtpPackage(rtp);
                 }

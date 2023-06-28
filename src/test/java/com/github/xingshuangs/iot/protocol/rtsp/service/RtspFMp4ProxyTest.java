@@ -84,7 +84,7 @@ public class RtspFMp4ProxyTest {
         proxy.onCodecHandle(log::debug);
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(20);
+                TimeUnit.SECONDS.sleep(40);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -137,12 +137,12 @@ public class RtspFMp4ProxyTest {
         RtspClient client = new RtspClient(uri, authenticator, ERtspTransportProtocol.UDP);
         RtspFMp4Proxy proxy = new RtspFMp4Proxy(client, true);
         proxy.onFmp4DataHandle(x -> {
-            log.debug("length：{}", x.length);
+//            log.debug("length：{}", x.length);
         });
         proxy.onCodecHandle(log::debug);
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(5);
+                TimeUnit.SECONDS.sleep(200);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
