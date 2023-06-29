@@ -80,6 +80,22 @@ public class PLCNetwork extends TcpClientBasic {
         this.persistence = persistence;
     }
 
+    public EPlcType getPlcType() {
+        return plcType;
+    }
+
+    public int getRack() {
+        return rack;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
+    public int getPduLength() {
+        return pduLength;
+    }
+
     public PLCNetwork() {
         super();
     }
