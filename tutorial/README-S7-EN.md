@@ -574,3 +574,26 @@ Receive：The maximum byte write length is 225 = 240 - 15, 15(response PDU) = 12
 
 Disconnection reconnects is supported. If the PLC has been disconnected, the reconnection is
 triggered in each time of reading and writing operation.
+
+> 4、How much data can I read or write in batches in a single communication?
+
+| PLC               | PDU length | Data Type                | Byte Size | (Write) Maximum Number | (Read) Maximum Number |
+|-------------------|:----------:|:-------------------------|:---------:|:----------------------:|:---------------------:|
+| S1200 / S200Smart |    240     | boolean / byte           |     1     |         **12**         |        **18**         |
+| S1200 / S200Smart |    240     | uint16 / int16           |     2     |         **12**         |        **18**         |
+| S1200 / S200Smart |    240     | uint32 / int32 / float32 |     4     |         **11**         |        **18**         |
+| S1200 / S200Smart |    240     | float64                  |     8     |         **9**          |        **17**         |
+
+| PLC  | PDU length | Data Type                | Byte Size | (Write) Maximum Number | (Read) Maximum Number |
+|------|:----------:|:-------------------------|:---------:|:----------------------:|:---------------------:|
+| S400 |    480     | boolean / byte           |     1     |         **26**         |        **38**         |
+| S400 |    480     | uint16 / int16           |     2     |         **24**         |        **38**         |
+| S400 |    480     | uint32 / int32 / float32 |     4     |         **22**         |        **38**         |
+| S400 |    480     | float64                  |     8     |         **18**         |        **35**         |
+
+| PLC    | PDU length | Data Type                | Byte Size | (Write) Maximum Number | (Read) Maximum Number |
+|--------|:----------:|:-------------------------|:---------:|:----------------------:|:---------------------:|
+| S1500  |    960     | boolean / byte           |     1     |         **52**         |        **78**         |
+| S1500  |    960     | uint16 / int16           |     2     |         **49**         |        **78**         |
+| S1500  |    960     | uint32 / int32 / float32 |     4     |         **45**         |        **78**         |
+| S1500  |    960     | float64                  |     8     |         **38**         |        **72**         |

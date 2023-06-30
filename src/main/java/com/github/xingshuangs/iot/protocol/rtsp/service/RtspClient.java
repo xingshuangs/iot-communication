@@ -62,6 +62,7 @@ public class RtspClient extends RtspNetwork {
                     }
                     if (System.currentTimeMillis() - lastTime > this.sessionInfo.getTimeout() / 2) {
                         lastTime = System.currentTimeMillis();
+                        log.debug("触发session心跳，发送参数获取信号");
                         this.getParameter();
                     }
                 }

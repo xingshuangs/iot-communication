@@ -151,7 +151,7 @@ public class RtspFMp4Proxy {
             this.lastFrame = videoFrame;
         }
         if (this.lastFrame.getTimestamp() > videoFrame.getTimestamp()) {
-            log.error("出现一帧数据时间戳小于之前的一帧的时间戳");
+            log.warn("出现一帧数据时间戳小于之前的一帧的时间戳");
         }
         this.lastFrame = videoFrame;
 

@@ -210,7 +210,7 @@ public class RtcpDataStatistics {
     public byte[] createReceiverAndSdesContent() {
         RtcpReceiverReport receiverReport = this.createReceiverReport();
         RtcpSdesReport sdesReport = this.createSdesReport();
-        log.debug("RTCP发送[{}]，[{}]数据", receiverReport.getHeader().getPackageType(), sdesReport.getHeader().getPackageType());
+//        log.debug("RTCP发送[{}]，[{}]数据", receiverReport.getHeader().getPackageType(), sdesReport.getHeader().getPackageType());
         byte[] res = new byte[receiverReport.byteArrayLength() + sdesReport.byteArrayLength()];
         System.arraycopy(receiverReport.toByteArray(), 0, res, 0, receiverReport.byteArrayLength());
         System.arraycopy(sdesReport.toByteArray(), 0, res, receiverReport.byteArrayLength(), sdesReport.byteArrayLength());

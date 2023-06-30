@@ -94,12 +94,18 @@ public class H264VideoParser implements IPayloadParser {
                 log.error("RTP解析未知数据类型[{}]，时间戳[{}]", naluType, rtp.getHeader().getTimestamp());
                 break;
         }
-        if (this.frameHandle != null && frame != null && frame.getFrameSegment().length > 0) {
+        if (this.frameHandle == null || frame == null) {
+            return;
+        }
+
+        if (frame.getFrameSegment().length > 0) {
             try {
                 this.frameHandle.accept(frame);
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
+        } else {
+            log.warn("存在一帧数据，负载为空，[{}], [{}]", frame.getTimestamp(), frame.getNaluType());
         }
     }
 
