@@ -5,13 +5,15 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EArea;
 import com.github.xingshuangs.iot.protocol.s7.enums.EParamVariableType;
 import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
 
+import java.util.regex.Pattern;
+
 /**
  * S7协议地址解析工具
- * DB1.0.1、DB1.1
- * M1.1、M1
- * V1.1、V1
- * I0.1、I0
- * Q0.1、Q0
+ * DB1.0.1、DB1.1、DB100.DBX0.0、DB100.DBB5、DB100.DBW6
+ * M1.1、M1、MB1、MW1、MD1
+ * V1.1、V1、VB100、VW100、VD100
+ * I0.1、I0、IB1、IW1、ID1
+ * Q0.1、Q0、QB1、QW1、QD1
  *
  * @author xingshuang
  */
@@ -110,9 +112,7 @@ public class AddressUtil {
     private static int parseDbNumber(String[] addList) {
         switch (addList[0].substring(0, 1)) {
             case "D":
-                return addList[0].contains("DB") ?
-                        Integer.valueOf(addList[0].substring(2))
-                        : Integer.valueOf(addList[0].substring(1));
+                return extractNumber(addList[0]);
             case "V":
                 //****************** 对于200smartPLC的V区，就是DB1.X，例如，V1=DB1.1，V100=DB1.100 **********************/
                 return 1;
@@ -130,9 +130,9 @@ public class AddressUtil {
     private static int parseByteAddress(String[] addList) {
         switch (addList[0].substring(0, 1)) {
             case "D":
-                return addList.length >= 2 ? Integer.parseInt(addList[1]) : 0;
+                return addList.length >= 2 ? extractNumber(addList[1]) : 0;
             default:
-                return Integer.parseInt(addList[0].substring(1));
+                return extractNumber(addList[0]);
         }
     }
 
@@ -146,10 +146,10 @@ public class AddressUtil {
         switch (addList[0].substring(0, 1)) {
             case "D":
                 // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0；本质上不是bit时，位索引是不是0都不受影响的
-                return addList.length >= 3 && variableType == EParamVariableType.BIT ? Integer.parseInt(addList[2]) : 0;
+                return addList.length >= 3 && variableType == EParamVariableType.BIT ? extractNumber(addList[2]) : 0;
             default:
                 // 只有是bit数据类型的时候，才能将bit地址进行赋值，不然都是0；本质上不是bit时，位索引是不是0都不受影响的
-                return addList.length >= 2 && variableType == EParamVariableType.BIT ? Integer.parseInt(addList[1]) : 0;
+                return addList.length >= 2 && variableType == EParamVariableType.BIT ? extractNumber(addList[1]) : 0;
         }
     }
 
@@ -176,5 +176,16 @@ public class AddressUtil {
             default:
                 throw new IllegalArgumentException("不支持访问");
         }
+    }
+
+    /**
+     * 提取字符串中的数字
+     *
+     * @param src 原来的字符串
+     * @return 处理之后的字符串
+     */
+    public static int extractNumber(String src) {
+        String number = Pattern.compile("\\D").matcher(src).replaceAll("").trim();
+        return Integer.parseInt(number);
     }
 }
