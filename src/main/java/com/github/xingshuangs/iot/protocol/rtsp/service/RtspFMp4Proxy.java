@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 /**
@@ -54,6 +55,11 @@ public class RtspFMp4Proxy {
     private Consumer<String> codecHandle;
 
     /**
+     * 销毁的处理事件
+     */
+    private BooleanSupplier destroyHandle;
+
+    /**
      * 是否终止
      */
     private boolean terminal = false;
@@ -91,6 +97,10 @@ public class RtspFMp4Proxy {
         this.codecHandle = codecHandle;
     }
 
+    public void onDestroyHandle(BooleanSupplier destroyHandle) {
+        this.destroyHandle = destroyHandle;
+    }
+
     public RtspFMp4Proxy(RtspClient client) {
         this(client, false);
     }
@@ -102,6 +112,7 @@ public class RtspFMp4Proxy {
             this.initHeaderHandle();
             this.frameHandle(f);
         });
+        this.client.onDestroyHandle(() -> this.destroyHandle == null || this.destroyHandle.getAsBoolean());
         this.asyncSend = asyncSend;
         if (this.asyncSend) {
             this.future = CompletableFuture.runAsync(this::executeHandle);

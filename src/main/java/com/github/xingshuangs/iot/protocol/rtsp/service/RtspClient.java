@@ -1,7 +1,6 @@
 package com.github.xingshuangs.iot.protocol.rtsp.service;
 
 
-import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.DigestAuthenticator;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspMethod;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspTransportProtocol;
@@ -60,7 +59,7 @@ public class RtspClient extends RtspNetwork {
                     if (this.socketClientIsAllDone()) {
                         break;
                     }
-                    if (System.currentTimeMillis() - lastTime > this.sessionInfo.getTimeout() / 2) {
+                    if (System.currentTimeMillis() - lastTime > (this.sessionInfo.getTimeout() - 1) / 2) {
                         lastTime = System.currentTimeMillis();
                         log.debug("触发session心跳，发送参数获取信号");
                         this.getParameter();
@@ -80,8 +79,10 @@ public class RtspClient extends RtspNetwork {
      * 断开
      */
     public void stop() {
-        this.teardown();
-        this.alive = false;
-        this.close();
+        if (this.alive) {
+            this.alive = false;
+            this.teardown();
+            this.close();
+        }
     }
 }

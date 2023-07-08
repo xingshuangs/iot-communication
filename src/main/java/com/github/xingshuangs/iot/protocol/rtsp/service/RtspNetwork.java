@@ -26,6 +26,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CRLF;
@@ -102,6 +103,11 @@ public class RtspNetwork extends TcpClientBasic {
     private Consumer<RawFrame> frameHandle;
 
     /**
+     * 销毁的处理事件
+     */
+    private BooleanSupplier destroyHandle;
+
+    /**
      * 通信协议，TCP、UDP
      */
     protected ERtspTransportProtocol transportProtocol;
@@ -116,6 +122,10 @@ public class RtspNetwork extends TcpClientBasic {
 
     public void onFrameHandle(Consumer<RawFrame> frameHandle) {
         this.frameHandle = frameHandle;
+    }
+
+    public void onDestroyHandle(BooleanSupplier destroyHandle) {
+        this.destroyHandle = destroyHandle;
     }
 
     public RtspNetwork(URI uri) {
@@ -403,6 +413,9 @@ public class RtspNetwork extends TcpClientBasic {
             this.checkAfterResponse(response, ERtspMethod.TEARDOWN);
         } else {
             this.sendToServer(request);
+        }
+        if (this.destroyHandle != null) {
+            this.destroyHandle.getAsBoolean();
         }
     }
 
