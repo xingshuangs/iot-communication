@@ -43,6 +43,10 @@ public class S7PLC extends PLCNetwork {
         this(plcType, ip, PORT, 0, 1, DEFAULT_PDU_LENGTH);
     }
 
+    public S7PLC(EPlcType plcType, String ip, int port) {
+        this(plcType, ip, port, 0, 1, DEFAULT_PDU_LENGTH);
+    }
+
     public S7PLC(EPlcType plcType, String ip, int port, int rack, int slot) {
         this(plcType, ip, port, rack, slot, DEFAULT_PDU_LENGTH);
     }
