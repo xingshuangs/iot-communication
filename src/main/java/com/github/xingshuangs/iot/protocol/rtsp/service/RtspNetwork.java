@@ -182,7 +182,7 @@ public class RtspNetwork extends TcpClientBasic {
         synchronized (this.objLock) {
             this.write(reqBytes);
             // 读取并解析头
-            byte[] header = new byte[1024];
+            byte[] header = new byte[4096];
             headerLen = this.read(header);
             contentString = new String(header, 0, headerLen, StandardCharsets.US_ASCII);
             ack = RtspMessageResponseBuilder.fromString(contentString, req);
