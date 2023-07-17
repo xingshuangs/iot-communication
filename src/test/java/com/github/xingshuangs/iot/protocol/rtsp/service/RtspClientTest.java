@@ -30,6 +30,7 @@ public class RtspClientTest {
             H264VideoFrame f = (H264VideoFrame) x;
             log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
         });
+        client.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
             try {
                 TimeUnit.SECONDS.sleep(500);
@@ -60,6 +61,7 @@ public class RtspClientTest {
             H264VideoFrame f = (H264VideoFrame) x;
             log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
         });
+        client.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
             try {
                 TimeUnit.SECONDS.sleep(15);
@@ -100,6 +102,7 @@ public class RtspClientTest {
                 log.debug(f.getTimestamp() + ", " + HexUtil.toHexString(new byte[]{f.getFrameSegment()[0]}) + ", " + tmp.getTimestamp() + ", " + HexUtil.toHexString(new byte[]{tmp.getFrameSegment()[0]}));
             }
         });
+        client.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
             try {
                 TimeUnit.SECONDS.sleep(10);

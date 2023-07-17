@@ -30,6 +30,7 @@ public class DemoRtspUdpAuthenticator {
             H264VideoFrame f = (H264VideoFrame) x;
             System.out.println(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
         });
+        client.onDestroyHandle(() -> System.out.println("close"));
         // 采用异步的形式关闭，由于是测试示例，写在启动前面
         CompletableFuture.runAsync(() -> {
             try {

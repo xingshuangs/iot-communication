@@ -45,6 +45,7 @@ public class RtspFMp4ProxyTcpSync {
             // *****write processing data business*****
             System.out.println(x);
         });
+      proxy.onDestroyHandle(() -> System.out.println("close"));
         // closed asynchronously, written before startup because it is a test example
         CompletableFuture.runAsync(() -> {
             try {

@@ -32,6 +32,7 @@ public class RtspTcpNoAuthenticator {
             H264VideoFrame f = (H264VideoFrame) x;
             System.out.println(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
         });
+        client.onDestroyHandle(() -> System.out.println("close"));
         // closed asynchronously, written before startup because it is a test example
         CompletableFuture.runAsync(() -> {
             try {

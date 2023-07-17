@@ -24,6 +24,7 @@ public class RtspFMp4ProxyTest {
             log.debug("length：{}", x.length);
         });
         proxy.onCodecHandle(log::debug);
+        proxy.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
             try {
                 TimeUnit.SECONDS.sleep(5);
@@ -53,6 +54,7 @@ public class RtspFMp4ProxyTest {
             log.debug("length：{}", x.length);
         });
         proxy.onCodecHandle(log::debug);
+        proxy.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
             try {
                 TimeUnit.SECONDS.sleep(5);
@@ -82,6 +84,7 @@ public class RtspFMp4ProxyTest {
             log.debug("length：{}", x.length);
         });
         proxy.onCodecHandle(log::debug);
+        proxy.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
             try {
                 TimeUnit.SECONDS.sleep(40);
@@ -111,6 +114,7 @@ public class RtspFMp4ProxyTest {
             log.debug("length：{}", x.length);
         });
         proxy.onCodecHandle(log::debug);
+        proxy.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
             try {
                 TimeUnit.SECONDS.sleep(5);
@@ -140,6 +144,7 @@ public class RtspFMp4ProxyTest {
 //            log.debug("length：{}", x.length);
         });
         proxy.onCodecHandle(log::debug);
+        proxy.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
             try {
                 TimeUnit.SECONDS.sleep(200);

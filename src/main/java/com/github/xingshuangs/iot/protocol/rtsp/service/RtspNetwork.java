@@ -105,7 +105,7 @@ public class RtspNetwork extends TcpClientBasic {
     /**
      * 销毁的处理事件
      */
-    private BooleanSupplier destroyHandle;
+    private Runnable destroyHandle;
 
     /**
      * 通信协议，TCP、UDP
@@ -124,7 +124,7 @@ public class RtspNetwork extends TcpClientBasic {
         this.frameHandle = frameHandle;
     }
 
-    public void onDestroyHandle(BooleanSupplier destroyHandle) {
+    public void onDestroyHandle(Runnable destroyHandle) {
         this.destroyHandle = destroyHandle;
     }
 
@@ -415,7 +415,7 @@ public class RtspNetwork extends TcpClientBasic {
             this.sendToServer(request);
         }
         if (this.destroyHandle != null) {
-            this.destroyHandle.getAsBoolean();
+            this.destroyHandle.run();
         }
     }
 

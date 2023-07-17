@@ -34,6 +34,7 @@ public class DemoRtspFMp4ProxyUdpAsync {
             // *****编写处理数据业务*****
             System.out.println(x);
         });
+        proxy.onDestroyHandle(() -> System.out.println("close"));
         // 采用异步的形式关闭，由于是测试示例，写在启动前面
         CompletableFuture.runAsync(() -> {
             try {
