@@ -305,7 +305,7 @@ class Demo {
 }
 ```
 
-### 3. Serializer Mode Read-write
+### 3. Serialize read and write in fixed annotation mode
 
 Support BOOL, UINT16, INT16, UINT32, INT32, FLOAT32, FLOAT64, STRING, TIME, DATE, TIME_OF_DAY, DTL read-write.
 
@@ -442,6 +442,56 @@ class Demo {
 }
 ```
 
+### 4. Serialize read and write in arbitrary combinations
+
+read and write
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        // create PLC instance
+        S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+        // create S7Serializer instance
+        S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
+
+        byte[] byteData = new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03};
+        List<S7Parameter> list = new ArrayList<>();
+        list.add(new S7Parameter("DB1.0.1", EDataType.BOOL, 1, true));
+        list.add(new S7Parameter("DB1.4", EDataType.UINT16, 1, 42767));
+        list.add(new S7Parameter("DB1.6", EDataType.INT16, 1, (short) 32767));
+        list.add(new S7Parameter("DB1.8", EDataType.UINT32, 1, 3147483647L));
+        list.add(new S7Parameter("DB1.12", EDataType.INT32, 1, 2147483647));
+        list.add(new S7Parameter("DB1.16", EDataType.FLOAT32, 1, 3.14f));
+        list.add(new S7Parameter("DB1.20", EDataType.FLOAT64, 1, 4.15));
+        list.add(new S7Parameter("DB1.28", EDataType.BYTE, 3, byteData));
+        list.add(new S7Parameter("DB1.31", EDataType.STRING, 10, "1234567890"));
+        list.add(new S7Parameter("DB1.43", EDataType.TIME, 1, 12L));
+        list.add(new S7Parameter("DB1.47", EDataType.DATE, 1, LocalDate.of(2023, 5, 15)));
+        list.add(new S7Parameter("DB1.49", EDataType.TIME_OF_DAY, 1, LocalTime.of(20, 22, 13)));
+        list.add(new S7Parameter("DB1.53", EDataType.DTL, 1, LocalDateTime.of(2023, 5, 27, 12, 11, 22, 333225555)));
+        s7Serializer.write(list);
+
+        list = new ArrayList<>();
+        list.add(new S7Parameter("DB1.0.1", EDataType.BOOL));
+        list.add(new S7Parameter("DB1.4", EDataType.UINT16));
+        list.add(new S7Parameter("DB1.6", EDataType.INT16));
+        list.add(new S7Parameter("DB1.8", EDataType.UINT32));
+        list.add(new S7Parameter("DB1.12", EDataType.INT32));
+        list.add(new S7Parameter("DB1.16", EDataType.FLOAT32));
+        list.add(new S7Parameter("DB1.20", EDataType.FLOAT64));
+        list.add(new S7Parameter("DB1.28", EDataType.BYTE, 3));
+        list.add(new S7Parameter("DB1.31", EDataType.STRING, 10));
+        list.add(new S7Parameter("DB1.43", EDataType.TIME));
+        list.add(new S7Parameter("DB1.47", EDataType.DATE));
+        list.add(new S7Parameter("DB1.49", EDataType.TIME_OF_DAY));
+        list.add(new S7Parameter("DB1.53", EDataType.DTL));
+        List<S7Parameter> actual = s7Serializer.read(list);
+
+        s7PLC.close();
+    }
+}
+```
+
 ## Server Tutorial (S7Any address)
 
 - By default, the server supports area I, Q, M, T, C and DB1, each area includes 65536 bytes.
@@ -559,6 +609,7 @@ will return true after reading or writing.
 
 Depend on different types of PLC PDULength, S1200 = 240, S1500 = 960. In a word there are 240, 480, 960.<br>
 The maximum read byte array size is 222 = 240 - 18, 462 = 480 - 18, 942 = 960 - 18.<br>
+The default value of PDULength is 240, which can be adjusted by yourself.
 
 ```text
 According to the test S1200[CPU 1214C], read multiple bytes in a single time
@@ -577,23 +628,23 @@ triggered in each time of reading and writing operation.
 
 > 4、How much data can I read or write in batches in a single communication?
 
-| PLC               | PDU length | Data Type                | Byte Size | (Write) Maximum Number | (Read) Maximum Number |
-|-------------------|:----------:|:-------------------------|:---------:|:----------------------:|:---------------------:|
-| S1200 / S200Smart |    240     | boolean / byte           |     1     |         **12**         |        **18**         |
-| S1200 / S200Smart |    240     | uint16 / int16           |     2     |         **12**         |        **18**         |
-| S1200 / S200Smart |    240     | uint32 / int32 / float32 |     4     |         **11**         |        **18**         |
-| S1200 / S200Smart |    240     | float64                  |     8     |         **9**          |        **17**         |
+| PDU length | Data Type                | Byte Size | (Write) Maximum Number | (Read) Maximum Number | PLC               |
+|:----------:|:-------------------------|:---------:|:----------------------:|:---------------------:|-------------------|
+|    240     | boolean / byte           |     1     |         **12**         |        **18**         | S1200 / S200Smart |
+|    240     | uint16 / int16           |     2     |         **12**         |        **18**         | S1200 / S200Smart |
+|    240     | uint32 / int32 / float32 |     4     |         **11**         |        **18**         | S1200 / S200Smart |
+|    240     | float64                  |     8     |         **9**          |        **17**         | S1200 / S200Smart |
 
-| PLC  | PDU length | Data Type                | Byte Size | (Write) Maximum Number | (Read) Maximum Number |
-|------|:----------:|:-------------------------|:---------:|:----------------------:|:---------------------:|
-| S400 |    480     | boolean / byte           |     1     |         **26**         |        **38**         |
-| S400 |    480     | uint16 / int16           |     2     |         **24**         |        **38**         |
-| S400 |    480     | uint32 / int32 / float32 |     4     |         **22**         |        **38**         |
-| S400 |    480     | float64                  |     8     |         **18**         |        **35**         |
+| PDU length | Data Type                | Byte Size | (Write) Maximum Number | (Read) Maximum Number | PLC  |
+|:----------:|:-------------------------|:---------:|:----------------------:|:---------------------:|------|
+|    480     | boolean / byte           |     1     |         **26**         |        **38**         | S400 |
+|    480     | uint16 / int16           |     2     |         **24**         |        **38**         | S400 |
+|    480     | uint32 / int32 / float32 |     4     |         **22**         |        **38**         | S400 |
+|    480     | float64                  |     8     |         **18**         |        **35**         | S400 |
 
-| PLC    | PDU length | Data Type                | Byte Size | (Write) Maximum Number | (Read) Maximum Number |
-|--------|:----------:|:-------------------------|:---------:|:----------------------:|:---------------------:|
-| S1500  |    960     | boolean / byte           |     1     |         **52**         |        **78**         |
-| S1500  |    960     | uint16 / int16           |     2     |         **49**         |        **78**         |
-| S1500  |    960     | uint32 / int32 / float32 |     4     |         **45**         |        **78**         |
-| S1500  |    960     | float64                  |     8     |         **38**         |        **72**         |
+| PDU length | Data Type                | Byte Size | (Write) Maximum Number | (Read) Maximum Number | PLC    |
+|:----------:|:-------------------------|:---------:|:----------------------:|:---------------------:|--------|
+|    960     | boolean / byte           |     1     |         **52**         |        **78**         | S1500  |
+|    960     | uint16 / int16           |     2     |         **49**         |        **78**         | S1500  |
+|    960     | uint32 / int32 / float32 |     4     |         **45**         |        **78**         | S1500  |
+|    960     | float64                  |     8     |         **38**         |        **72**         | S1500  |

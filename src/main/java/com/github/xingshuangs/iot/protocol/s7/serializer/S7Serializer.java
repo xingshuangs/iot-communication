@@ -43,38 +43,6 @@ public class S7Serializer implements IPLCSerializable {
         return new S7Serializer(s7PLC);
     }
 
-    @Override
-    public <T> T read(Class<T> targetClass) {
-        List<S7ParseData> s7ParseDataList = this.parseBean(targetClass);
-        this.readDataByCondition(s7ParseDataList);
-        return this.extractData(targetClass, s7ParseDataList);
-    }
-
-    public List<S7Parameter> read(List<S7Parameter> parameters) {
-        List<S7ParseData> s7ParseDataList = this.parseBean(parameters);
-        this.readDataByCondition(s7ParseDataList);
-        this.extractData(parameters, s7ParseDataList);
-        return parameters;
-    }
-
-    @Override
-    public <T> void write(T targetBean) {
-        // 解析参数
-        List<S7ParseData> s7ParseDataList = this.parseBean(targetBean.getClass());
-
-        if (s7ParseDataList.isEmpty()) {
-            throw new S7CommException("解析出的注解数据个数为空，无法读取数据");
-        }
-
-        // 填充字节数据
-        s7ParseDataList = this.fillData(targetBean, s7ParseDataList);
-
-        // 写入PLC
-        List<RequestItem> requestItems = s7ParseDataList.stream().map(S7ParseData::getRequestItem).collect(Collectors.toList());
-        List<DataItem> dataItems = s7ParseDataList.stream().map(S7ParseData::getDataItem).collect(Collectors.toList());
-        this.s7PLC.writeS7Data(requestItems, dataItems);
-    }
-
     /**
      * 将类根据S7Variable注解转换为解析数据
      *
@@ -100,11 +68,33 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
+     * 解析参数
+     *
+     * @param parameters 参数列表
+     * @return 解析列表
+     */
+    private List<S7ParseData> parseBean(final List<S7Parameter> parameters) {
+        try {
+            List<S7ParseData> s7ParseDataList = new ArrayList<>();
+            for (final S7Parameter p : parameters) {
+                if (p == null) {
+                    throw new S7CommException("parameters列表中存在null");
+                }
+                S7ParseData s7ParseData = this.createS7ParseData(p, p.getClass().getDeclaredField("value"));
+                s7ParseDataList.add(s7ParseData);
+            }
+            return s7ParseDataList;
+        } catch (NoSuchFieldException e) {
+            throw new S7CommException(e);
+        }
+    }
+
+    /**
      * 校验S7Variable的数据是否满足规则要求
      *
      * @param parameter parameter
      */
-    private void checkS7Variable(S7Parameter parameter) {
+    private void checkS7Variable(final S7Parameter parameter) {
         if (parameter.getAddress().isEmpty()) {
             throw new S7CommException("S7参数中[address]不能为空");
         }
@@ -120,6 +110,79 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
+     * 根据条件读取数据
+     *
+     * @param s7ParseDataList 条件
+     */
+    private void readDataByCondition(List<S7ParseData> s7ParseDataList) {
+        if (s7ParseDataList.isEmpty()) {
+            throw new S7CommException("解析出的注解数据个数为空，无法读取数据");
+        }
+
+        // 读取PLC数据
+        List<RequestItem> requestItems = s7ParseDataList.stream().map(S7ParseData::getRequestItem).collect(Collectors.toList());
+        List<DataItem> dataItems = this.s7PLC.readS7Data(requestItems);
+
+        if (s7ParseDataList.size() != dataItems.size()) {
+            throw new S7CommException("所需的字段解析项个数与返回的数据项数量不一致，错误");
+        }
+
+        // 提取数据
+        for (int i = 0; i < dataItems.size(); i++) {
+            s7ParseDataList.get(i).setDataItem(dataItems.get(i));
+        }
+    }
+
+    /**
+     * 构建S7ParseData数据
+     *
+     * @param p     S7Parameter数据
+     * @param field 对应字段
+     * @return S7ParseData数据
+     */
+    private S7ParseData createS7ParseData(S7Parameter p, Field field) {
+        this.checkS7Variable(p);
+        // 组装S7解析数据
+        S7ParseData s7ParseData = new S7ParseData();
+        s7ParseData.setDataType(p.getDataType());
+        s7ParseData.setCount(p.getCount());
+        s7ParseData.setField(field);
+        if (p.getDataType() == EDataType.BOOL) {
+            s7ParseData.setRequestItem(AddressUtil.parseBit(p.getAddress()));
+        } else if (p.getDataType() == EDataType.STRING) {
+            RequestItem requestItem = AddressUtil.parseByte(p.getAddress(), 1 + p.getCount() * p.getDataType().getByteLength());
+            // 为什么字节索引+1，为了避免修改PLC中string[60]类型的第一个字节数据，该数据为字符串的允许最大长度
+            requestItem.setByteAddress(requestItem.getByteAddress() + 1);
+            s7ParseData.setRequestItem(requestItem);
+        } else {
+            s7ParseData.setRequestItem(AddressUtil.parseByte(p.getAddress(), p.getCount() * p.getDataType().getByteLength()));
+        }
+        return s7ParseData;
+    }
+
+    // region read
+
+    @Override
+    public <T> T read(Class<T> targetClass) {
+        List<S7ParseData> s7ParseDataList = this.parseBean(targetClass);
+        this.readDataByCondition(s7ParseDataList);
+        return this.fillData(targetClass, s7ParseDataList);
+    }
+
+    /**
+     * 读取数据
+     *
+     * @param parameters 参数配置列表
+     * @return 结果列表
+     */
+    public List<S7Parameter> read(List<S7Parameter> parameters) {
+        List<S7ParseData> s7ParseDataList = this.parseBean(parameters);
+        this.readDataByCondition(s7ParseDataList);
+        this.fillData(parameters, s7ParseDataList);
+        return parameters;
+    }
+
+    /**
      * 提取数据
      *
      * @param targetClass     目标类型
@@ -127,7 +190,7 @@ public class S7Serializer implements IPLCSerializable {
      * @param <T>             类型
      * @return 目标类型的实体对象
      */
-    private <T> T extractData(Class<T> targetClass, List<S7ParseData> s7ParseDataList) {
+    private <T> T fillData(Class<T> targetClass, List<S7ParseData> s7ParseDataList) {
         try {
             final T result = targetClass.newInstance();
             for (S7ParseData item : s7ParseDataList) {
@@ -140,6 +203,32 @@ public class S7Serializer implements IPLCSerializable {
         }
     }
 
+    /**
+     * 填充数据
+     *
+     * @param parameters      参数列表
+     * @param s7ParseDataList 解析列表
+     */
+    private void fillData(final List<S7Parameter> parameters, final List<S7ParseData> s7ParseDataList) {
+        try {
+            for (int i = 0; i < s7ParseDataList.size(); i++) {
+                S7ParseData item = s7ParseDataList.get(i);
+                S7Parameter parameter = parameters.get(i);
+                this.fillField(parameter, item);
+            }
+        } catch (Exception e) {
+            throw new S7CommException("序列化提取数据错误:" + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 填充字段数据
+     *
+     * @param result 参数对象
+     * @param item   数据对象
+     * @param <T>    泛型
+     * @throws IllegalAccessException 异常
+     */
     private <T> void fillField(T result, S7ParseData item) throws IllegalAccessException {
         ByteReadBuff buff = new ByteReadBuff(item.getDataItem().getData());
         item.getField().setAccessible(true);
@@ -198,15 +287,58 @@ public class S7Serializer implements IPLCSerializable {
         }
     }
 
+    // endregion
+
+    // region write
+    @Override
+    public <T> void write(T targetBean) {
+        // 解析参数
+        List<S7ParseData> s7ParseDataList = this.parseBean(targetBean.getClass());
+
+        if (s7ParseDataList.isEmpty()) {
+            throw new S7CommException("解析出的注解数据个数为空，无法读取数据");
+        }
+
+        // 填充字节数据
+        s7ParseDataList = this.extractData(targetBean, s7ParseDataList);
+
+        // 写入PLC
+        List<RequestItem> requestItems = s7ParseDataList.stream().map(S7ParseData::getRequestItem).collect(Collectors.toList());
+        List<DataItem> dataItems = s7ParseDataList.stream().map(S7ParseData::getDataItem).collect(Collectors.toList());
+        this.s7PLC.writeS7Data(requestItems, dataItems);
+    }
+
     /**
-     * 填充数据
+     * 写入数据
+     *
+     * @param parameters 参数列表
+     */
+    public void write(List<S7Parameter> parameters) {
+        // 解析参数
+        List<S7ParseData> s7ParseDataList = this.parseBean(parameters);
+
+        if (s7ParseDataList.size() != parameters.size()) {
+            throw new S7CommException("解析出的数据个数与传入的数据个数不一致");
+        }
+
+        // 填充字节数据
+        s7ParseDataList = this.extractData(parameters, s7ParseDataList);
+
+        // 写入PLC
+        List<RequestItem> requestItems = s7ParseDataList.stream().map(S7ParseData::getRequestItem).collect(Collectors.toList());
+        List<DataItem> dataItems = s7ParseDataList.stream().map(S7ParseData::getDataItem).collect(Collectors.toList());
+        this.s7PLC.writeS7Data(requestItems, dataItems);
+    }
+
+    /**
+     * 提取数据
      *
      * @param targetBean      目标对象
      * @param s7ParseDataList 解析后的数据列表
      * @param <T>             类型
      * @return 有效的解析后的数据列表
      */
-    private <T> List<S7ParseData> fillData(T targetBean, List<S7ParseData> s7ParseDataList) {
+    private <T> List<S7ParseData> extractData(T targetBean, List<S7ParseData> s7ParseDataList) {
         try {
             for (S7ParseData item : s7ParseDataList) {
                 item.getField().setAccessible(true);
@@ -214,75 +346,7 @@ public class S7Serializer implements IPLCSerializable {
                 if (data == null) {
                     continue;
                 }
-                switch (item.getDataType()) {
-                    case BOOL:
-                        item.setDataItem(DataItem.createReqByBoolean((Boolean) data));
-                        break;
-                    case BYTE:
-                        item.setDataItem(DataItem.createReqByByte(ByteReadBuff.newInstance((byte[]) data)
-                                .getBytes(item.getCount())));
-                        break;
-                    case UINT16:
-                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(2)
-                                .putShort((Integer) data).getData()));
-                        break;
-                    case INT16:
-                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(2)
-                                .putShort((Short) data).getData()));
-                        break;
-                    case TIME:
-                    case UINT32:
-                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)
-                                .putInteger((Long) data).getData()));
-                        break;
-                    case INT32:
-                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)
-                                .putInteger((Integer) data).getData()));
-                        break;
-                    case FLOAT32:
-                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)
-                                .putFloat((Float) data).getData()));
-                        break;
-                    case FLOAT64:
-                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(8)
-                                .putDouble((Double) data).getData()));
-                        break;
-                    case STRING:
-                        byte[] bytes = ((String) data).getBytes(StandardCharsets.US_ASCII);
-                        byte[] targetBytes = new byte[1 + item.getCount()];
-                        targetBytes[0] = (byte) item.getCount();
-                        System.arraycopy(bytes, 0, targetBytes, 1, Math.min(bytes.length, item.getCount()));
-                        item.setDataItem(DataItem.createReqByByte(targetBytes));
-                        break;
-                    case DATE:
-                        // TODO: 后面时间采用工具类
-                        LocalDate start = LocalDate.of(1990, 1, 1);
-                        long date = ((LocalDate) data).toEpochDay() - start.toEpochDay();
-                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(2)
-                                .putShort((short) date).getData()));
-                        break;
-                    case TIME_OF_DAY:
-                        long timeOfDay = ((LocalTime) data).toSecondOfDay() * 1000L;
-                        item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)
-                                .putInteger(timeOfDay).getData()));
-                        break;
-                    case DTL:
-                        LocalDateTime dateTime = (LocalDateTime) data;
-                        byte[] dateTimeData = ByteWriteBuff.newInstance(12)
-                                .putShort(dateTime.getYear())
-                                .putByte(dateTime.getMonthValue())
-                                .putByte(dateTime.getDayOfMonth())
-                                .putByte(dateTime.getDayOfWeek().getValue())
-                                .putByte(dateTime.getHour())
-                                .putByte(dateTime.getMinute())
-                                .putByte(dateTime.getSecond())
-                                .putInteger(dateTime.getNano())
-                                .getData();
-                        item.setDataItem(DataItem.createReqByByte(dateTimeData));
-                        break;
-                    default:
-                        throw new S7CommException("无法识别数据类型");
-                }
+                this.extractField(item, data);
             }
             return s7ParseDataList.stream().filter(x -> x.getDataItem() != null).collect(Collectors.toList());
         } catch (Exception e) {
@@ -291,93 +355,104 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
-     * 根据条件读取数据
-     *
-     * @param s7ParseDataList 条件
-     */
-    private void readDataByCondition(List<S7ParseData> s7ParseDataList) {
-        if (s7ParseDataList.isEmpty()) {
-            throw new S7CommException("解析出的注解数据个数为空，无法读取数据");
-        }
-
-        // 读取PLC数据
-        List<RequestItem> requestItems = s7ParseDataList.stream().map(S7ParseData::getRequestItem).collect(Collectors.toList());
-        List<DataItem> dataItems = this.s7PLC.readS7Data(requestItems);
-
-        if (s7ParseDataList.size() != dataItems.size()) {
-            throw new S7CommException("所需的字段解析项个数与返回的数据项数量不一致，错误");
-        }
-
-        // 提取数据
-        for (int i = 0; i < dataItems.size(); i++) {
-            s7ParseDataList.get(i).setDataItem(dataItems.get(i));
-        }
-    }
-
-    /**
-     * 解析参数
-     *
-     * @param parameters 参数列表
-     * @return 解析列表
-     */
-    private List<S7ParseData> parseBean(final List<S7Parameter> parameters) {
-        try {
-            List<S7ParseData> s7ParseDataList = new ArrayList<>();
-            for (final S7Parameter p : parameters) {
-                if (p == null) {
-                    throw new S7CommException("parameters列表中存在null");
-                }
-                S7ParseData s7ParseData = this.createS7ParseData(p, p.getClass().getDeclaredField("value"));
-                s7ParseDataList.add(s7ParseData);
-            }
-            return s7ParseDataList;
-        } catch (NoSuchFieldException e) {
-            throw new S7CommException(e);
-        }
-    }
-
-    /**
-     * 构建S7ParseData数据
-     *
-     * @param p     S7Parameter数据
-     * @param field 对应字段
-     * @return S7ParseData数据
-     */
-    private S7ParseData createS7ParseData(S7Parameter p, Field field) {
-        this.checkS7Variable(p);
-        // 组装S7解析数据
-        S7ParseData s7ParseData = new S7ParseData();
-        s7ParseData.setDataType(p.getDataType());
-        s7ParseData.setCount(p.getCount());
-        s7ParseData.setField(field);
-        if (p.getDataType() == EDataType.BOOL) {
-            s7ParseData.setRequestItem(AddressUtil.parseBit(p.getAddress()));
-        } else if (p.getDataType() == EDataType.STRING) {
-            RequestItem requestItem = AddressUtil.parseByte(p.getAddress(), 1 + p.getCount() * p.getDataType().getByteLength());
-            // 为什么字节索引+1，为了避免修改PLC中string[60]类型的第一个字节数据，该数据为字符串的允许最大长度
-            requestItem.setByteAddress(requestItem.getByteAddress() + 1);
-            s7ParseData.setRequestItem(requestItem);
-        } else {
-            s7ParseData.setRequestItem(AddressUtil.parseByte(p.getAddress(), p.getCount() * p.getDataType().getByteLength()));
-        }
-        return s7ParseData;
-    }
-
-    /**
      * 提取数据
      *
-     * @param parameters      参数列表
-     * @param s7ParseDataList 解析列表
+     * @param parameters      参数数据列表
+     * @param s7ParseDataList 解析后的数据列表
+     * @return 有效的解析后的数据列表
      */
-    private void extractData(final List<S7Parameter> parameters, final List<S7ParseData> s7ParseDataList) {
+    private List<S7ParseData> extractData(List<S7Parameter> parameters, List<S7ParseData> s7ParseDataList) {
         try {
             for (int i = 0; i < s7ParseDataList.size(); i++) {
                 S7ParseData item = s7ParseDataList.get(i);
                 S7Parameter parameter = parameters.get(i);
-                this.fillField(parameter, item);
+                if (parameter.getValue() == null) {
+                    throw new S7CommException("参数的数值不能为null");
+                }
+                this.extractField(item, parameter.getValue());
             }
+            return s7ParseDataList.stream().filter(x -> x.getDataItem() != null).collect(Collectors.toList());
         } catch (Exception e) {
-            throw new S7CommException("序列化提取数据错误:" + e.getMessage(), e);
+            throw new S7CommException("序列化填充字节数据错误:" + e.getMessage(), e);
         }
     }
+
+    /**
+     * 提取字段数
+     *
+     * @param item S7的解析数据
+     * @param data 数据源
+     */
+    private void extractField(S7ParseData item, Object data) {
+        switch (item.getDataType()) {
+            case BOOL:
+                item.setDataItem(DataItem.createReqByBoolean((Boolean) data));
+                break;
+            case BYTE:
+                item.setDataItem(DataItem.createReqByByte(ByteReadBuff.newInstance((byte[]) data)
+                        .getBytes(item.getCount())));
+                break;
+            case UINT16:
+                item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(2)
+                        .putShort((Integer) data).getData()));
+                break;
+            case INT16:
+                item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(2)
+                        .putShort((Short) data).getData()));
+                break;
+            case TIME:
+            case UINT32:
+                item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)
+                        .putInteger((Long) data).getData()));
+                break;
+            case INT32:
+                item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)
+                        .putInteger((Integer) data).getData()));
+                break;
+            case FLOAT32:
+                item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)
+                        .putFloat((Float) data).getData()));
+                break;
+            case FLOAT64:
+                item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(8)
+                        .putDouble((Double) data).getData()));
+                break;
+            case STRING:
+                byte[] bytes = ((String) data).getBytes(StandardCharsets.US_ASCII);
+                byte[] targetBytes = new byte[1 + item.getCount()];
+                targetBytes[0] = (byte) item.getCount();
+                System.arraycopy(bytes, 0, targetBytes, 1, Math.min(bytes.length, item.getCount()));
+                item.setDataItem(DataItem.createReqByByte(targetBytes));
+                break;
+            case DATE:
+                // TODO: 后面时间采用工具类
+                LocalDate start = LocalDate.of(1990, 1, 1);
+                long date = ((LocalDate) data).toEpochDay() - start.toEpochDay();
+                item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(2)
+                        .putShort((short) date).getData()));
+                break;
+            case TIME_OF_DAY:
+                long timeOfDay = ((LocalTime) data).toSecondOfDay() * 1000L;
+                item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)
+                        .putInteger(timeOfDay).getData()));
+                break;
+            case DTL:
+                LocalDateTime dateTime = (LocalDateTime) data;
+                byte[] dateTimeData = ByteWriteBuff.newInstance(12)
+                        .putShort(dateTime.getYear())
+                        .putByte(dateTime.getMonthValue())
+                        .putByte(dateTime.getDayOfMonth())
+                        .putByte(dateTime.getDayOfWeek().getValue())
+                        .putByte(dateTime.getHour())
+                        .putByte(dateTime.getMinute())
+                        .putByte(dateTime.getSecond())
+                        .putInteger(dateTime.getNano())
+                        .getData();
+                item.setDataItem(DataItem.createReqByByte(dateTimeData));
+                break;
+            default:
+                throw new S7CommException("无法识别数据类型");
+        }
+    }
+    // endregion
 }

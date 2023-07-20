@@ -32,7 +32,7 @@ public class S7PLCServerTest {
         this.server = new S7PLCServer();
         server.addDBArea(1, 2, 3, 4);
         this.server.start(8888);
-        this.s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1",8888);
+        this.s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1", 8888);
         this.s7PLC.setComCallback(x -> log.debug("长度[{}]：{}", x.length, HexUtil.toHexString(x)));
 //        this.s7PLC.setPersistence(false);
     }
@@ -105,8 +105,25 @@ public class S7PLCServerTest {
 
     @Test
     public void serializerTest1() {
-        S7Serializer s7Serializer = S7Serializer.newInstance(this.s7PLC);
+        S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
+        byte[] byteData = new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03};
         List<S7Parameter> list = new ArrayList<>();
+        list.add(new S7Parameter("DB1.0.1", EDataType.BOOL, 1, true));
+        list.add(new S7Parameter("DB1.4", EDataType.UINT16, 1, 42767));
+        list.add(new S7Parameter("DB1.6", EDataType.INT16, 1, (short) 32767));
+        list.add(new S7Parameter("DB1.8", EDataType.UINT32, 1, 3147483647L));
+        list.add(new S7Parameter("DB1.12", EDataType.INT32, 1, 2147483647));
+        list.add(new S7Parameter("DB1.16", EDataType.FLOAT32, 1, 3.14f));
+        list.add(new S7Parameter("DB1.20", EDataType.FLOAT64, 1, 4.15));
+        list.add(new S7Parameter("DB1.28", EDataType.BYTE, 3, byteData));
+        list.add(new S7Parameter("DB1.31", EDataType.STRING, 10, "1234567890"));
+        list.add(new S7Parameter("DB1.43", EDataType.TIME, 1, 12L));
+        list.add(new S7Parameter("DB1.47", EDataType.DATE, 1, LocalDate.of(2023, 5, 15)));
+        list.add(new S7Parameter("DB1.49", EDataType.TIME_OF_DAY, 1, LocalTime.of(20, 22, 13)));
+        list.add(new S7Parameter("DB1.53", EDataType.DTL, 1, LocalDateTime.of(2023, 5, 27, 12, 11, 22, 333225555)));
+        s7Serializer.write(list);
+
+        list = new ArrayList<>();
         list.add(new S7Parameter("DB1.0.1", EDataType.BOOL));
         list.add(new S7Parameter("DB1.4", EDataType.UINT16));
         list.add(new S7Parameter("DB1.6", EDataType.INT16));
@@ -120,34 +137,18 @@ public class S7PLCServerTest {
         list.add(new S7Parameter("DB1.47", EDataType.DATE));
         list.add(new S7Parameter("DB1.49", EDataType.TIME_OF_DAY));
         list.add(new S7Parameter("DB1.53", EDataType.DTL));
-
-        byte[] byteData = new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03};
-        DemoBean bean = new DemoBean();
-        bean.setBitData(true);
-        bean.setUint16Data(42767);
-        bean.setInt16Data((short) 32767);
-        bean.setUint32Data(3147483647L);
-        bean.setInt32Data(2147483647);
-        bean.setFloat32Data(3.14f);
-        bean.setFloat64Data(4.15);
-        bean.setByteData(byteData);
-        bean.setStringData("1234567890");
-        bean.setTimeData(12L);
-        bean.setDateData(LocalDate.of(2023, 5, 15));
-        bean.setTimeOfDayData(LocalTime.of(20, 22, 13));
-        bean.setDateTimeData(LocalDateTime.of(2023, 5, 27, 12, 11, 22, 333225555));
-        s7Serializer.write(bean);
         List<S7Parameter> actual = s7Serializer.read(list);
+
         assertTrue((boolean) actual.get(0).getValue());
-        assertEquals(42767, (int)actual.get(1).getValue());
-        assertEquals(32767, (short)actual.get(2).getValue());
-        assertEquals(3147483647L, (long)actual.get(3).getValue());
-        assertEquals(2147483647,(int) actual.get(4).getValue());
+        assertEquals(42767, (int) actual.get(1).getValue());
+        assertEquals(32767, (short) actual.get(2).getValue());
+        assertEquals(3147483647L, (long) actual.get(3).getValue());
+        assertEquals(2147483647, (int) actual.get(4).getValue());
         assertEquals(3.14f, (float) actual.get(5).getValue(), 0.001);
-        assertEquals(4.15, (double)actual.get(6).getValue(), 0.001);
+        assertEquals(4.15, (double) actual.get(6).getValue(), 0.001);
         assertArrayEquals(byteData, (byte[]) actual.get(7).getValue());
         assertEquals("1234567890", actual.get(8).getValue());
-        assertEquals(12, (long)actual.get(9).getValue());
+        assertEquals(12, (long) actual.get(9).getValue());
         assertEquals(LocalDate.of(2023, 5, 15), actual.get(10).getValue());
         assertEquals(LocalTime.of(20, 22, 13), actual.get(11).getValue());
         assertEquals(LocalDateTime.of(2023, 5, 27, 12, 11, 22, 333225555), actual.get(12).getValue());

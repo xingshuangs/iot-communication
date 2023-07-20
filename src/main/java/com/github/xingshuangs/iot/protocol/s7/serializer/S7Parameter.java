@@ -46,4 +46,11 @@ public class S7Parameter {
         this.dataType = dataType;
         this.count = count;
     }
+
+    public S7Parameter(String address, EDataType dataType, Integer count, Object value) {
+        this.address = address;
+        this.dataType = dataType;
+        this.count = count;
+        this.value = value;
+    }
 }
