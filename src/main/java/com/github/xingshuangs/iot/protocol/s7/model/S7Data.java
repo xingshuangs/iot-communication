@@ -3,7 +3,9 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.s7.enums.EDestinationFileSystem;
 import com.github.xingshuangs.iot.protocol.s7.enums.EErrorClass;
+import com.github.xingshuangs.iot.protocol.s7.enums.EFileBlockType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
 import lombok.Data;
 
@@ -348,6 +350,76 @@ public class S7Data implements IObjectByteArray {
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = Header.createDefault();
         s7Data.parameter = PlcControlParameter.compress();
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    public static S7Data createStartDownload(EFileBlockType blockType,
+                                             int blockNumber,
+                                             EDestinationFileSystem destinationFileSystem,
+                                             int loadMemoryLength,
+                                             int mC7CodeLength) {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = Header.createDefault();
+        s7Data.parameter = StartDownloadParameter.createDefault(blockType, blockNumber, destinationFileSystem, loadMemoryLength, mC7CodeLength);
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    public static S7Data createDownload(EFileBlockType blockType,
+                                        int blockNumber,
+                                        EDestinationFileSystem destinationFileSystem) {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = Header.createDefault();
+        s7Data.parameter = DownloadParameter.createDefault(blockType, blockNumber, destinationFileSystem);
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    public static S7Data createEndDownload(EFileBlockType blockType,
+                                        int blockNumber,
+                                        EDestinationFileSystem destinationFileSystem) {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = Header.createDefault();
+        s7Data.parameter = EndDownloadParameter.createDefault(blockType, blockNumber, destinationFileSystem);
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    public static S7Data createStartUpload(EFileBlockType blockType,
+                                             int blockNumber,
+                                             EDestinationFileSystem destinationFileSystem) {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = Header.createDefault();
+        s7Data.parameter = StartUploadParameter.createDefault(blockType, blockNumber, destinationFileSystem);
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    public static S7Data createUpload(long uploadId) {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = Header.createDefault();
+        s7Data.parameter = UploadParameter.createDefault(uploadId);
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    public static S7Data createEndUpload(long uploadId) {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = Header.createDefault();
+        s7Data.parameter = EndUploadParameter.createDefault(uploadId);
         s7Data.selfCheck();
         return s7Data;
     }

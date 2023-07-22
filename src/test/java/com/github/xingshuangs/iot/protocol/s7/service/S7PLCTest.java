@@ -1,9 +1,6 @@
 package com.github.xingshuangs.iot.protocol.s7.service;
 
-import com.github.xingshuangs.iot.protocol.s7.enums.EArea;
-import com.github.xingshuangs.iot.protocol.s7.enums.EDataVariableType;
-import com.github.xingshuangs.iot.protocol.s7.enums.EParamVariableType;
-import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
+import com.github.xingshuangs.iot.protocol.s7.enums.*;
 import com.github.xingshuangs.iot.utils.HexUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
@@ -20,8 +17,8 @@ import static org.junit.Assert.*;
 @Slf4j
 @Ignore
 public class S7PLCTest {
-    //    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
-//    private S7PLC s7PLC = new S7PLC(EPlcType.S1500, "192.168.3.201");
+//    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
+//    private S7PLC s7PLC = new S7PLC(EPlcType.S1500, "192.168.3.103");
 //    private S7PLC s7PLC = new S7PLC(EPlcType.S200_SMART, "192.168.3.102");
     private final S7PLC s7PLC = new S7PLC(EPlcType.S1200);
 
@@ -88,8 +85,8 @@ public class S7PLCTest {
 
     @Test
     public void writeByte() {
-        s7PLC.writeByte("DB2.1", (byte) 0x11);
-        byte actual = s7PLC.readByte("DB2.1");
+        s7PLC.writeByte("DB1.0", (byte) 0x11);
+        byte actual = s7PLC.readByte("DB1.0");
         assertEquals((byte) 0x11, actual);
     }
 
@@ -336,5 +333,17 @@ public class S7PLCTest {
         s7PLC.writeByte("DB2.1", (byte) 0x11);
         actual = s7PLC.readByte("DB2.1");
         assertEquals((byte) 0x11, actual);
+    }
+
+    @Test
+    public void downloadFile() {
+        byte[] bytes = this.s7PLC.downloadFile(EFileBlockType.OB, 1, EDestinationFileSystem.P, 153, 24);
+        System.out.println("");
+    }
+
+    @Test
+    public void uploadFile() {
+        byte[] bytes = this.s7PLC.uploadFile(EFileBlockType.OB, 1, EDestinationFileSystem.B);
+        System.out.println(bytes.length);
     }
 }

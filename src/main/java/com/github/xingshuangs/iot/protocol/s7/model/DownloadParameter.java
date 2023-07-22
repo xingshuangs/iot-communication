@@ -18,17 +18,17 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class DownloadParameter extends DownloadAckParameter implements IObjectByteArray {
+public class DownloadParameter extends UpDownloadAckParameter implements IObjectByteArray {
 
     /**
      * 未知字节，2个字节
      */
-    protected byte[] unknownBytes = new byte[]{0x01, 0x00};
+    protected byte[] errorCode = new byte[]{0x01, 0x00};
 
     /**
      * 下载的Id，4个字节（没用）
      */
-    protected long downloadId = 0x00000000;
+    protected long id = 0x00000000;
 
     /**
      * 文件名长度，1个字节
@@ -43,7 +43,7 @@ public class DownloadParameter extends DownloadAckParameter implements IObjectBy
     /**
      * 数据块类型，2个字节
      */
-    protected EFileBlockType blockType = EFileBlockType.DB;
+    protected EFileBlockType blockType = EFileBlockType.OB;
 
     /**
      * 数据块编号，5个字节，范围00000-99999
@@ -70,8 +70,8 @@ public class DownloadParameter extends DownloadAckParameter implements IObjectBy
         return ByteWriteBuff.newInstance(18)
                 .putByte(this.functionCode.getCode())
                 .putByte((byte) (BooleanUtil.setBit(0, this.moreDataFollowing) & BooleanUtil.setBit(1, this.errorStatus)))
-                .putBytes(this.unknownBytes)
-                .putInteger(this.downloadId)
+                .putBytes(this.errorCode)
+                .putInteger(this.id)
                 .putByte(this.fileNameLength)
                 .putString(this.fileIdentifier)
                 .putBytes(this.blockType.getByteArray())
@@ -107,13 +107,23 @@ public class DownloadParameter extends DownloadAckParameter implements IObjectBy
         byte b = buff.getByte();
         res.moreDataFollowing = BooleanUtil.getValue(b, 0);
         res.errorStatus = BooleanUtil.getValue(b, 1);
-        res.unknownBytes = buff.getBytes(2);
-        res.downloadId = buff.getUInt32();
+        res.errorCode = buff.getBytes(2);
+        res.id = buff.getUInt32();
         res.fileNameLength = buff.getByteToInt();
         res.fileIdentifier = buff.getString(1);
         res.blockType = EFileBlockType.from(buff.getString(2));
         res.blockNumber = Integer.parseInt(buff.getString(5));
         res.destinationFileSystem = EDestinationFileSystem.from(buff.getByte());
         return res;
+    }
+
+    public static DownloadParameter createDefault(EFileBlockType blockType,
+                                                       int blockNumber,
+                                                       EDestinationFileSystem destinationFileSystem){
+        DownloadParameter parameter = new DownloadParameter();
+        parameter.blockType = blockType;
+        parameter.blockNumber = blockNumber;
+        parameter.destinationFileSystem = destinationFileSystem;
+        return parameter;
     }
 }

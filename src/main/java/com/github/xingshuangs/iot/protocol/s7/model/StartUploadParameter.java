@@ -1,10 +1,11 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.protocol.s7.enums.EDestinationFileSystem;
+import com.github.xingshuangs.iot.protocol.s7.enums.EFileBlockType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,74 +16,57 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class StartUploadParameter extends Parameter implements IObjectByteArray {
-
-    /**
-     * 后续是否还有更多数据
-     */
-    private boolean moreDataFollowing = false;
-
-    /**
-     * 错误状态
-     */
-    private boolean errorStatus = false;
-
-    /**
-     * 未知字节
-     */
-    private byte[] unknownBytes = new byte[2];
-
-    /**
-     * 上传的Id
-     */
-    private int uploadId = 0x00000000;
-
-    /**
-     * 文件名长度
-     */
-    private int filenameLength = 0;
-
-    /**
-     * 文件id
-     */
-    private String fileIdentifier = "";
-
-    /**
-     * 数据块类型
-     */
-    private String blockType = "";
-
-    /**
-     * 数据块编号
-     */
-    private String blockNumber = "";
-
-    /**
-     * 目标文件系统
-     */
-    private String destinationFileSystem = "";
+public class StartUploadParameter extends DownloadParameter {
 
     public StartUploadParameter() {
         this.functionCode = EFunctionCode.START_UPLOAD;
+        this.errorCode = new byte[]{0x00, 0x00};
     }
 
-    @Override
-    public int byteArrayLength() {
-        return 9 + this.filenameLength;
+    public static StartUploadParameter createDefault(EFileBlockType blockType,
+                                                     int blockNumber,
+                                                     EDestinationFileSystem destinationFileSystem) {
+        StartUploadParameter parameter = new StartUploadParameter();
+        parameter.blockType = blockType;
+        parameter.blockNumber = blockNumber;
+        parameter.destinationFileSystem = destinationFileSystem;
+        return parameter;
     }
 
-    @Override
-    public byte[] toByteArray() {
-        return ByteWriteBuff.newInstance(9 + this.filenameLength)
-                .putByte(this.functionCode.getCode())
-                .putByte((byte) (BooleanUtil.setBit(0, this.moreDataFollowing) & BooleanUtil.setBit(1, this.errorStatus)))
-                .putBytes(this.unknownBytes)
-                .putInteger(this.uploadId)
-                .putByte(this.filenameLength)
-                .putString(this.fileIdentifier)
-                .putString(this.blockType)
-                .putString(this.blockNumber)
-                .putString(this.destinationFileSystem)
-                .getData();
+    /**
+     * 字节数组数据解析
+     *
+     * @param data 字节数组数据
+     * @return StartUploadParameter
+     */
+    public static StartUploadParameter fromBytes(final byte[] data) {
+        return fromBytes(data, 0);
+    }
+
+    /**
+     * 字节数组数据解析
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return StartUploadParameter
+     */
+    public static StartUploadParameter fromBytes(final byte[] data, final int offset) {
+        if (data.length < 18) {
+            throw new IndexOutOfBoundsException("解析DownloadParameter时，字节数组长度不够");
+        }
+        ByteReadBuff buff = new ByteReadBuff(data, offset);
+        StartUploadParameter res = new StartUploadParameter();
+        res.functionCode = EFunctionCode.from(buff.getByte());
+        byte b = buff.getByte();
+        res.moreDataFollowing = BooleanUtil.getValue(b, 0);
+        res.errorStatus = BooleanUtil.getValue(b, 1);
+        res.errorCode = buff.getBytes(2);
+        res.id = buff.getUInt32();
+        res.fileNameLength = buff.getByteToInt();
+        res.fileIdentifier = buff.getString(1);
+        res.blockType = EFileBlockType.from(buff.getString(2));
+        res.blockNumber = Integer.parseInt(buff.getString(5));
+        res.destinationFileSystem = EDestinationFileSystem.from(buff.getByte());
+        return res;
     }
 }

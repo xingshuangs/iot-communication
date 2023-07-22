@@ -11,17 +11,17 @@ import java.util.Map;
  */
 public enum EDestinationFileSystem {
     /**
-     * 对应0x50
+     * 对应0x50，（Passive (copied, but not chained) module)：被动文件系统
      */
     P((byte) 0x50),
 
     /**
-     * 对应0x41
+     * 对应0x41，(Active embedded module)：主动文件系统
      */
     A((byte) 0x41),
 
     /**
-     * 对应0x42
+     * 对应0x42，(Active as well as passive module)：既主既被文件系统种
      */
     B((byte) 0x42),
     ;

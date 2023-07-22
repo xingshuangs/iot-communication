@@ -31,17 +31,17 @@ public class ParameterBuilder {
             case WRITE_VARIABLE:
                 return ReadWriteParameter.fromBytes(data);
             case START_DOWNLOAD:
-                return null;
+                return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.START_DOWNLOAD) : StartDownloadParameter.fromBytes(data);
             case DOWNLOAD:
-                return null;
+                return messageType == EMessageType.ACK_DATA ? UpDownloadAckParameter.fromBytes(data) : DownloadParameter.fromBytes(data);
             case END_DOWNLOAD:
-                return null;
+                return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.END_DOWNLOAD) : EndDownloadParameter.fromBytes(data);
             case START_UPLOAD:
-                return null;
+                return messageType == EMessageType.ACK_DATA ? StartUploadAckParameter.fromBytes(data) : StartUploadParameter.fromBytes(data);
             case UPLOAD:
-                return null;
+                return messageType == EMessageType.ACK_DATA ? UpDownloadAckParameter.fromBytes(data) : UploadParameter.fromBytes(data);
             case END_UPLOAD:
-                return null;
+                return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.END_UPLOAD) : EndUploadParameter.fromBytes(data);
             case PLC_CONTROL:
                 return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.PLC_CONTROL) : PlcControlParameter.fromBytes(data);
             case PLC_STOP:

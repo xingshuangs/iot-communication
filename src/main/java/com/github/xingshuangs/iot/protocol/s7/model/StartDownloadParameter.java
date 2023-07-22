@@ -23,7 +23,7 @@ public class StartDownloadParameter extends DownloadParameter implements IObject
     /**
      * 第二部分字符串长度，1个字节
      */
-    private int part2Length;
+    private int part2Length = 13;
 
     /**
      * 未知字符，1个字节
@@ -42,7 +42,7 @@ public class StartDownloadParameter extends DownloadParameter implements IObject
 
 
     public StartDownloadParameter() {
-        this.functionCode = EFunctionCode.START_UPLOAD;
+        this.functionCode = EFunctionCode.START_DOWNLOAD;
     }
 
     @Override
@@ -55,8 +55,8 @@ public class StartDownloadParameter extends DownloadParameter implements IObject
         return ByteWriteBuff.newInstance(32)
                 .putByte(this.functionCode.getCode())
                 .putByte((byte) (BooleanUtil.setBit(0, this.moreDataFollowing) & BooleanUtil.setBit(1, this.errorStatus)))
-                .putBytes(this.unknownBytes)
-                .putInteger(this.downloadId)
+                .putBytes(this.errorCode)
+                .putInteger(this.id)
                 .putByte(this.fileNameLength)
                 .putString(this.fileIdentifier)
                 .putBytes(this.blockType.getByteArray())
@@ -96,8 +96,8 @@ public class StartDownloadParameter extends DownloadParameter implements IObject
         byte b = buff.getByte();
         res.moreDataFollowing = BooleanUtil.getValue(b, 0);
         res.errorStatus = BooleanUtil.getValue(b, 1);
-        res.unknownBytes = buff.getBytes(2);
-        res.downloadId = buff.getUInt32();
+        res.errorCode = buff.getBytes(2);
+        res.id = buff.getUInt32();
         res.fileNameLength = buff.getByteToInt();
         res.fileIdentifier = buff.getString(1);
         res.blockType = EFileBlockType.from(buff.getString(2));
@@ -108,5 +108,19 @@ public class StartDownloadParameter extends DownloadParameter implements IObject
         res.loadMemoryLength = Integer.parseInt(buff.getString(6));
         res.mC7CodeLength = Integer.parseInt(buff.getString(6));
         return res;
+    }
+
+    public static StartDownloadParameter createDefault(EFileBlockType blockType,
+                                                       int blockNumber,
+                                                       EDestinationFileSystem destinationFileSystem,
+                                                       int loadMemoryLength,
+                                                       int mC7CodeLength){
+        StartDownloadParameter parameter = new StartDownloadParameter();
+        parameter.blockType = blockType;
+        parameter.blockNumber = blockNumber;
+        parameter.destinationFileSystem = destinationFileSystem;
+        parameter.loadMemoryLength = loadMemoryLength;
+        parameter.mC7CodeLength = mC7CodeLength;
+        return parameter;
     }
 }

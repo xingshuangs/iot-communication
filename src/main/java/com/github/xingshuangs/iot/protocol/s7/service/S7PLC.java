@@ -1,13 +1,11 @@
 package com.github.xingshuangs.iot.protocol.s7.service;
 
 
+import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.s7.enums.*;
-import com.github.xingshuangs.iot.protocol.s7.model.DataItem;
-import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
-import com.github.xingshuangs.iot.protocol.s7.model.RequestNckItem;
-import com.github.xingshuangs.iot.protocol.s7.model.S7Data;
+import com.github.xingshuangs.iot.protocol.s7.model.*;
 import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
 import com.github.xingshuangs.iot.utils.*;
 
@@ -1113,4 +1111,73 @@ public class S7PLC extends PLCNetwork {
     }
 
     //endregion
+
+    public byte[] downloadFile(EFileBlockType blockType,
+                               int blockNumber,
+                               EDestinationFileSystem destinationFileSystem,
+                               int loadMemoryLength,
+                               int mC7CodeLength) {
+        // 开始下载
+        S7Data reqStartDownload = S7Data.createStartDownload(blockType, blockNumber, destinationFileSystem, loadMemoryLength, mC7CodeLength);
+        this.readFromServerByPersistence(reqStartDownload);
+
+        // 下载中
+        ByteWriteBuff buff = new ByteWriteBuff(loadMemoryLength);
+        UpDownloadAckParameter upDownloadAckParameter = new UpDownloadAckParameter();
+        upDownloadAckParameter.setMoreDataFollowing(true);
+        while (upDownloadAckParameter.isMoreDataFollowing()) {
+            S7Data reqDownload = S7Data.createDownload(blockType, blockNumber, destinationFileSystem);
+            S7Data ackDownload = this.readFromServerByPersistence(reqDownload);
+            upDownloadAckParameter = (UpDownloadAckParameter) ackDownload.getParameter();
+            if (upDownloadAckParameter.isErrorStatus()) {
+                throw new S7CommException("下载发生错误");
+            }
+            UpDownloadDatum datum = (UpDownloadDatum) ackDownload.getDatum();
+            buff.putBytes(datum.getData());
+        }
+
+        // 下载结束
+        S7Data reqEndDownload = S7Data.createEndDownload(blockType, blockNumber, destinationFileSystem);
+        this.readFromServerByPersistence(reqEndDownload);
+
+        return buff.getData();
+    }
+
+    /**
+     * 从PLC上传文件内容到PC
+     *
+     * @param blockType             数据块类型
+     * @param blockNumber           数据块编号
+     * @param destinationFileSystem 目标系统
+     * @return 字节数组数据
+     */
+    public byte[] uploadFile(EFileBlockType blockType,
+                             int blockNumber,
+                             EDestinationFileSystem destinationFileSystem) {
+        // 开始上传
+        S7Data reqStartDownload = S7Data.createStartUpload(blockType, blockNumber, destinationFileSystem);
+        S7Data ackStartDownload = this.readFromServerByPersistence(reqStartDownload);
+        StartUploadAckParameter startUploadAckParameter = (StartUploadAckParameter) ackStartDownload.getParameter();
+
+        // 上传中
+        ByteWriteBuff buff = new ByteWriteBuff(startUploadAckParameter.getBlockLength());
+        UpDownloadAckParameter upDownloadAckParameter = new UpDownloadAckParameter();
+        upDownloadAckParameter.setMoreDataFollowing(true);
+        while (upDownloadAckParameter.isMoreDataFollowing()) {
+            S7Data reqUpload = S7Data.createUpload(startUploadAckParameter.getId());
+            S7Data ackUpload = this.readFromServerByPersistence(reqUpload);
+            upDownloadAckParameter = (UpDownloadAckParameter) ackUpload.getParameter();
+            if (upDownloadAckParameter.isErrorStatus()) {
+                throw new S7CommException("上传发生错误");
+            }
+            UpDownloadDatum datum = (UpDownloadDatum) ackUpload.getDatum();
+            buff.putBytes(datum.getData());
+        }
+
+        // 上传结束
+        S7Data reqEndUpload = S7Data.createEndUpload(startUploadAckParameter.getId());
+        this.readFromServerByPersistence(reqEndUpload);
+
+        return buff.getData();
+    }
 }

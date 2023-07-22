@@ -26,8 +26,8 @@ public class DownloadParameterTest {
         parameter.setFunctionCode(EFunctionCode.START_DOWNLOAD);
         parameter.setMoreDataFollowing(false);
         parameter.setErrorStatus(false);
-        parameter.setUnknownBytes(new byte[]{0x01, 0x00});
-        parameter.setDownloadId(0);
+        parameter.setErrorCode(new byte[]{0x01, 0x00});
+        parameter.setId(0);
         parameter.setFileNameLength(9);
         parameter.setFileIdentifier("_");
         parameter.setBlockType(EFileBlockType.DB);
@@ -44,8 +44,8 @@ public class DownloadParameterTest {
         assertEquals(EFunctionCode.START_DOWNLOAD, parameter.getFunctionCode());
         assertFalse(parameter.isMoreDataFollowing());
         assertFalse(parameter.isErrorStatus());
-        assertArrayEquals(new byte[]{0x01, 0x00}, parameter.getUnknownBytes());
-        assertEquals(0, parameter.getDownloadId());
+        assertArrayEquals(new byte[]{0x01, 0x00}, parameter.getErrorCode());
+        assertEquals(0, parameter.getId());
         assertEquals(9, parameter.getFileNameLength());
         assertEquals("_", parameter.getFileIdentifier());
         assertEquals(EFileBlockType.DB, parameter.getBlockType());
@@ -62,18 +62,18 @@ public class DownloadParameterTest {
     public void downloadParameterTest() {
 
         byte[] expect = new byte[]{
-                0x1A, 0x00, 0x01, 0x00,
+                0x1B, 0x00, 0x01, 0x00,
                 0x00, 0x00, 0x00, 0x00,
                 0x09, 0x5F, 0x30, 0x41,
                 0x30, 0x30, 0x30, 0x30, 0x31, 0x50,
         };
 
         DownloadParameter parameter = new DownloadParameter();
-        parameter.setFunctionCode(EFunctionCode.START_DOWNLOAD);
+        parameter.setFunctionCode(EFunctionCode.DOWNLOAD);
         parameter.setMoreDataFollowing(false);
         parameter.setErrorStatus(false);
-        parameter.setUnknownBytes(new byte[]{0x01, 0x00});
-        parameter.setDownloadId(0);
+        parameter.setErrorCode(new byte[]{0x01, 0x00});
+        parameter.setId(0);
         parameter.setFileNameLength(9);
         parameter.setFileIdentifier("_");
         parameter.setBlockType(EFileBlockType.DB);
@@ -83,11 +83,11 @@ public class DownloadParameterTest {
         assertArrayEquals(expect, actual);
 
         parameter = DownloadParameter.fromBytes(expect);
-        assertEquals(EFunctionCode.START_DOWNLOAD, parameter.getFunctionCode());
+        assertEquals(EFunctionCode.DOWNLOAD, parameter.getFunctionCode());
         assertFalse(parameter.isMoreDataFollowing());
         assertFalse(parameter.isErrorStatus());
-        assertArrayEquals(new byte[]{0x01, 0x00}, parameter.getUnknownBytes());
-        assertEquals(0, parameter.getDownloadId());
+        assertArrayEquals(new byte[]{0x01, 0x00}, parameter.getErrorCode());
+        assertEquals(0, parameter.getId());
         assertEquals(9, parameter.getFileNameLength());
         assertEquals("_", parameter.getFileIdentifier());
         assertEquals(EFileBlockType.DB, parameter.getBlockType());
@@ -103,14 +103,14 @@ public class DownloadParameterTest {
                 0x1A, 0x00
         };
 
-        DownloadAckParameter parameter = new DownloadAckParameter();
+        UpDownloadAckParameter parameter = new UpDownloadAckParameter();
         parameter.setFunctionCode(EFunctionCode.START_DOWNLOAD);
         parameter.setMoreDataFollowing(false);
         parameter.setErrorStatus(false);
         byte[] actual = parameter.toByteArray();
         assertArrayEquals(expect, actual);
 
-        parameter = DownloadAckParameter.fromBytes(expect);
+        parameter = UpDownloadAckParameter.fromBytes(expect);
         assertEquals(EFunctionCode.START_DOWNLOAD, parameter.getFunctionCode());
         assertFalse(parameter.isMoreDataFollowing());
         assertFalse(parameter.isErrorStatus());
