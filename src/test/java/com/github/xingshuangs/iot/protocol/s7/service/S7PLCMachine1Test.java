@@ -5,10 +5,7 @@ import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.s7.enums.ENckArea;
 import com.github.xingshuangs.iot.protocol.s7.enums.ENckModule;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
-import com.github.xingshuangs.iot.protocol.s7.model.DataItem;
-import com.github.xingshuangs.iot.protocol.s7.model.NckRequestBuilder;
-import com.github.xingshuangs.iot.protocol.s7.model.RequestNckItem;
-import com.github.xingshuangs.iot.protocol.s7.model.S7Data;
+import com.github.xingshuangs.iot.protocol.s7.model.*;
 import com.github.xingshuangs.iot.utils.HexUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
@@ -178,7 +175,8 @@ public class S7PLCMachine1Test {
         RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 23, 1, ENckModule.S, 1);
         S7Data s7Data = NckRequestBuilder.creatNckRequest(item);
         S7Data ack = this.s7PLC.readFromServerByPersistence(s7Data);
-        List<DataItem> dataItems = ack.getDatum().getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
+        ReadWriteDatum datum = (ReadWriteDatum) s7Data.getDatum();
+        List<DataItem> dataItems = datum.getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
         for (DataItem dataItem : dataItems) {
             log.debug("刀具：{}", ByteReadBuff.newInstance(dataItem.getData(), true).getUInt16());
         }
@@ -209,7 +207,8 @@ public class S7PLCMachine1Test {
         RequestNckItem item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 35, 1, ENckModule.S, 1);
         S7Data s7Data = NckRequestBuilder.creatNckRequest(item);
         S7Data ack = this.s7PLC.readFromServerByPersistence(s7Data);
-        List<DataItem> dataItems = ack.getDatum().getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
+        ReadWriteDatum datum = (ReadWriteDatum) s7Data.getDatum();
+        List<DataItem> dataItems = datum.getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
         for (DataItem dataItem : dataItems) {
             log.debug("刀具半径补偿编号：{}", ByteReadBuff.newInstance(dataItem.getData(), true).getUInt16());
         }
@@ -242,7 +241,8 @@ public class S7PLCMachine1Test {
         RequestNckItem item2 = new RequestNckItem(ENckArea.C_CHANNEL, 1, 2, 3, ENckModule.SMA, 1);
         S7Data s7Data = NckRequestBuilder.creatNckRequest(Arrays.asList(item, item1, item2));
         S7Data ack = this.s7PLC.readFromServerByPersistence(s7Data);
-        List<DataItem> dataItems = ack.getDatum().getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
+        ReadWriteDatum datum = (ReadWriteDatum) s7Data.getDatum();
+        List<DataItem> dataItems = datum.getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
         for (DataItem dataItem : dataItems) {
             log.debug("位置坐标：{}", ByteReadBuff.newInstance(dataItem.getData(), true).getFloat64());
         }
@@ -250,7 +250,8 @@ public class S7PLCMachine1Test {
         item = new RequestNckItem(ENckArea.C_CHANNEL, 1, 2, 1, ENckModule.SMA, 3);
         s7Data = NckRequestBuilder.creatNckRequest(Arrays.asList(item));
         ack = this.s7PLC.readFromServerByPersistence(s7Data);
-        dataItems = ack.getDatum().getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
+        datum = (ReadWriteDatum) s7Data.getDatum();
+        dataItems = datum.getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
         for (DataItem dataItem : dataItems) {
             log.debug("位置坐标：{}", ByteReadBuff.newInstance(dataItem.getData(), true).getFloat64());
         }
@@ -283,7 +284,8 @@ public class S7PLCMachine1Test {
         RequestNckItem item2 = new RequestNckItem(ENckArea.C_CHANNEL, 1, 25, 3, ENckModule.SEGA, 1);
         S7Data s7Data = NckRequestBuilder.creatNckRequest(Arrays.asList(item, item1, item2));
         S7Data ack = this.s7PLC.readFromServerByPersistence(s7Data);
-        List<DataItem> dataItems = ack.getDatum().getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
+        ReadWriteDatum datum = (ReadWriteDatum) s7Data.getDatum();
+        List<DataItem> dataItems = datum.getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
         for (DataItem dataItem : dataItems) {
             log.debug("位置坐标：{}", ByteReadBuff.newInstance(dataItem.getData(), true).getFloat64());
         }
@@ -315,7 +317,8 @@ public class S7PLCMachine1Test {
         RequestNckItem item = new RequestNckItem(ENckArea.B_MODE_GROUP, 1, 3, 1, ENckModule.S, 1);
         S7Data s7Data = NckRequestBuilder.creatNckRequest(item);
         S7Data ack = this.s7PLC.readFromServerByPersistence(s7Data);
-        List<DataItem> dataItems = ack.getDatum().getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
+        ReadWriteDatum datum = (ReadWriteDatum) s7Data.getDatum();
+        List<DataItem> dataItems = datum.getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
         for (DataItem dataItem : dataItems) {
             // 0000:JOG, 0100:MDA, 0200:AUTO, 其他
             log.debug("模式：{}", ByteReadBuff.newInstance(dataItem.getData(), true).getUInt16());

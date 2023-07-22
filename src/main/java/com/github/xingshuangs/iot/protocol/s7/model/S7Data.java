@@ -254,7 +254,7 @@ public class S7Data implements IObjectByteArray {
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = Header.createDefault();
         s7Data.parameter = ReadWriteParameter.createReqParameter(EFunctionCode.WRITE_VARIABLE, requestItems);
-        s7Data.datum = Datum.createDatum(dataItems);
+        s7Data.datum = ReadWriteDatum.createDatum(dataItems);
         s7Data.selfCheck();
         return s7Data;
     }
@@ -272,7 +272,7 @@ public class S7Data implements IObjectByteArray {
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = AckHeader.createDefault(request.header, EErrorClass.NO_ERROR, 0);
         s7Data.parameter = ReadWriteParameter.createAckParameter((ReadWriteParameter) request.parameter);
-        s7Data.datum = Datum.createDatum(returnItems);
+        s7Data.datum = ReadWriteDatum.createDatum(returnItems);
         s7Data.selfCheck();
         return s7Data;
     }

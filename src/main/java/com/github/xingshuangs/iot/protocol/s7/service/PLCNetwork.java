@@ -316,8 +316,12 @@ public class PLCNetwork extends TcpClientBasic {
         if (ack.getDatum() == null) {
             return;
         }
+        if (!(ack.getDatum() instanceof ReadWriteDatum)) {
+            return;
+        }
+        ReadWriteDatum datum = (ReadWriteDatum) ack.getDatum();
         // 请求的数据个数一致
-        List<ReturnItem> returnItems = ack.getDatum().getReturnItems();
+        List<ReturnItem> returnItems = datum.getReturnItems();
         ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
         if (returnItems.size() != parameter.getItemCount()) {
             throw new S7CommException("返回的数据个数和请求的数据个数不一致");
@@ -369,7 +373,8 @@ public class PLCNetwork extends TcpClientBasic {
                 // S7数据请求
                 S7Data req = S7Data.createReadRequest(newRequestItems);
                 S7Data ack = this.readFromServer(req);
-                List<DataItem> dataItems = ack.getDatum().getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
+                ReadWriteDatum datum = (ReadWriteDatum) ack.getDatum();
+                List<DataItem> dataItems = datum.getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
 
                 // 将获取的数据重装实际结果列表中
                 for (int i = 0; i < comItemList.size(); i++) {
@@ -477,7 +482,8 @@ public class PLCNetwork extends TcpClientBasic {
     public List<DataItem> readS7NckData(List<RequestNckItem> requestItems) {
         S7Data s7Data = NckRequestBuilder.creatNckRequest(requestItems);
         S7Data ack = this.readFromServerByPersistence(s7Data);
-        return ack.getDatum().getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
+        ReadWriteDatum datum = (ReadWriteDatum) ack.getDatum();
+        return datum.getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
     }
 
     //endregion

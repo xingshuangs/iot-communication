@@ -294,7 +294,8 @@ public class S7DataTest {
         assertEquals(EFunctionCode.READ_VARIABLE, parameter.getFunctionCode());
         assertEquals(1, parameter.getItemCount());
         assertEquals(0, parameter.getRequestItems().size());
-        List<ReturnItem> returnItems = s7Data.getDatum().getReturnItems();
+        ReadWriteDatum datum = (ReadWriteDatum) s7Data.getDatum();
+        List<ReturnItem> returnItems = datum.getReturnItems();
         for (ReturnItem returnItem : returnItems) {
             DataItem item = (DataItem) returnItem;
             assertEquals(EReturnCode.SUCCESS, item.getReturnCode());
@@ -370,7 +371,8 @@ public class S7DataTest {
             assertEquals(3, requestItem.getByteAddress());
             assertEquals(1, requestItem.getBitAddress());
         }
-        List<ReturnItem> returnItems = s7Data.getDatum().getReturnItems();
+        ReadWriteDatum datum = (ReadWriteDatum) s7Data.getDatum();
+        List<ReturnItem> returnItems = datum.getReturnItems();
         for (ReturnItem returnItem : returnItems) {
             DataItem item = (DataItem) returnItem;
             assertEquals(EReturnCode.RESERVED, item.getReturnCode());
@@ -420,7 +422,9 @@ public class S7DataTest {
         assertEquals(EFunctionCode.WRITE_VARIABLE, parameter.getFunctionCode());
         assertEquals(1, parameter.getItemCount());
         assertEquals(0, parameter.getRequestItems().size());
-        List<ReturnItem> returnItems = s7Data.getDatum().getReturnItems();
+
+        ReadWriteDatum datum = (ReadWriteDatum) s7Data.getDatum();
+        List<ReturnItem> returnItems = datum.getReturnItems();
         for (ReturnItem returnItem : returnItems) {
             assertEquals(EReturnCode.SUCCESS, returnItem.getReturnCode());
         }
@@ -470,7 +474,9 @@ public class S7DataTest {
         assertEquals(EFunctionCode.READ_VARIABLE, parameter.getFunctionCode());
         assertEquals(5, parameter.getItemCount());
         assertEquals(0, parameter.getRequestItems().size());
-        List<ReturnItem> returnItems = s7Data.getDatum().getReturnItems();
+
+        ReadWriteDatum datum = (ReadWriteDatum) s7Data.getDatum();
+        List<ReturnItem> returnItems = datum.getReturnItems();
         for (int i = 0; i < returnItems.size(); i++) {
             DataItem item = (DataItem) returnItems.get(i);
             if (i < 3) {

@@ -186,7 +186,8 @@ public class S7PLCServer extends TcpServerBasic {
      */
     private void writeVariableHandle(Socket socket, S7Data req) {
         ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
-        List<DataItem> dataItems = req.getDatum().getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
+        ReadWriteDatum datum = (ReadWriteDatum) req.getDatum();
+        List<DataItem> dataItems = datum.getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
         List<ReturnItem> returnItems = new ArrayList<>();
         try {
             this.rwLock.writeLock().lock();
