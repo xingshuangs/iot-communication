@@ -72,7 +72,7 @@ public class S7PLCServer extends TcpServerBasic {
      * @param dbNumbers db块编号
      */
     public void addDBArea(int... dbNumbers) {
-        log.debug("服务端数据区添加DB[{}]", dbNumbers);
+        log.debug("服务端数据区添加DB{}", dbNumbers);
         synchronized (this.objLock) {
             for (int x : dbNumbers) {
                 String name = String.format("DB%s", x);

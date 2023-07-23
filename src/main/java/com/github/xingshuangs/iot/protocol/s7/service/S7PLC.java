@@ -1112,6 +1112,16 @@ public class S7PLC extends PLCNetwork {
 
     //endregion
 
+    /**
+     * 下载文件，目前还未测试成功
+     *
+     * @param blockType             数据块类型
+     * @param blockNumber           数据块编号
+     * @param destinationFileSystem 目标文件系统
+     * @param loadMemoryLength      载入长度
+     * @param mC7CodeLength         mc7文件内容长度
+     * @return 字节数组数据
+     */
     public byte[] downloadFile(EFileBlockType blockType,
                                int blockNumber,
                                EDestinationFileSystem destinationFileSystem,
@@ -1144,7 +1154,7 @@ public class S7PLC extends PLCNetwork {
     }
 
     /**
-     * 从PLC上传文件内容到PC
+     * 从PLC上传文件内容到PC，已在s200smart中测试成功
      *
      * @param blockType             数据块类型
      * @param blockNumber           数据块编号

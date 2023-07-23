@@ -242,6 +242,10 @@ class Demo {
 class Demo {
     public static void main(String[] args) {
         S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+
+        // upload file data, PLC -> PC
+        byte[] bytes = s7PLC.uploadFile(EFileBlockType.OB, 1, EDestinationFileSystem.B);
+
         // hot restart
         s7PLC.hotRestart();
 
@@ -604,9 +608,17 @@ class Demo {
 
 通信采用懒加载，读写的时候才会触发连接，将checkConnected放在write或read后就变成true。
 
-> 2、PLC通信过程中最大的读写数据字节大小？
+> 2、在PLC关闭之后获取异常，在PLC重启之后自动连入该怎么处理？
 
-PLC的网络通信，根据不同型号PLC的PDULength而定，S1200=240，S1500=960，总之有240, 480, 960。<br>
+内部支持断线重连，每次触发读写操作的时候，若PLC已经断线，则触发重连操作。
+
+> 3、当反馈的报错信息为“未在模块上实现此服务或报告了帧错误”，原因是什么？
+
+由于PLC没有该地址块数据，或者该地址数据不支持访问。
+
+> 4、PLC通信过程中最大的读写数据字节大小？
+
+PLC的网络通信，根据不同型号PLC的PDULength而定，S1200 = 240，S1500 = 960，总之有240, 480, 960。<br>
 最大读取字节数组大小是222 = 240 - 18, 462 = 480 - 18, 942 = 960 - 18。<br>
 目前PDULength默认都为240，可自行调整。
 
@@ -620,11 +632,7 @@ PLC的网络通信，根据不同型号PLC的PDULength而定，S1200=240，S1500
 接收：最大字节写入长度是 225 = 240 - 15, 15(响应报文的PDU)=12(header)+2(parameter)+1(dataItem)
 ```
 
-> 3、在PLC关闭之后获取异常，在PLC重启之后自动连入该怎么处理？
-
-内部支持断线重连，每次触发读写操作的时候，若PLC已经断线，则触发重连操作。
-
-> 4、批量读写数据时，单次通信过程中，最多读写多少数据？
+> 5、批量读写数据时，单次通信过程中，最多读写多少数据？
 
 | PDU length | 数据类型                     | 字节数量 | (写)最多个数 | (读)最多个数 | PLC               |
 |:----------:|:-------------------------|:----:|:-------:|:-------:|-------------------|

@@ -76,7 +76,13 @@ public class UploadParameter extends UpDownloadAckParameter {
         return res;
     }
 
-    public static UploadParameter createDefault(long uploadId){
+    /**
+     * 创建上传参数
+     *
+     * @param uploadId 上传Id
+     * @return UploadParameter
+     */
+    public static UploadParameter createDefault(long uploadId) {
         UploadParameter parameter = new UploadParameter();
         parameter.id = uploadId;
         return parameter;

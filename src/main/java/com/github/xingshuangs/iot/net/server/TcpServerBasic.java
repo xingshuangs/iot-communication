@@ -54,7 +54,9 @@ public class TcpServerBasic {
             this.port = port;
             this.stop();
             this.serverSocket = new ServerSocket(port);
-            CompletableFuture.runAsync(this::waitForClients);
+            Thread thread = new Thread(this::waitForClients);
+            thread.setDaemon(true);
+            thread.start();
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
         }
@@ -86,7 +88,7 @@ public class TcpServerBasic {
     /**
      * 等待客户端连入
      */
-    private void waitForClients() {
+    protected void waitForClients() {
         log.debug("开启等待客户端线程，端口号[{}]", this.port);
         while (this.isAlive()) {
             try {
@@ -94,7 +96,9 @@ public class TcpServerBasic {
                 if (!this.checkClientValid(client)) {
                     SocketUtils.close(client);
                 }
-                CompletableFuture.runAsync(() -> this.doClientConnected(client));
+                Thread thread = new Thread(() -> this.doClientConnected(client));
+                thread.setDaemon(true);
+                thread.start();
             } catch (IOException e) {
                 if (this.isAlive()) {
                     log.error(e.getMessage());
@@ -132,7 +136,7 @@ public class TcpServerBasic {
      *
      * @param client 客户端
      */
-    private void doClientConnected(Socket client) {
+    protected void doClientConnected(Socket client) {
         SocketAddress address = client.getRemoteSocketAddress();
         this.clientMap.put(address.toString(), client);
         log.debug("有客户端[{}]连入，当前客户端数量[{}]", address, this.clientMap.size());

@@ -354,6 +354,16 @@ public class S7Data implements IObjectByteArray {
         return s7Data;
     }
 
+    /**
+     * 创建开始下载
+     *
+     * @param blockType             数据块类型
+     * @param blockNumber           数据块编号
+     * @param destinationFileSystem 目标文件系统
+     * @param loadMemoryLength      载入长度
+     * @param mC7CodeLength         mc7文件内容长度
+     * @return S7Data
+     */
     public static S7Data createStartDownload(EFileBlockType blockType,
                                              int blockNumber,
                                              EDestinationFileSystem destinationFileSystem,
@@ -368,6 +378,14 @@ public class S7Data implements IObjectByteArray {
         return s7Data;
     }
 
+    /**
+     * 创建下载中
+     *
+     * @param blockType             数据块类型
+     * @param blockNumber           数据块编号
+     * @param destinationFileSystem 目标文件系统
+     * @return S7Data
+     */
     public static S7Data createDownload(EFileBlockType blockType,
                                         int blockNumber,
                                         EDestinationFileSystem destinationFileSystem) {
@@ -380,9 +398,17 @@ public class S7Data implements IObjectByteArray {
         return s7Data;
     }
 
+    /**
+     * 创建结束下载
+     *
+     * @param blockType             数据块类型
+     * @param blockNumber           数据块编号
+     * @param destinationFileSystem 目标文件系统
+     * @return S7Data
+     */
     public static S7Data createEndDownload(EFileBlockType blockType,
-                                        int blockNumber,
-                                        EDestinationFileSystem destinationFileSystem) {
+                                           int blockNumber,
+                                           EDestinationFileSystem destinationFileSystem) {
         S7Data s7Data = new S7Data();
         s7Data.tpkt = new TPKT();
         s7Data.cotp = COTPData.createDefault();
@@ -392,9 +418,17 @@ public class S7Data implements IObjectByteArray {
         return s7Data;
     }
 
+    /**
+     * 创建开始上传
+     *
+     * @param blockType             数据块类型
+     * @param blockNumber           数据块编号
+     * @param destinationFileSystem 目标文件系统
+     * @return S7Data
+     */
     public static S7Data createStartUpload(EFileBlockType blockType,
-                                             int blockNumber,
-                                             EDestinationFileSystem destinationFileSystem) {
+                                           int blockNumber,
+                                           EDestinationFileSystem destinationFileSystem) {
         S7Data s7Data = new S7Data();
         s7Data.tpkt = new TPKT();
         s7Data.cotp = COTPData.createDefault();
@@ -404,6 +438,12 @@ public class S7Data implements IObjectByteArray {
         return s7Data;
     }
 
+    /**
+     * 创建上传中
+     *
+     * @param uploadId 上传Id
+     * @return S7Data
+     */
     public static S7Data createUpload(long uploadId) {
         S7Data s7Data = new S7Data();
         s7Data.tpkt = new TPKT();
@@ -414,6 +454,12 @@ public class S7Data implements IObjectByteArray {
         return s7Data;
     }
 
+    /**
+     * 创建结束上传
+     *
+     * @param uploadId 上传Id
+     * @return S7Data
+     */
     public static S7Data createEndUpload(long uploadId) {
         S7Data s7Data = new S7Data();
         s7Data.tpkt = new TPKT();

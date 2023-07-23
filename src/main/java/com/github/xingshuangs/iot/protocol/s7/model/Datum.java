@@ -41,7 +41,7 @@ public class Datum implements IObjectByteArray {
                 return ReadWriteDatum.fromBytes(data, messageType, functionCode);
             case DOWNLOAD:
             case UPLOAD:
-                return UpDownloadDatum.fromBytes(data, messageType, functionCode);
+                return UpDownloadDatum.fromBytes(data, messageType);
             default:
                 throw new S7CommException("数据部分无法解析");
         }

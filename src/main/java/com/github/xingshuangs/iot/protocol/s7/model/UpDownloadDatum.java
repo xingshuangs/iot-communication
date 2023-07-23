@@ -3,7 +3,6 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
-import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
 import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
 import lombok.Data;
 
@@ -30,12 +29,27 @@ public class UpDownloadDatum extends Datum {
      */
     private byte[] data;
 
-    public static UpDownloadDatum fromBytes(byte[] data, EMessageType messageType, EFunctionCode functionCode) {
-        return fromBytes(data, 0, messageType, functionCode);
+    /**
+     * 字节数组数据解析
+     *
+     * @param data        字节数组数据
+     * @param messageType 消息类型
+     * @return UpDownloadDatum
+     */
+    public static UpDownloadDatum fromBytes(byte[] data, EMessageType messageType) {
+        return fromBytes(data, 0, messageType);
 
     }
 
-    public static UpDownloadDatum fromBytes(byte[] data, int offset, EMessageType messageType, EFunctionCode functionCode) {
+    /**
+     * 字节数组数据解析
+     *
+     * @param data        字节数组数据
+     * @param offset      偏移量
+     * @param messageType 消息类型
+     * @return UpDownloadDatum
+     */
+    public static UpDownloadDatum fromBytes(byte[] data, int offset, EMessageType messageType) {
         if (EMessageType.ACK_DATA != messageType) {
             throw new S7CommException("不是响应数据");
         }

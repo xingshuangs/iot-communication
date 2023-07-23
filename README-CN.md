@@ -56,6 +56,7 @@
 
 ## 赞助
 
+一杯奶茶足矣<br>
 **微信** (请备注上你的姓名)<br>
 ![微信](https://i.postimg.cc/brBG5vx8/image.png)
 

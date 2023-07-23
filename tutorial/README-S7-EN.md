@@ -241,6 +241,10 @@ class Demo {
 class Demo {
     public static void main(String[] args) {
         S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
+
+        // upload file data, PLC -> PC
+        byte[] bytes = s7PLC.uploadFile(EFileBlockType.OB, 1, EDestinationFileSystem.B);
+
         // hot restart
         s7PLC.hotRestart();
 
@@ -605,7 +609,18 @@ class Demo {
 Communication uses lazy loading. The connection is triggered only when reading or writing. CheckConnected function
 will return true after reading or writing.
 
-> 2、Maximum read/write data byte size during PLC communication?
+> 2、What about getting exceptions after PLC shutdown and automatically connecting after PLC restarts?
+
+Disconnection reconnects is supported. If the PLC has been disconnected, the reconnection is
+triggered in each time of reading and writing operation.
+
+> 3、When the feedback error message is "This service was not implemented on the module or a frame error was reported",
+> what is the reason?
+
+Message in chinese： 未在模块上实现此服务或报告了帧错误 <br>
+The PLC does not have the address block data, or the address data does not support access.
+
+> 4、Maximum read/write data byte size during PLC communication?
 
 Depend on different types of PLC PDULength, S1200 = 240, S1500 = 960. In a word there are 240, 480, 960.<br>
 The maximum read byte array size is 222 = 240 - 18, 462 = 480 - 18, 942 = 960 - 18.<br>
@@ -621,12 +636,7 @@ Send：The maximum byte write length is 212 = 240 - 28, 28(request PDU) = 10(hea
 Receive：The maximum byte write length is 225 = 240 - 15, 15(response PDU) = 12(header) + 2(parameter) + 1(dataItem)
 ```
 
-> 3、What about getting exceptions after PLC shutdown and automatically connecting after PLC restarts?
-
-Disconnection reconnects is supported. If the PLC has been disconnected, the reconnection is
-triggered in each time of reading and writing operation.
-
-> 4、How much data can I read or write in batches in a single communication?
+> 5、How much data can I read or write in batches in a single communication?
 
 | PDU length | Data Type                | Byte Size | (Write) Maximum Number | (Read) Maximum Number | PLC               |
 |:----------:|:-------------------------|:---------:|:----------------------:|:---------------------:|-------------------|

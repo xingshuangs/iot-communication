@@ -117,9 +117,17 @@ public class DownloadParameter extends UpDownloadAckParameter implements IObject
         return res;
     }
 
+    /**
+     * 创建默认的下载中参数
+     *
+     * @param blockType             数据块类型
+     * @param blockNumber           数据块编号
+     * @param destinationFileSystem 目标文件系统
+     * @return DownloadParameter
+     */
     public static DownloadParameter createDefault(EFileBlockType blockType,
-                                                       int blockNumber,
-                                                       EDestinationFileSystem destinationFileSystem){
+                                                  int blockNumber,
+                                                  EDestinationFileSystem destinationFileSystem) {
         DownloadParameter parameter = new DownloadParameter();
         parameter.blockType = blockType;
         parameter.blockNumber = blockNumber;

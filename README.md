@@ -57,5 +57,6 @@ Distributed under the MIT License. See [`LICENSE`](./LICENSE) for more informati
 
 ## Sponsor
 
+Buy me a cup of coffee
 **WeChat** (Please note your name)<br>
 ![微信](https://i.postimg.cc/brBG5vx8/image.png)
