@@ -35,7 +35,7 @@ public class MbapHeader implements IObjectByteArray {
     private int protocolId = 0;
 
     /**
-     * 长度<br>
+     * 长度，长度域是下一个域的字节数，包括单元标识符和数据域。<br>
      * 字节大小：2个字节
      * 字节序数：4-5
      */
@@ -49,7 +49,10 @@ public class MbapHeader implements IObjectByteArray {
     private int unitId = 0;
 
     public MbapHeader() {
-        this.transactionId = getNewNumber();
+    }
+
+    public MbapHeader(int transactionId) {
+        this.transactionId = transactionId;
     }
 
     @Override

@@ -57,7 +57,7 @@ public class MbTcpRequest implements IObjectByteArray {
      */
     public static MbTcpRequest createDefault() {
         MbTcpRequest request = new MbTcpRequest();
-        request.header = new MbapHeader();
+        request.header = new MbapHeader(MbapHeader.getNewNumber());
         return request;
     }
 }

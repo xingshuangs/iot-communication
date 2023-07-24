@@ -43,6 +43,20 @@ public class MbTcpResponse implements IObjectByteArray {
      * @param pduBytes pdu字节数组数据
      * @return MbTcpResponse
      */
+    public static MbTcpResponse fromBytes(byte[] data) {
+        MbTcpResponse response = new MbTcpResponse();
+        response.header = MbapHeader.fromBytes(data);
+        response.pdu = MbPdu.fromBytes(data, response.header.byteArrayLength());
+        return response;
+    }
+
+    /**
+     * 解析字节数组数据
+     *
+     * @param header   报文头
+     * @param pduBytes pdu字节数组数据
+     * @return MbTcpResponse
+     */
     public static MbTcpResponse fromBytes(MbapHeader header, byte[] pduBytes) {
         MbTcpResponse response = new MbTcpResponse();
         response.header = header;

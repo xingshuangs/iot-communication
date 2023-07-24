@@ -71,7 +71,7 @@ public class ModbusNetwork extends TcpClientBasic {
         }
         MbapHeader header;
         int len;
-        byte[] remain;
+        byte[] total;
         synchronized (this.objLock) {
             this.write(req.toByteArray());
 
@@ -81,16 +81,17 @@ public class ModbusNetwork extends TcpClientBasic {
                 throw new ModbusCommException(" MbapHeader 无效，读取长度不一致");
             }
             header = MbapHeader.fromBytes(data);
-            remain = new byte[header.getLength() - 1];
-            len = this.read(remain);
+            total = new byte[data.length + header.getLength() - 1];
+            System.arraycopy(data, 0, total, 0, data.length);
+            len = this.read(total, data.length, header.getLength() - 1);
         }
-        if (len < remain.length) {
+        if (len < header.getLength() - 1) {
             throw new ModbusCommException(" MbapHeader后面的数据长度，长度不一致");
         }
-        MbTcpResponse ack = MbTcpResponse.fromBytes(header, remain);
         if (this.comCallback != null) {
-            this.comCallback.accept(ack.toByteArray());
+            this.comCallback.accept(total);
         }
+        MbTcpResponse ack = MbTcpResponse.fromBytes(total);
         this.checkResult(req, ack);
         return ack;
     }

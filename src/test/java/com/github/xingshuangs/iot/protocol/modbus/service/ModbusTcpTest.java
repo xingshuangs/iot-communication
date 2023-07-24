@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -30,18 +30,14 @@ public class ModbusTcpTest {
         assertArrayEquals(new Boolean[]{true}, booleans.toArray(new Boolean[0]));
 
         booleans = plc.readCoil(0, 4);
-        assertArrayEquals(new Boolean[]{true, true, false, false}, booleans.toArray(new Boolean[0]));
+        assertArrayEquals(new Boolean[]{true, false, true, false}, booleans.toArray(new Boolean[0]));
     }
 
     @Test
     public void writeCoil() {
         plc.writeCoil(0, true);
 
-        List<Boolean> list = new ArrayList<>();
-        list.add(true);
-        list.add(false);
-        list.add(true);
-        list.add(false);
+        List<Boolean> list = Arrays.asList(true, false, true, false);
         plc.writeCoil(0, list);
     }
 
@@ -77,11 +73,7 @@ public class ModbusTcpTest {
     public void writeHoldRegister() {
         plc.writeHoldRegister(2, 123);
 
-        List<Integer> list = new ArrayList<>();
-        list.add(11);
-        list.add(12);
-        list.add(13);
-        list.add(14);
+        List<Integer> list = Arrays.asList(11, 12, 13, 14);
         plc.writeHoldRegister(3, list);
     }
 
