@@ -10,9 +10,9 @@ import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspTrackInfo;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
 /**
@@ -41,7 +41,7 @@ public class RtspFMp4Proxy {
     /**
      * 数据缓存
      */
-    private final LinkedList<IObjectByteArray> buffers = new LinkedList<>();
+    private final ConcurrentLinkedQueue<IObjectByteArray> buffers = new ConcurrentLinkedQueue<>();
 
     /**
      * FMp4数据事件
@@ -257,7 +257,7 @@ public class RtspFMp4Proxy {
             // 有数据的时候发送出去
             int size = this.buffers.size();
             for (int i = 0; i < size; i++) {
-                IObjectByteArray pop = this.buffers.pop();
+                IObjectByteArray pop = this.buffers.poll();
                 if (this.fmp4DataHandle != null && pop != null) {
                     try {
                         this.fmp4DataHandle.accept(pop.toByteArray());

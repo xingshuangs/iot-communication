@@ -343,7 +343,7 @@ public class S7PLCTest {
 
     @Test
     public void uploadFile() {
-        byte[] bytes = this.s7PLC.uploadFile(EFileBlockType.OB, 1, EDestinationFileSystem.B);
+        byte[] bytes = this.s7PLC.uploadFile(EFileBlockType.OB, 1, EDestinationFileSystem.A);
         System.out.println(bytes.length);
     }
 }

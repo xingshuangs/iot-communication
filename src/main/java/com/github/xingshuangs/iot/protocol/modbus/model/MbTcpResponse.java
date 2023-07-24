@@ -39,8 +39,7 @@ public class MbTcpResponse implements IObjectByteArray {
     /**
      * 解析字节数组数据
      *
-     * @param header   报文头
-     * @param pduBytes pdu字节数组数据
+     * @param data 字节数组数据
      * @return MbTcpResponse
      */
     public static MbTcpResponse fromBytes(byte[] data) {

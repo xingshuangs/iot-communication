@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.rtsp.authentication;
 
 import com.github.xingshuangs.iot.utils.HexUtil;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -40,5 +41,14 @@ public class BasicAuthenticatorTest {
         byte[] pps = decoder.decode(src);
         String ppsStr = HexUtil.toHexString(pps);
 //        System.out.println(ppsStr);
+    }
+
+    @Test
+    public void base6DemoTest() {
+        Base64.Encoder encoder = Base64.getEncoder();
+        byte[] src = new byte[]{0x00, 0x02, 0x00};
+        byte[] encode = encoder.encode(src);
+        String actual = new String(encode, StandardCharsets.US_ASCII);
+        Assert.assertEquals("AAIA", actual);
     }
 }
