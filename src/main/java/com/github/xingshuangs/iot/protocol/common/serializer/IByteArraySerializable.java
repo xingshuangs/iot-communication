@@ -9,7 +9,7 @@ package com.github.xingshuangs.iot.protocol.common.serializer;
 public interface IByteArraySerializable {
 
     /**
-     * 读数据
+     * 转换为对象
      *
      * @param targetClass 目标类
      * @param src         字节数组
@@ -19,7 +19,7 @@ public interface IByteArraySerializable {
     <T> T toObject(Class<T> targetClass, byte[] src);
 
     /**
-     * 写数据
+     * 转换为数组
      *
      * @param targetBean 目标对象
      * @param <T>        类型
