@@ -9,7 +9,7 @@ import com.github.xingshuangs.iot.protocol.s7.model.*;
 import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
 import com.github.xingshuangs.iot.utils.*;
 
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -368,7 +368,7 @@ public class S7PLC extends PLCNetwork {
 //        }
         int length = ByteUtil.toUInt8(dataItem.getData(), 1);
         dataItem = this.readS7Data(AddressUtil.parseByte(address, 2 + length));
-        return ByteUtil.toStr(dataItem.getData(), 2);
+        return ByteUtil.toStr(dataItem.getData(), 2, length, Charset.forName("GB2312"));
     }
 
     /**
@@ -388,7 +388,7 @@ public class S7PLC extends PLCNetwork {
 //            throw new S7CommException("该地址的值不是字符串类型");
 //        }
         int actLength = ByteUtil.toUInt8(dataItem.getData(), 1);
-        return ByteUtil.toStr(dataItem.getData(), 2, Math.min(actLength, length));
+        return ByteUtil.toStr(dataItem.getData(), 2, Math.min(actLength, length), Charset.forName("GB2312"));
     }
 
 //    /**
@@ -612,7 +612,7 @@ public class S7PLC extends PLCNetwork {
             throw new IllegalArgumentException("data字符串参数长度为0");
         }
         // 填充字节长度数据
-        byte[] dataBytes = data.getBytes(StandardCharsets.US_ASCII);
+        byte[] dataBytes = data.getBytes(Charset.forName("GB2312"));
         byte[] tmp = new byte[1 + dataBytes.length];
         tmp[0] = ByteUtil.toByte(dataBytes.length);
         System.arraycopy(dataBytes, 0, tmp, 1, dataBytes.length);

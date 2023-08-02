@@ -160,6 +160,17 @@ public class UdpClientBasic implements ICommunicable {
         return this.read(data, 0, data.length);
     }
 
+    /**
+     * 读取数据
+     *
+     * @param data    字节数组
+     * @param timeout 超时时间，毫秒，0：一直阻塞，非0：超时时间
+     * @return 读取到的数据长度
+     */
+    public int read(final byte[] data, final int timeout) {
+        return this.read(data, 0, data.length, timeout);
+    }
+
 
     /**
      * 读取数据
@@ -170,7 +181,20 @@ public class UdpClientBasic implements ICommunicable {
      * @return 读取到的数据长度
      */
     public int read(final byte[] data, final int offset, final int length) {
-        return this.read(data, offset, length, this.serverAddress);
+        return this.read(data, offset, length, this.serverAddress, 0);
+    }
+
+    /**
+     * 读取数据
+     *
+     * @param data    字节数组
+     * @param offset  偏移量
+     * @param length  数据长度
+     * @param timeout 超时时间，毫秒，0：一直阻塞，非0：超时时间
+     * @return 读取到的数据长度
+     */
+    public int read(final byte[] data, final int offset, final int length, final int timeout) {
+        return this.read(data, offset, length, this.serverAddress, timeout);
     }
 
     /**
@@ -181,7 +205,19 @@ public class UdpClientBasic implements ICommunicable {
      * @return 读取到的数据长度
      */
     public int read(final byte[] data, final SocketAddress address) {
-        return this.read(data, 0, data.length, address);
+        return this.read(data, 0, data.length, address, 0);
+    }
+
+    /**
+     * 读取数据
+     *
+     * @param data    字节数组
+     * @param address socket地址
+     * @param timeout 超时时间，毫秒，0：一直阻塞，非0：超时时间
+     * @return 读取到的数据长度
+     */
+    public int read(final byte[] data, final SocketAddress address, final int timeout) {
+        return this.read(data, 0, data.length, address, timeout);
     }
 
     /**
@@ -191,11 +227,12 @@ public class UdpClientBasic implements ICommunicable {
      * @param offset  偏移量
      * @param length  数据长度
      * @param address socket地址
+     * @param timeout 超时时间，毫秒，0：一直阻塞，非0：超时时间
      * @return 读取到的数据长度
      */
-    public int read(final byte[] data, final int offset, final int length, final SocketAddress address) {
+    public int read(final byte[] data, final int offset, final int length, final SocketAddress address, final int timeout) {
         DatagramPacket packet = new DatagramPacket(data, offset, length, address);
-        DatagramPacket res = this.read(packet);
+        DatagramPacket res = this.read(packet, timeout);
         return res.getLength();
     }
 
@@ -206,8 +243,20 @@ public class UdpClientBasic implements ICommunicable {
      * @return DatagramPacket数据对象
      */
     public DatagramPacket read(DatagramPacket packet) {
+        return this.read(packet, 0);
+    }
+
+    /**
+     * 读取数据
+     *
+     * @param packet  DatagramPacket数据对象
+     * @param timeout 超时时间，毫秒，0：一直阻塞，非0：超时时间
+     * @return DatagramPacket数据对象
+     */
+    public DatagramPacket read(DatagramPacket packet, final int timeout) {
         try {
             DatagramSocket availableSocket = this.getAvailableSocket();
+            availableSocket.setSoTimeout(timeout);
             availableSocket.receive(packet);
             return packet;
         } catch (IOException e) {

@@ -2,17 +2,17 @@ package com.github.xingshuangs.iot.protocol.s7.serializer;
 
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
-import com.github.xingshuangs.iot.protocol.common.serializer.IPLCSerializable;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.common.enums.EDataType;
+import com.github.xingshuangs.iot.protocol.common.serializer.IPLCSerializable;
 import com.github.xingshuangs.iot.protocol.s7.model.DataItem;
 import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
 import com.github.xingshuangs.iot.protocol.s7.service.S7PLC;
 import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
 
 import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -260,7 +260,7 @@ public class S7Serializer implements IPLCSerializable {
                 break;
             case STRING:
                 int length = buff.getByteToInt(0);
-                item.getField().set(result, buff.getString(1, Math.min(length, item.getCount())));
+                item.getField().set(result, buff.getString(1, Math.min(length, item.getCount()), Charset.forName("GB2312")));
                 break;
             case DATE:
                 LocalDate date = LocalDate.of(1990, 1, 1).plusDays(buff.getUInt16());
@@ -418,7 +418,7 @@ public class S7Serializer implements IPLCSerializable {
                         .putDouble((Double) data).getData()));
                 break;
             case STRING:
-                byte[] bytes = ((String) data).getBytes(StandardCharsets.US_ASCII);
+                byte[] bytes = ((String) data).getBytes(Charset.forName("GB2312"));
                 byte[] targetBytes = new byte[1 + item.getCount()];
                 targetBytes[0] = (byte) item.getCount();
                 System.arraycopy(bytes, 0, targetBytes, 1, Math.min(bytes.length, item.getCount()));

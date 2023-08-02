@@ -140,9 +140,9 @@ public class S7PLCTest {
 
     @Test
     public void writeString() {
-        s7PLC.writeString("DB4.304", "demo");
+        s7PLC.writeString("DB4.304", "百搭利器");
         String str = s7PLC.readString("DB4.304");
-        assertEquals("demo", str);
+        assertEquals("百搭利器", str);
     }
 
     @Test

@@ -81,7 +81,7 @@ public class S7PLCServerTest {
         bean.setFloat32Data(3.14f);
         bean.setFloat64Data(4.15);
         bean.setByteData(bytes);
-        bean.setStringData("1234567890");
+        bean.setStringData("天气好");
         bean.setTimeData(12L);
         bean.setDateData(LocalDate.of(2023, 5, 15));
         bean.setTimeOfDayData(LocalTime.of(20, 22, 13));
@@ -96,7 +96,7 @@ public class S7PLCServerTest {
         assertEquals(3.14f, bean.getFloat32Data(), 0.001);
         assertEquals(4.15, bean.getFloat64Data(), 0.001);
         assertArrayEquals(bytes, bean.getByteData());
-        assertEquals("1234567890", bean.getStringData());
+        assertEquals("天气好", bean.getStringData());
         assertEquals(12, bean.getTimeData().longValue());
         assertEquals(LocalDate.of(2023, 5, 15), bean.getDateData());
         assertEquals(LocalTime.of(20, 22, 13), bean.getTimeOfDayData());
