@@ -474,7 +474,7 @@ public class PLCNetwork extends TcpClientBasic {
     }
 
     /**
-     * 读取S7协议NCK数据
+     * 读取S7协议NCK数据，无法精确限制请求数量，因为响应的内容长度不定
      *
      * @param requestItems 请求项列表
      * @return 数据项

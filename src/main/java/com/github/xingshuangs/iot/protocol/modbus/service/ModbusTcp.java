@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author xingshuang
  */
-public class ModbusTcp extends ModbusNetwork {
+public class ModbusTcp extends ModbusTcpNetwork {
 
     public static final int PORT = 502;
 

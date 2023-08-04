@@ -1112,6 +1112,7 @@ public class S7PLC extends PLCNetwork {
 
     //endregion
 
+    //region 上传下载
     /**
      * 下载文件，目前还未测试成功
      *
@@ -1190,4 +1191,5 @@ public class S7PLC extends PLCNetwork {
 
         return buff.getData();
     }
+    //endregion
 }
