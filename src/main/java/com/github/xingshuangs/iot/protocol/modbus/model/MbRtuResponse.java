@@ -8,6 +8,8 @@ import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.utils.CRCUtil;
 import lombok.Data;
 
+import java.util.Arrays;
+
 /**
  * RTU的modbus响应
  *
@@ -59,6 +61,22 @@ public class MbRtuResponse implements IObjectByteArray {
                 .putBytes(this.pdu.toByteArray())
                 .getData();
         this.crc = CRCUtil.crc16ToByteArray(data);
+    }
+
+    /**
+     * 校验CRC
+     *
+     * @return true：校验成功，false：校验失败
+     */
+    public boolean checkCrc() {
+        if (this.pdu == null) {
+            throw new ModbusCommException("pdu不能为null");
+        }
+        byte[] data = ByteWriteBuff.newInstance(1 + this.pdu.byteArrayLength())
+                .putByte(this.unitId)
+                .putBytes(this.pdu.toByteArray())
+                .getData();
+        return Arrays.equals(this.crc, CRCUtil.crc16ToByteArray(data));
     }
 
 

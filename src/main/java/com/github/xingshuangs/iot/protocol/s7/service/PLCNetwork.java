@@ -102,6 +102,7 @@ public class PLCNetwork extends TcpClientBasic {
 
     public PLCNetwork(String host, int port) {
         super(host, port);
+        this.tag = "S7";
     }
 
     //region socket连接后握手操作

@@ -32,6 +32,15 @@ public class MbRtuRequest implements IObjectByteArray {
      */
     private byte[] crc;
 
+    public MbRtuRequest() {
+    }
+
+    public MbRtuRequest(int unitId, MbPdu pdu) {
+        this.unitId = unitId;
+        this.pdu = pdu;
+        this.selfCheck();
+    }
+
     @Override
     public int byteArrayLength() {
         return 3 + this.pdu.byteArrayLength();
