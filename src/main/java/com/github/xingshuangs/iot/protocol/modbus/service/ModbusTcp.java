@@ -14,7 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ModbusTcp extends ModbusNetwork<MbTcpRequest, MbTcpResponse> {
 
     public ModbusTcp() {
-        this(0, IP, PORT);
+        this(1, IP, PORT);
+    }
+
+    public ModbusTcp(String ip) {
+        this(1, ip, PORT);
     }
 
     public ModbusTcp(int unitId) {

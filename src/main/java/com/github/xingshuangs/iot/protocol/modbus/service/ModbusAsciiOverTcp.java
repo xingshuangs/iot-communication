@@ -2,8 +2,15 @@ package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
 import com.github.xingshuangs.iot.exceptions.ModbusCommException;
-import com.github.xingshuangs.iot.protocol.modbus.model.*;
+import com.github.xingshuangs.iot.protocol.modbus.model.MbAsciiRequest;
+import com.github.xingshuangs.iot.protocol.modbus.model.MbAsciiResponse;
+import com.github.xingshuangs.iot.protocol.modbus.model.MbErrorResponse;
+import com.github.xingshuangs.iot.protocol.modbus.model.MbPdu;
+import com.github.xingshuangs.iot.utils.HexUtil;
 import lombok.extern.slf4j.Slf4j;
+
+import java.nio.charset.StandardCharsets;
+import java.util.function.Consumer;
 
 /**
  * modbus 1个寄存器占2个字节
@@ -11,34 +18,48 @@ import lombok.extern.slf4j.Slf4j;
  * @author xingshuang
  */
 @Slf4j
-public class ModbusRtuOverTcp extends ModbusNetwork<MbRtuRequest, MbRtuResponse> {
+public class ModbusAsciiOverTcp extends ModbusNetwork<MbAsciiRequest, MbAsciiResponse> {
 
-    public ModbusRtuOverTcp() {
+    /**
+     * 通信回调
+     */
+    private Consumer<String> comStringCallback;
+
+    public void setComStringCallback(Consumer<String> comStringCallback) {
+        this.comStringCallback = comStringCallback;
+    }
+
+    public ModbusAsciiOverTcp() {
         this(1, IP, PORT);
     }
 
-    public ModbusRtuOverTcp(String ip) {
+    public ModbusAsciiOverTcp(String ip) {
         this(1, ip, PORT);
     }
 
-    public ModbusRtuOverTcp(int unitId) {
+    public ModbusAsciiOverTcp(int unitId) {
         this(unitId, IP, PORT);
     }
 
-    public ModbusRtuOverTcp(int unitId, String ip) {
+    public ModbusAsciiOverTcp(int unitId, String ip) {
         this(unitId, ip, PORT);
     }
 
-    public ModbusRtuOverTcp(int unitId, String ip, int port) {
+    public ModbusAsciiOverTcp(int unitId, String ip, int port) {
         super(unitId, ip, port);
-        this.tag = "ModbusRtu";
+        this.tag = "ModbusAscii";
     }
 
     @Override
-    protected MbRtuResponse readFromServer(MbRtuRequest req) {
-        byte[] reqBytes = req.toByteArray();
+    protected MbAsciiResponse readFromServer(MbAsciiRequest req) {
+        String reqStr = ":" + HexUtil.toHexString(req.toByteArray(), "") + "\r\n";
+        byte[] reqBytes = reqStr.getBytes(StandardCharsets.US_ASCII);
+
         if (this.comCallback != null) {
             this.comCallback.accept(reqBytes);
+        }
+        if (this.comStringCallback != null) {
+            this.comStringCallback.accept(reqStr);
         }
         int len;
         byte[] data = new byte[1024];
@@ -51,18 +72,24 @@ public class ModbusRtuOverTcp extends ModbusNetwork<MbRtuRequest, MbRtuResponse>
         }
         byte[] total = new byte[len];
         System.arraycopy(data, 0, total, 0, len);
+        String ackStr = new String(total, StandardCharsets.UTF_8);
         if (this.comCallback != null) {
             this.comCallback.accept(total);
         }
-        MbRtuResponse ack = MbRtuResponse.fromBytes(total);
+        if (this.comStringCallback != null) {
+            this.comStringCallback.accept(ackStr);
+        }
+        ackStr = ackStr.replace(":", "").replace("\r\n", "");
+        byte[] ackBytes = HexUtil.toHexArray(ackStr);
+        MbAsciiResponse ack = MbAsciiResponse.fromBytes(ackBytes);
         this.checkResult(req, ack);
         return ack;
     }
 
     @Override
-    protected void checkResult(MbRtuRequest req, MbRtuResponse ack) {
-        if (!ack.checkCrc()) {
-            throw new ModbusCommException("响应数据CRC校验失败");
+    protected void checkResult(MbAsciiRequest req, MbAsciiResponse ack) {
+        if (!ack.checkLrc()) {
+            throw new ModbusCommException("响应数据LRC校验失败");
         }
         if (ack.getPdu() == null) {
             throw new ModbusCommException("PDU数据为null");
@@ -79,9 +106,9 @@ public class ModbusRtuOverTcp extends ModbusNetwork<MbRtuRequest, MbRtuResponse>
 
     @Override
     protected MbPdu readModbusData(MbPdu reqPdu) {
-        MbRtuRequest request = new MbRtuRequest(this.unitId, reqPdu);
+        MbAsciiRequest request = new MbAsciiRequest(this.unitId, reqPdu);
         try {
-            MbRtuResponse response = this.readFromServer(request);
+            MbAsciiResponse response = this.readFromServer(request);
             return response.getPdu();
         } finally {
             if (!this.persistence) {

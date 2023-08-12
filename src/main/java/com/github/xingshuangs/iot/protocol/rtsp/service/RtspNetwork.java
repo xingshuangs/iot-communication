@@ -147,6 +147,7 @@ public class RtspNetwork extends TcpClientBasic {
         this.uri = uri;
         this.authenticator = authenticator;
         this.transportProtocol = transportProtocol;
+        this.tag = "RTSP";
     }
 
     @Override

@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 
 @Slf4j
 @Ignore
-public class ModbusRtuTest {
+public class ModbusRtuOverTcpTest {
 
     private final ModbusRtuOverTcp plc = new ModbusRtuOverTcp(1, "127.0.0.1");
 

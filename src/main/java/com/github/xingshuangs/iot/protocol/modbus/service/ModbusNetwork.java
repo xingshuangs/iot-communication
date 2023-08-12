@@ -21,7 +21,7 @@ import java.util.function.Consumer;
  * @author xingshuang
  */
 @Slf4j
-public abstract class ModbusNetwork<T ,R> extends TcpClientBasic {
+public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
 
     public static final int PORT = 502;
 
@@ -341,10 +341,10 @@ public abstract class ModbusNetwork<T ,R> extends TcpClientBasic {
     }
 
     /**
-     * 读取一个Float32的数据
+     * 读取一个Float64的数据
      *
      * @param address 地址
-     * @return 一个Float32的数据
+     * @return 一个Float64的数据
      */
     public double readFloat64(int address) {
         byte[] res = this.readHoldRegister(address, 4);
