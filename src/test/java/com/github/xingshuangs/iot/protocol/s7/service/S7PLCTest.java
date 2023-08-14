@@ -146,6 +146,13 @@ public class S7PLCTest {
     }
 
     @Test
+    public void writeStringS200Smart() {
+        s7PLC.writeString("V10", "手动反馈和搜狐");
+        String str = s7PLC.readString("V10");
+        assertEquals("手动反馈和搜狐", str);
+    }
+
+    @Test
     public void writeTime() {
         s7PLC.writeTime("DB4.292", 1000);
         long actual = s7PLC.readTime("DB4.292");

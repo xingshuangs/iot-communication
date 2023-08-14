@@ -355,24 +355,24 @@ public class S7PLC extends PLCNetwork {
     /**
      * 读取字符串
      * String（字符串）数据类型存储一串单字节字符，
-     * String提供了多大256个字节，前两个字节分别表示字节中最大的字符数和当前的字符数，定义字符串的最大长度可以减少它的占用存储空间
+     * S1200（非S200SMART）:String提供了多大256个字节，前两个字节分别表示字节中最大的字符数和当前的字符数，定义字符串的最大长度可以减少它的占用存储空间
+     * S200SMART:字符串由变量存储时，字符串长度为0至254个字符，最长为255个字节，其中第一个字符为长度字节
      *
      * @param address 地址
      * @return 字符串
      */
     public String readString(String address) {
-        DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 2));
-//        int total = ByteUtil.toUInt8(dataItem.getData(), 0);
-//        if (total == 0 || total == 255) {
-//            throw new S7CommException("该地址的值不是字符串类型");
-//        }
-        int length = ByteUtil.toUInt8(dataItem.getData(), 1);
-        dataItem = this.readS7Data(AddressUtil.parseByte(address, 2 + length));
-        return ByteUtil.toStr(dataItem.getData(), 2, length, Charset.forName("GB2312"));
+        int offset = this.plcType == EPlcType.S200_SMART ? 1 : 2;
+        DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, offset));
+        int length = ByteUtil.toUInt8(dataItem.getData(), offset - 1);
+        dataItem = this.readS7Data(AddressUtil.parseByte(address, offset + length));
+        return ByteUtil.toStr(dataItem.getData(), offset, length, Charset.forName("GB2312"));
     }
 
     /**
      * 读取字符串
+     * S1200（非S200SMART）:数据类型为 string 的操作数可存储多个字符，最多可包括 254 个字符。字符串中的第一个字节为总长度，第二个字节为有效字符数量。
+     * S200SMART:字符串由变量存储时，字符串长度为0至254个字符，最长为255个字节，其中第一个字符为长度字节
      *
      * @param address 地址
      * @param length  字符串长度
@@ -382,13 +382,10 @@ public class S7PLC extends PLCNetwork {
         if (length <= 0 || length > 254) {
             throw new IllegalArgumentException("length <= 0 || length > 254");
         }
-        DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 2 + length));
-//        int total = ByteUtil.toUInt8(dataItem.getData(), 0);
-//        if (total == 0 || total == 255) {
-//            throw new S7CommException("该地址的值不是字符串类型");
-//        }
-        int actLength = ByteUtil.toUInt8(dataItem.getData(), 1);
-        return ByteUtil.toStr(dataItem.getData(), 2, Math.min(actLength, length), Charset.forName("GB2312"));
+        int offset = this.plcType == EPlcType.S200_SMART ? 1 : 2;
+        DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, offset + length));
+        int actLength = ByteUtil.toUInt8(dataItem.getData(), offset - 1);
+        return ByteUtil.toStr(dataItem.getData(), offset, Math.min(actLength, length), Charset.forName("GB2312"));
     }
 
 //    /**
@@ -603,6 +600,8 @@ public class S7PLC extends PLCNetwork {
      * 写入字符串数据
      * String（字符串）数据类型存储一串单字节字符，
      * String提供了多大256个字节，前两个字节分别表示字节中最大的字符数和当前的字符数，定义字符串的最大长度可以减少它的占用存储空间
+     * S1200:数据类型为 string 的操作数可存储多个字符，最多可包括 254 个字符。字符串中的第一个字节为总长度，第二个字节为有效字符数量。
+     * S200SMART:字符串由变量存储时，字符串长度为0至254个字符，最长为255个字节，其中第一个字符为长度字节
      *
      * @param address 地址
      * @param data    字符串数据
@@ -611,6 +610,7 @@ public class S7PLC extends PLCNetwork {
         if (data.length() == 0) {
             throw new IllegalArgumentException("data字符串参数长度为0");
         }
+        int offset = this.plcType == EPlcType.S200_SMART ? 0 : 1;
         // 填充字节长度数据
         byte[] dataBytes = data.getBytes(Charset.forName("GB2312"));
         byte[] tmp = new byte[1 + dataBytes.length];
@@ -618,7 +618,7 @@ public class S7PLC extends PLCNetwork {
         System.arraycopy(dataBytes, 0, tmp, 1, dataBytes.length);
         // 字节索引+1
         RequestItem requestItem = AddressUtil.parseByte(address, tmp.length);
-        requestItem.setByteAddress(requestItem.getByteAddress() + 1);
+        requestItem.setByteAddress(requestItem.getByteAddress() + offset);
         // 通信交互
         this.writeS7Data(requestItem, DataItem.createReqByByte(tmp));
     }
@@ -1113,6 +1113,7 @@ public class S7PLC extends PLCNetwork {
     //endregion
 
     //region 上传下载
+
     /**
      * 下载文件，目前还未测试成功
      *

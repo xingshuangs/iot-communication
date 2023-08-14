@@ -6,6 +6,7 @@ import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.common.enums.EDataType;
 import com.github.xingshuangs.iot.protocol.common.serializer.IPLCSerializable;
+import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import com.github.xingshuangs.iot.protocol.s7.model.DataItem;
 import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
 import com.github.xingshuangs.iot.protocol.s7.service.S7PLC;
@@ -152,7 +153,10 @@ public class S7Serializer implements IPLCSerializable {
         } else if (p.getDataType() == EDataType.STRING) {
             RequestItem requestItem = AddressUtil.parseByte(p.getAddress(), 1 + p.getCount() * p.getDataType().getByteLength());
             // 为什么字节索引+1，为了避免修改PLC中string[60]类型的第一个字节数据，该数据为字符串的允许最大长度
-            requestItem.setByteAddress(requestItem.getByteAddress() + 1);
+            // S1200（非S200Smart）:数据类型为 string 的操作数可存储多个字符，最多可包括 254 个字符。字符串中的第一个字节为总长度，第二个字节为有效字符数量。
+            // S200SMART:字符串由变量存储时，字符串长度为0至254个字符，最长为255个字节，其中第一个字符为长度字节
+            int offset = this.s7PLC.getPlcType() == EPlcType.S200_SMART ? 0 : 1;
+            requestItem.setByteAddress(requestItem.getByteAddress() + offset);
             s7ParseData.setRequestItem(requestItem);
         } else {
             s7ParseData.setRequestItem(AddressUtil.parseByte(p.getAddress(), p.getCount() * p.getDataType().getByteLength()));
