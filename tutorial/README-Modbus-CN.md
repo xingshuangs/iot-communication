@@ -1,4 +1,4 @@
-# ModbusTCP通信协议教程
+# Modbus通信协议教程
 
 [返回主页](../README-CN.md)
 
@@ -12,6 +12,14 @@
 - **4 字节**数据的编码格式 = **BA_DC**； (大端模式 = **DC_BA**，小端模式 = **AB_CD**)
 - 支持自动重连
 
+> 协议类
+
+| Modbus协议 | 对应的类               | 备注      |
+|:--------:|:-------------------|:--------|
+|   Tcp    | ModbusTcp          | 网口      |
+|   Rtu    | ModbusRtuOverTcp   | 需要串口转网口 |
+|  Ascii   | ModbusAsciiOverTcp | 需要串口转网口 |
+
 > 存储区
 
 | 区号  | 名称    | 读写      |    地址范围     | 对应方法                                 |
@@ -23,36 +31,36 @@
 
 > 功能码
 
-| 功能码 | 功能说明    | 对应方法              |
-|:---:|:--------|:------------------|
-| 01H | 读取输出线圈  | readCoil          |
-| 02H | 读取输入线圈  | readDiscreteInput |
-| 03H | 读取保持寄存器 | readHoldRegister  |
-| 04H | 读取输入寄存器 | readInputRegister |
-| 05H | 写入单线圈   | writeCoil         |
-| 06H | 写入单寄存器  | writeHoldRegister |
-| 0FH | 写入多线圈   | writeCoil         |
-| 10H | 写入多寄存器  | writeHoldRegister |
+| 序号  | 功能码 | 功能说明    | 对应方法              |
+|:---:|:---:|:--------|:------------------|
+|  1  | 01H | 读取输出线圈  | readCoil          |
+|  2  | 02H | 读取输入线圈  | readDiscreteInput |
+|  3  | 03H | 读取保持寄存器 | readHoldRegister  |
+|  4  | 04H | 读取输入寄存器 | readInputRegister |
+|  5  | 05H | 写入单线圈   | writeCoil         |
+|  6  | 06H | 写入单寄存器  | writeHoldRegister |
+|  7  | 0FH | 写入多线圈   | writeCoil         |
+|  8  | 10H | 写入多寄存器  | writeHoldRegister |
 
 > 保持寄存器快捷访问
 
-| 方法           | 寄存器数量 | 字节大小 | 位大小 | 含义        |  寄存器  |
-|:-------------|:-----:|:----:|:---:|:----------|:-----:|
-| readBoolean  |   1   | 1/8  |  1  | 读取boolean | 保持寄存器 |
-| readInt16    |   1   |  2   | 16  | 读取Int16   | 保持寄存器 |
-| readUInt16   |   1   |  2   | 16  | 读取UInt16  | 保持寄存器 |
-| readInt32    |   2   |  4   | 32  | 读取Int32   | 保持寄存器 |
-| readUInt32   |   2   |  4   | 32  | 读取UInt32  | 保持寄存器 |
-| readFloat32  |   2   |  4   | 32  | 读取Float32 | 保持寄存器 |
-| readFloat64  |   4   |  8   | 64  | 读取Float64 | 保持寄存器 |
-| readString   |   n   |  2n  | 16n | 读取字符串     | 保持寄存器 |
-| writeInt16   |   1   |  2   | 16  | 写入Int16   | 保持寄存器 |
-| writeUInt16  |   1   |  2   | 16  | 写入UInt16  | 保持寄存器 |
-| writeInt32   |   2   |  4   | 32  | 写入Int32   | 保持寄存器 |
-| writeUInt32  |   2   |  4   | 32  | 写入UInt32  | 保持寄存器 |
-| writeFloat32 |   2   |  4   | 32  | 写入Float32 | 保持寄存器 |
-| writeFloat64 |   4   |  8   | 64  | 写入Float32 | 保持寄存器 |
-| writeString  |   n   |  2n  | 16n | 写入字符串     | 保持寄存器 |
+| 序号  | 方法           | 寄存器数量 | 字节大小 | 位大小 | 含义        |  寄存器  |
+|:---:|:-------------|:-----:|:----:|:---:|:----------|:-----:|
+|  1  | readBoolean  |   1   | 1/8  |  1  | 读取boolean | 保持寄存器 |
+|  2  | readInt16    |   1   |  2   | 16  | 读取Int16   | 保持寄存器 |
+|  3  | readUInt16   |   1   |  2   | 16  | 读取UInt16  | 保持寄存器 |
+|  4  | readInt32    |   2   |  4   | 32  | 读取Int32   | 保持寄存器 |
+|  5  | readUInt32   |   2   |  4   | 32  | 读取UInt32  | 保持寄存器 |
+|  6  | readFloat32  |   2   |  4   | 32  | 读取Float32 | 保持寄存器 |
+|  7  | readFloat64  |   4   |  8   | 64  | 读取Float64 | 保持寄存器 |
+|  8  | readString   |   n   |  2n  | 16n | 读取字符串     | 保持寄存器 |
+|  9  | writeInt16   |   1   |  2   | 16  | 写入Int16   | 保持寄存器 |
+| 10  | writeUInt16  |   1   |  2   | 16  | 写入UInt16  | 保持寄存器 |
+| 11  | writeInt32   |   2   |  4   | 32  | 写入Int32   | 保持寄存器 |
+| 12  | writeUInt32  |   2   |  4   | 32  | 写入UInt32  | 保持寄存器 |
+| 13  | writeFloat32 |   2   |  4   | 32  | 写入Float32 | 保持寄存器 |
+| 14  | writeFloat64 |   4   |  8   | 64  | 写入Float32 | 保持寄存器 |
+| 15  | writeString  |   n   |  2n  | 16n | 写入字符串     | 保持寄存器 |
 
 ## 打印报文
 

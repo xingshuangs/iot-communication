@@ -12,7 +12,7 @@ public class DemoS7Control {
 
     public static void main(String[] args) {
         S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
-        // upload file data, PLC -> PC
+        // upload file data, PLC -> PC, success in 200Smart
         byte[] bytes = s7PLC.uploadFile(EFileBlockType.OB, 1, EDestinationFileSystem.A);
 
         // FIXME: download file, but not test success

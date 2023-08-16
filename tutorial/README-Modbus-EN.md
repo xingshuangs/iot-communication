@@ -1,4 +1,4 @@
-# ModbusTCP Protocol Tutorial
+# Modbus Protocol Tutorial
 
 [HOME BACK](../README.md)
 
@@ -12,6 +12,14 @@
 - The encoding format of **4 bytes** data = **BA_DC**. (big-endian mode = **DC_BA**，little-endian mode = **AB_CD**)
 - Support automatic reconnection.
 
+> protocol type
+
+| Modbus Protocol | Class              | Remark             |
+|:---------------:|:-------------------|:-------------------|
+|       Tcp       | ModbusTcp          | Ethernet           |
+|       Rtu       | ModbusRtuOverTcp   | Serial to Ethernet |
+|      Ascii      | ModbusAsciiOverTcp | Serial to Ethernet |
+
 > Area
 
 | Area Number | Name           | Read/Write | Address Range | Method                               |
@@ -23,40 +31,41 @@
 
 > Function Code
 
-| Function Code | Description             | Method            |
-|:-------------:|:------------------------|:------------------|
-|      01H      | read output coil        | readCoil          |
-|      02H      | read input coil         | readDiscreteInput |
-|      03H      | read hold register      | readHoldRegister  |
-|      04H      | read input register     | readInputRegister |
-|      05H      | write single coil       | writeCoil         |
-|      06H      | write single register   | writeHoldRegister |
-|      0FH      | write multiple coil     | writeCoil         |
-|      10H      | write multiple register | writeHoldRegister |
+| number | Function Code | Description             | Method            |
+|:------:|:-------------:|:------------------------|:------------------|
+|   1    |      01H      | read output coil        | readCoil          |
+|   2    |      02H      | read input coil         | readDiscreteInput |
+|   3    |      03H      | read hold register      | readHoldRegister  |
+|   4    |      04H      | read input register     | readInputRegister |
+|   5    |      05H      | write single coil       | writeCoil         |
+|   6    |      06H      | write single register   | writeHoldRegister |
+|   7    |      0FH      | write multiple coil     | writeCoil         |
+|   8    |      10H      | write multiple register | writeHoldRegister |
 
 > Hold Register Quick Access
 
-| Method       | Register Count | Size in Byte | Size in Bit |   Register    |
-|:-------------|:--------------:|:------------:|:-----------:|:-------------:|
-| readBoolean  |       1        |     1/8      |      1      | hold register |
-| readInt16    |       1        |      2       |     16      | hold register |
-| readUInt16   |       1        |      2       |     16      | hold register |
-| readInt32    |       2        |      4       |     32      | hold register |
-| readUInt32   |       2        |      4       |     32      | hold register |
-| readFloat32  |       2        |      4       |     32      | hold register |
-| readFloat64  |       4        |      8       |     64      | hold register |
-| readString   |       n        |      2n      |     16n     | hold register |
-| writeInt16   |       1        |      2       |     16      | hold register |
-| writeUInt16  |       1        |      2       |     16      | hold register |
-| writeInt32   |       2        |      4       |     32      | hold register |
-| writeUInt32  |       2        |      4       |     32      | hold register |
-| writeFloat32 |       2        |      4       |     32      | hold register |
-| writeFloat64 |       4        |      8       |     64      | hold register |
-| writeString  |       n        |      2n      |     16n     | hold register |
+| number | Method       | Register Count | Size in Byte | Size in Bit |   Register    |
+|:------:|:-------------|:--------------:|:------------:|:-----------:|:-------------:|
+|   1    | readBoolean  |       1        |     1/8      |      1      | hold register |
+|   2    | readInt16    |       1        |      2       |     16      | hold register |
+|   3    | readUInt16   |       1        |      2       |     16      | hold register |
+|   4    | readInt32    |       2        |      4       |     32      | hold register |
+|   5    | readUInt32   |       2        |      4       |     32      | hold register |
+|   6    | readFloat32  |       2        |      4       |     32      | hold register |
+|   7    | readFloat64  |       4        |      8       |     64      | hold register |
+|   8    | readString   |       n        |      2n      |     16n     | hold register |
+|   9    | writeInt16   |       1        |      2       |     16      | hold register |
+|   10   | writeUInt16  |       1        |      2       |     16      | hold register |
+|   11   | writeInt32   |       2        |      4       |     32      | hold register |
+|   12   | writeUInt32  |       2        |      4       |     32      | hold register |
+|   13   | writeFloat32 |       2        |      4       |     32      | hold register |
+|   14   | writeFloat64 |       4        |      8       |     64      | hold register |
+|   15   | writeString  |       n        |      2n      |     16n     | hold register |
 
 ## Print Message
 
-If you want to know the actual input and output of packets during communication, you can print packet information by yourself.
+If you want to know the actual input and output of packets during communication, you can print packet information by
+yourself.
 
 ```java
 class Demo {

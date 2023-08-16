@@ -15,7 +15,7 @@
 Now, it is a tool for iot communication, it includes
 
 - Siemens S7 protocol.
-- ModbusTCP protocol.
+- Modbus protocol.
 - RTSP, RTCP, RTP, H264 protocol.
 - MP4 (FMP4) protocol.
 - Parse byte array data.
@@ -36,7 +36,7 @@ Add the dependency to pom.xml in the JAVA project.
 ## Tutorial
 
 - [Siemens S7 Protocol Tutorial.](./tutorial/README-S7-EN.md)
-- [ModbusTCP Protocol Tutorial.](./tutorial/README-Modbus-EN.md)
+- [Modbus Protocol Tutorial.](./tutorial/README-Modbus-EN.md)
 - [RTSP/RTCP/RTP/H264/FMP4 Protocol Tutorial](./tutorial/README-RTSP-EN.md)
 - [WEB Video Monitor Tutorial](./tutorial/README-WebVideo-EN.md)
 - [Tool for Byte Array Data Parse Tutorial.](./tutorial/README-ByteArray-EN.md)

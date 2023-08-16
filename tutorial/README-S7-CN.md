@@ -7,7 +7,7 @@
 - 支持单数据读写，多数据读写，大数据量自动分包读写
 - 支持序列化批量多地址且地址不连续的读写
 - 支持读写**DB**区，**I**区，**Q**区，**M**区，**V**区
-- 支持读写西门子**S1500**，**S1200**，**S200Smart**，**西门子机床828D** (**S300，S400未测试过，但同S1200**)
+- 支持读写西门子**S1500**，**S1200**，**S400**，**S300**，**S200Smart**，**西门子机床828D**
 - 支持PLC自动重连
 
 1. 如果你不熟悉S7协议可以查看这个[地址](https://blog.csdn.net/XS_YOUYOU/article/details/124870209)
@@ -244,7 +244,7 @@ class Demo {
     public static void main(String[] args) {
         S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
 
-        // upload file data, PLC -> PC
+        // upload file data, PLC -> PC, success in 200Smart
         byte[] bytes = s7PLC.uploadFile(EFileBlockType.OB, 1, EDestinationFileSystem.A);
 
         // FIXME: download file, but not test success
@@ -658,3 +658,13 @@ PLC的网络通信，根据不同型号PLC的PDULength而定，S1200 = 240，S15
 |    960     | uint16 / int16           |  2   | **49**  | **78**  | S1500  |
 |    960     | uint32 / int32 / float32 |  4   | **45**  | **78**  | S1500  |
 |    960     | float64                  |  8   | **38**  | **72**  | S1500  |
+
+> 6、PLC初始化参数
+
+| PLC        | 最大 PDU length | Rack  | Slot  |
+|------------|:-------------:|:-----:|:-----:|
+| S200_SMART |      240      | **0** | **1** |
+| S300       |      240      | **0** | **2** |
+| S400       |      480      | **0** | **3** |
+| S1200      |      240      | **0** | **1** |
+| S1500      |      960      | **0** | **1** |

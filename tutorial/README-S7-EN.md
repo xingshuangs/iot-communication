@@ -7,8 +7,7 @@
 - Read/write single data and multi data, large data automatic subcontracting.
 - Read/write serialized batch multiple addresses and discontinuous address.
 - Read/write **DB**, **I**, **Q**, **M**, and **V**.
-- Read/write Siemens **S1500**, **S1200**, **S200Smart**, **Siemens Machine Tool 828D**. (**S300, S400 not tested, but
-  same as S1200**)
+- Read/write Siemens **S1500**, **S1200**, **S400**, **S300**, **S200Smart**, **Siemens Machine Tool 828D**.
 - Support automatic PLC reconnection.
 
 1. You can check this [address](https://blog.csdn.net/XS_YOUYOU/article/details/124870209) if
@@ -242,8 +241,8 @@ class Demo {
 class Demo {
     public static void main(String[] args) {
         S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
-        
-        // upload file data, PLC -> PC
+
+        // upload file data, PLC -> PC, success in 200Smart
         byte[] bytes = s7PLC.uploadFile(EFileBlockType.OB, 1, EDestinationFileSystem.A);
 
         // FIXME: download file, but not test success
@@ -662,3 +661,13 @@ Receive：The maximum byte write length is 225 = 240 - 15, 15(response PDU) = 12
 |    960     | uint16 / int16           |     2     |         **49**         |        **78**         | S1500  |
 |    960     | uint32 / int32 / float32 |     4     |         **45**         |        **78**         | S1500  |
 |    960     | float64                  |     8     |         **38**         |        **72**         | S1500  |
+
+> 6、PLC initialization parameters
+
+| PLC        | Max PDU length | Rack  | Slot  |
+|------------|:--------------:|:-----:|:-----:|
+| S200_SMART |      240       | **0** | **1** |
+| S300       |      240       | **0** | **2** |
+| S400       |      480       | **0** | **3** |
+| S1200      |      240       | **0** | **1** |
+| S1500      |      960       | **0** | **1** |

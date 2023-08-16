@@ -15,7 +15,7 @@
 目前它只是一个物联网通信的工具，包含
 
 - 西门子S7通信协议
-- ModbusTCP通信协议
+- Modbus通信协议
 - RTSP、RTCP、RTP、H264协议
 - MP4 (FMP4) 协议
 - 基础字节数组解析转换工具
@@ -36,7 +36,7 @@
 ## 教程链接
 
 - [西门子S7通信协议](./tutorial/README-S7-CN.md)
-- [ModbusTCP通信协议](./tutorial/README-Modbus-CN.md)
+- [Modbus通信协议](./tutorial/README-Modbus-CN.md)
 - [RTSP/RTCP/RTP/H264/FMP4协议](./tutorial/README-RTSP-CN.md)
 - [WEB视频监控](./tutorial/README-WebVideo-CN.md)
 - [字节数据解析转换工具](./tutorial/README-ByteArray-CN.md)
