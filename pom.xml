@@ -6,11 +6,11 @@
 
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.2</version>
     <packaging>jar</packaging>
 
     <name>iot-communication</name>
-    <description>iot-communication is a tool 目前支持S7、ModbusTCP通信协议、字节数据转换、RTSP视频监控</description>
+    <description>iot-communication is a tool 目前支持S7协议、Modbus通信协议、字节数据转换、RTSP-WEB视频监控</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

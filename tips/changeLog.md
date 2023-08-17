@@ -1,3 +1,16 @@
+## v1.4.2
+- 更新时间：2023.08.17
+- S7添加非注解形式的批量读写，可以进行多地址的任意组合，通过S7Parameter配置参数
+- S7重构Datum数据类型，实现上传功能（200smart测试成功），下载功能未测试成功，可能PLC的约束，待研究
+- S7修复字符串读写编码转换问题，采用GB2312
+- S7修复200smart-PLC读取字符串和1200-PLC等不一样的问题
+- ModbusTcp调整通信数据解析流程
+- Modbus添加ModbusRtuOverTcp和ModbusAsciiOverTcp
+- RTSP修复通信过程中因为缓存太小，导致报文解析错误的问题
+- RtspFMp4Proxy修复缓存线程安全问题
+- TcpServerBasic中的CompletableFuture替换为Thread
+- 字节数组解析中添加自定义字节数组数据提取的功能，通过ByteArrayParameter配置参数进行批量读取
+
 ## v1.4.1
 - 更新时间：2023.07.09
 - RtspFMp4Proxy添加数据缓存，增加缓存大小，用于重新数据排序，同时将关键帧和普通帧区分开
