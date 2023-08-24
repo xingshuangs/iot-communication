@@ -133,6 +133,9 @@ class Demo {
         // read input register
         byte[] readInputRegister = plc.readInputRegister(0, 2);
 
+        // hold register read Boolean
+        boolean readBoolean = plc.readBoolean(2, 1);
+
         // hold register read Int16
         short readInt16 = plc.readInt16(2);
 

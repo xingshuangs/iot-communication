@@ -68,15 +68,15 @@ public class ByteArraySerializerTest {
                 (byte) 0x32, (byte) 0x33, (byte) 0x41};
 
         List<ByteArrayParameter> list = new ArrayList<>();
-        list.add(new ByteArrayParameter(0,0,1, EDataType.BOOL));
-        list.add(new ByteArrayParameter(0,0,1, EDataType.BYTE));
-        list.add(new ByteArrayParameter(3,0,1, EDataType.UINT16));
-        list.add(new ByteArrayParameter(3,0,1, EDataType.INT16));
-        list.add(new ByteArrayParameter(5,0,1, EDataType.UINT32));
-        list.add(new ByteArrayParameter(9,0,1, EDataType.INT32));
-        list.add(new ByteArrayParameter(13,0,1, EDataType.FLOAT32));
-        list.add(new ByteArrayParameter(21,0,1, EDataType.FLOAT64));
-        list.add(new ByteArrayParameter(37,0,3, EDataType.STRING));
+        list.add(new ByteArrayParameter(0, 0, 1, EDataType.BOOL));
+        list.add(new ByteArrayParameter(0, 0, 1, EDataType.BYTE));
+        list.add(new ByteArrayParameter(3, 0, 1, EDataType.UINT16));
+        list.add(new ByteArrayParameter(3, 0, 1, EDataType.INT16));
+        list.add(new ByteArrayParameter(5, 0, 1, EDataType.UINT32));
+        list.add(new ByteArrayParameter(9, 0, 1, EDataType.INT32));
+        list.add(new ByteArrayParameter(13, 0, 1, EDataType.FLOAT32));
+        list.add(new ByteArrayParameter(21, 0, 1, EDataType.FLOAT64));
+        list.add(new ByteArrayParameter(37, 0, 3, EDataType.STRING));
 
         ByteArraySerializer serializer = ByteArraySerializer.newInstance();
         List<ByteArrayParameter> bean = serializer.extractParameter(list, src);
@@ -86,7 +86,7 @@ public class ByteArraySerializerTest {
         assertEquals((short) 25689, bean.get(3).getValue());
         assertEquals((long) 523975585, bean.get(4).getValue());
         assertEquals(523975585, bean.get(5).getValue());
-        assertEquals(33.16, (Float)bean.get(6).getValue(), 0.0001);
+        assertEquals(33.16, (Float) bean.get(6).getValue(), 0.0001);
         assertEquals(156665.35455556, (Double) bean.get(7).getValue(), 0.00000000001);
         assertEquals("23A", bean.get(8).getValue());
 
@@ -94,24 +94,24 @@ public class ByteArraySerializerTest {
         assertEquals(25689, parameter.getValue());
 
         list = new ArrayList<>();
-        list.add(new ByteArrayParameter(0,0,8, EDataType.BOOL));
-        list.add(new ByteArrayParameter(1,0,4, EDataType.BYTE));
-        list.add(new ByteArrayParameter(1,0,2, EDataType.UINT16));
-        list.add(new ByteArrayParameter(3,0,2, EDataType.INT16));
-        list.add(new ByteArrayParameter(5,0,2, EDataType.UINT32));
-        list.add(new ByteArrayParameter(5,0,2, EDataType.INT32));
-        list.add(new ByteArrayParameter(13,0,2, EDataType.FLOAT32));
-        list.add(new ByteArrayParameter(21,0,2, EDataType.FLOAT64));
-        list.add(new ByteArrayParameter(37,0,3, EDataType.STRING));
+        list.add(new ByteArrayParameter(0, 0, 8, EDataType.BOOL));
+        list.add(new ByteArrayParameter(1, 0, 4, EDataType.BYTE));
+        list.add(new ByteArrayParameter(1, 0, 2, EDataType.UINT16));
+        list.add(new ByteArrayParameter(3, 0, 2, EDataType.INT16));
+        list.add(new ByteArrayParameter(5, 0, 2, EDataType.UINT32));
+        list.add(new ByteArrayParameter(5, 0, 2, EDataType.INT32));
+        list.add(new ByteArrayParameter(13, 0, 2, EDataType.FLOAT32));
+        list.add(new ByteArrayParameter(21, 0, 2, EDataType.FLOAT64));
+        list.add(new ByteArrayParameter(37, 0, 3, EDataType.STRING));
         List<ByteArrayParameter> listBean = serializer.extractParameter(list, src);
-        assertArrayEquals(new Boolean[]{true, false, false, false, false, false, false, true}, ((List<Boolean>)listBean.get(0).getValue()).toArray(new Boolean[0]));
-        assertArrayEquals(new Byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x64, (byte) 0x59}, ((List<Byte>)listBean.get(1).getValue()).toArray(new Byte[0]));
-        assertArrayEquals(new Integer[]{0, 25689}, ((List<Integer>)listBean.get(2).getValue()).toArray(new Integer[0]));
-        assertArrayEquals(new Short[]{25689, 7995}, ((List<Short>)listBean.get(3).getValue()).toArray(new Short[0]));
-        assertArrayEquals(new Long[]{523975585L, 523975585L}, ((List<Long>)listBean.get(4).getValue()).toArray(new Long[0]));
-        assertArrayEquals(new Integer[]{523975585, 523975585}, ((List<Integer>)listBean.get(5).getValue()).toArray(new Integer[0]));
-        assertArrayEquals(new Float[]{33.16f, -15.62f}, ((List<Float>)listBean.get(6).getValue()).toArray(new Float[0]));
-        assertArrayEquals(new Double[]{156665.35455556, -56516.66664}, ((List<Double>)listBean.get(7).getValue()).toArray(new Double[0]));
+        assertArrayEquals(new Boolean[]{true, false, false, false, false, false, false, true}, ((List<Boolean>) listBean.get(0).getValue()).toArray(new Boolean[0]));
+        assertArrayEquals(new Byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x64, (byte) 0x59}, ((List<Byte>) listBean.get(1).getValue()).toArray(new Byte[0]));
+        assertArrayEquals(new Integer[]{0, 25689}, ((List<Integer>) listBean.get(2).getValue()).toArray(new Integer[0]));
+        assertArrayEquals(new Short[]{25689, 7995}, ((List<Short>) listBean.get(3).getValue()).toArray(new Short[0]));
+        assertArrayEquals(new Long[]{523975585L, 523975585L}, ((List<Long>) listBean.get(4).getValue()).toArray(new Long[0]));
+        assertArrayEquals(new Integer[]{523975585, 523975585}, ((List<Integer>) listBean.get(5).getValue()).toArray(new Integer[0]));
+        assertArrayEquals(new Float[]{33.16f, -15.62f}, ((List<Float>) listBean.get(6).getValue()).toArray(new Float[0]));
+        assertArrayEquals(new Double[]{156665.35455556, -56516.66664}, ((List<Double>) listBean.get(7).getValue()).toArray(new Double[0]));
         assertEquals("23A", listBean.get(8).getValue());
     }
 
