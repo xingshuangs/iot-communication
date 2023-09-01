@@ -136,7 +136,7 @@ public class PLCNetwork extends TcpClientBasic {
                 remote = 0x4D57;
                 break;
             case S200_SMART:
-                local = 0x0100;
+                local = 0x1000;
                 remote = 0x0300;
                 break;
             case S300:
