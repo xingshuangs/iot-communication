@@ -105,6 +105,17 @@ public class PLCNetwork extends TcpClientBasic {
         this.tag = "S7";
     }
 
+    @Override
+    public void connect() {
+        try {
+            super.connect();
+        } finally {
+            if (!this.persistence) {
+                this.close();
+            }
+        }
+    }
+
     //region socket连接后握手操作
 
     /**

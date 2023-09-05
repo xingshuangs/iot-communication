@@ -72,6 +72,17 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
         this.unitId = unitId;
     }
 
+    @Override
+    public void connect() {
+        try {
+            super.connect();
+        } finally {
+            if (!this.persistence) {
+                this.close();
+            }
+        }
+    }
+
     //region 底层数据通信部分
 
     /**

@@ -35,6 +35,7 @@ public class S7PLCServerTest {
         this.s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1", 8888);
         this.s7PLC.setComCallback(x -> log.debug("长度[{}]：{}", x.length, HexUtil.toHexString(x)));
 //        this.s7PLC.setPersistence(false);
+//        this.s7PLC.connect();
     }
 
     @After
