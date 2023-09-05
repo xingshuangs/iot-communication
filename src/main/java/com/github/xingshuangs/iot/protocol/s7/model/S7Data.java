@@ -384,16 +384,21 @@ public class S7Data implements IObjectByteArray {
      * @param blockType             数据块类型
      * @param blockNumber           数据块编号
      * @param destinationFileSystem 目标文件系统
+     * @param moreDataFollowing     是否还有更多数据
+     * @param data                  字节数据
      * @return S7Data
      */
     public static S7Data createDownload(EFileBlockType blockType,
                                         int blockNumber,
-                                        EDestinationFileSystem destinationFileSystem) {
+                                        EDestinationFileSystem destinationFileSystem,
+                                        boolean moreDataFollowing,
+                                        byte[] data) {
         S7Data s7Data = new S7Data();
         s7Data.tpkt = new TPKT();
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = Header.createDefault();
-        s7Data.parameter = DownloadParameter.createDefault(blockType, blockNumber, destinationFileSystem);
+        s7Data.parameter = DownloadParameter.createDefault(blockType, blockNumber, destinationFileSystem, moreDataFollowing);
+        s7Data.datum = UpDownloadDatum.createDownloadData(data);
         s7Data.selfCheck();
         return s7Data;
     }

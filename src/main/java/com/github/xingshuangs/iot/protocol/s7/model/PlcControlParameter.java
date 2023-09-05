@@ -90,7 +90,7 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
      */
     public static PlcControlParameter fromBytes(final byte[] data) {
         if (data.length < 11) {
-            throw new S7CommException("StopParameter解析有误，StopParameter字节数组长度 < 7");
+            throw new S7CommException("PlcControlParameter解析有误，PlcControlParameter字节数组长度 < 11");
         }
         ByteReadBuff buff = new ByteReadBuff(data);
         PlcControlParameter parameter = new PlcControlParameter();

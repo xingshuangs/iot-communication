@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class DownloadParameter extends UpDownloadAckParameter implements IObjectByteArray {
+public class DownloadParameter extends UploadAckParameter implements IObjectByteArray {
 
     /**
      * 未知字节，2个字节
@@ -69,7 +69,7 @@ public class DownloadParameter extends UpDownloadAckParameter implements IObject
     public byte[] toByteArray() {
         return ByteWriteBuff.newInstance(18)
                 .putByte(this.functionCode.getCode())
-                .putByte((byte) (BooleanUtil.setBit(0, this.moreDataFollowing) & BooleanUtil.setBit(1, this.errorStatus)))
+                .putByte((byte) (BooleanUtil.setBit(0, this.moreDataFollowing) | BooleanUtil.setBit(1, this.errorStatus)))
                 .putBytes(this.errorCode)
                 .putInteger(this.id)
                 .putByte(this.fileNameLength)
@@ -123,15 +123,18 @@ public class DownloadParameter extends UpDownloadAckParameter implements IObject
      * @param blockType             数据块类型
      * @param blockNumber           数据块编号
      * @param destinationFileSystem 目标文件系统
+     * @param moreDataFollowing     是否有更多数据
      * @return DownloadParameter
      */
     public static DownloadParameter createDefault(EFileBlockType blockType,
                                                   int blockNumber,
-                                                  EDestinationFileSystem destinationFileSystem) {
+                                                  EDestinationFileSystem destinationFileSystem,
+                                                  boolean moreDataFollowing) {
         DownloadParameter parameter = new DownloadParameter();
         parameter.blockType = blockType;
         parameter.blockNumber = blockNumber;
         parameter.destinationFileSystem = destinationFileSystem;
+        parameter.setMoreDataFollowing(moreDataFollowing);
         return parameter;
     }
 }

@@ -45,6 +45,11 @@ public enum EErrorClass {
      * 访问错误
      */
     ACCESS_ERROR((byte) 0x87, "访问错误"),
+
+    /**
+     * 下载错误
+     */
+    DOWNLOAD_ERROR((byte) 0xD2, "下载错误"),
     ;
 
     private static Map<Byte, EErrorClass> map;

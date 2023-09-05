@@ -490,4 +490,11 @@ public class S7DataTest {
             }
         }
     }
+
+    @Test
+    public void downloadData() {
+        S7Data download = S7Data.createDownload(EFileBlockType.DB, 1, EDestinationFileSystem.P, true, new byte[10]);
+        byte[] bytes = download.toByteArray();
+        assertEquals(49,bytes.length);
+    }
 }

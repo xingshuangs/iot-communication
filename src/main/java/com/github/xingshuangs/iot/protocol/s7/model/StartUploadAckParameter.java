@@ -41,7 +41,7 @@ public class StartUploadAckParameter extends UploadParameter {
     public byte[] toByteArray() {
         return ByteWriteBuff.newInstance(16)
                 .putByte(this.functionCode.getCode())
-                .putByte((byte) (BooleanUtil.setBit(0, this.moreDataFollowing) & BooleanUtil.setBit(1, this.errorStatus)))
+                .putByte((byte) (BooleanUtil.setBit(0, this.moreDataFollowing) | BooleanUtil.setBit(1, this.errorStatus)))
                 .putBytes(this.errorCode)
                 .putInteger(this.id)
                 .putByte(this.blockLengthStringLength)

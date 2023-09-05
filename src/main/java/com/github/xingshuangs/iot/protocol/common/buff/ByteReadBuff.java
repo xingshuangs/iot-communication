@@ -30,6 +30,15 @@ public class ByteReadBuff extends ByteBuffBase {
     private boolean littleEndian;
 
     /**
+     * 获取剩余字节数量
+     *
+     * @return 剩余字节数量
+     */
+    public int getRemainSize() {
+        return this.data.length - this.offset;
+    }
+
+    /**
      * 构造方法
      *
      * @param data 字节数组

@@ -54,7 +54,7 @@ public class StartDownloadParameter extends DownloadParameter implements IObject
     public byte[] toByteArray() {
         return ByteWriteBuff.newInstance(32)
                 .putByte(this.functionCode.getCode())
-                .putByte((byte) (BooleanUtil.setBit(0, this.moreDataFollowing) & BooleanUtil.setBit(1, this.errorStatus)))
+                .putByte((byte) (BooleanUtil.setBit(0, this.moreDataFollowing) | BooleanUtil.setBit(1, this.errorStatus)))
                 .putBytes(this.errorCode)
                 .putInteger(this.id)
                 .putByte(this.fileNameLength)

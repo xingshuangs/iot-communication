@@ -14,7 +14,7 @@ public class DownloadParameterTest {
     public void startDownloadParameterTest() {
 
         byte[] expect = new byte[]{
-                0x1A, 0x00, 0x01, 0x00,
+                (byte) 0xFA, 0x00, 0x01, 0x00,
                 0x00, 0x00, 0x00, 0x00,
                 0x09, 0x5F, 0x30, 0x41,
                 0x30, 0x30, 0x30, 0x30, 0x31, 0x50,
@@ -62,7 +62,7 @@ public class DownloadParameterTest {
     public void downloadParameterTest() {
 
         byte[] expect = new byte[]{
-                0x1B, 0x00, 0x01, 0x00,
+                (byte) 0xFB, 0x00, 0x01, 0x00,
                 0x00, 0x00, 0x00, 0x00,
                 0x09, 0x5F, 0x30, 0x41,
                 0x30, 0x30, 0x30, 0x30, 0x31, 0x50,
@@ -100,17 +100,17 @@ public class DownloadParameterTest {
     public void downloadAckParameterTest() {
 
         byte[] expect = new byte[]{
-                0x1A, 0x00
+                (byte) 0xFA, 0x00
         };
 
-        UpDownloadAckParameter parameter = new UpDownloadAckParameter();
+        UploadAckParameter parameter = new UploadAckParameter();
         parameter.setFunctionCode(EFunctionCode.START_DOWNLOAD);
         parameter.setMoreDataFollowing(false);
         parameter.setErrorStatus(false);
         byte[] actual = parameter.toByteArray();
         assertArrayEquals(expect, actual);
 
-        parameter = UpDownloadAckParameter.fromBytes(expect);
+        parameter = UploadAckParameter.fromBytes(expect);
         assertEquals(EFunctionCode.START_DOWNLOAD, parameter.getFunctionCode());
         assertFalse(parameter.isMoreDataFollowing());
         assertFalse(parameter.isErrorStatus());

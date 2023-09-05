@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,10 +18,10 @@ import static org.junit.Assert.*;
 @Slf4j
 @Ignore
 public class S7PLCTest {
-//    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
+    //    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
 //    private S7PLC s7PLC = new S7PLC(EPlcType.S1500, "192.168.3.103");
-//    private S7PLC s7PLC = new S7PLC(EPlcType.S200_SMART, "192.168.3.102");
-    private final S7PLC s7PLC = new S7PLC(EPlcType.S1200);
+    private S7PLC s7PLC = new S7PLC(EPlcType.S200_SMART, "192.168.3.102");
+//    private final S7PLC s7PLC = new S7PLC(EPlcType.S1200);
 
     @Before
     public void before() {
@@ -342,15 +343,59 @@ public class S7PLCTest {
         assertEquals((byte) 0x11, actual);
     }
 
+    //region 200smart上传下载
     @Test
-    public void downloadFile() {
-        byte[] bytes = this.s7PLC.downloadFile(EFileBlockType.OB, 1, EDestinationFileSystem.P, 153, 24);
-        System.out.println("");
+    public void downloadFileDB1() {
+        byte[] bytes = this.s7PLC.uploadFile(EFileBlockType.DB, 1);
+        System.out.println(bytes.length);
+        this.s7PLC.downloadFile(bytes);
     }
 
     @Test
-    public void uploadFile() {
-        byte[] bytes = this.s7PLC.uploadFile(EFileBlockType.OB, 1, EDestinationFileSystem.A);
+    public void downloadFileSDB0() {
+        byte[] bytes = this.s7PLC.uploadFile(EFileBlockType.SDB, 0);
         System.out.println(bytes.length);
+        this.s7PLC.downloadFile(bytes);
     }
+
+    @Test
+    public void downloadFileOB1() {
+        byte[] bytes = this.s7PLC.uploadFile(EFileBlockType.OB, 1);
+        System.out.println(bytes.length);
+        this.s7PLC.downloadFile(bytes);
+    }
+
+    @Test
+    public void uploadFileOB1() throws IOException {
+        byte[] bytes = this.s7PLC.uploadFile(EFileBlockType.OB, 1);
+        System.out.println(bytes.length);
+        // 长度：145，mc7长度：16
+        String fileName = "G:\\Study\\Protocol\\S7\\mc7File\\OB1.mc7";
+        this.writeDataToFile(fileName, bytes, false);
+    }
+
+    @Test
+    public void uploadFileSDB0() throws IOException {
+        byte[] bytes = this.s7PLC.uploadFile(EFileBlockType.SDB, 0);
+        System.out.println(bytes.length);
+        // 长度：530，MC7长度：494
+        String fileName = "G:\\Study\\Protocol\\S7\\mc7File\\SDB0.mc7";
+        this.writeDataToFile(fileName, bytes, false);
+    }
+
+    @Test
+    public void uploadFileDB1() throws IOException {
+        byte[] bytes = this.s7PLC.uploadFile(EFileBlockType.DB, 1);
+        System.out.println(bytes.length);
+        // 长度：71，MC7长度：0
+        String fileName = "G:\\Study\\Protocol\\S7\\mc7File\\DB1.mc7";
+        this.writeDataToFile(fileName, bytes, false);
+    }
+
+    public void writeDataToFile(String fileName, byte[] bytes, boolean append) throws IOException {
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream(fileName, append))) {
+            out.write(bytes);
+        }
+    }
+    //endregion
 }

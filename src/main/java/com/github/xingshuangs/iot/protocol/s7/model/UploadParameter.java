@@ -13,7 +13,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
-public class UploadParameter extends UpDownloadAckParameter {
+public class UploadParameter extends UploadAckParameter {
 
     /**
      * 未知字节，2个字节
@@ -38,7 +38,7 @@ public class UploadParameter extends UpDownloadAckParameter {
     public byte[] toByteArray() {
         return ByteWriteBuff.newInstance(8)
                 .putByte(this.functionCode.getCode())
-                .putByte((byte) (BooleanUtil.setBit(0, this.moreDataFollowing) & BooleanUtil.setBit(1, this.errorStatus)))
+                .putByte((byte) (BooleanUtil.setBit(0, this.moreDataFollowing) | BooleanUtil.setBit(1, this.errorStatus)))
                 .putBytes(this.errorCode)
                 .putInteger(this.id)
                 .getData();

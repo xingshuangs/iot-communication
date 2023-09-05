@@ -33,16 +33,19 @@ public class ParameterBuilder {
             case START_DOWNLOAD:
                 return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.START_DOWNLOAD) : StartDownloadParameter.fromBytes(data);
             case DOWNLOAD:
-                return messageType == EMessageType.ACK_DATA ? UpDownloadAckParameter.fromBytes(data) : DownloadParameter.fromBytes(data);
+                return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.DOWNLOAD) : DownloadParameter.fromBytes(data);
             case END_DOWNLOAD:
                 return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.END_DOWNLOAD) : EndDownloadParameter.fromBytes(data);
             case START_UPLOAD:
                 return messageType == EMessageType.ACK_DATA ? StartUploadAckParameter.fromBytes(data) : StartUploadParameter.fromBytes(data);
             case UPLOAD:
-                return messageType == EMessageType.ACK_DATA ? UpDownloadAckParameter.fromBytes(data) : UploadParameter.fromBytes(data);
+                return messageType == EMessageType.ACK_DATA ? UploadAckParameter.fromBytes(data) : UploadParameter.fromBytes(data);
             case END_UPLOAD:
                 return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.END_UPLOAD) : EndUploadParameter.fromBytes(data);
             case PLC_CONTROL:
+                if (messageType == EMessageType.ACK) {
+                    return PlcControlAckParameter.fromBytes(data);
+                }
                 return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.PLC_CONTROL) : PlcControlParameter.fromBytes(data);
             case PLC_STOP:
                 return messageType == EMessageType.ACK_DATA ? new Parameter(EFunctionCode.PLC_STOP) : PlcStopParameter.fromBytes(data);

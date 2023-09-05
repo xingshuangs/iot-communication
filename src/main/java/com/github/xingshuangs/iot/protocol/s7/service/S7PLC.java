@@ -1117,69 +1117,51 @@ public class S7PLC extends PLCNetwork {
     /**
      * 下载文件，目前还未测试成功
      *
-     * @param blockType             数据块类型
-     * @param blockNumber           数据块编号
-     * @param destinationFileSystem 目标文件系统
-     * @param loadMemoryLength      载入长度
-     * @param mC7CodeLength         mc7文件内容长度
-     * @return 字节数组数据
+     * @param data 数据字节内容
      */
-    public byte[] downloadFile(EFileBlockType blockType,
-                               int blockNumber,
-                               EDestinationFileSystem destinationFileSystem,
-                               int loadMemoryLength,
-                               int mC7CodeLength) {
+    public void downloadFile(byte[] data) {
         // 开始下载
-        S7Data reqStartDownload = S7Data.createStartDownload(blockType, blockNumber, destinationFileSystem, loadMemoryLength, mC7CodeLength);
+        EDestinationFileSystem destinationFileSystem = EDestinationFileSystem.P;
+        Mc7File mc7 = Mc7File.fromBytes(data);
+        S7Data reqStartDownload = S7Data.createStartDownload(mc7.getBlockType(), mc7.getBlockNumber(), destinationFileSystem, data.length, mc7.getMC7CodeLength());
         this.readFromServerByPersistence(reqStartDownload);
 
         // 下载中
-        ByteWriteBuff buff = new ByteWriteBuff(loadMemoryLength);
-        UpDownloadAckParameter upDownloadAckParameter = new UpDownloadAckParameter();
-        upDownloadAckParameter.setMoreDataFollowing(true);
-        while (upDownloadAckParameter.isMoreDataFollowing()) {
-            S7Data reqDownload = S7Data.createDownload(blockType, blockNumber, destinationFileSystem);
-            S7Data ackDownload = this.readFromServerByPersistence(reqDownload);
-            upDownloadAckParameter = (UpDownloadAckParameter) ackDownload.getParameter();
-            if (upDownloadAckParameter.isErrorStatus()) {
-                throw new S7CommException("下载发生错误");
-            }
-            UpDownloadDatum datum = (UpDownloadDatum) ackDownload.getDatum();
-            buff.putBytes(datum.getData());
+        ByteReadBuff buff = new ByteReadBuff(data);
+        while (buff.getRemainSize() > 0) {
+            boolean moreDataFollowing = buff.getRemainSize() > this.pduLength - 32;
+            byte[] tmpData = buff.getBytes(Math.min(buff.getRemainSize(), this.pduLength - 32));
+            S7Data reqDownload = S7Data.createDownload(mc7.getBlockType(), mc7.getBlockNumber(), destinationFileSystem, moreDataFollowing, tmpData);
+            this.readFromServerByPersistence(reqDownload);
         }
 
         // 下载结束
-        S7Data reqEndDownload = S7Data.createEndDownload(blockType, blockNumber, destinationFileSystem);
+        S7Data reqEndDownload = S7Data.createEndDownload(mc7.getBlockType(), mc7.getBlockNumber(), destinationFileSystem);
         this.readFromServerByPersistence(reqEndDownload);
-
-        return buff.getData();
     }
 
     /**
      * 从PLC上传文件内容到PC，已在s200smart中测试成功
      *
-     * @param blockType             数据块类型
-     * @param blockNumber           数据块编号
-     * @param destinationFileSystem 目标系统
+     * @param blockType   数据块类型
+     * @param blockNumber 数据块编号
      * @return 字节数组数据
      */
-    public byte[] uploadFile(EFileBlockType blockType,
-                             int blockNumber,
-                             EDestinationFileSystem destinationFileSystem) {
+    public byte[] uploadFile(EFileBlockType blockType, int blockNumber) {
         // 开始上传
-        S7Data reqStartDownload = S7Data.createStartUpload(blockType, blockNumber, destinationFileSystem);
+        S7Data reqStartDownload = S7Data.createStartUpload(blockType, blockNumber, EDestinationFileSystem.A);
         S7Data ackStartDownload = this.readFromServerByPersistence(reqStartDownload);
         StartUploadAckParameter startUploadAckParameter = (StartUploadAckParameter) ackStartDownload.getParameter();
 
         // 上传中
         ByteWriteBuff buff = new ByteWriteBuff(startUploadAckParameter.getBlockLength());
-        UpDownloadAckParameter upDownloadAckParameter = new UpDownloadAckParameter();
-        upDownloadAckParameter.setMoreDataFollowing(true);
-        while (upDownloadAckParameter.isMoreDataFollowing()) {
+        UploadAckParameter uploadAckParameter = new UploadAckParameter();
+        uploadAckParameter.setMoreDataFollowing(true);
+        while (uploadAckParameter.isMoreDataFollowing()) {
             S7Data reqUpload = S7Data.createUpload(startUploadAckParameter.getId());
             S7Data ackUpload = this.readFromServerByPersistence(reqUpload);
-            upDownloadAckParameter = (UpDownloadAckParameter) ackUpload.getParameter();
-            if (upDownloadAckParameter.isErrorStatus()) {
+            uploadAckParameter = (UploadAckParameter) ackUpload.getParameter();
+            if (uploadAckParameter.isErrorStatus()) {
                 throw new S7CommException("上传发生错误");
             }
             UpDownloadDatum datum = (UpDownloadDatum) ackUpload.getDatum();

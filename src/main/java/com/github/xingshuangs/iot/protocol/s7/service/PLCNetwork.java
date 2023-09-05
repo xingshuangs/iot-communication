@@ -306,9 +306,12 @@ public class PLCNetwork extends TcpClientBasic {
         }
         // 响应头正确
         AckHeader ackHeader = (AckHeader) ack.getHeader();
+        if (ackHeader.getErrorClass() == null) {
+            throw new S7CommException(String.format("响应异常，未知异常：%s", ErrorCode.MAP.getOrDefault(ackHeader.getErrorCode(), "错误码不存在")));
+        }
         if (ackHeader.getErrorClass() != EErrorClass.NO_ERROR) {
             throw new S7CommException(String.format("响应异常，错误类型：%s，错误原因：%s",
-                    ackHeader.getErrorClass().getDescription(), ErrorCode.MAP.get(ackHeader.getErrorCode())));
+                    ackHeader.getErrorClass().getDescription(), ErrorCode.MAP.getOrDefault(ackHeader.getErrorCode(), "错误码不存在")));
         }
         // 发送和接收的PDU编号一致
         if (ackHeader.getPduReference() != req.getHeader().getPduReference()) {

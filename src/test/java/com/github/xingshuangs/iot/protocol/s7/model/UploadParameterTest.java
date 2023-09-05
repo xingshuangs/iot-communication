@@ -112,14 +112,14 @@ public class UploadParameterTest {
                 0x1E, 0x00
         };
 
-        UpDownloadAckParameter parameter = new UpDownloadAckParameter();
+        UploadAckParameter parameter = new UploadAckParameter();
         parameter.setFunctionCode(EFunctionCode.UPLOAD);
         parameter.setMoreDataFollowing(false);
         parameter.setErrorStatus(false);
         byte[] actual = parameter.toByteArray();
         assertArrayEquals(expect, actual);
 
-        parameter = UpDownloadAckParameter.fromBytes(expect);
+        parameter = UploadAckParameter.fromBytes(expect);
         assertEquals(EFunctionCode.UPLOAD, parameter.getFunctionCode());
         assertFalse(parameter.isMoreDataFollowing());
         assertFalse(parameter.isErrorStatus());
