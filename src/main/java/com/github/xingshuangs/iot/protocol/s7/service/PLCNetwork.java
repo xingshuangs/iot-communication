@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.s7.service;
 import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.s7.algorithm.S7ComGroup;
 import com.github.xingshuangs.iot.protocol.s7.algorithm.S7ComItem;
 import com.github.xingshuangs.iot.protocol.s7.algorithm.S7SequentialGroupAlg;
@@ -201,43 +202,18 @@ public class PLCNetwork extends TcpClientBasic {
      */
     private S7Data readFromServer(S7Data req) {
         byte[] sendData = req.toByteArray();
-        if (this.comCallback != null) {
-            this.comCallback.accept(sendData);
-        }
-
-        // 将报文中的TPKT和COTP减掉，剩下PDU的内容，7=4(tpkt)+3(cotp)
-        if (this.pduLength > 0 && sendData.length - 7 > this.pduLength) {
-            throw new S7CommException(String.format("发送请求的字节数过长[%d]，已经大于最大的PDU长度[%d]", sendData.length, this.pduLength));
-        }
-
-        TPKT tpkt;
-        int len;
-        byte[] total;
-        synchronized (this.objLock) {
-            this.write(sendData);
-
-            byte[] data = new byte[TPKT.BYTE_LENGTH];
-            len = this.read(data);
-            if (len < TPKT.BYTE_LENGTH) {
-                throw new S7CommException(" TPKT 无效，长度不一致");
-            }
-            tpkt = TPKT.fromBytes(data);
-            total = new byte[tpkt.getLength()];
-            System.arraycopy(data, 0, total, 0, data.length);
-            len = this.read(total, data.length, tpkt.getLength() - data.length);
-        }
-        if (TPKT.BYTE_LENGTH + len < total.length) {
-            throw new S7CommException(" TPKT后面的数据长度，长度不一致");
-        }
-        if (this.comCallback != null) {
-            this.comCallback.accept(total);
-        }
+        byte[] total = this.readFromServer(sendData);
         S7Data ack = S7Data.fromBytes(total);
-
         this.checkPostedCom(req, ack);
         return ack;
     }
 
+    /**
+     * 以字节数组的方式和服务器进行数据交互
+     *
+     * @param sendData 发送的字节数据
+     * @return 接收的字节数据
+     */
     private byte[] readFromServer(byte[] sendData) {
         if (this.comCallback != null) {
             this.comCallback.accept(sendData);
@@ -495,11 +471,92 @@ public class PLCNetwork extends TcpClientBasic {
      * @return 数据项
      */
     public List<DataItem> readS7NckData(List<RequestNckItem> requestItems) {
-        S7Data s7Data = NckRequestBuilder.creatNckRequest(requestItems);
-        S7Data ack = this.readFromServerByPersistence(s7Data);
-        ReadWriteDatum datum = (ReadWriteDatum) ack.getDatum();
-        return datum.getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
+        try {
+            S7Data s7Data = NckRequestBuilder.creatNckRequest(requestItems);
+            S7Data ack = this.readFromServer(s7Data);
+            ReadWriteDatum datum = (ReadWriteDatum) ack.getDatum();
+            return datum.getReturnItems().stream().map(DataItem.class::cast).collect(Collectors.toList());
+        } finally {
+            if (!this.persistence) {
+                this.close();
+            }
+        }
     }
 
+    //endregion
+
+    //region 上传下载
+
+    /**
+     * 下载文件，已在s200smart中测试成功
+     *
+     * @param mc7 Mc7File文件对象
+     */
+    public void downloadFile(Mc7File mc7) {
+        try {
+            // 开始下载
+            EDestinationFileSystem destinationFileSystem = EDestinationFileSystem.P;
+            S7Data reqStartDownload = S7Data.createStartDownload(mc7.getBlockType(), mc7.getBlockNumber(), destinationFileSystem,
+                    mc7.getLoadMemoryLength(), mc7.getMC7CodeLength());
+            this.readFromServer(reqStartDownload);
+
+            // 下载中
+            ByteReadBuff buff = new ByteReadBuff(mc7.getData());
+            while (buff.getRemainSize() > 0) {
+                boolean moreDataFollowing = buff.getRemainSize() > this.pduLength - 32;
+                byte[] tmpData = buff.getBytes(Math.min(buff.getRemainSize(), this.pduLength - 32));
+                S7Data reqDownload = S7Data.createDownload(mc7.getBlockType(), mc7.getBlockNumber(), destinationFileSystem, moreDataFollowing, tmpData);
+                this.readFromServer(reqDownload);
+            }
+
+            // 下载结束
+            S7Data reqEndDownload = S7Data.createEndDownload(mc7.getBlockType(), mc7.getBlockNumber(), destinationFileSystem);
+            this.readFromServer(reqEndDownload);
+        } finally {
+            if (!this.persistence) {
+                this.close();
+            }
+        }
+    }
+
+    /**
+     * 从PLC上传文件内容到PC，已在s200smart中测试成功
+     *
+     * @param blockType   数据块类型
+     * @param blockNumber 数据块编号
+     * @return 字节数组数据
+     */
+    public byte[] uploadFile(EFileBlockType blockType, int blockNumber) {
+        try {
+            // 开始上传
+            S7Data reqStartDownload = S7Data.createStartUpload(blockType, blockNumber, EDestinationFileSystem.A);
+            S7Data ackStartDownload = this.readFromServer(reqStartDownload);
+            StartUploadAckParameter startUploadAckParameter = (StartUploadAckParameter) ackStartDownload.getParameter();
+
+            // 上传中
+            ByteWriteBuff buff = new ByteWriteBuff(startUploadAckParameter.getBlockLength());
+            UploadAckParameter uploadAckParameter = new UploadAckParameter();
+            uploadAckParameter.setMoreDataFollowing(true);
+            while (uploadAckParameter.isMoreDataFollowing()) {
+                S7Data reqUpload = S7Data.createUpload(startUploadAckParameter.getId());
+                S7Data ackUpload = this.readFromServer(reqUpload);
+                uploadAckParameter = (UploadAckParameter) ackUpload.getParameter();
+                if (uploadAckParameter.isErrorStatus()) {
+                    throw new S7CommException("上传发生错误");
+                }
+                UpDownloadDatum datum = (UpDownloadDatum) ackUpload.getDatum();
+                buff.putBytes(datum.getData());
+            }
+
+            // 上传结束
+            S7Data reqEndUpload = S7Data.createEndUpload(startUploadAckParameter.getId());
+            this.readFromServer(reqEndUpload);
+            return buff.getData();
+        } finally {
+            if (!this.persistence) {
+                this.close();
+            }
+        }
+    }
     //endregion
 }

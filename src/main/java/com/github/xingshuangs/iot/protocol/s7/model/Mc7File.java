@@ -17,7 +17,7 @@ public class Mc7File {
     /**
      * 源数据
      */
-    private byte[] data;
+    private byte[] data = new byte[0];
 
     /**
      * 块类型
@@ -33,6 +33,15 @@ public class Mc7File {
      * mc7代码长度
      */
     private int mC7CodeLength;
+
+    /**
+     * 字节数组总长度
+     *
+     * @return 长度
+     */
+    public int getLoadMemoryLength() {
+        return this.data.length;
+    }
 
     /**
      * 字节转换为对象

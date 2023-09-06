@@ -480,8 +480,8 @@ public class S7PLC extends PLCNetwork {
         if (count <= 0) {
             throw new IllegalArgumentException("count<=0");
         }
-        if (dbNumber <= 0) {
-            throw new IllegalArgumentException("dbNumber<=0");
+        if (dbNumber < 0) {
+            throw new IllegalArgumentException("dbNumber<0");
         }
         if (byteAddress < 0) {
             throw new IllegalArgumentException("byteAddress<0");
@@ -736,6 +736,16 @@ public class S7PLC extends PLCNetwork {
      */
     public void compress() {
         this.readFromServerByPersistence(S7Data.createCompress());
+    }
+
+    /**
+     * 创建插入文件指令
+     *
+     * @param blockType             块类型
+     * @param blockNumber           块编号
+     */
+    public void insert(EFileBlockType blockType, int blockNumber) {
+        this.readFromServerByPersistence(S7Data.createInsert(blockType, blockNumber, EDestinationFileSystem.P));
     }
 
     //endregion
@@ -1112,67 +1122,5 @@ public class S7PLC extends PLCNetwork {
 
     //endregion
 
-    //region 上传下载
 
-    /**
-     * 下载文件，目前还未测试成功
-     *
-     * @param data 数据字节内容
-     */
-    public void downloadFile(byte[] data) {
-        // 开始下载
-        EDestinationFileSystem destinationFileSystem = EDestinationFileSystem.P;
-        Mc7File mc7 = Mc7File.fromBytes(data);
-        S7Data reqStartDownload = S7Data.createStartDownload(mc7.getBlockType(), mc7.getBlockNumber(), destinationFileSystem, data.length, mc7.getMC7CodeLength());
-        this.readFromServerByPersistence(reqStartDownload);
-
-        // 下载中
-        ByteReadBuff buff = new ByteReadBuff(data);
-        while (buff.getRemainSize() > 0) {
-            boolean moreDataFollowing = buff.getRemainSize() > this.pduLength - 32;
-            byte[] tmpData = buff.getBytes(Math.min(buff.getRemainSize(), this.pduLength - 32));
-            S7Data reqDownload = S7Data.createDownload(mc7.getBlockType(), mc7.getBlockNumber(), destinationFileSystem, moreDataFollowing, tmpData);
-            this.readFromServerByPersistence(reqDownload);
-        }
-
-        // 下载结束
-        S7Data reqEndDownload = S7Data.createEndDownload(mc7.getBlockType(), mc7.getBlockNumber(), destinationFileSystem);
-        this.readFromServerByPersistence(reqEndDownload);
-    }
-
-    /**
-     * 从PLC上传文件内容到PC，已在s200smart中测试成功
-     *
-     * @param blockType   数据块类型
-     * @param blockNumber 数据块编号
-     * @return 字节数组数据
-     */
-    public byte[] uploadFile(EFileBlockType blockType, int blockNumber) {
-        // 开始上传
-        S7Data reqStartDownload = S7Data.createStartUpload(blockType, blockNumber, EDestinationFileSystem.A);
-        S7Data ackStartDownload = this.readFromServerByPersistence(reqStartDownload);
-        StartUploadAckParameter startUploadAckParameter = (StartUploadAckParameter) ackStartDownload.getParameter();
-
-        // 上传中
-        ByteWriteBuff buff = new ByteWriteBuff(startUploadAckParameter.getBlockLength());
-        UploadAckParameter uploadAckParameter = new UploadAckParameter();
-        uploadAckParameter.setMoreDataFollowing(true);
-        while (uploadAckParameter.isMoreDataFollowing()) {
-            S7Data reqUpload = S7Data.createUpload(startUploadAckParameter.getId());
-            S7Data ackUpload = this.readFromServerByPersistence(reqUpload);
-            uploadAckParameter = (UploadAckParameter) ackUpload.getParameter();
-            if (uploadAckParameter.isErrorStatus()) {
-                throw new S7CommException("上传发生错误");
-            }
-            UpDownloadDatum datum = (UpDownloadDatum) ackUpload.getDatum();
-            buff.putBytes(datum.getData());
-        }
-
-        // 上传结束
-        S7Data reqEndUpload = S7Data.createEndUpload(startUploadAckParameter.getId());
-        this.readFromServerByPersistence(reqEndUpload);
-
-        return buff.getData();
-    }
-    //endregion
 }

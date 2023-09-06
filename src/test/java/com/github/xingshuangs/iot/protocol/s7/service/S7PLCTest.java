@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.s7.service;
 
 import com.github.xingshuangs.iot.protocol.s7.enums.*;
+import com.github.xingshuangs.iot.protocol.s7.model.Mc7File;
 import com.github.xingshuangs.iot.utils.HexUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
@@ -348,21 +349,33 @@ public class S7PLCTest {
     public void downloadFileDB1() {
         byte[] bytes = this.s7PLC.uploadFile(EFileBlockType.DB, 1);
         System.out.println(bytes.length);
-        this.s7PLC.downloadFile(bytes);
+        this.s7PLC.plcStop();
+        Mc7File mc7File = Mc7File.fromBytes(bytes);
+        this.s7PLC.downloadFile(mc7File);
+        this.s7PLC.insert(mc7File.getBlockType(), mc7File.getBlockNumber());
+        this.s7PLC.hotRestart();
     }
 
     @Test
     public void downloadFileSDB0() {
         byte[] bytes = this.s7PLC.uploadFile(EFileBlockType.SDB, 0);
         System.out.println(bytes.length);
-        this.s7PLC.downloadFile(bytes);
+        this.s7PLC.plcStop();
+        Mc7File mc7File = Mc7File.fromBytes(bytes);
+        this.s7PLC.downloadFile(mc7File);
+        this.s7PLC.insert(mc7File.getBlockType(), mc7File.getBlockNumber());
+        this.s7PLC.hotRestart();
     }
 
     @Test
     public void downloadFileOB1() {
         byte[] bytes = this.s7PLC.uploadFile(EFileBlockType.OB, 1);
         System.out.println(bytes.length);
-        this.s7PLC.downloadFile(bytes);
+        this.s7PLC.plcStop();
+        Mc7File mc7File = Mc7File.fromBytes(bytes);
+        this.s7PLC.downloadFile(mc7File);
+        this.s7PLC.insert(mc7File.getBlockType(), mc7File.getBlockNumber());
+        this.s7PLC.hotRestart();
     }
 
     @Test

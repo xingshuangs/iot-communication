@@ -355,6 +355,24 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
+     * 创建插入文件指令
+     *
+     * @param blockType             块类型
+     * @param blockNumber           块编号
+     * @param destinationFileSystem 目标文件系统
+     * @return PlcControlParameter
+     */
+    public static S7Data createInsert(EFileBlockType blockType, int blockNumber, EDestinationFileSystem destinationFileSystem) {
+        S7Data s7Data = new S7Data();
+        s7Data.tpkt = new TPKT();
+        s7Data.cotp = COTPData.createDefault();
+        s7Data.header = Header.createDefault();
+        s7Data.parameter = PlcControlParameter.insert(blockType,blockNumber,destinationFileSystem);
+        s7Data.selfCheck();
+        return s7Data;
+    }
+
+    /**
      * 创建开始下载
      *
      * @param blockType             数据块类型

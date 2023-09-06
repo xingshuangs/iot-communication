@@ -3,9 +3,12 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
-import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.s7.enums.EDestinationFileSystem;
+import com.github.xingshuangs.iot.protocol.s7.enums.EFileBlockType;
+import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
+import com.github.xingshuangs.iot.utils.ByteUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -37,7 +40,7 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
     /**
      * 参数块内容
      */
-    private String parameterBlock = "";
+    private PlcControlParamBlock parameterBlock;
 
     /**
      * 服务名长度，后续字节长度，不包含自身 <br>
@@ -51,9 +54,9 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
      */
     private String piService = "";
 
-    public void setParameterBlock(String parameterBlock) {
+    public void setParameterBlock(PlcControlParamBlock parameterBlock) {
         this.parameterBlock = parameterBlock;
-        this.parameterBlockLength = this.parameterBlock.length();
+        this.parameterBlockLength = this.parameterBlock.byteArrayLength();
     }
 
     public void setPiService(String piService) {
@@ -76,7 +79,7 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
                 .putByte(this.functionCode.getCode())
                 .putBytes(this.unknownBytes)
                 .putShort(this.parameterBlockLength)
-                .putString(this.parameterBlock)
+                .putBytes(this.parameterBlock.toByteArray())
                 .putByte(this.lengthPart)
                 .putString(this.piService)
                 .getData();
@@ -97,7 +100,8 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
         parameter.functionCode = EFunctionCode.from(buff.getByte());
         parameter.unknownBytes = buff.getBytes(7);
         parameter.parameterBlockLength = buff.getUInt16();
-        parameter.parameterBlock = parameter.parameterBlockLength == 0 ? "" : buff.getString(parameter.parameterBlockLength);
+        // TODO: 这里只考虑了字符串这种数据模型，未考虑其他数据模块
+        parameter.parameterBlock = parameter.parameterBlockLength == 0 ? new PlcControlParamBlock() : new PlcControlStringParamBlock(buff.getString(parameter.parameterBlockLength));
         parameter.lengthPart = buff.getByteToInt();
         parameter.piService = parameter.lengthPart == 0 ? "" : buff.getString(parameter.lengthPart);
         return parameter;
@@ -110,7 +114,7 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
      */
     public static PlcControlParameter hotRestart() {
         PlcControlParameter parameter = new PlcControlParameter();
-        parameter.setParameterBlock("");
+        parameter.setParameterBlock(new PlcControlStringParamBlock());
         parameter.setPiService(P_PROGRAM);
         return parameter;
     }
@@ -122,7 +126,7 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
      */
     public static PlcControlParameter coldRestart() {
         PlcControlParameter parameter = new PlcControlParameter();
-        parameter.setParameterBlock("C ");
+        parameter.setParameterBlock(new PlcControlStringParamBlock("C "));
         parameter.setPiService(P_PROGRAM);
         return parameter;
     }
@@ -134,7 +138,7 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
      */
     public static PlcControlParameter copyRamToRom() {
         PlcControlParameter parameter = new PlcControlParameter();
-        parameter.setParameterBlock("EP");
+        parameter.setParameterBlock(new PlcControlStringParamBlock("EP"));
         parameter.setPiService("_MODU");
         return parameter;
     }
@@ -146,8 +150,30 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
      */
     public static PlcControlParameter compress() {
         PlcControlParameter parameter = new PlcControlParameter();
-        parameter.setParameterBlock("");
+        parameter.setParameterBlock(new PlcControlStringParamBlock());
         parameter.setPiService("_GARB");
+        return parameter;
+    }
+
+    /**
+     * 创建插入文件指令
+     *
+     * @param blockType             块类型
+     * @param blockNumber           块编号
+     * @param destinationFileSystem 目标文件系统
+     * @return PlcControlParameter
+     */
+    public static PlcControlParameter insert(EFileBlockType blockType, int blockNumber, EDestinationFileSystem destinationFileSystem) {
+        byte[] data = ByteWriteBuff.newInstance(8)
+                .putBytes(blockType.getByteArray())
+                .putString(String.format("%05d", blockNumber))
+                .putByte(destinationFileSystem.getCode())
+                .getData();
+        PlcControlInsertParamBlock insertParamBlock = new PlcControlInsertParamBlock();
+        insertParamBlock.addFileName(ByteUtil.toStr(data));
+        PlcControlParameter parameter = new PlcControlParameter();
+        parameter.setParameterBlock(insertParamBlock);
+        parameter.setPiService("_INSE");
         return parameter;
     }
 }
