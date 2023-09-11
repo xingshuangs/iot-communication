@@ -152,7 +152,6 @@ public class TcpClientBasic implements ICommunicable {
     public void close() {
         try {
             SocketUtils.close(this.socket);
-            this.socket = null;
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
         }
