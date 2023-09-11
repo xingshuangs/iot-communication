@@ -160,7 +160,6 @@ public class PLCNetwork extends TcpClientBasic {
             case SINUMERIK_828D:
                 local = 0x0400;
                 remote = 0x0D04;
-                remote += 0x20 * this.rack + this.slot;
                 break;
         }
         S7Data req = S7Data.createConnectRequest(local, remote);
