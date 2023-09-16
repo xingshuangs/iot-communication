@@ -207,6 +207,31 @@ public class S7PLCTest {
     }
 
     @Test
+    public void writeMultiData2() {
+        S7PLC s7PLC1 = new S7PLC(EPlcType.S1200);
+        MultiAddressWrite addressWrite = new MultiAddressWrite();
+        addressWrite.addString("DB1.0", "123456")
+                .addString("DB1.10", "abcdefg");
+        s7PLC1.writeMultiData(addressWrite);
+        String actual = s7PLC1.readString("DB1.0");
+        assertEquals("123456", actual);
+        actual = s7PLC1.readString("DB1.10");
+        assertEquals("abcdefg", actual);
+        s7PLC1.close();
+
+        s7PLC1 = new S7PLC(EPlcType.S200_SMART);
+        MultiAddressRead addressRead = new MultiAddressRead();
+        addressWrite.addStringIn200Smart("DB2.0", "123456")
+                .addStringIn200Smart("DB2.10", "abcdefg");
+        s7PLC1.writeMultiData(addressWrite);
+        actual = s7PLC1.readString("DB2.0");
+        assertEquals("123456", actual);
+        actual = s7PLC1.readString("DB2.10");
+        assertEquals("abcdefg", actual);
+        s7PLC1.close();
+    }
+
+    @Test
     public void writeMultiData1() {
 //        s7PLC.setComCallback(x -> System.out.println("长度：" + x.length));
 //        MultiAddressWrite addressWrite = new MultiAddressWrite();

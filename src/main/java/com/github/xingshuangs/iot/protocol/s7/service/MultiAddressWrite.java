@@ -4,11 +4,13 @@ package com.github.xingshuangs.iot.protocol.s7.service;
 import com.github.xingshuangs.iot.protocol.s7.model.DataItem;
 import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
 import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
+import com.github.xingshuangs.iot.utils.ByteUtil;
 import com.github.xingshuangs.iot.utils.FloatUtil;
 import com.github.xingshuangs.iot.utils.IntegerUtil;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,5 +160,49 @@ public class MultiAddressWrite {
         byte[] bytes = FloatUtil.toByteArray(data);
         this.addByte(address, bytes);
         return this;
+    }
+
+    /**
+     * 添加字符串，针对非200smart的PLC
+     *
+     * @param address 地址
+     * @param data    字符串数据
+     * @return 对象本身
+     */
+    public MultiAddressWrite addString(String address, String data) {
+        this.addStringCustom(address, data, 1);
+        return this;
+    }
+
+    /**
+     * 添加字符串，针对200smart的PLC
+     *
+     * @param address 地址
+     * @param data    字符串数据
+     * @return 对象本身
+     */
+    public MultiAddressWrite addStringIn200Smart(String address, String data) {
+        this.addStringCustom(address, data, 0);
+        return this;
+    }
+
+    /**
+     * 自定义添加字符串
+     *
+     * @param address 地址
+     * @param data    字符串数据
+     * @param offset  偏移量
+     */
+    @SuppressWarnings("DuplicatedCode")
+    private void addStringCustom(String address, String data, int offset) {
+        byte[] dataBytes = data.getBytes(Charset.forName("GB2312"));
+        byte[] tmp = new byte[1 + dataBytes.length];
+        tmp[0] = ByteUtil.toByte(dataBytes.length);
+        System.arraycopy(dataBytes, 0, tmp, 1, dataBytes.length);
+        // 非200smart，字节索引+1
+        RequestItem requestItem = AddressUtil.parseByte(address, tmp.length);
+        requestItem.setByteAddress(requestItem.getByteAddress() + offset);
+        this.requestItems.add(requestItem);
+        this.dataItems.add(DataItem.createReqByByte(tmp));
     }
 }
