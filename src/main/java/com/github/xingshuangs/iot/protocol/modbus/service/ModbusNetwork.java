@@ -11,6 +11,7 @@ import com.github.xingshuangs.iot.utils.ByteUtil;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Consumer;
@@ -293,73 +294,151 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
         byte[] res = this.readHoldRegister(address, 1);
         int byteOffset = bitIndex / 8;
         int bitOffset = bitIndex % 8;
-        return ByteReadBuff.newInstance(res, EByteBuffFormat.BA_DC).getBoolean(byteOffset, bitOffset);
+        return ByteReadBuff.newInstance(res).getBoolean(byteOffset, bitOffset);
     }
 
     /**
-     * 读取一个Int16 2字节数据
+     * 读取一个Int16 2字节数据，默认大端模式
      *
      * @param address 地址
      * @return 一个Int16 2字节数据
      */
     public short readInt16(int address) {
-        byte[] res = this.readHoldRegister(address, 1);
-        return ByteReadBuff.newInstance(res, EByteBuffFormat.BA_DC).getInt16();
+        return this.readInt16(address, false);
     }
 
     /**
-     * 读取一个UInt16 2字节数据
+     * 读取一个Int16 2字节数据
+     *
+     * @param address      地址
+     * @param littleEndian 是否小端模式，true：小端，false：大端
+     * @return 一个Int16 2字节数据
+     */
+    public short readInt16(int address, boolean littleEndian) {
+        byte[] res = this.readHoldRegister(address, 1);
+        return ByteReadBuff.newInstance(res, littleEndian).getInt16();
+    }
+
+    /**
+     * 读取一个UInt16 2字节数据，默认大端模式
      *
      * @param address 地址
      * @return 一个UInt16 2字节数据
      */
     public int readUInt16(int address) {
-        byte[] res = this.readHoldRegister(address, 1);
-        return ByteReadBuff.newInstance(res, EByteBuffFormat.BA_DC).getUInt16();
+        return this.readUInt16(address, false);
     }
 
     /**
-     * 读取一个UInt32 4字节数据
+     * 读取一个UInt16 2字节数据
+     *
+     * @param address      地址
+     * @param littleEndian 是否小端模式，true：小端，false：大端
+     * @return 一个UInt16 2字节数据
+     */
+    public int readUInt16(int address, boolean littleEndian) {
+        byte[] res = this.readHoldRegister(address, 1);
+        return ByteReadBuff.newInstance(res, littleEndian).getUInt16();
+    }
+
+    /**
+     * 读取一个Int32 4字节数据，默认BA_DC格式
      *
      * @param address 地址
-     * @return 一个UInt32 4字节数据
+     * @return 一个Int32 4字节数据
      */
     public int readInt32(int address) {
-        byte[] res = this.readHoldRegister(address, 2);
-        return ByteReadBuff.newInstance(res, EByteBuffFormat.BA_DC).getInt32();
+        return this.readInt32(address, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 读取一个UInt32 4字节数据
+     * 读取一个Int32 4字节数据
+     *
+     * @param address 地址
+     * @param format  4字节数据转换格式
+     * @return 一个Int32 4字节数据
+     */
+    public int readInt32(int address, EByteBuffFormat format) {
+        byte[] res = this.readHoldRegister(address, 2);
+        return ByteReadBuff.newInstance(res, format).getInt32();
+    }
+
+    /**
+     * 读取一个UInt32 4字节数据，默认BA_DC格式
      *
      * @param address 地址
      * @return 一个UInt32 4字节数据
      */
     public long readUInt32(int address) {
+        return this.readUInt32(address, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * 读取一个UInt32 4字节数据
+     *
+     * @param address 地址
+     * @param format  4字节数据转换格式
+     * @return 一个UInt32 4字节数据
+     */
+    public long readUInt32(int address, EByteBuffFormat format) {
         byte[] res = this.readHoldRegister(address, 2);
-        return ByteReadBuff.newInstance(res, EByteBuffFormat.BA_DC).getUInt32();
+        return ByteReadBuff.newInstance(res, format).getUInt32();
+    }
+
+    /**
+     * 读取一个Float32的数据，默认BA_DC格式
+     *
+     * @param address 地址
+     * @return 一个Float32的数据
+     */
+    public float readFloat32(int address) {
+        return this.readFloat32(address, EByteBuffFormat.BA_DC);
     }
 
     /**
      * 读取一个Float32的数据
      *
      * @param address 地址
+     * @param format  4字节数据转换格式
      * @return 一个Float32的数据
      */
-    public float readFloat32(int address) {
+    public float readFloat32(int address, EByteBuffFormat format) {
         byte[] res = this.readHoldRegister(address, 2);
-        return ByteReadBuff.newInstance(res, EByteBuffFormat.BA_DC).getFloat32();
+        return ByteReadBuff.newInstance(res, format).getFloat32();
+    }
+
+    /**
+     * 读取一个Float64的数据，默认BA_DC格式
+     *
+     * @param address 地址
+     * @return 一个Float64的数据
+     */
+    public double readFloat64(int address) {
+        return this.readFloat64(address, EByteBuffFormat.BA_DC);
     }
 
     /**
      * 读取一个Float64的数据
      *
      * @param address 地址
+     * @param format  8字节数据转换格式
      * @return 一个Float64的数据
      */
-    public double readFloat64(int address) {
+    public double readFloat64(int address, EByteBuffFormat format) {
         byte[] res = this.readHoldRegister(address, 4);
-        return ByteReadBuff.newInstance(res, EByteBuffFormat.BA_DC).getFloat64();
+        return ByteReadBuff.newInstance(res, format).getFloat64();
+    }
+
+    /**
+     * 读取字符串，默认ASCII编码
+     * String（字符串）数据类型存储一串单字节字符
+     *
+     * @param address 地址
+     * @param length  字符串长度
+     * @return 字符串
+     */
+    public String readString(int address, int length) {
+        return this.readString(address, length, StandardCharsets.US_ASCII);
     }
 
     /**
@@ -368,63 +447,108 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      *
      * @param address 地址
      * @param length  字符串长度
+     * @param charset 字符编码
      * @return 字符串
      */
-    public String readString(int address, int length) {
+    public String readString(int address, int length, Charset charset) {
         byte[] res = this.readHoldRegister(address, length / 2);
-        return ByteUtil.toStr(res);
+        return ByteUtil.toStr(res, 0, res.length, charset);
     }
     //endregion
 
     //region 通用保持寄存器 写入数据
 
     /**
-     * 写入一个Int16 2字节数据
+     * 写入一个Int16 2字节数据，默认大端模式
      *
      * @param address 地址
      * @param data    数据
      */
     public void writeInt16(int address, short data) {
-        byte[] bytes = ByteWriteBuff.newInstance(2, EByteBuffFormat.BA_DC)
+        this.writeInt16(address, data, false);
+    }
+
+    /**
+     * 写入一个Int16 2字节数据
+     *
+     * @param address      地址
+     * @param data         数据
+     * @param littleEndian 是否小端模式，true：小端，false：大端
+     */
+    public void writeInt16(int address, short data, boolean littleEndian) {
+        byte[] bytes = ByteWriteBuff.newInstance(2, littleEndian)
                 .putShort(data)
                 .getData();
         this.writeHoldRegister(address, bytes);
     }
 
     /**
-     * 写入一个UInt16 2字节数据
+     * 写入一个UInt16 2字节数据，默认大端模式
      *
      * @param address 地址
      * @param data    数据
      */
     public void writeUInt16(int address, int data) {
-        byte[] bytes = ByteWriteBuff.newInstance(2, EByteBuffFormat.BA_DC)
+        this.writeUInt16(address, data, false);
+    }
+
+    /**
+     * 写入一个UInt16 2字节数据，默认大端模式
+     *
+     * @param address      地址
+     * @param data         数据
+     * @param littleEndian 是否小端模式，true：小端，false：大端
+     */
+    public void writeUInt16(int address, int data, boolean littleEndian) {
+        byte[] bytes = ByteWriteBuff.newInstance(2, littleEndian)
                 .putShort(data)
                 .getData();
         this.writeHoldRegister(address, bytes);
     }
 
     /**
-     * 写入一个Int32 4字节数据
+     * 写入一个Int32 4字节数据，默认BA_DC格式
      *
      * @param address 地址
      * @param data    数据
      */
     public void writeInt32(int address, int data) {
-        byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.BA_DC)
+        this.writeInt32(address, data, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * 写入一个Int32 4字节数据，默认BA_DC格式
+     *
+     * @param address 地址
+     * @param data    数据
+     * @param format  4字节数据转换格式
+     */
+    public void writeInt32(int address, int data, EByteBuffFormat format) {
+        byte[] bytes = ByteWriteBuff.newInstance(4, format)
                 .putInteger(data)
                 .getData();
         this.writeHoldRegister(address, bytes);
     }
 
     /**
-     * 写入一个UInt32 4字节数据
+     * 写入一个UInt32 4字节数据，默认BA_DC格式
      *
      * @param address 地址
      * @param data    数据
      */
     public void writeUInt32(int address, long data) {
-        byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.BA_DC)
+        this.writeUInt32(address, data, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * 写入一个UInt32 4字节数据，默认BA_DC格式
+     *
+     * @param address 地址
+     * @param data    数据
+     * @param format  4字节数据转换格式
+     */
+    public void writeUInt32(int address, long data, EByteBuffFormat format) {
+        byte[] bytes = ByteWriteBuff.newInstance(4, format)
                 .putInteger(data)
                 .getData();
         this.writeHoldRegister(address, bytes);
@@ -437,10 +561,31 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param data    数据
      */
     public void writeFloat32(int address, float data) {
-        byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.BA_DC)
+        this.writeFloat32(address, data, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * 写入一个Float32 4字节数据
+     *
+     * @param address 地址
+     * @param data    数据
+     * @param format  4字节数据转换格式
+     */
+    public void writeFloat32(int address, float data, EByteBuffFormat format) {
+        byte[] bytes = ByteWriteBuff.newInstance(4, format)
                 .putFloat(data)
                 .getData();
         this.writeHoldRegister(address, bytes);
+    }
+
+    /**
+     * 写入一个Float64 8字节数据，默认BA_DC格式
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeFloat64(int address, double data) {
+        this.writeFloat64(address, data, EByteBuffFormat.BA_DC);
     }
 
     /**
@@ -448,12 +593,23 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      *
      * @param address 地址
      * @param data    数据
+     * @param format  8字节数据转换格式
      */
-    public void writeFloat64(int address, double data) {
-        byte[] bytes = ByteWriteBuff.newInstance(8, EByteBuffFormat.BA_DC)
+    public void writeFloat64(int address, double data, EByteBuffFormat format) {
+        byte[] bytes = ByteWriteBuff.newInstance(8, format)
                 .putDouble(data)
                 .getData();
         this.writeHoldRegister(address, bytes);
+    }
+
+    /**
+     * 写入一个String数据，默认ASCII编码
+     *
+     * @param address 地址
+     * @param data    数据字符串
+     */
+    public void writeString(int address, String data) {
+        this.writeString(address, data, StandardCharsets.US_ASCII);
     }
 
     /**
@@ -461,9 +617,10 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      *
      * @param address 地址
      * @param data    数据字符串
+     * @param charset 字符集
      */
-    public void writeString(int address, String data) {
-        byte[] bytes = data.getBytes(StandardCharsets.US_ASCII);
+    public void writeString(int address, String data, Charset charset) {
+        byte[] bytes = data.getBytes(charset);
         this.writeHoldRegister(address, bytes);
     }
     //endregion

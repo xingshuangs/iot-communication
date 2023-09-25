@@ -28,7 +28,7 @@ public class ByteWriteBuff extends ByteBuffBase {
     /**
      * 是否为小端模式，默认不是，为大端模式
      */
-    private boolean littleEndian;
+    private final boolean littleEndian;
 
     /**
      * 构造方法
@@ -55,6 +55,10 @@ public class ByteWriteBuff extends ByteBuffBase {
 
     public static ByteWriteBuff newInstance(int capacity, EByteBuffFormat format) {
         return new ByteWriteBuff(capacity, false, format);
+    }
+
+    public static ByteWriteBuff newInstance(int capacity, boolean littleEndian) {
+        return new ByteWriteBuff(capacity, littleEndian, EByteBuffFormat.DC_BA);
     }
 
     public static ByteWriteBuff newInstance(int capacity, boolean littleEndian, EByteBuffFormat format) {
