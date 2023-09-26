@@ -26,7 +26,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CRLF;
@@ -111,10 +110,6 @@ public class RtspNetwork extends TcpClientBasic {
      * 通信协议，TCP、UDP
      */
     protected ERtspTransportProtocol transportProtocol;
-
-    public RtspTrackInfo getTrackInfo() {
-        return trackInfo;
-    }
 
     public void onCommCallback(Consumer<String> commCallback) {
         this.commCallback = commCallback;

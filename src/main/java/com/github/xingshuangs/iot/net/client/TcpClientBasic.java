@@ -220,7 +220,7 @@ public class TcpClientBasic implements ICommunicable {
      * 读取数据
      *
      * @param data    字节数组
-     * @param timeout 超时时间，毫秒级别
+     * @param timeout 超时时间，毫秒级别，0：没有超时时间，无限等
      * @return 读取的数据长度
      */
     public int read(final byte[] data, final int timeout) {
@@ -245,7 +245,7 @@ public class TcpClientBasic implements ICommunicable {
      * @param data    字节数组
      * @param offset  偏移量
      * @param length  数据长度
-     * @param timeout 超时时间，毫秒级别
+     * @param timeout 超时时间，毫秒级别，0：没有超时时间，无限等
      * @return 读取的数据长度
      */
     public int read(final byte[] data, final int offset, final int length, final int timeout) {
@@ -258,14 +258,30 @@ public class TcpClientBasic implements ICommunicable {
      * @param data      字节数组
      * @param offset    偏移量
      * @param length    数据长度
-     * @param timeout   超时时间，毫秒级别
      * @param maxLength 单次通信允许的对最大长度
+     * @param timeout   超时时间，毫秒级别，0：没有超时时间，无限等
      * @return 读取的数据长度
      */
     public int read(final byte[] data, final int offset, final int length, final int maxLength, final int timeout) {
+        return this.read(data, offset, length, maxLength, timeout, false);
+    }
+
+    /**
+     * 读取数据
+     *
+     * @param data        字节数组
+     * @param offset      偏移量
+     * @param length      数据长度
+     * @param maxLength   单次通信允许的对最大长度
+     * @param timeout     超时时间，毫秒级别，0：没有超时时间，无限等
+     * @param waitForMore 若数据不够，是否等待，等待更多数据，大部分都是不等待的，等待都适用于分包粘包的情况
+     * @return 读取的数据长度
+     */
+    public int read(final byte[] data, final int offset, final int length, final int maxLength,
+                    final int timeout, final boolean waitForMore) {
         try {
             Socket availableSocket = this.getAvailableSocket();
-            return SocketUtils.read(availableSocket, data, offset, length, maxLength, timeout);
+            return SocketUtils.read(availableSocket, data, offset, length, maxLength, timeout, waitForMore);
         } catch (IOException e) {
             this.socketError.set(true);
             throw new SocketRuntimeException(e);

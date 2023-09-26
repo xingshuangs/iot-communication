@@ -78,14 +78,27 @@ public class RtspFMp4Proxy {
      */
     private boolean asyncSend = false;
 
+    /**
+     * 上一次的H264的视频帧
+     */
     private H264VideoFrame lastFrame;
 
-    private List<H264VideoFrame> gop = new ArrayList<>();
+    /**
+     * 缓存视频帧数据，主要用于重新排序
+     */
+    private final List<H264VideoFrame> gop = new ArrayList<>();
 
+    /**
+     * 异步执行的对象
+     */
     private CompletableFuture<Void> future;
 
     public Mp4Header getMp4Header() {
         return mp4Header;
+    }
+
+    public Mp4TrackInfo getMp4TrackInfo() {
+        return mp4TrackInfo;
     }
 
     public void onFmp4DataHandle(Consumer<byte[]> fmp4DataHandle) {
@@ -276,7 +289,7 @@ public class RtspFMp4Proxy {
      * @return 异步结果
      */
     public CompletableFuture<Void> start() {
-        log.info("开启FMp4代理服务端，模式：[{}]", this.asyncSend ? "异步" : "同步");
+        log.info("开启FMp4代理服务端，模式[{}]，地址[{}]", this.asyncSend ? "异步" : "同步", this.client.getUri());
         return this.client.start();
     }
 
@@ -294,6 +307,6 @@ public class RtspFMp4Proxy {
             }
         }
         this.client.stop();
-        log.info("关闭FMp4代理服务端");
+        log.info("关闭FMp4代理服务端，地址[{}]", this.client.getUri());
     }
 }

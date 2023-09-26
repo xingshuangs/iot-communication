@@ -168,20 +168,15 @@ public class RtspInterleavedClient implements IRtspDataStream {
         if (readLength != 3) {
             throw new RtspCommException("头读取长度有误");
         }
+        int offset = 4;
         int length = ByteReadBuff.newInstance(header, 2).getUInt16();
-        byte[] total = new byte[length + 4];
+        byte[] total = new byte[length + offset];
         System.arraycopy(header, 0, total, 0, header.length);
         // 存在分包的情况，循环读取，保证数据准确性
-        int offset = 4;
-        int len = length;
-        while (offset < total.length) {
-            int read = this.rtspClient.read(total, offset, len);
-            offset += read;
-            len -= read;
-        }
-        if (offset != total.length) {
+        int read = this.rtspClient.read(total, offset, length, 1024, 0, true);
+        if (offset + read != total.length) {
             log.error(HexUtil.toHexString(total));
-            throw new RtspCommException("数据体读取长度有误，原来长度[" + (length + 4) + "], 现在长度[" + offset + "]");
+            throw new RtspCommException("数据体读取长度有误，原来长度[" + (total.length) + "], 现在长度[" + (offset + read) + "]");
         }
         return total;
     }
