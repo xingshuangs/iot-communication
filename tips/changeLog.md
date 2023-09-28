@@ -1,3 +1,17 @@
+## v1.4.3
+- 更新时间：2023.09.28
+- S7: S200-smart修改local为0x1000
+- S7: 200smart下载功能实现并测试成功，上传功能优化
+- S7: MultiAddressWrite添加addString方法
+- S7: 修复西门子机床的remote地址错误
+- S7: 修复主动连接缺失持久化的控制
+- Modbus: 添加更多适配的方法，自定义字节数据转换的格式
+- Modbus: 修复主动连接缺失持久化的控制
+- Net: 修复关闭的时候socket设置为null的问题
+- Net: 添加底层socket通信对分包粘包的情况
+- RTSP: 修复存在多个WWW-Authenticate的问题，默认使用第一个
+- RTSP: 修复rtsp关闭时因通道断开导致的错误
+
 ## v1.4.2
 - 更新时间：2023.08.17
 - S7添加非注解形式的批量读写，可以进行多地址的任意组合，通过S7Parameter配置参数
