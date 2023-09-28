@@ -131,7 +131,7 @@ public class SocketUtils {
             int len = maxLength <= 0 ? length - count : Math.min(maxLength, length - count);
             int num = in.read(data, off, len);
             if (num < 0) {
-                throw new SocketRuntimeException("读取数据异常，未读取到数据");
+                throw new SocketRuntimeException("读取数据异常，未读取到数据，连接断开");
             }
             count += num;
             off += num;
