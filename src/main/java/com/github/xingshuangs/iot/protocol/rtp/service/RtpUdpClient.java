@@ -9,6 +9,7 @@ import com.github.xingshuangs.iot.protocol.rtsp.service.IRtspDataStream;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 /**
@@ -73,7 +74,7 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
 
     @Override
     public void triggerReceive() {
-        this.future = CompletableFuture.runAsync(this::waitForReceiveData);
+        this.future = CompletableFuture.runAsync(this::waitForReceiveData, Executors.newSingleThreadExecutor());
     }
 
     @Override

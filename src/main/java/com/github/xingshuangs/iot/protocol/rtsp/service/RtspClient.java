@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -72,7 +73,7 @@ public class RtspClient extends RtspNetwork {
                     this.stop();
                 }
             }
-        });
+        }, Executors.newSingleThreadExecutor());
     }
 
     /**

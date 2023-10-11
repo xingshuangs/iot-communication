@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 /**
@@ -131,7 +132,7 @@ public class RtspFMp4Proxy {
         });
         this.asyncSend = asyncSend;
         if (this.asyncSend) {
-            this.future = CompletableFuture.runAsync(this::executeHandle);
+            this.future = CompletableFuture.runAsync(this::executeHandle, Executors.newSingleThreadExecutor());
         }
     }
 
