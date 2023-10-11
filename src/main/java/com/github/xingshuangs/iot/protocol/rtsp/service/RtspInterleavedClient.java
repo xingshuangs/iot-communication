@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.service;
 
 
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
+import com.github.xingshuangs.iot.exceptions.SocketRuntimeException;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.rtcp.model.RtcpBasePackage;
@@ -147,6 +148,11 @@ public class RtspInterleavedClient implements IRtspDataStream {
                 } else if (interleaved.getChannelId() == this.rtcpVideoChannelNumber) {
                     this.rtcpVideoHandle(interleaved);
                 }
+            } catch (SocketRuntimeException e) {
+                // SocketRuntimeException就是IO异常，网络断开了，结束线程
+                log.error(e.getMessage());
+                this.terminal = true;
+                break;
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
