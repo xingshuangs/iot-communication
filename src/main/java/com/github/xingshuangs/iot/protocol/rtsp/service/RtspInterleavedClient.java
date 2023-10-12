@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
@@ -70,6 +71,11 @@ public class RtspInterleavedClient implements IRtspDataStream {
      */
     private CompletableFuture<Void> future;
 
+    /**
+     * 线程池执行服务，单线程
+     */
+    private final ExecutorService executorService;
+
     public void setCommCallback(Consumer<byte[]> commCallback) {
         this.commCallback = commCallback;
     }
@@ -93,6 +99,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
     public RtspInterleavedClient(IPayloadParser iPayloadParser, TcpClientBasic rtspClient) {
         this.iPayloadParser = iPayloadParser;
         this.rtspClient = rtspClient;
+        this.executorService = Executors.newSingleThreadExecutor();
     }
 
     @Override
@@ -102,6 +109,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
 
     @Override
     public void close() {
+        this.executorService.shutdown();
         if (!this.terminal) {
             // 发送byte
             byte[] receiverAndByteContent = this.statistics.createReceiverAndByteContent();
@@ -113,7 +121,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
 
     @Override
     public void triggerReceive() {
-        this.future = CompletableFuture.runAsync(this::waitForReceiveData, Executors.newSingleThreadExecutor());
+        this.future = CompletableFuture.runAsync(this::waitForReceiveData, this.executorService);
     }
 
     @Override

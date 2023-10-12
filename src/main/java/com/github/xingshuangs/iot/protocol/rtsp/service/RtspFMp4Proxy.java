@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
@@ -94,6 +95,11 @@ public class RtspFMp4Proxy {
      */
     private CompletableFuture<Void> future;
 
+    /**
+     * 线程池执行服务，单线程
+     */
+    private ExecutorService executorService;
+
     public Mp4Header getMp4Header() {
         return mp4Header;
     }
@@ -132,7 +138,8 @@ public class RtspFMp4Proxy {
         });
         this.asyncSend = asyncSend;
         if (this.asyncSend) {
-            this.future = CompletableFuture.runAsync(this::executeHandle, Executors.newSingleThreadExecutor());
+            this.executorService = Executors.newSingleThreadExecutor();
+            this.future = CompletableFuture.runAsync(this::executeHandle, this.executorService);
         }
     }
 
@@ -298,6 +305,9 @@ public class RtspFMp4Proxy {
      * 结束
      */
     public void stop() {
+        if (this.executorService != null) {
+            this.executorService.shutdown();
+        }
         if (this.asyncSend) {
             this.terminal = true;
             synchronized (this.objLock) {
