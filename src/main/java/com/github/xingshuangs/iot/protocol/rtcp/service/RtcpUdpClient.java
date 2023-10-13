@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 /**
@@ -40,17 +42,23 @@ public class RtcpUdpClient extends UdpClientBasic implements IRtspDataStream {
      */
     private CompletableFuture<Void> future;
 
+    /**
+     * 线程池执行服务，单线程
+     */
+    private final ExecutorService executorService;
+
     public void setCommCallback(Consumer<byte[]> commCallback) {
         this.commCallback = commCallback;
     }
 
 
     public RtcpUdpClient() {
-
+        this.executorService = Executors.newSingleThreadExecutor();
     }
 
     public RtcpUdpClient(String ip, int port) {
         super(ip, port);
+        this.executorService = Executors.newSingleThreadExecutor();
     }
 
     @Override
@@ -60,6 +68,7 @@ public class RtcpUdpClient extends UdpClientBasic implements IRtspDataStream {
 
     @Override
     public void close() {
+        this.executorService.shutdown();
         if (!this.terminal) {
             // 发送byte
             byte[] receiverAndByteContent = this.statistics.createReceiverAndByteContent();
@@ -74,7 +83,7 @@ public class RtcpUdpClient extends UdpClientBasic implements IRtspDataStream {
      */
     @Override
     public void triggerReceive() {
-        this.future = CompletableFuture.runAsync(this::waitForReceiveData);
+        this.future = CompletableFuture.runAsync(this::waitForReceiveData, this.executorService);
     }
 
     @Override

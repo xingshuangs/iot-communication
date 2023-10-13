@@ -105,6 +105,20 @@ public class RtspMessageResponseTest {
     }
 
     @Test
+    public void rtspDescribeUnAuthorizationResponse() {
+        String src = "RTSP/1.0 401 Unauthorized\r\n" +
+                "CSeq: 1\r\n" +
+                "WWW-Authenticate: Digest realm=\"686dbc3097f3\", nonce=\"6b9a455aec675b8db81a9ceb802e4eb8\", stale=\"FALSE\"\r\n" +
+                "WWW-Authenticate: Basic realm= \"686dbc3097f3\"\r\n"+
+                "\r\n";
+
+        RtspDescribeResponse response = RtspDescribeResponse.fromHeaderString(src);
+        assertEquals(RtspMessage.VERSION_1_0, response.version);
+        assertEquals(ERtspStatusCode.UNAUTHORIZED, response.statusCode);
+        assertEquals(1, response.cSeq);
+    }
+
+    @Test
     public void rtspSetupResponse() {
         String src = "RTSP/1.0 200 OK\r\n" +
                 "CSeq: 1\r\n" +

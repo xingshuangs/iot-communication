@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 /**
@@ -78,14 +80,32 @@ public class RtspFMp4Proxy {
      */
     private boolean asyncSend = false;
 
+    /**
+     * 上一次的H264的视频帧
+     */
     private H264VideoFrame lastFrame;
 
-    private List<H264VideoFrame> gop = new ArrayList<>();
+    /**
+     * 缓存视频帧数据，主要用于重新排序
+     */
+    private final List<H264VideoFrame> gop = new ArrayList<>();
 
+    /**
+     * 异步执行的对象
+     */
     private CompletableFuture<Void> future;
+
+    /**
+     * 线程池执行服务，单线程
+     */
+    private ExecutorService executorService;
 
     public Mp4Header getMp4Header() {
         return mp4Header;
+    }
+
+    public Mp4TrackInfo getMp4TrackInfo() {
+        return mp4TrackInfo;
     }
 
     public void onFmp4DataHandle(Consumer<byte[]> fmp4DataHandle) {
@@ -118,7 +138,8 @@ public class RtspFMp4Proxy {
         });
         this.asyncSend = asyncSend;
         if (this.asyncSend) {
-            this.future = CompletableFuture.runAsync(this::executeHandle);
+            this.executorService = Executors.newSingleThreadExecutor();
+            this.future = CompletableFuture.runAsync(this::executeHandle, this.executorService);
         }
     }
 
@@ -276,7 +297,7 @@ public class RtspFMp4Proxy {
      * @return 异步结果
      */
     public CompletableFuture<Void> start() {
-        log.info("开启FMp4代理服务端，模式：[{}]", this.asyncSend ? "异步" : "同步");
+        log.info("开启FMp4代理服务端，模式[{}]，地址[{}]", this.asyncSend ? "异步" : "同步", this.client.getUri());
         return this.client.start();
     }
 
@@ -284,6 +305,9 @@ public class RtspFMp4Proxy {
      * 结束
      */
     public void stop() {
+        if (this.executorService != null) {
+            this.executorService.shutdown();
+        }
         if (this.asyncSend) {
             this.terminal = true;
             synchronized (this.objLock) {
@@ -294,6 +318,6 @@ public class RtspFMp4Proxy {
             }
         }
         this.client.stop();
-        log.info("关闭FMp4代理服务端");
+        log.info("关闭FMp4代理服务端，地址[{}]", this.client.getUri());
     }
 }

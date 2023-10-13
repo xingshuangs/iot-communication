@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -19,6 +21,11 @@ import java.util.concurrent.TimeUnit;
 public class RtspClient extends RtspNetwork {
 
     private boolean alive;
+
+    /**
+     * 线程池执行服务，单线程
+     */
+    private ExecutorService executorService;
 
     public RtspClient(URI uri) {
         super(uri);
@@ -34,6 +41,7 @@ public class RtspClient extends RtspNetwork {
 
     public RtspClient(URI uri, DigestAuthenticator authenticator, ERtspTransportProtocol transportProtocol) {
         super(uri, authenticator, transportProtocol);
+        this.executorService = Executors.newSingleThreadExecutor();
     }
 
     /**
@@ -43,8 +51,9 @@ public class RtspClient extends RtspNetwork {
      */
     public CompletableFuture<Void> start() {
         log.info("开启RTSP连接，地址[{}]，通信模式[{}]", this.uri, this.transportProtocol);
-        this.alive = true;
         this.connect();
+        // 保证连接成功后在置true
+        this.alive = true;
 
         return CompletableFuture.runAsync(() -> {
             try {
@@ -61,7 +70,7 @@ public class RtspClient extends RtspNetwork {
                     }
                     if (System.currentTimeMillis() - lastTime > (this.sessionInfo.getTimeout() - 1) / 2) {
                         lastTime = System.currentTimeMillis();
-                        log.debug("触发session心跳，发送参数获取信号");
+                        log.debug("[{}]触发session心跳，发送参数获取信号", this.uri);
                         this.getParameter();
                     }
                 }
@@ -72,13 +81,16 @@ public class RtspClient extends RtspNetwork {
                     this.stop();
                 }
             }
-        });
+        }, this.executorService);
     }
 
     /**
      * 断开
      */
     public void stop() {
+        if (this.executorService != null) {
+            this.executorService.shutdown();
+        }
         if (this.alive) {
             this.alive = false;
             this.teardown();

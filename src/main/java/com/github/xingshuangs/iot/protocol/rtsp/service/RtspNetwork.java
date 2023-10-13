@@ -26,7 +26,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CRLF;
@@ -111,10 +110,6 @@ public class RtspNetwork extends TcpClientBasic {
      * 通信协议，TCP、UDP
      */
     protected ERtspTransportProtocol transportProtocol;
-
-    public RtspTrackInfo getTrackInfo() {
-        return trackInfo;
-    }
 
     public void onCommCallback(Consumer<String> commCallback) {
         this.commCallback = commCallback;
@@ -226,7 +221,7 @@ public class RtspNetwork extends TcpClientBasic {
             this.commCallback.accept(reqString);
         }
         byte[] reqBytes = reqString.getBytes(StandardCharsets.US_ASCII);
-        // 后续的发送不需要加锁，因为read不再接收响应
+        // 后续的发送不需要加锁，因为发送数据后不再接收响应
         this.write(reqBytes);
     }
 
@@ -409,12 +404,13 @@ public class RtspNetwork extends TcpClientBasic {
 
         RtspTeardownRequest request = this.needAuthorization ? new RtspTeardownRequest(this.uri, this.sessionInfo.getSessionId())
                 : new RtspTeardownRequest(this.uri, this.sessionInfo.getSessionId(), this.authenticator);
-        if (this.transportProtocol == ERtspTransportProtocol.UDP) {
-            RtspTeardownResponse response = (RtspTeardownResponse) this.readFromServer(request);
-            this.checkAfterResponse(response, ERtspMethod.TEARDOWN);
-        } else {
-            this.sendToServer(request);
-        }
+//        if (this.transportProtocol == ERtspTransportProtocol.UDP) {
+//            RtspTeardownResponse response = (RtspTeardownResponse) this.readFromServer(request);
+//            this.checkAfterResponse(response, ERtspMethod.TEARDOWN);
+//        } else {
+//            this.sendToServer(request);
+//        }
+        this.sendToServer(request);
         if (this.destroyHandle != null) {
             this.destroyHandle.run();
         }
@@ -492,7 +488,11 @@ public class RtspNetwork extends TcpClientBasic {
     protected void socketClientJoinForFinished() {
         CompletableFuture<?>[] futures = this.socketClients.values().stream()
                 .map(IRtspDataStream::getFuture)
+                .filter(Objects::nonNull)
                 .toArray(CompletableFuture[]::new);
+        if (futures.length == 0) {
+            return;
+        }
         CompletableFuture<Void> all = CompletableFuture.allOf(futures);
         all.join();
     }

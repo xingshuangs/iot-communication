@@ -1,5 +1,6 @@
 package com.github.xingshuangs.iot.protocol.modbus.service;
 
+import com.github.xingshuangs.iot.protocol.common.buff.EByteBuffFormat;
 import com.github.xingshuangs.iot.utils.HexUtil;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +8,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -128,6 +130,37 @@ public class ModbusRtuOverTcpTest {
 
     @Test
     public void readWriteData1() {
+        plc.writeInt16(2, (short) 10, true);
+        short data = plc.readInt16(2, true);
+        assertEquals(10, data);
+
+        plc.writeUInt16(3, 20, true);
+        int i = plc.readUInt16(3, true);
+        assertEquals(20, i);
+
+        plc.writeInt32(4, 32, EByteBuffFormat.DC_BA);
+        int i1 = plc.readInt32(4, EByteBuffFormat.DC_BA);
+        assertEquals(32, i1);
+
+        plc.writeUInt32(6, 32L, EByteBuffFormat.DC_BA);
+        long l = plc.readUInt32(6, EByteBuffFormat.DC_BA);
+        assertEquals(32L, l);
+
+        plc.writeFloat32(8, 12.12f, EByteBuffFormat.DC_BA);
+        float v = plc.readFloat32(8, EByteBuffFormat.DC_BA);
+        assertEquals(12.12f, v, 0.0001);
+
+        plc.writeFloat64(10, 33.21, EByteBuffFormat.DC_BA);
+        double v1 = plc.readFloat64(10, EByteBuffFormat.DC_BA);
+        assertEquals(33.21, v1, 0.0001);
+
+        plc.writeString(14, "pppp", StandardCharsets.UTF_8);
+        String s = plc.readString(14, 4, StandardCharsets.UTF_8);
+        assertEquals("pppp", s);
+    }
+
+    @Test
+    public void readWriteData2() {
         plc.writeString(2, "1234");
         String s = plc.readString(2, 4);
         assertEquals("1234", s);

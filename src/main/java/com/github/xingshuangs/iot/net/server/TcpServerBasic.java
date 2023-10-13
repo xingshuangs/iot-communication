@@ -30,11 +30,6 @@ public class TcpServerBasic {
      */
     protected int port = 8088;
 
-    /**
-     * 客户端MAP
-     */
-    protected final ConcurrentHashMap<String, Socket> clientMap = new ConcurrentHashMap<>();
-
     //region 服务端
 
     /**
@@ -112,15 +107,6 @@ public class TcpServerBasic {
     //region 客户端
 
     /**
-     * 获取客户端连入数量
-     *
-     * @return 客户端连入数量
-     */
-    public int getClientSum() {
-        return this.clientMap.size();
-    }
-
-    /**
      * 校验客户端是否允许连入
      *
      * @param client 客户端
@@ -137,9 +123,7 @@ public class TcpServerBasic {
      * @param client 客户端
      */
     protected void doClientConnected(Socket client) {
-        SocketAddress address = client.getRemoteSocketAddress();
-        this.clientMap.put(address.toString(), client);
-        log.debug("有客户端[{}]连入，当前客户端数量[{}]", address, this.clientMap.size());
+        log.debug("有客户端[{}]连入", client.getRemoteSocketAddress());
         this.clientConnected(client);
         try {
             if (this.checkHandshake(client)) {
@@ -159,9 +143,8 @@ public class TcpServerBasic {
             }
         }
 
-        this.clientMap.remove(address.toString());
-        log.debug("有客户端[{}]断开，当前客户端数量[{}]", address, this.clientMap.size());
         this.clientDisconnected(client);
+        log.debug("有客户端[{}]断开", client.getRemoteSocketAddress());
     }
 
     /**
@@ -247,11 +230,20 @@ public class TcpServerBasic {
      * @return 读取个数
      */
     protected int read(final Socket socket, final byte[] data) {
-        try {
-            return SocketUtils.read(socket, data);
-        } catch (IOException e) {
-            throw new SocketRuntimeException(e);
-        }
+        return this.read(socket, data, 0, data.length, 1024);
+    }
+
+    /**
+     * 读取数据
+     *
+     * @param socket socket对象
+     * @param data   字节数组
+     * @param offset 偏移量
+     * @param length 写入长度
+     * @return 返回读取的数据长度
+     */
+    private int read(final Socket socket, final byte[] data, final int offset, final int length) {
+        return this.read(socket, data, offset, length, 1024);
     }
 
     /**
@@ -262,13 +254,16 @@ public class TcpServerBasic {
      * @param offset    偏移量
      * @param length    写入长度
      * @param maxLength 单次通信允许的对最大长度
+     * @return 返回读取的数据长度
      */
-    protected void read(final Socket socket, final byte[] data, final int offset, final int length, final int maxLength) {
+    protected int read(final Socket socket, final byte[] data, final int offset, final int length, final int maxLength) {
         try {
-            SocketUtils.read(socket, data, offset, length, maxLength);
+            return SocketUtils.read(socket, data, offset, length, maxLength);
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
         }
     }
+
+
     //endregion
 }

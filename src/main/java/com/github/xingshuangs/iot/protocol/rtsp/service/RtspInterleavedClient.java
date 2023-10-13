@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.service;
 
 
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
+import com.github.xingshuangs.iot.exceptions.SocketRuntimeException;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.rtcp.model.RtcpBasePackage;
@@ -16,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 /**
@@ -68,6 +71,11 @@ public class RtspInterleavedClient implements IRtspDataStream {
      */
     private CompletableFuture<Void> future;
 
+    /**
+     * 线程池执行服务，单线程
+     */
+    private final ExecutorService executorService;
+
     public void setCommCallback(Consumer<byte[]> commCallback) {
         this.commCallback = commCallback;
     }
@@ -91,6 +99,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
     public RtspInterleavedClient(IPayloadParser iPayloadParser, TcpClientBasic rtspClient) {
         this.iPayloadParser = iPayloadParser;
         this.rtspClient = rtspClient;
+        this.executorService = Executors.newSingleThreadExecutor();
     }
 
     @Override
@@ -100,6 +109,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
 
     @Override
     public void close() {
+        this.executorService.shutdown();
         if (!this.terminal) {
             // 发送byte
             byte[] receiverAndByteContent = this.statistics.createReceiverAndByteContent();
@@ -111,7 +121,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
 
     @Override
     public void triggerReceive() {
-        this.future = CompletableFuture.runAsync(this::waitForReceiveData);
+        this.future = CompletableFuture.runAsync(this::waitForReceiveData, this.executorService);
     }
 
     @Override
@@ -146,6 +156,11 @@ public class RtspInterleavedClient implements IRtspDataStream {
                 } else if (interleaved.getChannelId() == this.rtcpVideoChannelNumber) {
                     this.rtcpVideoHandle(interleaved);
                 }
+            } catch (SocketRuntimeException e) {
+                // SocketRuntimeException就是IO异常，网络断开了，结束线程
+                log.error(e.getMessage());
+                this.terminal = true;
+                break;
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
@@ -168,20 +183,15 @@ public class RtspInterleavedClient implements IRtspDataStream {
         if (readLength != 3) {
             throw new RtspCommException("头读取长度有误");
         }
+        int offset = 4;
         int length = ByteReadBuff.newInstance(header, 2).getUInt16();
-        byte[] total = new byte[length + 4];
+        byte[] total = new byte[length + offset];
         System.arraycopy(header, 0, total, 0, header.length);
         // 存在分包的情况，循环读取，保证数据准确性
-        int offset = 4;
-        int len = length;
-        while (offset < total.length) {
-            int read = this.rtspClient.read(total, offset, len);
-            offset += read;
-            len -= read;
-        }
-        if (offset != total.length) {
+        int read = this.rtspClient.read(total, offset, length, 1024, 0, true);
+        if (offset + read != total.length) {
             log.error(HexUtil.toHexString(total));
-            throw new RtspCommException("数据体读取长度有误，原来长度[" + (length + 4) + "], 现在长度[" + offset + "]");
+            throw new RtspCommException("数据体读取长度有误，原来长度[" + (total.length) + "], 现在长度[" + (offset + read) + "]");
         }
         return total;
     }

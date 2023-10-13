@@ -90,11 +90,30 @@ public class SocketUtils {
      * @param offset    偏移量
      * @param length    读取长度
      * @param maxLength 单次通信允许的对最大长度
-     * @param timeout   超时时间
+     * @param timeout   超时时间，0：没有超时时间
      * @return 读取数量
      * @throws IOException IO异常
      */
-    public static int read(final Socket socket, final byte[] data, final int offset, final int length, final int maxLength, final int timeout) throws IOException {
+    public static int read(final Socket socket, final byte[] data, final int offset, final int length,
+                           final int maxLength, final int timeout) throws IOException {
+        return read(socket, data, offset, length, maxLength, timeout, false);
+    }
+
+    /**
+     * 读取数据
+     *
+     * @param socket      socket对象
+     * @param data        字节数组
+     * @param offset      偏移量
+     * @param length      读取长度
+     * @param maxLength   单次通信允许的对最大长度
+     * @param timeout     超时时间，0：没有超时时间，无限等
+     * @param waitForMore 若数据不够，是否等待，等待更多数据，大部分都是不等待的，等待都适用于分包粘包的情况
+     * @return 读取数量
+     * @throws IOException IO异常
+     */
+    public static int read(final Socket socket, final byte[] data, final int offset, final int length,
+                           final int maxLength, final int timeout, final boolean waitForMore) throws IOException {
         if (offset + length > data.length) {
             throw new IllegalArgumentException("offset+length");
         }
@@ -112,12 +131,12 @@ public class SocketUtils {
             int len = maxLength <= 0 ? length - count : Math.min(maxLength, length - count);
             int num = in.read(data, off, len);
             if (num < 0) {
-                throw new SocketRuntimeException("读取数据异常，未读取到数据");
+                throw new SocketRuntimeException("读取数据异常，未读取到数据，连接断开");
             }
             count += num;
             off += num;
-            // 比读取的数据长度还小，则证明已经读取完了
-            if (num < len) {
+            // 实际读取的数据长度比期望还小，则证明已经读取完了
+            if (!waitForMore && num < len) {
                 break;
             }
         }

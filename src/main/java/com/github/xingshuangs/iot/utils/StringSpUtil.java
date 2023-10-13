@@ -31,7 +31,7 @@ public class StringSpUtil {
         for (String item : data) {
             int index = item.indexOf(midChar);
             if (index >= 0) {
-                res.put(item.substring(0, index).trim(), item.substring(index + 1).trim());
+                res.putIfAbsent(item.substring(0, index).trim(), item.substring(index + 1).trim());
             }
         }
         return res;

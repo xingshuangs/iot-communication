@@ -9,6 +9,8 @@ import com.github.xingshuangs.iot.protocol.rtsp.service.IRtspDataStream;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 /**
@@ -44,6 +46,11 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
      */
     private RtcpUdpClient rtcpUdpClient;
 
+    /**
+     * 线程池执行服务，单线程
+     */
+    private final ExecutorService executorService;
+
     public void setCommCallback(Consumer<byte[]> commCallback) {
         this.commCallback = commCallback;
     }
@@ -54,10 +61,12 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
 
     public RtpUdpClient(IPayloadParser iPayloadParser) {
         this.iPayloadParser = iPayloadParser;
+        this.executorService = Executors.newSingleThreadExecutor();
     }
 
     public RtpUdpClient(String ip, int port) {
         super(ip, port);
+        this.executorService = Executors.newSingleThreadExecutor();
     }
 
     @Override
@@ -67,13 +76,14 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
 
     @Override
     public void close() {
+        this.executorService.shutdown();
         this.terminal = true;
         super.close();
     }
 
     @Override
     public void triggerReceive() {
-        this.future = CompletableFuture.runAsync(this::waitForReceiveData);
+        this.future = CompletableFuture.runAsync(this::waitForReceiveData, this.executorService);
     }
 
     @Override
