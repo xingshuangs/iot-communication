@@ -132,15 +132,24 @@ public class PLCNetwork extends TcpClientBasic {
 
     /**
      * 连接请求
-     * 1500	1200	300	    400	    200	    200Smart
+     * <p>
+     * TSAP包含两个字节，远程TSAP地址是连接的远程PC Access所设置的地址，
+     * 第一个字节标识访问的资源，01是PG，02是OP，03是S7单边（服务器模式），10（16进制）及以上是S7双边通信；
+     * 第二个字节是访问点，是CPU的槽号+CP槽号
+     * 第一个字节：0x01+连接数目（S7-200）或者0x03+连接数目（S7-300/400)
+     * 第二个字节：模块位置（S7-200）或者机架和槽位（S7-300/400）
+     * 1500	    1200	300	    400	    200	    200Smart
      * 0x0102	0x0102	0x0102	0x0102	0x4d57	0x1000
      * 0x0100	0x0100	0x0102	0x0103	0x4d57	0x0300
+     * ------------------------------------------------
+     * 0x0100	0x0100	0x0100	0x0100	0x4d57	0x1000
+     * 0x0300	0x0300	0x0302	0x0303	0x4d57	0x0300
      */
     private void connectionRequest() {
         // 对应0xC1
-        int local = 0x0102;
+        int local = 0x0100;
         // 对应0xC2 | 经测试：S1200支持0x0100、0x0200、0x0300，S200Smart支持0x0200、0x0300
-        int remote = 0x0100;
+        int remote = 0x0300;
         switch (this.plcType) {
             case S200:
                 // S7net中写的是0x1000,0x1001
@@ -149,6 +158,7 @@ public class PLCNetwork extends TcpClientBasic {
                 break;
             case S200_SMART:
                 local = 0x1000;
+                // 远程只能设置为0x0200,0x0201,0x0300,0x0301
                 remote = 0x0300;
                 break;
             case S300:

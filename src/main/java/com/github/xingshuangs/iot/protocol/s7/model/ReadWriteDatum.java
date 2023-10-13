@@ -30,8 +30,15 @@ public class ReadWriteDatum extends Datum {
             return 0;
         }
         int sum = 0;
-        for (ReturnItem returnItem : this.returnItems) {
-            sum += returnItem.byteArrayLength();
+        for (int i = 0; i < this.returnItems.size(); i++) {
+            int length = this.returnItems.get(i).byteArrayLength();
+            sum += length;
+            // 当数据不是最后一个的时候，如果数据长度为奇数，S7协议会多填充一个字节，使其数量保持为偶数（最后一个奇数长度数据不需要填充）
+            if (i != this.returnItems.size() - 1
+                    && length % 2 == 1
+                    && this.returnItems.get(i) instanceof DataItem) {
+                sum++;
+            }
         }
         return sum;
     }
@@ -42,8 +49,15 @@ public class ReadWriteDatum extends Datum {
             return new byte[0];
         }
         ByteWriteBuff buff = ByteWriteBuff.newInstance(this.byteArrayLength());
-        for (ReturnItem returnItem : this.returnItems) {
-            buff.putBytes(returnItem.toByteArray());
+        for (int i = 0; i < this.returnItems.size(); i++) {
+            int length = this.returnItems.get(i).byteArrayLength();
+            buff.putBytes(this.returnItems.get(i).toByteArray());
+            // 当数据不是最后一个的时候，如果数据长度为奇数，S7协议会多填充一个字节，使其数量保持为偶数（最后一个奇数长度数据不需要填充）
+            if (i != this.returnItems.size() - 1
+                    && length % 2 == 1
+                    && this.returnItems.get(i) instanceof DataItem) {
+                buff.putByte(0x00);
+            }
         }
         return buff.getData();
     }
@@ -85,13 +99,18 @@ public class ReadWriteDatum extends Datum {
             ReturnItem dataItem;
             // 对写操作的响应结果进行特殊处理
             if (EMessageType.ACK_DATA == messageType && EFunctionCode.WRITE_VARIABLE == functionCode) {
-                dataItem = ReturnItem.fromBytes(data);
+                dataItem = ReturnItem.fromBytes(remain);
+                datum.returnItems.add(dataItem);
+                offset += dataItem.byteArrayLength();
             } else {
                 dataItem = DataItem.fromBytes(remain);
+                datum.returnItems.add(dataItem);
+                offset += dataItem.byteArrayLength();
+                // 当数据不是最后一个的时候，如果数据长度为奇数，S7协议会多填充一个字节，使其数量保持为偶数（最后一个奇数长度数据不需要填充）
+                if (dataItem.byteArrayLength() % 2 == 1) {
+                    offset++;
+                }
             }
-
-            datum.returnItems.add(dataItem);
-            offset += dataItem.byteArrayLength();
             if (offset >= data.length) {
                 break;
             }

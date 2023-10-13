@@ -19,10 +19,10 @@ import static org.junit.Assert.*;
 @Slf4j
 @Ignore
 public class S7PLCTest {
-    //    private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
+//        private S7PLC s7PLC = new S7PLC(EPlcType.S1200, "192.168.3.98");
 //    private S7PLC s7PLC = new S7PLC(EPlcType.S1500, "192.168.3.103");
-    private S7PLC s7PLC = new S7PLC(EPlcType.S200_SMART, "192.168.3.102");
-//    private final S7PLC s7PLC = new S7PLC(EPlcType.S1200);
+//    private S7PLC s7PLC = new S7PLC(EPlcType.S200_SMART, "192.168.3.102");
+    private final S7PLC s7PLC = new S7PLC(EPlcType.S1200);
 
     @Before
     public void before() {
@@ -81,14 +81,14 @@ public class S7PLCTest {
         boolean res = s7PLC.readBoolean("DB2.1.7");
         assertTrue(res);
 
-        List<Boolean> actual = s7PLC.readBoolean("DB1.2.0", "DB1.2.1", "DB1.2.7");
+        List<Boolean> actual = s7PLC.readBoolean("DB2.2.0", "DB2.2.1", "DB2.2.7");
         assertEquals(3, actual.size());
     }
 
     @Test
     public void writeByte() {
-        s7PLC.writeByte("DB1.0", (byte) 0x11);
-        byte actual = s7PLC.readByte("DB1.0");
+        s7PLC.writeByte("DB2.0", (byte) 0x11);
+        byte actual = s7PLC.readByte("DB2.0");
         assertEquals((byte) 0x11, actual);
     }
 
@@ -128,8 +128,8 @@ public class S7PLCTest {
 
     @Test
     public void writeFloat32() {
-        s7PLC.writeFloat32("DB2.6", 12);
-        float actual = s7PLC.readFloat32("DB2.6");
+        s7PLC.writeFloat32("DB1.2", 12);
+        float actual = s7PLC.readFloat32("DB1.2");
         assertEquals(12, actual, 0.00001);
     }
 
@@ -197,9 +197,9 @@ public class S7PLCTest {
         assertTrue(actual);
 
         MultiAddressRead addressRead = new MultiAddressRead();
-        addressRead.addData("DB1.0", 1)
-                .addData("DB1.2", 3)
-                .addData("DB1.3", 5);
+        addressRead.addData("DB2.0", 1)
+                .addData("DB2.2", 3)
+                .addData("DB2.3", 5);
         List<byte[]> list = s7PLC.readMultiByte(addressRead);
         assertEquals(1, list.get(0).length);
         assertEquals(3, list.get(1).length);
@@ -234,24 +234,49 @@ public class S7PLCTest {
     @Test
     public void writeMultiData1() {
 //        s7PLC.setComCallback(x -> System.out.println("长度：" + x.length));
-//        MultiAddressWrite addressWrite = new MultiAddressWrite();
-//        addressWrite.addByte("DB2.0", (byte) 0x11)
-//                .addByte("DB2.1", (byte) 0x12)
-//                .addByte("DB2.2", (byte) 0x13)
-//                .addByte("DB2.3", (byte) 0x14);
-//        s7PLC.writeMultiData(addressWrite);
+        MultiAddressRead addressRead = new MultiAddressRead();
+        addressRead.addData("DB2.0", 1)
+                .addData("DB2.1", 1)
+                .addData("DB2.2", 1)
+                .addData("DB2.3", 1)
+                .addData("DB2.4", 1);
+        List<byte[]> list = s7PLC.readMultiByte(addressRead);
 
         MultiAddressWrite addressWrite = new MultiAddressWrite();
-//        for (int i = 0; i < 53; i++) {
-//            addressWrite.addBoolean(String.format("DB1.%d.0", i), true);
-//        }
+        addressWrite.addByte("DB2.0", (byte) 0x01)
+                .addByte("DB2.1", (byte) 0x02)
+                .addByte("DB2.2", (byte) 0x03)
+                .addByte("DB2.3", (byte) 0x04)
+                .addByte("DB2.4", (byte) 0x05);
+        s7PLC.writeMultiData(addressWrite);
+
+//        MultiAddressRead addressRead = new MultiAddressRead();
+//        addressRead.addData("V0", 1)
+//                .addData("V1", 1)
+//                .addData("V2", 1)
+//                .addData("V3", 1)
+//                .addData("V4", 1);
+//        List<byte[]> list = s7PLC.readMultiByte(addressRead);
+//
+//        MultiAddressWrite addressWrite = new MultiAddressWrite();
+//        addressWrite.addByte("V0", (byte) 0x01)
+//                .addByte("V1", (byte) 0x02)
+//                .addByte("V2", (byte) 0x03)
+//                .addByte("V3", (byte) 0x04)
+//                .addByte("V4", (byte) 0x05);
 //        s7PLC.writeMultiData(addressWrite);
 
-        addressWrite = new MultiAddressWrite();
-        for (int i = 0; i < 100; i++) {
-            addressWrite.addByte(String.format("DB1.%d", i), (byte) i);
-        }
-        s7PLC.writeMultiData(addressWrite);
+//        MultiAddressWrite addressWrite = new MultiAddressWrite();
+////        for (int i = 0; i < 53; i++) {
+////            addressWrite.addBoolean(String.format("DB1.%d.0", i), true);
+////        }
+////        s7PLC.writeMultiData(addressWrite);
+//
+//        addressWrite = new MultiAddressWrite();
+//        for (int i = 0; i < 100; i++) {
+//            addressWrite.addByte(String.format("DB1.%d", i), (byte) i);
+//        }
+//        s7PLC.writeMultiData(addressWrite);
 
 //        addressWrite = new MultiAddressWrite();
 //        for (int i = 0; i < 100; i++) {

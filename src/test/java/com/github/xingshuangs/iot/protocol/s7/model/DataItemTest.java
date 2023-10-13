@@ -20,10 +20,10 @@ public class DataItemTest {
         DataItem dataItem = new DataItem();
         dataItem.setReturnCode(EReturnCode.from((byte) 0xFF));
         dataItem.setVariableType(EDataVariableType.BYTE_WORD_DWORD);
-        dataItem.setCount(7);
+        dataItem.setCount(1);
         dataItem.setData(new byte[1]);
         byte[] actual = dataItem.toByteArray();
-        byte[] expect = {(byte) 0xFF, (byte) 0x04, (byte) 0x00, (byte) 0x38, (byte) 0x00, (byte) 0x00};
+        byte[] expect = {(byte) 0xFF, (byte) 0x04, (byte) 0x00, (byte) 0x08, (byte) 0x00};
         assertArrayEquals(expect, actual);
     }
 }
