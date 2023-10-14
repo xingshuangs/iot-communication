@@ -65,10 +65,6 @@ public class ByteWriteBuff extends ByteBuffBase {
         return new ByteWriteBuff(capacity, false, format);
     }
 
-    public static ByteWriteBuff newInstance(int capacity, boolean littleEndian) {
-        return new ByteWriteBuff(capacity, littleEndian, EByteBuffFormat.DC_BA);
-    }
-
     public static ByteWriteBuff newInstance(int capacity, boolean littleEndian, EByteBuffFormat format) {
         return new ByteWriteBuff(capacity, littleEndian, format);
     }

@@ -2,13 +2,22 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
+import lombok.Data;
 
 /**
- * 协议体数据：无数据
+ * 协议体数据：错误信息
  *
  * @author xingshuang
  */
-public class McData implements IObjectByteArray {
+@Data
+public class McErrorInformationData implements IObjectByteArray {
+
+    private byte[] accessRoute;
+
+    private byte[] command;
+
+    private byte[] subcommand;
+
     @Override
     public int byteArrayLength() {
         return 0;

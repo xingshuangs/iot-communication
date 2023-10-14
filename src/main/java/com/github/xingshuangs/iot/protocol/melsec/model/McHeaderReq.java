@@ -13,7 +13,7 @@ import lombok.Data;
 public class McHeaderReq extends McHeader {
 
     /**
-     * 监视定时器
+     * 监视定时器，2字节
      */
     private int monitoringTimer;
 

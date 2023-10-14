@@ -2,13 +2,19 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
 
 /**
- * 协议体数据：无数据
+ * 协议体数据：公共请求数据
  *
  * @author xingshuang
  */
-public class McData implements IObjectByteArray {
+public class McReqData implements IObjectByteArray {
+
+    private EMcCommand command;
+
+    private int subcommand;
+
     @Override
     public int byteArrayLength() {
         return 0;
