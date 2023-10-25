@@ -7,35 +7,25 @@ import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import lombok.Data;
 
 /**
- * 协议体数据：公共请求数据
+ * 协议体数据：响应数据
  *
  * @author xingshuang
  */
 @Data
-public class McReqData implements IObjectByteArray {
+public class McAckData implements IObjectByteArray {
 
     /**
-     * PLC的类型系列
+     * 数据内容
      */
-    protected EMcSeries series;
-
-    /**
-     * 指令，2个字节
-     */
-    protected EMcCommand command;
-
-    /**
-     * 子指令，2个字节
-     */
-    protected int subcommand;
+    private byte[] data = new byte[0];
 
     @Override
     public int byteArrayLength() {
-        return 0;
+        return this.data.length;
     }
 
     @Override
     public byte[] toByteArray() {
-        return new byte[0];
+        return this.data;
     }
 }
