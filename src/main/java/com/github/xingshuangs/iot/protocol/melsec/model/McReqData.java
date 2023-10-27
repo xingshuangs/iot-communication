@@ -3,7 +3,6 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import lombok.Data;
 
 /**
@@ -13,11 +12,6 @@ import lombok.Data;
  */
 @Data
 public class McReqData implements IObjectByteArray {
-
-    /**
-     * PLC的类型系列
-     */
-    protected EMcSeries series;
 
     /**
      * 指令，2个字节

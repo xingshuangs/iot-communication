@@ -63,10 +63,23 @@ public class IntegerUtil {
      * @return 字节数组
      */
     public static byte[] toCustomByteArray(long data, int offset, int length) {
+        return toCustomByteArray(data, offset, length, false);
+    }
+
+    /**
+     * 将long转换为字节数组，并自定义获取字节数，默认采用大端模式
+     *
+     * @param data         long数据
+     * @param offset       偏移量
+     * @param length       读取长度
+     * @param littleEndian 小端模式
+     * @return 字节数组
+     */
+    public static byte[] toCustomByteArray(long data, int offset, int length, boolean littleEndian) {
         if (offset + length > 4) {
             throw new IndexOutOfBoundsException("offset + length > 4");
         }
-        byte[] bytes = toByteArray((int) data, false);
+        byte[] bytes = toByteArray((int) data, littleEndian);
         byte[] res = new byte[length];
         System.arraycopy(bytes, offset, res, 0, length);
         return res;
