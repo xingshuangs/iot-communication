@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * @author xingshuang
  */
 @Data
-public class McDeviceRandomWriteMultiBlocksReqData extends McReqData {
+public class McDeviceBatchWriteMultiBlocksReqData extends McReqData {
 
     /**
      * 软元件设备地址，字访问地址列表
@@ -23,6 +24,11 @@ public class McDeviceRandomWriteMultiBlocksReqData extends McReqData {
      * 软元件设备地址，位访问地址列表
      */
     private List<McDeviceContent> bitContents;
+
+    public McDeviceBatchWriteMultiBlocksReqData() {
+        this.wordContents = new ArrayList<>();
+        this.bitContents = new ArrayList<>();
+    }
 
     @Override
     public int byteArrayLength() {

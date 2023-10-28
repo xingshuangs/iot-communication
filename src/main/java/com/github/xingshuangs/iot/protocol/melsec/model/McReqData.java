@@ -16,12 +16,12 @@ public class McReqData implements IObjectByteArray {
     /**
      * 指令，2个字节
      */
-    protected EMcCommand command;
+    protected EMcCommand command = EMcCommand.DEVICE_ACCESS_BATCH_READ_IN_UNITS;
 
     /**
      * 子指令，2个字节
      */
-    protected int subcommand;
+    protected int subcommand = 0x0000;
 
     @Override
     public int byteArrayLength() {

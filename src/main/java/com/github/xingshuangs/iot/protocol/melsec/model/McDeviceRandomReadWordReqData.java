@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +24,11 @@ public class McDeviceRandomReadWordReqData extends McReqData {
      * 软元件设备地址，双字访问地址列表
      */
     private List<McDeviceAddress> dwordAddresses;
+
+    public McDeviceRandomReadWordReqData() {
+        this.wordAddresses = new ArrayList<>();
+        this.dwordAddresses = new ArrayList<>();
+    }
 
     @Override
     public int byteArrayLength() {
