@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 @Ignore
 public class ModbusRtuOverTcpTest {
 
-    private final ModbusRtuOverTcp plc = new ModbusRtuOverTcp(1, "127.0.0.1");
+    private final ModbusRtuOverTcp plc = new ModbusRtuOverTcp("127.0.0.1");
 
     @Before
     public void before() {
@@ -166,5 +166,35 @@ public class ModbusRtuOverTcpTest {
         assertEquals("1234", s);
     }
 
+    @Test
+    public void readWriteData3() {
+        plc.writeInt16(3,2, (short) 10);
+        short data = plc.readInt16(3,2);
+        assertEquals(10, data);
+
+        plc.writeUInt16(4,3, 20);
+        int i = plc.readUInt16(4,3);
+        assertEquals(20, i);
+
+        plc.writeInt32(3,4, 32);
+        int i1 = plc.readInt32(3,4);
+        assertEquals(32, i1);
+
+        plc.writeUInt32(4,6, 32L);
+        long l = plc.readUInt32(4,6);
+        assertEquals(32L, l);
+
+        plc.writeFloat32(3,8, 12.12f);
+        float v = plc.readFloat32(3,8);
+        assertEquals(12.12f, v, 0.0001);
+
+        plc.writeFloat64(4,10, 33.21);
+        double v1 = plc.readFloat64(4,10);
+        assertEquals(33.21, v1, 0.0001);
+
+        plc.writeString(3,14, "pppp");
+        String s = plc.readString(3,14, 4);
+        assertEquals("pppp", s);
+    }
 
 }

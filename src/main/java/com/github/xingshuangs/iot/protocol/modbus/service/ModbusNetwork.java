@@ -64,6 +64,10 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
         return unitId;
     }
 
+    public void setUnitId(int unitId) {
+        this.unitId = unitId;
+    }
+
     public ModbusNetwork() {
         super();
     }
@@ -109,7 +113,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param reqPdu 请求对象
      * @return 响应结果
      */
-    protected abstract MbPdu readModbusData(MbPdu reqPdu);
+    protected abstract MbPdu readModbusData(int unitId, MbPdu reqPdu);
 
     //endregion
 
@@ -130,7 +134,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("quantity<1||quantity>2000");
         }
         MbReadCoilRequest reqPdu = new MbReadCoilRequest(address, quantity);
-        MbReadCoilResponse resPdu = (MbReadCoilResponse) this.readModbusData(reqPdu);
+        MbReadCoilResponse resPdu = (MbReadCoilResponse) this.readModbusData(this.unitId, reqPdu);
         return BooleanUtil.byteArrayToList(quantity, resPdu.getCoilStatus());
     }
 
@@ -145,7 +149,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("address<0");
         }
         MbWriteSingleCoilRequest reqPdu = new MbWriteSingleCoilRequest(address, coilStatus);
-        this.readModbusData(reqPdu);
+        this.readModbusData(this.unitId, reqPdu);
     }
 
     /**
@@ -163,7 +167,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
         }
         byte[] values = BooleanUtil.listToByteArray(coilStatus);
         MbWriteMultipleCoilRequest reqPdu = new MbWriteMultipleCoilRequest(address, coilStatus.size(), values);
-        this.readModbusData(reqPdu);
+        this.readModbusData(this.unitId, reqPdu);
     }
 
     /**
@@ -181,7 +185,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("quantity<1||quantity>2000");
         }
         MbReadDiscreteInputRequest reqPdu = new MbReadDiscreteInputRequest(address, quantity);
-        MbReadDiscreteInputResponse resPdu = (MbReadDiscreteInputResponse) this.readModbusData(reqPdu);
+        MbReadDiscreteInputResponse resPdu = (MbReadDiscreteInputResponse) this.readModbusData(this.unitId, reqPdu);
         return BooleanUtil.byteArrayToList(quantity, resPdu.getInputStatus());
     }
 
@@ -200,7 +204,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("quantity<=0||quantity>125");
         }
         MbReadHoldRegisterRequest reqPdu = new MbReadHoldRegisterRequest(address, quantity);
-        MbReadHoldRegisterResponse resPdu = (MbReadHoldRegisterResponse) this.readModbusData(reqPdu);
+        MbReadHoldRegisterResponse resPdu = (MbReadHoldRegisterResponse) this.readModbusData(this.unitId, reqPdu);
         return resPdu.getRegister();
     }
 
@@ -218,7 +222,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("value<0||value>65535");
         }
         MbWriteSingleRegisterRequest reqPdu = new MbWriteSingleRegisterRequest(address, value);
-        this.readModbusData(reqPdu);
+        this.readModbusData(this.unitId, reqPdu);
     }
 
     /**
@@ -235,7 +239,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("values长度必须是偶数");
         }
         MbWriteMultipleRegisterRequest reqPdu = new MbWriteMultipleRegisterRequest(address, values.length / 2, values);
-        this.readModbusData(reqPdu);
+        this.readModbusData(this.unitId, reqPdu);
     }
 
     /**
@@ -255,7 +259,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
             data[i * 2 + 1] = bytes[1];
         }
         MbWriteMultipleRegisterRequest reqPdu = new MbWriteMultipleRegisterRequest(address, values.size(), data);
-        this.readModbusData(reqPdu);
+        this.readModbusData(this.unitId, reqPdu);
     }
 
     /**
@@ -273,7 +277,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("quantity<=0||quantity>125");
         }
         MbReadInputRegisterRequest reqPdu = new MbReadInputRegisterRequest(address, quantity);
-        MbReadInputRegisterResponse resPdu = (MbReadInputRegisterResponse) this.readModbusData(reqPdu);
+        MbReadInputRegisterResponse resPdu = (MbReadInputRegisterResponse) this.readModbusData(this.unitId, reqPdu);
         return resPdu.getRegister();
     }
     //endregion

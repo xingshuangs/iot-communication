@@ -21,6 +21,10 @@ public class ModbusTcp extends ModbusNetwork<MbTcpRequest, MbTcpResponse> {
         this(1, ip, PORT);
     }
 
+    public ModbusTcp(String ip, int port) {
+        this(1, ip, port);
+    }
+
     public ModbusTcp(int unitId) {
         this(unitId, IP, PORT);
     }
@@ -107,9 +111,9 @@ public class ModbusTcp extends ModbusNetwork<MbTcpRequest, MbTcpResponse> {
      * @return 响应结果
      */
     @Override
-    protected MbPdu readModbusData(MbPdu reqPdu) {
+    protected MbPdu readModbusData(int unitId, MbPdu reqPdu) {
         MbTcpRequest request = MbTcpRequest.createDefault();
-        request.getHeader().setUnitId(this.unitId);
+        request.getHeader().setUnitId(unitId);
         request.setPdu(reqPdu);
         request.selfCheck();
         try {
