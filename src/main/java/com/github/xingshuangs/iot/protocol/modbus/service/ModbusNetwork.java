@@ -110,6 +110,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
     /**
      * 读取modbus数据
      *
+     * @param unitId 从站编号
      * @param reqPdu 请求对象
      * @return 响应结果
      */
@@ -127,6 +128,18 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return boolean列表
      */
     public List<Boolean> readCoil(int address, int quantity) {
+        return this.readCoil(this.unitId, address, quantity);
+    }
+
+    /**
+     * 读取线圈， modbus 1个寄存器占2个字节
+     *
+     * @param unitId   从站编号
+     * @param address  地址
+     * @param quantity 线圈数量
+     * @return boolean列表
+     */
+    public List<Boolean> readCoil(int unitId, int address, int quantity) {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
@@ -134,7 +147,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("quantity<1||quantity>2000");
         }
         MbReadCoilRequest reqPdu = new MbReadCoilRequest(address, quantity);
-        MbReadCoilResponse resPdu = (MbReadCoilResponse) this.readModbusData(this.unitId, reqPdu);
+        MbReadCoilResponse resPdu = (MbReadCoilResponse) this.readModbusData(unitId, reqPdu);
         return BooleanUtil.byteArrayToList(quantity, resPdu.getCoilStatus());
     }
 
@@ -145,11 +158,22 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param coilStatus 线圈状态
      */
     public void writeCoil(int address, boolean coilStatus) {
+        this.writeCoil(this.unitId, address, coilStatus);
+    }
+
+    /**
+     * 写单线圈， modbus 1个寄存器占2个字节
+     *
+     * @param unitId     从站编号
+     * @param address    地址
+     * @param coilStatus 线圈状态
+     */
+    public void writeCoil(int unitId, int address, boolean coilStatus) {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
         MbWriteSingleCoilRequest reqPdu = new MbWriteSingleCoilRequest(address, coilStatus);
-        this.readModbusData(this.unitId, reqPdu);
+        this.readModbusData(unitId, reqPdu);
     }
 
     /**
@@ -159,6 +183,17 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param coilStatus 线圈状态列表
      */
     public void writeCoil(int address, List<Boolean> coilStatus) {
+        this.writeCoil(this.unitId, address, coilStatus);
+    }
+
+    /**
+     * 写多线圈， modbus 1个寄存器占2个字节
+     *
+     * @param unitId     从站编号
+     * @param address    地址
+     * @param coilStatus 线圈状态列表
+     */
+    public void writeCoil(int unitId, int address, List<Boolean> coilStatus) {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
@@ -167,7 +202,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
         }
         byte[] values = BooleanUtil.listToByteArray(coilStatus);
         MbWriteMultipleCoilRequest reqPdu = new MbWriteMultipleCoilRequest(address, coilStatus.size(), values);
-        this.readModbusData(this.unitId, reqPdu);
+        this.readModbusData(unitId, reqPdu);
     }
 
     /**
@@ -178,6 +213,18 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return boolean列表
      */
     public List<Boolean> readDiscreteInput(int address, int quantity) {
+        return this.readDiscreteInput(this.unitId, address, quantity);
+    }
+
+    /**
+     * 读取离散输入， modbus 1个寄存器占2个字节
+     *
+     * @param unitId   从站编号
+     * @param address  地址
+     * @param quantity 线圈数量
+     * @return boolean列表
+     */
+    public List<Boolean> readDiscreteInput(int unitId, int address, int quantity) {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
@@ -185,7 +232,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("quantity<1||quantity>2000");
         }
         MbReadDiscreteInputRequest reqPdu = new MbReadDiscreteInputRequest(address, quantity);
-        MbReadDiscreteInputResponse resPdu = (MbReadDiscreteInputResponse) this.readModbusData(this.unitId, reqPdu);
+        MbReadDiscreteInputResponse resPdu = (MbReadDiscreteInputResponse) this.readModbusData(unitId, reqPdu);
         return BooleanUtil.byteArrayToList(quantity, resPdu.getInputStatus());
     }
 
@@ -197,6 +244,18 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 字节数组
      */
     public byte[] readHoldRegister(int address, int quantity) {
+        return this.readHoldRegister(this.unitId, address, quantity);
+    }
+
+    /**
+     * 读取保持寄存器， modbus 1个寄存器占2个字节
+     *
+     * @param unitId   从站编号
+     * @param address  地址
+     * @param quantity 寄存器数量
+     * @return 字节数组
+     */
+    public byte[] readHoldRegister(int unitId, int address, int quantity) {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
@@ -204,9 +263,10 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("quantity<=0||quantity>125");
         }
         MbReadHoldRegisterRequest reqPdu = new MbReadHoldRegisterRequest(address, quantity);
-        MbReadHoldRegisterResponse resPdu = (MbReadHoldRegisterResponse) this.readModbusData(this.unitId, reqPdu);
+        MbReadHoldRegisterResponse resPdu = (MbReadHoldRegisterResponse) this.readModbusData(unitId, reqPdu);
         return resPdu.getRegister();
     }
+
 
     /**
      * 以数值形式写入保持寄存器， modbus 1个寄存器占2个字节
@@ -215,6 +275,17 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param value   数值，占2个字节
      */
     public void writeHoldRegister(int address, int value) {
+        this.writeHoldRegister(this.unitId, address, value);
+    }
+
+    /**
+     * 以数值形式写入保持寄存器， modbus 1个寄存器占2个字节
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param value   数值，占2个字节
+     */
+    public void writeHoldRegister(int unitId, int address, int value) {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
@@ -222,7 +293,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("value<0||value>65535");
         }
         MbWriteSingleRegisterRequest reqPdu = new MbWriteSingleRegisterRequest(address, value);
-        this.readModbusData(this.unitId, reqPdu);
+        this.readModbusData(unitId, reqPdu);
     }
 
     /**
@@ -232,6 +303,17 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param values  数据值列表
      */
     public void writeHoldRegister(int address, byte[] values) {
+        this.writeHoldRegister(this.unitId, address, values);
+    }
+
+    /**
+     * 以字节数组形式写入保持寄存器， modbus 1个寄存器占2个字节
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param values  数据值列表
+     */
+    public void writeHoldRegister(int unitId, int address, byte[] values) {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
@@ -239,7 +321,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("values长度必须是偶数");
         }
         MbWriteMultipleRegisterRequest reqPdu = new MbWriteMultipleRegisterRequest(address, values.length / 2, values);
-        this.readModbusData(this.unitId, reqPdu);
+        this.readModbusData(unitId, reqPdu);
     }
 
     /**
@@ -249,6 +331,17 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param values  数据值列表
      */
     public void writeHoldRegister(int address, List<Integer> values) {
+        this.writeHoldRegister(this.unitId, address, values);
+    }
+
+    /**
+     * 以数值数组形式写入保持寄存器， modbus 1个寄存器占2个字节
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param values  数据值列表
+     */
+    public void writeHoldRegister(int unitId, int address, List<Integer> values) {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
@@ -259,7 +352,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
             data[i * 2 + 1] = bytes[1];
         }
         MbWriteMultipleRegisterRequest reqPdu = new MbWriteMultipleRegisterRequest(address, values.size(), data);
-        this.readModbusData(this.unitId, reqPdu);
+        this.readModbusData(unitId, reqPdu);
     }
 
     /**
@@ -270,6 +363,18 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 字节数组
      */
     public byte[] readInputRegister(int address, int quantity) {
+        return this.readInputRegister(this.unitId, address, quantity);
+    }
+
+    /**
+     * 读取输入寄存器， modbus 1个寄存器占2个字节
+     *
+     * @param unitId   从站编号
+     * @param address  地址
+     * @param quantity 寄存器数量
+     * @return 字节数组
+     */
+    public byte[] readInputRegister(int unitId, int address, int quantity) {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
@@ -277,7 +382,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("quantity<=0||quantity>125");
         }
         MbReadInputRegisterRequest reqPdu = new MbReadInputRegisterRequest(address, quantity);
-        MbReadInputRegisterResponse resPdu = (MbReadInputRegisterResponse) this.readModbusData(this.unitId, reqPdu);
+        MbReadInputRegisterResponse resPdu = (MbReadInputRegisterResponse) this.readModbusData(unitId, reqPdu);
         return resPdu.getRegister();
     }
     //endregion
@@ -292,10 +397,22 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return true, false
      */
     public boolean readBoolean(int address, int bitIndex) {
+        return this.readBoolean(this.unitId, address, bitIndex);
+    }
+
+    /**
+     * 读取一个boolean类型数据，只有一个地址的数据，位索引[0,15]
+     *
+     * @param unitId   从站编号
+     * @param address  地址
+     * @param bitIndex 位索引[0,15]
+     * @return true, false
+     */
+    public boolean readBoolean(int unitId, int address, int bitIndex) {
         if (bitIndex < 0 || bitIndex > 15) {
             throw new IllegalArgumentException("bitIndex < 0 || bitIndex > 15");
         }
-        byte[] res = this.readHoldRegister(address, 1);
+        byte[] res = this.readHoldRegister(unitId, address, 1);
         int byteOffset = bitIndex / 8;
         int bitOffset = bitIndex % 8;
         return ByteReadBuff.newInstance(res).getBoolean(byteOffset, bitOffset);
@@ -308,7 +425,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 一个Int16 2字节数据
      */
     public short readInt16(int address) {
-        return this.readInt16(address, false);
+        return this.readInt16(this.unitId, address, false);
     }
 
     /**
@@ -319,7 +436,30 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 一个Int16 2字节数据
      */
     public short readInt16(int address, boolean littleEndian) {
-        byte[] res = this.readHoldRegister(address, 1);
+        return this.readInt16(this.unitId, address, littleEndian);
+    }
+
+    /**
+     * 读取一个Int16 2字节数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @return 一个Int16 2字节数据
+     */
+    public short readInt16(int unitId, int address) {
+        return this.readInt16(unitId, address, false);
+    }
+
+    /**
+     * 读取一个Int16 2字节数据
+     *
+     * @param unitId       从站编号
+     * @param address      地址
+     * @param littleEndian 是否小端模式，true：小端，false：大端
+     * @return 一个Int16 2字节数据
+     */
+    public short readInt16(int unitId, int address, boolean littleEndian) {
+        byte[] res = this.readHoldRegister(unitId, address, 1);
         return ByteReadBuff.newInstance(res, littleEndian).getInt16();
     }
 
@@ -330,7 +470,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 一个UInt16 2字节数据
      */
     public int readUInt16(int address) {
-        return this.readUInt16(address, false);
+        return this.readUInt16(this.unitId, address, false);
     }
 
     /**
@@ -341,7 +481,30 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 一个UInt16 2字节数据
      */
     public int readUInt16(int address, boolean littleEndian) {
-        byte[] res = this.readHoldRegister(address, 1);
+        return this.readUInt16(this.unitId, address, littleEndian);
+    }
+
+    /**
+     * 读取一个UInt16 2字节数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @return 一个UInt16 2字节数据
+     */
+    public int readUInt16(int unitId, int address) {
+        return this.readUInt16(unitId, address, false);
+    }
+
+    /**
+     * 读取一个UInt16 2字节数据
+     *
+     * @param unitId       从站编号
+     * @param address      地址
+     * @param littleEndian 是否小端模式，true：小端，false：大端
+     * @return 一个UInt16 2字节数据
+     */
+    public int readUInt16(int unitId, int address, boolean littleEndian) {
+        byte[] res = this.readHoldRegister(unitId, address, 1);
         return ByteReadBuff.newInstance(res, littleEndian).getUInt16();
     }
 
@@ -352,7 +515,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 一个Int32 4字节数据
      */
     public int readInt32(int address) {
-        return this.readInt32(address, EByteBuffFormat.BA_DC);
+        return this.readInt32(this.unitId, address, EByteBuffFormat.BA_DC);
     }
 
     /**
@@ -363,7 +526,30 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 一个Int32 4字节数据
      */
     public int readInt32(int address, EByteBuffFormat format) {
-        byte[] res = this.readHoldRegister(address, 2);
+        return this.readInt32(this.unitId, address, format);
+    }
+
+    /**
+     * 读取一个Int32 4字节数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @return 一个Int32 4字节数据
+     */
+    public int readInt32(int unitId, int address) {
+        return this.readInt32(unitId, address, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * 读取一个Int32 4字节数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param format  4字节数据转换格式
+     * @return 一个Int32 4字节数据
+     */
+    public int readInt32(int unitId, int address, EByteBuffFormat format) {
+        byte[] res = this.readHoldRegister(unitId, address, 2);
         return ByteReadBuff.newInstance(res, format).getInt32();
     }
 
@@ -374,7 +560,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 一个UInt32 4字节数据
      */
     public long readUInt32(int address) {
-        return this.readUInt32(address, EByteBuffFormat.BA_DC);
+        return this.readUInt32(this.unitId, address, EByteBuffFormat.BA_DC);
     }
 
     /**
@@ -385,7 +571,30 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 一个UInt32 4字节数据
      */
     public long readUInt32(int address, EByteBuffFormat format) {
-        byte[] res = this.readHoldRegister(address, 2);
+        return this.readUInt32(this.unitId, address, format);
+    }
+
+    /**
+     * 读取一个UInt32 4字节数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @return 一个UInt32 4字节数据
+     */
+    public long readUInt32(int unitId, int address) {
+        return this.readUInt32(unitId, address, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * 读取一个UInt32 4字节数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param format  4字节数据转换格式
+     * @return 一个UInt32 4字节数据
+     */
+    public long readUInt32(int unitId, int address, EByteBuffFormat format) {
+        byte[] res = this.readHoldRegister(unitId, address, 2);
         return ByteReadBuff.newInstance(res, format).getUInt32();
     }
 
@@ -396,7 +605,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 一个Float32的数据
      */
     public float readFloat32(int address) {
-        return this.readFloat32(address, EByteBuffFormat.BA_DC);
+        return this.readFloat32(this.unitId, address, EByteBuffFormat.BA_DC);
     }
 
     /**
@@ -407,7 +616,30 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 一个Float32的数据
      */
     public float readFloat32(int address, EByteBuffFormat format) {
-        byte[] res = this.readHoldRegister(address, 2);
+        return this.readFloat32(this.unitId, address, format);
+    }
+
+    /**
+     * 读取一个Float32的数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @return 一个Float32的数据
+     */
+    public float readFloat32(int unitId, int address) {
+        return this.readFloat32(unitId, address, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * 读取一个Float32的数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param format  4字节数据转换格式
+     * @return 一个Float32的数据
+     */
+    public float readFloat32(int unitId, int address, EByteBuffFormat format) {
+        byte[] res = this.readHoldRegister(unitId, address, 2);
         return ByteReadBuff.newInstance(res, format).getFloat32();
     }
 
@@ -418,7 +650,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 一个Float64的数据
      */
     public double readFloat64(int address) {
-        return this.readFloat64(address, EByteBuffFormat.BA_DC);
+        return this.readFloat64(this.unitId, address, EByteBuffFormat.BA_DC);
     }
 
     /**
@@ -429,7 +661,30 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 一个Float64的数据
      */
     public double readFloat64(int address, EByteBuffFormat format) {
-        byte[] res = this.readHoldRegister(address, 4);
+        return this.readFloat64(this.unitId, address, format);
+    }
+
+    /**
+     * 读取一个Float64的数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @return 一个Float64的数据
+     */
+    public double readFloat64(int unitId, int address) {
+        return this.readFloat64(unitId, address, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * 读取一个Float64的数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param format  8字节数据转换格式
+     * @return 一个Float64的数据
+     */
+    public double readFloat64(int unitId, int address, EByteBuffFormat format) {
+        byte[] res = this.readHoldRegister(unitId, address, 4);
         return ByteReadBuff.newInstance(res, format).getFloat64();
     }
 
@@ -442,7 +697,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 字符串
      */
     public String readString(int address, int length) {
-        return this.readString(address, length, StandardCharsets.US_ASCII);
+        return this.readString(this.unitId, address, length, StandardCharsets.US_ASCII);
     }
 
     /**
@@ -455,7 +710,34 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @return 字符串
      */
     public String readString(int address, int length, Charset charset) {
-        byte[] res = this.readHoldRegister(address, length / 2);
+        return this.readString(this.unitId, address, length, charset);
+    }
+
+    /**
+     * 读取字符串
+     * String（字符串）数据类型存储一串单字节字符
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param length  字符串长度
+     * @return 字符串
+     */
+    public String readString(int unitId, int address, int length) {
+        return this.readString(unitId, address, length, StandardCharsets.US_ASCII);
+    }
+
+    /**
+     * 读取字符串
+     * String（字符串）数据类型存储一串单字节字符
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param length  字符串长度
+     * @param charset 字符编码
+     * @return 字符串
+     */
+    public String readString(int unitId, int address, int length, Charset charset) {
+        byte[] res = this.readHoldRegister(unitId, address, length / 2);
         return ByteUtil.toStr(res, 0, res.length, charset);
     }
     //endregion
@@ -469,7 +751,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param data    数据
      */
     public void writeInt16(int address, short data) {
-        this.writeInt16(address, data, false);
+        this.writeInt16(this.unitId, address, data, false);
     }
 
     /**
@@ -480,10 +762,33 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param littleEndian 是否小端模式，true：小端，false：大端
      */
     public void writeInt16(int address, short data, boolean littleEndian) {
+        this.writeInt16(this.unitId, address, data, littleEndian);
+    }
+
+    /**
+     * 写入一个Int16 2字节数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeInt16(int unitId, int address, short data) {
+        this.writeInt16(unitId, address, data, false);
+    }
+
+    /**
+     * 写入一个Int16 2字节数据
+     *
+     * @param unitId       从站编号
+     * @param address      地址
+     * @param data         数据
+     * @param littleEndian 是否小端模式，true：小端，false：大端
+     */
+    public void writeInt16(int unitId, int address, short data, boolean littleEndian) {
         byte[] bytes = ByteWriteBuff.newInstance(2, littleEndian)
                 .putShort(data)
                 .getData();
-        this.writeHoldRegister(address, bytes);
+        this.writeHoldRegister(unitId, address, bytes);
     }
 
     /**
@@ -493,7 +798,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param data    数据
      */
     public void writeUInt16(int address, int data) {
-        this.writeUInt16(address, data, false);
+        this.writeUInt16(this.unitId, address, data, false);
     }
 
     /**
@@ -504,10 +809,33 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param littleEndian 是否小端模式，true：小端，false：大端
      */
     public void writeUInt16(int address, int data, boolean littleEndian) {
+        this.writeUInt16(this.unitId, address, data, littleEndian);
+    }
+
+    /**
+     * 写入一个UInt16 2字节数据，默认大端模式
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeUInt16(int unitId, int address, int data) {
+        this.writeUInt16(unitId, address, data, false);
+    }
+
+    /**
+     * 写入一个UInt16 2字节数据，默认大端模式
+     *
+     * @param unitId       从站编号
+     * @param address      地址
+     * @param data         数据
+     * @param littleEndian 是否小端模式，true：小端，false：大端
+     */
+    public void writeUInt16(int unitId, int address, int data, boolean littleEndian) {
         byte[] bytes = ByteWriteBuff.newInstance(2, littleEndian)
                 .putShort(data)
                 .getData();
-        this.writeHoldRegister(address, bytes);
+        this.writeHoldRegister(unitId, address, bytes);
     }
 
     /**
@@ -517,7 +845,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param data    数据
      */
     public void writeInt32(int address, int data) {
-        this.writeInt32(address, data, EByteBuffFormat.BA_DC);
+        this.writeInt32(this.unitId, address, data, EByteBuffFormat.BA_DC);
     }
 
     /**
@@ -528,10 +856,33 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param format  4字节数据转换格式
      */
     public void writeInt32(int address, int data, EByteBuffFormat format) {
+        this.writeInt32(this.unitId, address, data, format);
+    }
+
+    /**
+     * 写入一个Int32 4字节数据，默认BA_DC格式
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeInt32(int unitId, int address, int data) {
+        this.writeInt32(unitId, address, data, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * 写入一个Int32 4字节数据，默认BA_DC格式
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param data    数据
+     * @param format  4字节数据转换格式
+     */
+    public void writeInt32(int unitId, int address, int data, EByteBuffFormat format) {
         byte[] bytes = ByteWriteBuff.newInstance(4, format)
                 .putInteger(data)
                 .getData();
-        this.writeHoldRegister(address, bytes);
+        this.writeHoldRegister(unitId, address, bytes);
     }
 
     /**
@@ -541,7 +892,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param data    数据
      */
     public void writeUInt32(int address, long data) {
-        this.writeUInt32(address, data, EByteBuffFormat.BA_DC);
+        this.writeUInt32(this.unitId, address, data, EByteBuffFormat.BA_DC);
     }
 
     /**
@@ -552,10 +903,33 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param format  4字节数据转换格式
      */
     public void writeUInt32(int address, long data, EByteBuffFormat format) {
+        this.writeUInt32(this.unitId, address, data, format);
+    }
+
+    /**
+     * 写入一个UInt32 4字节数据，默认BA_DC格式
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeUInt32(int unitId, int address, long data) {
+        this.writeUInt32(unitId, address, data, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * 写入一个UInt32 4字节数据，默认BA_DC格式
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param data    数据
+     * @param format  4字节数据转换格式
+     */
+    public void writeUInt32(int unitId, int address, long data, EByteBuffFormat format) {
         byte[] bytes = ByteWriteBuff.newInstance(4, format)
                 .putInteger(data)
                 .getData();
-        this.writeHoldRegister(address, bytes);
+        this.writeHoldRegister(unitId, address, bytes);
     }
 
     /**
@@ -565,7 +939,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param data    数据
      */
     public void writeFloat32(int address, float data) {
-        this.writeFloat32(address, data, EByteBuffFormat.BA_DC);
+        this.writeFloat32(this.unitId, address, data, EByteBuffFormat.BA_DC);
     }
 
     /**
@@ -576,10 +950,33 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param format  4字节数据转换格式
      */
     public void writeFloat32(int address, float data, EByteBuffFormat format) {
+        this.writeFloat32(this.unitId, address, data, format);
+    }
+
+    /**
+     * 写入一个Float32 4字节数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeFloat32(int unitId, int address, float data) {
+        this.writeFloat32(unitId, address, data, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * 写入一个Float32 4字节数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param data    数据
+     * @param format  4字节数据转换格式
+     */
+    public void writeFloat32(int unitId, int address, float data, EByteBuffFormat format) {
         byte[] bytes = ByteWriteBuff.newInstance(4, format)
                 .putFloat(data)
                 .getData();
-        this.writeHoldRegister(address, bytes);
+        this.writeHoldRegister(unitId, address, bytes);
     }
 
     /**
@@ -589,7 +986,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param data    数据
      */
     public void writeFloat64(int address, double data) {
-        this.writeFloat64(address, data, EByteBuffFormat.BA_DC);
+        this.writeFloat64(this.unitId, address, data, EByteBuffFormat.BA_DC);
     }
 
     /**
@@ -600,10 +997,33 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param format  8字节数据转换格式
      */
     public void writeFloat64(int address, double data, EByteBuffFormat format) {
+        this.writeFloat64(this.unitId, address, data, format);
+    }
+
+    /**
+     * 写入一个Float64 8字节数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeFloat64(int unitId, int address, double data) {
+        this.writeFloat64(unitId, address, data, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * 写入一个Float64 8字节数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param data    数据
+     * @param format  8字节数据转换格式
+     */
+    public void writeFloat64(int unitId, int address, double data, EByteBuffFormat format) {
         byte[] bytes = ByteWriteBuff.newInstance(8, format)
                 .putDouble(data)
                 .getData();
-        this.writeHoldRegister(address, bytes);
+        this.writeHoldRegister(unitId, address, bytes);
     }
 
     /**
@@ -613,7 +1033,7 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param data    数据字符串
      */
     public void writeString(int address, String data) {
-        this.writeString(address, data, StandardCharsets.US_ASCII);
+        this.writeString(this.unitId, address, data, StandardCharsets.US_ASCII);
     }
 
     /**
@@ -624,8 +1044,31 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
      * @param charset 字符集
      */
     public void writeString(int address, String data, Charset charset) {
+        this.writeString(this.unitId, address, data, charset);
+    }
+
+    /**
+     * 写入一个String数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param data    数据字符串
+     */
+    public void writeString(int unitId, int address, String data) {
+        this.writeString(unitId, address, data, StandardCharsets.US_ASCII);
+    }
+
+    /**
+     * 写入一个String数据
+     *
+     * @param unitId  从站编号
+     * @param address 地址
+     * @param data    数据字符串
+     * @param charset 字符集
+     */
+    public void writeString(int unitId, int address, String data, Charset charset) {
         byte[] bytes = data.getBytes(charset);
-        this.writeHoldRegister(address, bytes);
+        this.writeHoldRegister(unitId, address, bytes);
     }
     //endregion
 }
