@@ -35,4 +35,11 @@ public class McMessageReq implements IObjectByteArray {
                 .putBytes(this.data.toByteArray())
                 .getData();
     }
+
+    /**
+     * 自我校验，主要核对数据长度
+     */
+    public void selfCheck() {
+        this.header.dataLength = 2 + this.data.byteArrayLength();
+    }
 }

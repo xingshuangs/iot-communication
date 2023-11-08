@@ -14,7 +14,7 @@ import lombok.Data;
 public class McHeader implements IObjectByteArray {
 
     /**
-     * 副帧头，2字节
+     * 副帧头，2字节，根据报文的类型定义设置的值。
      */
     protected int subHeader;
 
@@ -24,7 +24,8 @@ public class McHeader implements IObjectByteArray {
     protected McAccessRoute accessRoute;
 
     /**
-     * 数据长度，2字节，若请求就是请求数据长度，若响应就是响应数据长度
+     * 数据长度，2字节，请求数据长，指定从监视定时器到请求数据为止的数据长；响应数据长，
+     * 存储从结束代码到响应数据(正常结束时)或出错信息(异常结束时)为止的数据长。
      */
     protected int dataLength;
 
