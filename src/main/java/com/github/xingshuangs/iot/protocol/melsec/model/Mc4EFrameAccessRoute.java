@@ -46,4 +46,13 @@ public class Mc4EFrameAccessRoute extends McAccessRoute {
                 .putByte(this.requestDestModuleStationNumber)
                 .getData();
     }
+
+    public static Mc4EFrameAccessRoute createDefault() {
+        Mc4EFrameAccessRoute route = new Mc4EFrameAccessRoute();
+        route.networkNumber = 0x00;
+        route.pcNumber = 0xFF;
+        route.requestDestModuleIoNumber = 0x03FF;
+        route.requestDestModuleStationNumber = 0x00;
+        return route;
+    }
 }

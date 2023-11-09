@@ -23,6 +23,14 @@ public class McMessageReq implements IObjectByteArray {
      */
     private McData data;
 
+    public McMessageReq() {
+    }
+
+    public McMessageReq(McHeaderReq header, McData data) {
+        this.header = header;
+        this.data = data;
+    }
+
     @Override
     public int byteArrayLength() {
         return this.header.byteArrayLength() + this.data.byteArrayLength();

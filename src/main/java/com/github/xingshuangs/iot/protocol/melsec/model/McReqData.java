@@ -1,7 +1,6 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
 import lombok.Data;
 
@@ -11,7 +10,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
-public class McReqData implements IObjectByteArray {
+public class McReqData extends McData {
 
     /**
      * 指令，2个字节
