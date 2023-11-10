@@ -42,6 +42,10 @@ public class McReqBuilder {
         return createDeviceBatchReadWordReq(Mc4EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, deviceAddress);
     }
 
+    public static McMessageReq createDeviceBatchReadWordReq(int timer, McDeviceAddress deviceAddress) {
+        return createDeviceBatchReadWordReq(Mc4EFrameAccessRoute.createDefault(), timer, deviceAddress);
+    }
+
     public static McMessageReq createDeviceBatchReadWordReq(McAccessRoute accessRoute, int timer, McDeviceAddress deviceAddress) {
         McHeaderReq header = createMcHeaderReq4E(accessRoute, timer);
         McDeviceBatchReadReqData data = new McDeviceBatchReadReqData();

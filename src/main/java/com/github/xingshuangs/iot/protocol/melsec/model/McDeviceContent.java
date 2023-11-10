@@ -2,6 +2,8 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcDeviceCode;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import lombok.Data;
 
 /**
@@ -17,6 +19,23 @@ public class McDeviceContent extends McDeviceAddress {
      */
     private byte[] data;
 
+    public McDeviceContent() {
+    }
+
+    public McDeviceContent(byte[] data) {
+        this.data = data;
+    }
+
+    public McDeviceContent(int headDeviceNumber, EMcDeviceCode deviceCode, int devicePointsCount, byte[] data) {
+        super(headDeviceNumber, deviceCode, devicePointsCount);
+        this.data = data;
+    }
+
+    public McDeviceContent(EMcSeries series, int headDeviceNumber, EMcDeviceCode deviceCode, int devicePointsCount, byte[] data) {
+        super(series, headDeviceNumber, deviceCode, devicePointsCount);
+        this.data = data;
+    }
+
     @Override
     public int byteArrayLengthWithoutPointsCount() {
         return this.data.length + super.byteArrayLengthWithoutPointsCount();
@@ -29,7 +48,8 @@ public class McDeviceContent extends McDeviceAddress {
 
     @Override
     public byte[] toByteArrayWithoutPointsCount() {
-        ByteWriteBuff buff = ByteWriteBuff.newInstance(this.byteArrayLengthWithoutPointsCount(), true);
+        int length = this.data.length + super.byteArrayLengthWithoutPointsCount();
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true);
         buff.putBytes(super.toByteArrayWithoutPointsCount());
         buff.putBytes(this.data);
         return buff.getData();
@@ -37,7 +57,8 @@ public class McDeviceContent extends McDeviceAddress {
 
     @Override
     public byte[] toByteArrayWithPointsCount() {
-        ByteWriteBuff buff = ByteWriteBuff.newInstance(this.byteArrayLengthWithPointsCount(), true);
+        int length = this.data.length + super.byteArrayLengthWithPointsCount();
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true);
         buff.putBytes(super.toByteArrayWithPointsCount());
         buff.putBytes(this.data);
         return buff.getData();
