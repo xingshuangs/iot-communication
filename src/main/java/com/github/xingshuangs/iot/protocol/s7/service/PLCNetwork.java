@@ -327,11 +327,11 @@ public class PLCNetwork extends TcpClientBasic {
             throw new S7CommException("返回的数据个数和请求的数据个数不一致");
         }
         // 返回结果校验
-        returnItems.forEach(x -> {
-            if (x.getReturnCode() != EReturnCode.SUCCESS) {
-                throw new S7CommException(String.format("返回结果异常，原因：%s", x.getReturnCode().getDescription()));
+        for (int i = 0; i < returnItems.size(); i++) {
+            if (returnItems.get(i).getReturnCode() != EReturnCode.SUCCESS) {
+                throw new S7CommException(String.format("返回第[%d]个结果异常，原因：%s", i + 1, returnItems.get(i).getReturnCode().getDescription()));
             }
-        });
+        }
     }
 
     //endregion
