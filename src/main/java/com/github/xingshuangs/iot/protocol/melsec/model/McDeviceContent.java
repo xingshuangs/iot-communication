@@ -26,9 +26,17 @@ public class McDeviceContent extends McDeviceAddress {
         this.data = data;
     }
 
+    public McDeviceContent(int headDeviceNumber, EMcDeviceCode deviceCode, byte[] data) {
+        this(headDeviceNumber, deviceCode, 1, data);
+    }
+
     public McDeviceContent(int headDeviceNumber, EMcDeviceCode deviceCode, int devicePointsCount, byte[] data) {
         super(headDeviceNumber, deviceCode, devicePointsCount);
         this.data = data;
+    }
+
+    public McDeviceContent(EMcSeries series, int headDeviceNumber, EMcDeviceCode deviceCode, byte[] data) {
+        this(series, headDeviceNumber, deviceCode, 1, data);
     }
 
     public McDeviceContent(EMcSeries series, int headDeviceNumber, EMcDeviceCode deviceCode, int devicePointsCount, byte[] data) {

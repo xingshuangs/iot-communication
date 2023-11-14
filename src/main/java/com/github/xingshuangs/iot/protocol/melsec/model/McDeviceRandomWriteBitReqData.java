@@ -18,15 +18,15 @@ public class McDeviceRandomWriteBitReqData extends McReqData {
     /**
      * 软元件设备内容，位访问地址列表
      */
-    private List<McDeviceContent> wordContents;
+    private List<McDeviceContent> bitContents;
 
     public McDeviceRandomWriteBitReqData() {
-        this.wordContents = new ArrayList<>();
+        this.bitContents = new ArrayList<>();
     }
 
     @Override
     public int byteArrayLength() {
-        return 4 + 1 + this.wordContents.stream().mapToInt(McDeviceContent::byteArrayLengthWithoutPointsCount).sum();
+        return 4 + 1 + this.bitContents.stream().mapToInt(McDeviceContent::byteArrayLengthWithoutPointsCount).sum();
     }
 
     @Override
@@ -34,8 +34,8 @@ public class McDeviceRandomWriteBitReqData extends McReqData {
         ByteWriteBuff buff = ByteWriteBuff.newInstance(this.byteArrayLength(), true)
                 .putShort(this.command.getCode())
                 .putShort(this.subcommand)
-                .putByte(this.wordContents.size());
-        this.wordContents.forEach(x -> buff.putBytes(x.toByteArrayWithoutPointsCount()));
+                .putByte(this.bitContents.size());
+        this.bitContents.forEach(x -> buff.putBytes(x.toByteArrayWithoutPointsCount()));
         return buff.getData();
     }
 }

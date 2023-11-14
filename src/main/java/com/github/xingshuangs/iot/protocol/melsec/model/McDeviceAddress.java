@@ -33,15 +33,23 @@ public class McDeviceAddress {
     /**
      * 软元件点数，2个字节，注意：该字段不统计在字节计算中，给外部统计使用
      */
-    protected int devicePointsCount = 0;
+    protected int devicePointsCount = 1;
 
     public McDeviceAddress() {
+    }
+
+    public McDeviceAddress(int headDeviceNumber, EMcDeviceCode deviceCode) {
+        this(headDeviceNumber, deviceCode, 1);
     }
 
     public McDeviceAddress(int headDeviceNumber, EMcDeviceCode deviceCode, int devicePointsCount) {
         this.headDeviceNumber = headDeviceNumber;
         this.deviceCode = deviceCode;
         this.devicePointsCount = devicePointsCount;
+    }
+
+    public McDeviceAddress(EMcSeries series, int headDeviceNumber, EMcDeviceCode deviceCode) {
+        this(series, headDeviceNumber, deviceCode, 1);
     }
 
     public McDeviceAddress(EMcSeries series, int headDeviceNumber, EMcDeviceCode deviceCode, int devicePointsCount) {

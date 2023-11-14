@@ -126,7 +126,7 @@ public class McReqBuilder {
     }
 
     public static McMessageReq createDeviceRandomWriteWordReq(List<McDeviceContent> wordContents,
-                                                             List<McDeviceContent> dwordContents) {
+                                                              List<McDeviceContent> dwordContents) {
         return createDeviceRandomWriteWordReq(Mc4EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, wordContents, dwordContents);
     }
 
@@ -148,18 +148,17 @@ public class McReqBuilder {
         return req;
     }
 
-    public static McMessageReq createDeviceRandomWriteBitReq(List<McDeviceContent> wordAddresses) {
-        return createDeviceRandomWriteBitReq(Mc4EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, wordAddresses);
+    public static McMessageReq createDeviceRandomWriteBitReq(List<McDeviceContent> bitAddresses) {
+        return createDeviceRandomWriteBitReq(Mc4EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, bitAddresses);
     }
 
-    public static McMessageReq createDeviceRandomWriteBitReq(McAccessRoute accessRoute, int timer,
-                                                              List<McDeviceContent> wordContents) {
-        EMcSeries series = !wordContents.isEmpty() ? wordContents.get(0).getSeries() : EMcSeries.Q_L;
+    public static McMessageReq createDeviceRandomWriteBitReq(McAccessRoute accessRoute, int timer, List<McDeviceContent> bitContents) {
+        EMcSeries series = !bitContents.isEmpty() ? bitContents.get(0).getSeries() : EMcSeries.Q_L;
         McHeaderReq header = createMcHeaderReq4E(accessRoute, timer);
         McDeviceRandomWriteBitReqData data = new McDeviceRandomWriteBitReqData();
         data.setCommand(EMcCommand.DEVICE_ACCESS_RANDOM_WRITE_IN_UNITS);
         data.setSubcommand(series == EMcSeries.Q_L ? 0x0001 : 0x0003);
-        data.setWordContents(wordContents);
+        data.setBitContents(bitContents);
         McMessageReq req = new McMessageReq(header, data);
         req.selfCheck();
         return req;
@@ -171,8 +170,8 @@ public class McReqBuilder {
     }
 
     public static McMessageReq createDeviceBatchReadMultiBlocksReq(McAccessRoute accessRoute, int timer,
-                                                             List<McDeviceAddress> wordAddresses,
-                                                             List<McDeviceAddress> bitAddresses) {
+                                                                   List<McDeviceAddress> wordAddresses,
+                                                                   List<McDeviceAddress> bitAddresses) {
         if (wordAddresses.isEmpty() && bitAddresses.isEmpty()) {
             throw new IllegalArgumentException("wordAddresses&&bitAddresses");
         }
@@ -189,7 +188,7 @@ public class McReqBuilder {
     }
 
     public static McMessageReq createDeviceBatchWriteMultiBlocksReq(List<McDeviceContent> wordContents,
-                                                                   List<McDeviceContent> bitContents) {
+                                                                    List<McDeviceContent> bitContents) {
         return createDeviceBatchWriteMultiBlocksReq(Mc4EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, wordContents, bitContents);
     }
 
