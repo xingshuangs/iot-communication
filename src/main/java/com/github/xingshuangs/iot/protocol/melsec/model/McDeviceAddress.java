@@ -38,21 +38,21 @@ public class McDeviceAddress {
     public McDeviceAddress() {
     }
 
-    public McDeviceAddress(int headDeviceNumber, EMcDeviceCode deviceCode) {
-        this(headDeviceNumber, deviceCode, 1);
+    public McDeviceAddress(EMcDeviceCode deviceCode, int headDeviceNumber) {
+        this(deviceCode, headDeviceNumber,1);
     }
 
-    public McDeviceAddress(int headDeviceNumber, EMcDeviceCode deviceCode, int devicePointsCount) {
+    public McDeviceAddress(EMcDeviceCode deviceCode, int headDeviceNumber, int devicePointsCount) {
         this.headDeviceNumber = headDeviceNumber;
         this.deviceCode = deviceCode;
         this.devicePointsCount = devicePointsCount;
     }
 
-    public McDeviceAddress(EMcSeries series, int headDeviceNumber, EMcDeviceCode deviceCode) {
-        this(series, headDeviceNumber, deviceCode, 1);
+    public McDeviceAddress(EMcSeries series, EMcDeviceCode deviceCode, int headDeviceNumber) {
+        this(series,  deviceCode, headDeviceNumber,1);
     }
 
-    public McDeviceAddress(EMcSeries series, int headDeviceNumber, EMcDeviceCode deviceCode, int devicePointsCount) {
+    public McDeviceAddress(EMcSeries series, EMcDeviceCode deviceCode, int headDeviceNumber, int devicePointsCount) {
         this.series = series;
         this.headDeviceNumber = headDeviceNumber;
         this.deviceCode = deviceCode;

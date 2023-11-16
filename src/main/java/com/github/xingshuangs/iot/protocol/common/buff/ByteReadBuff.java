@@ -27,7 +27,7 @@ public class ByteReadBuff extends ByteBuffBase {
     /**
      * 是否为小端模式，默认不是，为大端模式
      */
-    private boolean littleEndian;
+    private final boolean littleEndian;
 
     /**
      * 获取剩余字节数量
@@ -51,6 +51,10 @@ public class ByteReadBuff extends ByteBuffBase {
         this(data, offset, false, EByteBuffFormat.DC_BA);
     }
 
+    public ByteReadBuff(byte[] data, int offset, boolean littleEndian) {
+        this(data, offset, littleEndian, EByteBuffFormat.DC_BA);
+    }
+
     public ByteReadBuff(byte[] data, EByteBuffFormat format) {
         this(data, 0, false, format);
     }
@@ -72,6 +76,10 @@ public class ByteReadBuff extends ByteBuffBase {
 
     public static ByteReadBuff newInstance(byte[] data, int offset) {
         return new ByteReadBuff(data, offset);
+    }
+
+    public static ByteReadBuff newInstance(byte[] data, int offset, boolean littleEndian) {
+        return new ByteReadBuff(data, offset, littleEndian);
     }
 
     public static ByteReadBuff newInstance(byte[] data, boolean littleEndian) {

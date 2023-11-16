@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
 
@@ -41,5 +42,31 @@ public class McHeader implements IObjectByteArray {
                 .putBytes(this.accessRoute.toByteArray())
                 .putShort(this.dataLength)
                 .getData();
+    }
+
+    /**
+     * 解析字节数组数据
+     *
+     * @param data 字节数组数据
+     * @return McHeader
+     */
+    public static McHeader fromBytes(final byte[] data) {
+        return fromBytes(data, 0);
+    }
+
+    /**
+     * 解析字节数组数据
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return McHeaderAck
+     */
+    public static McHeader fromBytes(final byte[] data, final int offset) {
+        ByteReadBuff buff = new ByteReadBuff(data, offset,true);
+        McHeader res = new McHeader();
+        res.subHeader = buff.getUInt16();
+        res.accessRoute = Mc4E3EFrameAccessRoute.fromBytes(buff.getBytes(5));
+        res.dataLength = buff.getUInt16();
+        return res;
     }
 }

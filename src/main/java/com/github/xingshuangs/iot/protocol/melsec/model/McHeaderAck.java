@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import lombok.Data;
 
@@ -35,5 +36,32 @@ public class McHeaderAck extends McHeader {
                 .putShort(this.dataLength)
                 .putShort(this.endCode)
                 .getData();
+    }
+
+    /**
+     * 解析字节数组数据
+     *
+     * @param data 字节数组数据
+     * @return McHeaderAck
+     */
+    public static McHeaderAck fromBytes(final byte[] data) {
+        return fromBytes(data, 0);
+    }
+
+    /**
+     * 解析字节数组数据
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return McHeaderAck
+     */
+    public static McHeaderAck fromBytes(final byte[] data, final int offset) {
+        ByteReadBuff buff = new ByteReadBuff(data, offset,true);
+        McHeaderAck res = new McHeaderAck();
+        res.subHeader = buff.getUInt16();
+        res.accessRoute = Mc4E3EFrameAccessRoute.fromBytes(buff.getBytes(5));
+        res.dataLength = buff.getUInt16();
+        res.endCode = buff.getUInt16();
+        return res;
     }
 }
