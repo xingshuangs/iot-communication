@@ -38,17 +38,17 @@ public class McReqBuilder {
         return req;
     }
 
-    public static McMessageReq createDeviceBatchReadWordReq(McDeviceAddress deviceAddress) {
-        return createDeviceBatchReadWordReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, deviceAddress);
+    public static McMessageReq createReadDeviceBatchInWordReq(McDeviceAddress deviceAddress) {
+        return createReadDeviceBatchInWordReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, deviceAddress);
     }
 
-    public static McMessageReq createDeviceBatchReadWordReq(int timer, McDeviceAddress deviceAddress) {
-        return createDeviceBatchReadWordReq(Mc4E3EFrameAccessRoute.createDefault(), timer, deviceAddress);
+    public static McMessageReq createReadDeviceBatchInWordReq(int timer, McDeviceAddress deviceAddress) {
+        return createReadDeviceBatchInWordReq(Mc4E3EFrameAccessRoute.createDefault(), timer, deviceAddress);
     }
 
-    public static McMessageReq createDeviceBatchReadWordReq(McAccessRoute accessRoute, int timer, McDeviceAddress deviceAddress) {
+    public static McMessageReq createReadDeviceBatchInWordReq(McAccessRoute accessRoute, int timer, McDeviceAddress deviceAddress) {
         McHeaderReq header = createMcHeaderReq4E(accessRoute, timer);
-        McDeviceBatchReadReqData data = new McDeviceBatchReadReqData();
+        McReadDeviceBatchReqData data = new McReadDeviceBatchReqData();
         data.setCommand(EMcCommand.DEVICE_ACCESS_BATCH_READ_IN_UNITS);
         data.setSubcommand(deviceAddress.getSeries() == EMcSeries.Q_L ? 0x0000 : 0x0002);
         data.setDeviceAddress(deviceAddress);
@@ -57,13 +57,13 @@ public class McReqBuilder {
         return req;
     }
 
-    public static McMessageReq createDeviceBatchReadBitReq(McDeviceAddress deviceAddress) {
-        return createDeviceBatchReadBitReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, deviceAddress);
+    public static McMessageReq createReadDeviceBatchInBitReq(McDeviceAddress deviceAddress) {
+        return createReadDeviceBatchInBitReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, deviceAddress);
     }
 
-    public static McMessageReq createDeviceBatchReadBitReq(McAccessRoute accessRoute, int timer, McDeviceAddress deviceAddress) {
+    public static McMessageReq createReadDeviceBatchInBitReq(McAccessRoute accessRoute, int timer, McDeviceAddress deviceAddress) {
         McHeaderReq header = createMcHeaderReq4E(accessRoute, timer);
-        McDeviceBatchReadReqData data = new McDeviceBatchReadReqData();
+        McReadDeviceBatchReqData data = new McReadDeviceBatchReqData();
         data.setCommand(EMcCommand.DEVICE_ACCESS_BATCH_READ_IN_UNITS);
         data.setSubcommand(deviceAddress.getSeries() == EMcSeries.Q_L ? 0x0001 : 0x0003);
         data.setDeviceAddress(deviceAddress);
@@ -72,13 +72,13 @@ public class McReqBuilder {
         return req;
     }
 
-    public static McMessageReq createDeviceBatchWriteWordReq(McDeviceContent deviceContent) {
-        return createDeviceBatchWriteWordReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, deviceContent);
+    public static McMessageReq createWriteDeviceBatchInWordReq(McDeviceContent deviceContent) {
+        return createWriteDeviceBatchInWordReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, deviceContent);
     }
 
-    public static McMessageReq createDeviceBatchWriteWordReq(McAccessRoute accessRoute, int timer, McDeviceContent deviceContent) {
+    public static McMessageReq createWriteDeviceBatchInWordReq(McAccessRoute accessRoute, int timer, McDeviceContent deviceContent) {
         McHeaderReq header = createMcHeaderReq4E(accessRoute, timer);
-        McDeviceBatchWriteReqData data = new McDeviceBatchWriteReqData();
+        McWriteDeviceBatchReqData data = new McWriteDeviceBatchReqData();
         data.setCommand(EMcCommand.DEVICE_ACCESS_BATCH_WRITE_IN_UNITS);
         data.setSubcommand(deviceContent.getSeries() == EMcSeries.Q_L ? 0x0000 : 0x0002);
         data.setDeviceContent(deviceContent);
@@ -87,13 +87,13 @@ public class McReqBuilder {
         return req;
     }
 
-    public static McMessageReq createDeviceBatchWriteBitReq(McDeviceContent deviceContent) {
-        return createDeviceBatchWriteBitReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, deviceContent);
+    public static McMessageReq createWriteDeviceBatchInBitReq(McDeviceContent deviceContent) {
+        return createWriteDeviceBatchInBitReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, deviceContent);
     }
 
-    public static McMessageReq createDeviceBatchWriteBitReq(McAccessRoute accessRoute, int timer, McDeviceContent deviceContent) {
+    public static McMessageReq createWriteDeviceBatchInBitReq(McAccessRoute accessRoute, int timer, McDeviceContent deviceContent) {
         McHeaderReq header = createMcHeaderReq4E(accessRoute, timer);
-        McDeviceBatchWriteReqData data = new McDeviceBatchWriteReqData();
+        McWriteDeviceBatchReqData data = new McWriteDeviceBatchReqData();
         data.setCommand(EMcCommand.DEVICE_ACCESS_BATCH_WRITE_IN_UNITS);
         data.setSubcommand(deviceContent.getSeries() == EMcSeries.Q_L ? 0x0001 : 0x0003);
         data.setDeviceContent(deviceContent);
@@ -102,20 +102,20 @@ public class McReqBuilder {
         return req;
     }
 
-    public static McMessageReq createDeviceRandomReadWordReq(List<McDeviceAddress> wordAddresses,
-                                                             List<McDeviceAddress> dwordAddresses) {
-        return createDeviceRandomReadWordReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, wordAddresses, dwordAddresses);
+    public static McMessageReq createReadDeviceRandomInWordReq(List<McDeviceAddress> wordAddresses,
+                                                               List<McDeviceAddress> dwordAddresses) {
+        return createReadDeviceRandomInWordReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, wordAddresses, dwordAddresses);
     }
 
-    public static McMessageReq createDeviceRandomReadWordReq(McAccessRoute accessRoute, int timer,
-                                                             List<McDeviceAddress> wordAddresses,
-                                                             List<McDeviceAddress> dwordAddresses) {
+    public static McMessageReq createReadDeviceRandomInWordReq(McAccessRoute accessRoute, int timer,
+                                                               List<McDeviceAddress> wordAddresses,
+                                                               List<McDeviceAddress> dwordAddresses) {
         if (wordAddresses.isEmpty() && dwordAddresses.isEmpty()) {
             throw new IllegalArgumentException("wordAddresses&&dwordAddresses");
         }
         EMcSeries series = !wordAddresses.isEmpty() ? wordAddresses.get(0).getSeries() : dwordAddresses.get(0).getSeries();
         McHeaderReq header = createMcHeaderReq4E(accessRoute, timer);
-        McDeviceRandomReadWordReqData data = new McDeviceRandomReadWordReqData();
+        McReadDeviceRandomInWordReqData data = new McReadDeviceRandomInWordReqData();
         data.setCommand(EMcCommand.DEVICE_ACCESS_RANDOM_READ_IN_UNITS);
         data.setSubcommand(series == EMcSeries.Q_L ? 0x0000 : 0x0002);
         data.setWordAddresses(wordAddresses);
@@ -125,20 +125,20 @@ public class McReqBuilder {
         return req;
     }
 
-    public static McMessageReq createDeviceRandomWriteWordReq(List<McDeviceContent> wordContents,
-                                                              List<McDeviceContent> dwordContents) {
-        return createDeviceRandomWriteWordReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, wordContents, dwordContents);
+    public static McMessageReq createWriteDeviceRandomInWordReq(List<McDeviceContent> wordContents,
+                                                                List<McDeviceContent> dwordContents) {
+        return createWriteDeviceRandomInWordReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, wordContents, dwordContents);
     }
 
-    public static McMessageReq createDeviceRandomWriteWordReq(McAccessRoute accessRoute, int timer,
-                                                              List<McDeviceContent> wordContents,
-                                                              List<McDeviceContent> dwordContents) {
+    public static McMessageReq createWriteDeviceRandomInWordReq(McAccessRoute accessRoute, int timer,
+                                                                List<McDeviceContent> wordContents,
+                                                                List<McDeviceContent> dwordContents) {
         if (wordContents.isEmpty() && dwordContents.isEmpty()) {
             throw new IllegalArgumentException("wordContents&&dwordContents");
         }
         EMcSeries series = !wordContents.isEmpty() ? wordContents.get(0).getSeries() : dwordContents.get(0).getSeries();
         McHeaderReq header = createMcHeaderReq4E(accessRoute, timer);
-        McDeviceRandomWriteWordReqData data = new McDeviceRandomWriteWordReqData();
+        McWriteDeviceRandomInWordReqData data = new McWriteDeviceRandomInWordReqData();
         data.setCommand(EMcCommand.DEVICE_ACCESS_RANDOM_WRITE_IN_UNITS);
         data.setSubcommand(series == EMcSeries.Q_L ? 0x0000 : 0x0002);
         data.setWordContents(wordContents);
@@ -148,14 +148,14 @@ public class McReqBuilder {
         return req;
     }
 
-    public static McMessageReq createDeviceRandomWriteBitReq(List<McDeviceContent> bitAddresses) {
-        return createDeviceRandomWriteBitReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, bitAddresses);
+    public static McMessageReq createWriteDeviceRandomInBitReq(List<McDeviceContent> bitAddresses) {
+        return createWriteDeviceRandomInBitReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, bitAddresses);
     }
 
-    public static McMessageReq createDeviceRandomWriteBitReq(McAccessRoute accessRoute, int timer, List<McDeviceContent> bitContents) {
+    public static McMessageReq createWriteDeviceRandomInBitReq(McAccessRoute accessRoute, int timer, List<McDeviceContent> bitContents) {
         EMcSeries series = !bitContents.isEmpty() ? bitContents.get(0).getSeries() : EMcSeries.Q_L;
         McHeaderReq header = createMcHeaderReq4E(accessRoute, timer);
-        McDeviceRandomWriteBitReqData data = new McDeviceRandomWriteBitReqData();
+        McWriteDeviceRandomInBitReqData data = new McWriteDeviceRandomInBitReqData();
         data.setCommand(EMcCommand.DEVICE_ACCESS_RANDOM_WRITE_IN_UNITS);
         data.setSubcommand(series == EMcSeries.Q_L ? 0x0001 : 0x0003);
         data.setBitContents(bitContents);
@@ -164,12 +164,12 @@ public class McReqBuilder {
         return req;
     }
 
-    public static McMessageReq createDeviceBatchReadMultiBlocksReq(List<McDeviceAddress> wordAddresses,
+    public static McMessageReq createReadDeviceBatchMultiBlocksReq(List<McDeviceAddress> wordAddresses,
                                                                    List<McDeviceAddress> bitAddresses) {
-        return createDeviceBatchReadMultiBlocksReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, wordAddresses, bitAddresses);
+        return createReadDeviceBatchMultiBlocksReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, wordAddresses, bitAddresses);
     }
 
-    public static McMessageReq createDeviceBatchReadMultiBlocksReq(McAccessRoute accessRoute, int timer,
+    public static McMessageReq createReadDeviceBatchMultiBlocksReq(McAccessRoute accessRoute, int timer,
                                                                    List<McDeviceAddress> wordAddresses,
                                                                    List<McDeviceAddress> bitAddresses) {
         if (wordAddresses.isEmpty() && bitAddresses.isEmpty()) {
@@ -177,7 +177,7 @@ public class McReqBuilder {
         }
         EMcSeries series = !wordAddresses.isEmpty() ? wordAddresses.get(0).getSeries() : bitAddresses.get(0).getSeries();
         McHeaderReq header = createMcHeaderReq4E(accessRoute, timer);
-        McDeviceBatchReadMultiBlocksReqData data = new McDeviceBatchReadMultiBlocksReqData();
+        McReadDeviceBatchMultiBlocksReqData data = new McReadDeviceBatchMultiBlocksReqData();
         data.setCommand(EMcCommand.DEVICE_ACCESS_BATCH_READ_MULTIPLE_BLOCKS);
         data.setSubcommand(series == EMcSeries.Q_L ? 0x0000 : 0x0002);
         data.setWordAddresses(wordAddresses);
@@ -187,12 +187,12 @@ public class McReqBuilder {
         return req;
     }
 
-    public static McMessageReq createDeviceBatchWriteMultiBlocksReq(List<McDeviceContent> wordContents,
+    public static McMessageReq createWriteDeviceBatchMultiBlocksReq(List<McDeviceContent> wordContents,
                                                                     List<McDeviceContent> bitContents) {
-        return createDeviceBatchWriteMultiBlocksReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, wordContents, bitContents);
+        return createWriteDeviceBatchMultiBlocksReq(Mc4E3EFrameAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT, wordContents, bitContents);
     }
 
-    public static McMessageReq createDeviceBatchWriteMultiBlocksReq(McAccessRoute accessRoute, int timer,
+    public static McMessageReq createWriteDeviceBatchMultiBlocksReq(McAccessRoute accessRoute, int timer,
                                                                     List<McDeviceContent> wordContents,
                                                                     List<McDeviceContent> bitContents) {
         if (wordContents.isEmpty() && bitContents.isEmpty()) {
@@ -200,7 +200,7 @@ public class McReqBuilder {
         }
         EMcSeries series = !wordContents.isEmpty() ? wordContents.get(0).getSeries() : bitContents.get(0).getSeries();
         McHeaderReq header = createMcHeaderReq4E(accessRoute, timer);
-        McDeviceBatchWriteMultiBlocksReqData data = new McDeviceBatchWriteMultiBlocksReqData();
+        McWriteDeviceBatchMultiBlocksReqData data = new McWriteDeviceBatchMultiBlocksReqData();
         data.setCommand(EMcCommand.DEVICE_ACCESS_BATCH_WRITE_MULTIPLE_BLOCKS);
         data.setSubcommand(series == EMcSeries.Q_L ? 0x0000 : 0x0002);
         data.setWordContents(wordContents);

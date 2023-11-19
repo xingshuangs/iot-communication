@@ -13,7 +13,7 @@ import java.util.List;
  * @author xingshuang
  */
 @Data
-public class McDeviceRandomWriteWordReqData extends McReqData {
+public class McWriteDeviceRandomInWordReqData extends McReqData {
 
     /**
      * 软元件设备内容，字访问地址列表
@@ -25,7 +25,7 @@ public class McDeviceRandomWriteWordReqData extends McReqData {
      */
     private List<McDeviceContent> dwordContents;
 
-    public McDeviceRandomWriteWordReqData() {
+    public McWriteDeviceRandomInWordReqData() {
         this.wordContents = new ArrayList<>();
         this.dwordContents = new ArrayList<>();
     }

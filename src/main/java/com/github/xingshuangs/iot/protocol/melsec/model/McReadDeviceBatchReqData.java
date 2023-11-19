@@ -10,7 +10,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
-public class McDeviceBatchReadReqData extends McReqData {
+public class McReadDeviceBatchReqData extends McReqData {
 
     /**
      * 软元件设备地址

@@ -13,7 +13,7 @@ import java.util.List;
  * @author xingshuang
  */
 @Data
-public class McDeviceBatchWriteMultiBlocksReqData extends McReqData {
+public class McWriteDeviceBatchMultiBlocksReqData extends McReqData {
 
     /**
      * 软元件设备地址，字访问地址列表
@@ -25,7 +25,7 @@ public class McDeviceBatchWriteMultiBlocksReqData extends McReqData {
      */
     private List<McDeviceContent> bitContents;
 
-    public McDeviceBatchWriteMultiBlocksReqData() {
+    public McWriteDeviceBatchMultiBlocksReqData() {
         this.wordContents = new ArrayList<>();
         this.bitContents = new ArrayList<>();
     }

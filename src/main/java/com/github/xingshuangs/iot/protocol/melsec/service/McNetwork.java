@@ -3,9 +3,9 @@ package com.github.xingshuangs.iot.protocol.melsec.service;
 
 import com.github.xingshuangs.iot.exceptions.McCommException;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
-import com.github.xingshuangs.iot.protocol.melsec.model.McHeader;
-import com.github.xingshuangs.iot.protocol.melsec.model.McMessageAck;
-import com.github.xingshuangs.iot.protocol.melsec.model.McMessageReq;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSubHeader;
+import com.github.xingshuangs.iot.protocol.melsec.model.*;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Consumer;
@@ -16,7 +16,8 @@ import java.util.function.Consumer;
  * @author xingshuang
  */
 @Slf4j
-public abstract class McNetwork extends TcpClientBasic {
+@Data
+public class McNetwork extends TcpClientBasic {
 
     /**
      * 锁
@@ -33,17 +34,15 @@ public abstract class McNetwork extends TcpClientBasic {
      */
     private boolean persistence = true;
 
-    public void setComCallback(Consumer<byte[]> comCallback) {
-        this.comCallback = comCallback;
-    }
+    /**
+     * 访问路径，默认4E，3E帧访问路径
+     */
+    private McAccessRoute accessRoute = Mc4E3EFrameAccessRoute.createDefault();
 
-    public boolean isPersistence() {
-        return persistence;
-    }
-
-    public void setPersistence(boolean persistence) {
-        this.persistence = persistence;
-    }
+    /**
+     * 监视定时器，默认：3000ms，设置读取及写入的处理完成之前的等待时间。设置连接站E71向访问目标发出处理请求之后到返回响应为止的等待时间。
+     */
+    private int monitoringTimer = 3000;
 
     public McNetwork() {
         super();
@@ -110,23 +109,45 @@ public abstract class McNetwork extends TcpClientBasic {
      * @param ack 响应数据
      */
     protected void checkResult(McMessageReq req, McMessageAck ack) {
-//        if (ack.getPdu() == null) {
-//            throw new McCommException("PDU数据为null");
-//        }
-//        if (req.getHeader().getTransactionId() != ack.getHeader().getTransactionId()) {
-//            throw new McCommException("事务元标识符Id不一致");
-//        }
-//        if (ack.getPdu().getFunctionCode().getCode() == (req.getPdu().getFunctionCode().getCode() | (byte) 0x80)) {
-//            MbErrorResponse response = (MbErrorResponse) ack.getPdu();
-//            throw new McCommException("响应返回异常，异常码:" + response.getErrorCode().getDescription());
-//        }
-//        if (ack.getPdu().getFunctionCode().getCode() != req.getPdu().getFunctionCode().getCode()) {
-//            MbErrorResponse response = (MbErrorResponse) ack.getPdu();
-//            throw new McCommException("返回功能码和发送功能码不一致，异常码:" + response.getErrorCode().getDescription());
-//        }
+        if (req.getHeader().getSubHeader() == EMcSubHeader.REQ_4E.getCode()
+                && ack.getHeader().getSubHeader() != EMcSubHeader.ACK_4E.getCode()) {
+            throw new McCommException("响应副帧头和请求副帧头不一致，请求副帧头：" + req.getHeader().getSubHeader()
+                    + "，响应副帧头：" + ack.getHeader().getEndCode());
+        }
+        if (req.getHeader().getSubHeader() == EMcSubHeader.REQ_3E.getCode()
+                && ack.getHeader().getSubHeader() != EMcSubHeader.ACK_3E.getCode()) {
+            throw new McCommException("响应副帧头和请求副帧头不一致，请求副帧头：" + req.getHeader().getSubHeader()
+                    + "，响应副帧头：" + ack.getHeader().getEndCode());
+        }
+        if (ack.getHeader().getEndCode() != 0) {
+            throw new McCommException("响应返回异常，异常码:" + ack.getHeader().getEndCode());
+        }
     }
 
     //endregion
 
 
+    public byte[] readDeviceBatchInWord(McDeviceAddress deviceAddress) {
+        McMessageReq req = McReqBuilder.createReadDeviceBatchInWordReq(this.accessRoute, this.monitoringTimer, deviceAddress);
+        McMessageAck ack = this.readFromServer(req);
+        McAckData ackData = (McAckData) ack.getData();
+        return ackData.getData();
+    }
+
+    public void writeDeviceBatchInWord(McDeviceContent deviceContent) {
+        McMessageReq req = McReqBuilder.createWriteDeviceBatchInWordReq(this.accessRoute, this.monitoringTimer, deviceContent);
+        this.readFromServer(req);
+    }
+
+    public byte[] readDeviceBatchInBit(McDeviceAddress deviceAddress) {
+        McMessageReq req = McReqBuilder.createReadDeviceBatchInBitReq(this.accessRoute, this.monitoringTimer, deviceAddress);
+        McMessageAck ack = this.readFromServer(req);
+        McAckData ackData = (McAckData) ack.getData();
+        return ackData.getData();
+    }
+
+    public void writeDeviceBatchInBit(McDeviceContent deviceContent) {
+        McMessageReq req = McReqBuilder.createWriteDeviceBatchInBitReq(this.accessRoute, this.monitoringTimer, deviceContent);
+        this.readFromServer(req);
+    }
 }

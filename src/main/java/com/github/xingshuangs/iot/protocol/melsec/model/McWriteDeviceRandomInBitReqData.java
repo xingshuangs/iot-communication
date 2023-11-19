@@ -13,14 +13,14 @@ import java.util.List;
  * @author xingshuang
  */
 @Data
-public class McDeviceRandomWriteBitReqData extends McReqData {
+public class McWriteDeviceRandomInBitReqData extends McReqData {
 
     /**
      * 软元件设备内容，位访问地址列表
      */
     private List<McDeviceContent> bitContents;
 
-    public McDeviceRandomWriteBitReqData() {
+    public McWriteDeviceRandomInBitReqData() {
         this.bitContents = new ArrayList<>();
     }
 
