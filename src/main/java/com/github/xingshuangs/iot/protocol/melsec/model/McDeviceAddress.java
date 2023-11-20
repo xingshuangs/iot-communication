@@ -7,6 +7,8 @@ import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import com.github.xingshuangs.iot.utils.IntegerUtil;
 import lombok.Data;
 
+import java.util.regex.Pattern;
+
 /**
  * 软元件设备地址
  *
@@ -39,7 +41,7 @@ public class McDeviceAddress {
     }
 
     public McDeviceAddress(EMcDeviceCode deviceCode, int headDeviceNumber) {
-        this(deviceCode, headDeviceNumber,1);
+        this(deviceCode, headDeviceNumber, 1);
     }
 
     public McDeviceAddress(EMcDeviceCode deviceCode, int headDeviceNumber, int devicePointsCount) {
@@ -49,7 +51,7 @@ public class McDeviceAddress {
     }
 
     public McDeviceAddress(EMcSeries series, EMcDeviceCode deviceCode, int headDeviceNumber) {
-        this(series,  deviceCode, headDeviceNumber,1);
+        this(series, deviceCode, headDeviceNumber, 1);
     }
 
     public McDeviceAddress(EMcSeries series, EMcDeviceCode deviceCode, int headDeviceNumber, int devicePointsCount) {
@@ -112,5 +114,27 @@ public class McDeviceAddress {
         }
         buff.putShort(this.devicePointsCount);
         return buff.getData();
+    }
+
+    public static McDeviceAddress createBy(String address) {
+        return createBy(EMcSeries.Q_L, address, 1);
+    }
+
+    public static McDeviceAddress createBy(String address, int count) {
+        return createBy(EMcSeries.Q_L, address, count);
+    }
+
+    public static McDeviceAddress createBy(EMcSeries series, String address, int count) {
+        if (address == null || address.length() == 0) {
+            throw new IllegalArgumentException("address不能为空");
+        }
+        if (count <= 0) {
+            throw new IllegalArgumentException("count个数必须为正数");
+        }
+        String letter = Pattern.compile("\\d").matcher(address).replaceAll("").trim().toUpperCase();
+        EMcDeviceCode deviceCode = EMcDeviceCode.from(letter);
+        String number = Pattern.compile("\\D").matcher(address).replaceAll("").trim();
+        int headDeviceNumber = Integer.parseInt(number);
+        return new McDeviceAddress(series, deviceCode, headDeviceNumber, count);
     }
 }

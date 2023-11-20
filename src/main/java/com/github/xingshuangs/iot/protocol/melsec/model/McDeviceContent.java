@@ -72,7 +72,7 @@ public class McDeviceContent extends McDeviceAddress {
         return buff.getData();
     }
 
-    public static McDeviceContent createByAddress(McDeviceAddress deviceAddress, byte[] data){
+    public static McDeviceContent createByAddress(McDeviceAddress deviceAddress, byte[] data) {
         McDeviceContent deviceContent = new McDeviceContent();
         deviceContent.series = deviceAddress.getSeries();
         deviceContent.headDeviceNumber = deviceAddress.headDeviceNumber;
@@ -80,5 +80,18 @@ public class McDeviceContent extends McDeviceAddress {
         deviceContent.devicePointsCount = deviceAddress.devicePointsCount;
         deviceContent.data = data;
         return deviceContent;
+    }
+
+    public static McDeviceContent createBy(String address, byte[] data) {
+        return createBy(EMcSeries.Q_L, address, 1, data);
+    }
+
+    public static McDeviceContent createBy(String address, int count, byte[] data) {
+        return createBy(EMcSeries.Q_L, address, count, data);
+    }
+
+    public static McDeviceContent createBy(EMcSeries series, String address, int count, byte[] data) {
+        McDeviceAddress deviceAddress = McDeviceAddress.createBy(series, address, count);
+        return createByAddress(deviceAddress, data);
     }
 }

@@ -11,6 +11,8 @@ import com.github.xingshuangs.iot.protocol.melsec.model.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -178,5 +180,14 @@ public class McNetwork extends TcpClientBasic {
     public void writeDeviceBatchInBit(McDeviceContent deviceContent) {
         McMessageReq req = McReqBuilder.createWriteDeviceBatchInBitReq(this.accessRoute, this.monitoringTimer, deviceContent);
         this.readFromServer(req);
+    }
+
+    protected List<Boolean> getBooleanList(byte[] bytes) {
+        List<Boolean> res = new ArrayList<>();
+        for (byte aByte : bytes) {
+            res.add((aByte & (byte) 0xF0) == 0x10);
+            res.add((aByte & 0x0F) == 0x01);
+        }
+        return res;
     }
 }
