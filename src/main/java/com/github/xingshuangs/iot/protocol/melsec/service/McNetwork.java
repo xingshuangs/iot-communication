@@ -3,6 +3,9 @@ package com.github.xingshuangs.iot.protocol.melsec.service;
 
 import com.github.xingshuangs.iot.exceptions.McCommException;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcDeviceCode;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSubHeader;
 import com.github.xingshuangs.iot.protocol.melsec.model.*;
 import lombok.Data;
@@ -37,12 +40,17 @@ public class McNetwork extends TcpClientBasic {
     /**
      * 访问路径，默认4E，3E帧访问路径
      */
-    private McAccessRoute accessRoute = Mc4E3EFrameAccessRoute.createDefault();
+    protected McAccessRoute accessRoute = Mc4E3EFrameAccessRoute.createDefault();
 
     /**
      * 监视定时器，默认：3000ms，设置读取及写入的处理完成之前的等待时间。设置连接站E71向访问目标发出处理请求之后到返回响应为止的等待时间。
      */
-    private int monitoringTimer = 3000;
+    protected int monitoringTimer = 3000;
+
+    /**
+     * PLC的类型系列
+     */
+    protected EMcSeries series = EMcSeries.Q_L;
 
     public McNetwork() {
         super();
@@ -126,6 +134,27 @@ public class McNetwork extends TcpClientBasic {
 
     //endregion
 
+    public byte[] readDeviceBatchRaw(EMcCommand command, int subCommand, EMcDeviceCode deviceCode,
+                                     int headDeviceNumber, int devicePointsCount) {
+        McHeaderReq header = McReqBuilder.createMcHeaderReq4E(accessRoute, this.monitoringTimer);
+        McDeviceAddress deviceAddress = new McDeviceAddress(this.series, deviceCode, headDeviceNumber, devicePointsCount);
+        McReadDeviceBatchReqData data = new McReadDeviceBatchReqData(command, subCommand, deviceAddress);
+        McMessageReq req = new McMessageReq(header, data);
+        req.selfCheck();
+        McMessageAck ack = this.readFromServer(req);
+        McAckData ackData = (McAckData) ack.getData();
+        return ackData.getData();
+    }
+
+    public void writeDeviceBatchRaw(EMcCommand command, int subCommand, EMcDeviceCode deviceCode,
+                                    int headDeviceNumber, int devicePointsCount, byte[] dataBytes) {
+        McHeaderReq header = McReqBuilder.createMcHeaderReq4E(accessRoute, this.monitoringTimer);
+        McDeviceContent deviceContent = new McDeviceContent(this.series, deviceCode, headDeviceNumber, devicePointsCount, dataBytes);
+        McWriteDeviceBatchReqData data = new McWriteDeviceBatchReqData(command, subCommand, deviceContent);
+        McMessageReq req = new McMessageReq(header, data);
+        req.selfCheck();
+        this.readFromServer(req);
+    }
 
     public byte[] readDeviceBatchInWord(McDeviceAddress deviceAddress) {
         McMessageReq req = McReqBuilder.createReadDeviceBatchInWordReq(this.accessRoute, this.monitoringTimer, deviceAddress);

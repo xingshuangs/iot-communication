@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
 import lombok.Data;
 
 /**
@@ -16,6 +17,15 @@ public class McWriteDeviceBatchReqData extends McReqData {
      * 软元件设备地址+内容
      */
     private McDeviceContent deviceContent;
+
+    public McWriteDeviceBatchReqData() {
+    }
+
+    public McWriteDeviceBatchReqData(EMcCommand command, int subcommand, McDeviceContent deviceContent) {
+        this.command = command;
+        this.subcommand = subcommand;
+        this.deviceContent = deviceContent;
+    }
 
     @Override
     public int byteArrayLength() {
