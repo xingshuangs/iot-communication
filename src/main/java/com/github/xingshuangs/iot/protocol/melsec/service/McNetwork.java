@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.melsec.service;
 
 import com.github.xingshuangs.iot.exceptions.McCommException;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcDeviceCode;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
@@ -158,27 +159,97 @@ public class McNetwork extends TcpClientBasic {
         this.readFromServer(req);
     }
 
-    public byte[] readDeviceBatchInWord(McDeviceAddress deviceAddress) {
+    public McDeviceContent readDeviceBatchInWord(McDeviceAddress deviceAddress) {
+        if (deviceAddress.getDevicePointsCount() < 1 || deviceAddress.getDevicePointsCount() > 960) {
+            throw new McCommException("1 <= 字访问点数 <= 960");
+        }
         McMessageReq req = McReqBuilder.createReadDeviceBatchInWordReq(this.accessRoute, this.monitoringTimer, deviceAddress);
         McMessageAck ack = this.readFromServer(req);
         McAckData ackData = (McAckData) ack.getData();
-        return ackData.getData();
+        return McDeviceContent.createByAddress(deviceAddress, ackData.getData());
     }
 
     public void writeDeviceBatchInWord(McDeviceContent deviceContent) {
+        if (deviceContent.getDevicePointsCount() < 1 || deviceContent.getDevicePointsCount() > 960) {
+            throw new McCommException("1 <= 字访问点数 <= 960");
+        }
         McMessageReq req = McReqBuilder.createWriteDeviceBatchInWordReq(this.accessRoute, this.monitoringTimer, deviceContent);
         this.readFromServer(req);
     }
 
-    public byte[] readDeviceBatchInBit(McDeviceAddress deviceAddress) {
+    public McDeviceContent readDeviceBatchInBit(McDeviceAddress deviceAddress) {
+        if (deviceAddress.getDevicePointsCount() < 1 || deviceAddress.getDevicePointsCount() > 7168) {
+            throw new McCommException("1 <= 位访问点数 <= 7168");
+        }
         McMessageReq req = McReqBuilder.createReadDeviceBatchInBitReq(this.accessRoute, this.monitoringTimer, deviceAddress);
         McMessageAck ack = this.readFromServer(req);
         McAckData ackData = (McAckData) ack.getData();
-        return ackData.getData();
+        return McDeviceContent.createByAddress(deviceAddress, ackData.getData());
     }
 
     public void writeDeviceBatchInBit(McDeviceContent deviceContent) {
+        if (deviceContent.getDevicePointsCount() < 1 || deviceContent.getDevicePointsCount() > 7168) {
+            throw new McCommException("1 <= 位访问点数 <= 7168");
+        }
         McMessageReq req = McReqBuilder.createWriteDeviceBatchInBitReq(this.accessRoute, this.monitoringTimer, deviceContent);
+        this.readFromServer(req);
+    }
+
+    public List<McDeviceContent> readDeviceRandomInWord(List<McDeviceAddress> wordAddresses, List<McDeviceAddress> dwordAddresses) {
+        if (this.series == EMcSeries.Q_L && (wordAddresses.size() + dwordAddresses.size() < 1 || wordAddresses.size() + dwordAddresses.size() > 192)) {
+            throw new McCommException("1 ≤ 字访问点数+双字访问点数 ≤ 192点");
+        }
+        if (this.series != EMcSeries.Q_L && (wordAddresses.size() + dwordAddresses.size() < 1 || wordAddresses.size() + dwordAddresses.size() > 96)) {
+            throw new McCommException("1 ≤ 字访问点数+双字访问点数 ≤ 96点");
+        }
+        McMessageReq req = McReqBuilder.createReadDeviceRandomInWordReq(this.accessRoute, this.monitoringTimer, wordAddresses, dwordAddresses);
+        McMessageAck ack = this.readFromServer(req);
+        McAckData ackData = (McAckData) ack.getData();
+        List<McDeviceContent> result = new ArrayList<>();
+        ByteReadBuff buff = new ByteReadBuff(ackData.getData());
+        for (McDeviceAddress wordAddress : wordAddresses) {
+            result.add(McDeviceContent.createByAddress(wordAddress, buff.getBytes(2)));
+        }
+        for (McDeviceAddress dwordAddress : dwordAddresses) {
+            result.add(McDeviceContent.createByAddress(dwordAddress, buff.getBytes(4)));
+        }
+        return result;
+    }
+
+    public void writeDeviceRandomInWord(List<McDeviceContent> wordContents, List<McDeviceContent> dwordContents) {
+        int count = wordContents.size() * 12 + dwordContents.size() * 14;
+        if (this.series == EMcSeries.Q_L && (count < 1 || count > 1920)) {
+            throw new McCommException("1 ≤ (字访问点数×12)+(双字访问点数×14) ≤ 1920点");
+        }
+        if (this.series != EMcSeries.Q_L && (count < 1 || count > 960)) {
+            throw new McCommException("1 ≤ (字访问点数×12)+(双字访问点数×14) ≤ 960点");
+        }
+        McMessageReq req = McReqBuilder.createWriteDeviceRandomInWordReq(this.accessRoute, this.monitoringTimer, wordContents, dwordContents);
+        this.readFromServer(req);
+    }
+
+    public void writeDeviceRandomInBit(List<McDeviceContent> bitAddresses) {
+        McMessageReq req = McReqBuilder.createWriteDeviceRandomInBitReq(this.accessRoute, this.monitoringTimer, bitAddresses);
+        this.readFromServer(req);
+    }
+
+    public List<McDeviceContent> readDeviceBatchMultiBlocks(List<McDeviceAddress> wordAddresses, List<McDeviceAddress> bitAddresses) {
+        McMessageReq req = McReqBuilder.createReadDeviceBatchMultiBlocksReq(this.accessRoute, this.monitoringTimer, wordAddresses, bitAddresses);
+        McMessageAck ack = this.readFromServer(req);
+        McAckData ackData = (McAckData) ack.getData();
+        List<McDeviceContent> result = new ArrayList<>();
+        ByteReadBuff buff = new ByteReadBuff(ackData.getData());
+        for (McDeviceAddress wordAddress : wordAddresses) {
+            result.add(McDeviceContent.createByAddress(wordAddress, buff.getBytes(2 * wordAddress.getDevicePointsCount())));
+        }
+        for (McDeviceAddress bitAddress : bitAddresses) {
+            result.add(McDeviceContent.createByAddress(bitAddress, buff.getBytes(2 * bitAddress.getDevicePointsCount())));
+        }
+        return result;
+    }
+
+    public void writeDeviceBatchMultiBlocks(List<McDeviceContent> wordContents, List<McDeviceContent> bitContents) {
+        McMessageReq req = McReqBuilder.createWriteDeviceBatchMultiBlocksReq(this.accessRoute, this.monitoringTimer, wordContents, bitContents);
         this.readFromServer(req);
     }
 

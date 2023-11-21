@@ -3,6 +3,7 @@ package com.github.xingshuangs.iot.protocol.melsec.service;
 
 import com.github.xingshuangs.iot.exceptions.McCommException;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceAddress;
+import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceContent;
 
 import java.util.List;
 
@@ -14,12 +15,10 @@ import java.util.List;
 public class McPLC extends McNetwork {
 
     public List<Boolean> readBoolean(String address, int count) {
-        if (count < 1 || count > 7168) {
-            throw new McCommException("count < 1 || count > 7168");
-        }
+
         McDeviceAddress deviceAddress = McDeviceAddress.createBy(this.series, address, count);
-        byte[] bytes = this.readDeviceBatchInBit(deviceAddress);
-        List<Boolean> res = this.getBooleanList(bytes);
+        McDeviceContent deviceContent = this.readDeviceBatchInBit(deviceAddress);
+        List<Boolean> res = this.getBooleanList(deviceContent.getData());
         return res.subList(0, count);
     }
 
@@ -29,10 +28,9 @@ public class McPLC extends McNetwork {
     }
 
     public byte[] readBytes(String address, int count) {
-        if (count < 1 || count > 960) {
-            throw new McCommException("count < 1 || count > 960");
-        }
+
         McDeviceAddress deviceAddress = McDeviceAddress.createBy(this.series, address, count);
-        return this.readDeviceBatchInWord(deviceAddress);
+        McDeviceContent deviceContent = this.readDeviceBatchInWord(deviceAddress);
+        return deviceContent.getData();
     }
 }
