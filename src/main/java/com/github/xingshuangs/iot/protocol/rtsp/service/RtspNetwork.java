@@ -246,6 +246,17 @@ public class RtspNetwork extends TcpClientBasic {
     protected void option() {
         RtspOptionRequest request = new RtspOptionRequest(this.uri);
         RtspOptionResponse response = (RtspOptionResponse) this.readFromServer(request);
+        if (response.getStatusCode() == ERtspStatusCode.UNAUTHORIZED) {
+            // 需要授权
+            this.needAuthorization = true;
+            if (this.authenticator == null) {
+                throw new RtspCommException(String.format("RTSP[%s]交互中authenticator为null", ERtspMethod.OPTIONS));
+            }
+            this.authenticator.addServerInfoByString(response.getWwwAuthenticate());
+            this.authenticator.addClientInfo(this.uri.toString(), ERtspMethod.OPTIONS.getCode());
+            request = new RtspOptionRequest(this.uri, this.authenticator);
+            response = (RtspOptionResponse) this.readFromServer(request);
+        }
         this.checkAfterResponse(response, ERtspMethod.OPTIONS);
         this.methods = response.getPublicMethods();
         // 清空客户端
@@ -258,7 +269,8 @@ public class RtspNetwork extends TcpClientBasic {
     protected void describe() {
         this.checkBeforeRequest(ERtspMethod.DESCRIBE);
 
-        RtspDescribeRequest request = new RtspDescribeRequest(this.uri, Collections.singletonList(ERtspAcceptContent.SDP));
+        RtspDescribeRequest request = this.needAuthorization ? new RtspDescribeRequest(this.uri, Collections.singletonList(ERtspAcceptContent.SDP), this.authenticator)
+                : new RtspDescribeRequest(this.uri, Collections.singletonList(ERtspAcceptContent.SDP));
         RtspDescribeResponse response = (RtspDescribeResponse) this.readFromServer(request);
 
         if (response.getStatusCode() == ERtspStatusCode.UNAUTHORIZED) {

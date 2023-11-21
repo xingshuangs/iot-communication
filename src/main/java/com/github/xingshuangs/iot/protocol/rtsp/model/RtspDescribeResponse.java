@@ -37,7 +37,6 @@ public final class RtspDescribeResponse extends RtspMessageResponse {
 
         if (response.statusCode == ERtspStatusCode.UNAUTHORIZED) {
             response.wwwAuthenticate = map.getOrDefault(WWW_AUTHENTICATE, "").trim();
-            return response;
         }
         return response;
     }
