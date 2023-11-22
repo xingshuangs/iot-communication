@@ -10,8 +10,7 @@ import java.util.Map;
 
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspEntityHeaderFields.*;
-import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspRequestHeaderFields.AUTHORIZATION;
-import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspRequestHeaderFields.USER_AGENT;
+import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspResponseHeaderFields.WWW_AUTHENTICATE;
 
 
 /**
@@ -26,6 +25,11 @@ public class RtspMessageResponse extends RtspMessage {
      * 状态码
      */
     protected ERtspStatusCode statusCode = ERtspStatusCode.OK;
+
+    /**
+     * WWW-Authenticate: Digest realm="IP Camera(D2959)", nonce="c9f3698bf99b5f0a77f3960d35df7776", stale="FALSE"\r\n
+     */
+    protected String wwwAuthenticate = "";
 
     /**
      * 内容类型
@@ -101,6 +105,9 @@ public class RtspMessageResponse extends RtspMessage {
         }
         if (map.containsKey(C_SEQ1)) {
             this.cSeq = Integer.parseInt(map.get(C_SEQ1).trim());
+        }
+        if (map.containsKey(WWW_AUTHENTICATE)) {
+            this.wwwAuthenticate = map.getOrDefault(WWW_AUTHENTICATE, "").trim();
         }
     }
 

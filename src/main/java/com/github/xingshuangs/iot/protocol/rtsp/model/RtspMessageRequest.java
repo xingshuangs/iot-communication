@@ -4,6 +4,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model;
 import com.github.xingshuangs.iot.protocol.rtsp.authentication.AbstractAuthenticator;
 import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspMethod;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspRequestHeade
  * @author xingshuang
  */
 @Getter
+@Setter
 public class RtspMessageRequest extends RtspMessage {
     /**
      * 方法
