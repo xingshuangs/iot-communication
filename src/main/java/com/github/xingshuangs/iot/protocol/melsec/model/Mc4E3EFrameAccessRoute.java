@@ -33,6 +33,16 @@ public class Mc4E3EFrameAccessRoute extends McAccessRoute {
      */
     private int requestDestModuleStationNumber = 0x00;
 
+    public Mc4E3EFrameAccessRoute() {
+    }
+
+    public Mc4E3EFrameAccessRoute(int networkNumber, int pcNumber, int requestDestModuleIoNumber, int requestDestModuleStationNumber) {
+        this.networkNumber = networkNumber;
+        this.pcNumber = pcNumber;
+        this.requestDestModuleIoNumber = requestDestModuleIoNumber;
+        this.requestDestModuleStationNumber = requestDestModuleStationNumber;
+    }
+
     @Override
     public int byteArrayLength() {
         return 5;

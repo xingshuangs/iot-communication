@@ -1,6 +1,7 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcDeviceCode;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import org.junit.Test;
 
@@ -20,7 +21,7 @@ public class McReqBuilderTest {
                 0x00, 0x00, 0x0C, 0x00
         };
         Mc4E3EFrameAccessRoute route = Mc4E3EFrameAccessRoute.createDefault();
-        McHeaderReq headerReq = McReqBuilder.createMcHeaderReq4E(route, 3000);
+        McHeaderReq headerReq = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(), route, 3000);
         byte[] actual = headerReq.toByteArray();
         assertArrayEquals(expect, actual);
     }

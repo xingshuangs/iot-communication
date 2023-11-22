@@ -7,7 +7,7 @@ import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcDeviceCode;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSubHeader;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import com.github.xingshuangs.iot.protocol.melsec.model.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +39,11 @@ public class McNetwork extends TcpClientBasic {
      * 是否持久化，默认是持久化，对应长连接，true：长连接，false：短连接
      */
     private boolean persistence = true;
+
+    /**
+     * 帧类型
+     */
+    protected EMcFrameType frameType = EMcFrameType.FRAME_4E;
 
     /**
      * 访问路径，默认4E，3E帧访问路径
@@ -120,13 +125,13 @@ public class McNetwork extends TcpClientBasic {
      * @param ack 响应数据
      */
     protected void checkResult(McMessageReq req, McMessageAck ack) {
-        if (req.getHeader().getSubHeader() == EMcSubHeader.REQ_4E.getCode()
-                && ack.getHeader().getSubHeader() != EMcSubHeader.ACK_4E.getCode()) {
+        if (req.getHeader().getSubHeader() == EMcFrameType.FRAME_4E.getReqSubHeader()
+                && ack.getHeader().getSubHeader() != EMcFrameType.FRAME_4E.getAckSubHeader()) {
             throw new McCommException("响应副帧头和请求副帧头不一致，请求副帧头：" + req.getHeader().getSubHeader()
                     + "，响应副帧头：" + ack.getHeader().getEndCode());
         }
-        if (req.getHeader().getSubHeader() == EMcSubHeader.REQ_3E.getCode()
-                && ack.getHeader().getSubHeader() != EMcSubHeader.ACK_3E.getCode()) {
+        if (req.getHeader().getSubHeader() == EMcFrameType.FRAME_3E.getReqSubHeader()
+                && ack.getHeader().getSubHeader() != EMcFrameType.FRAME_3E.getAckSubHeader()) {
             throw new McCommException("响应副帧头和请求副帧头不一致，请求副帧头：" + req.getHeader().getSubHeader()
                     + "，响应副帧头：" + ack.getHeader().getEndCode());
         }
@@ -139,7 +144,7 @@ public class McNetwork extends TcpClientBasic {
 
     public byte[] readDeviceBatchRaw(EMcCommand command, int subCommand, EMcDeviceCode deviceCode,
                                      int headDeviceNumber, int devicePointsCount) {
-        McHeaderReq header = McReqBuilder.createMcHeaderReq4E(accessRoute, this.monitoringTimer);
+        McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
         McDeviceAddress deviceAddress = new McDeviceAddress(this.series, deviceCode, headDeviceNumber, devicePointsCount);
         McReadDeviceBatchReqData data = new McReadDeviceBatchReqData(command, subCommand, deviceAddress);
         McMessageReq req = new McMessageReq(header, data);
@@ -151,7 +156,7 @@ public class McNetwork extends TcpClientBasic {
 
     public void writeDeviceBatchRaw(EMcCommand command, int subCommand, EMcDeviceCode deviceCode,
                                     int headDeviceNumber, int devicePointsCount, byte[] dataBytes) {
-        McHeaderReq header = McReqBuilder.createMcHeaderReq4E(accessRoute, this.monitoringTimer);
+        McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
         McDeviceContent deviceContent = new McDeviceContent(this.series, deviceCode, headDeviceNumber, devicePointsCount, dataBytes);
         McWriteDeviceBatchReqData data = new McWriteDeviceBatchReqData(command, subCommand, deviceContent);
         McMessageReq req = new McMessageReq(header, data);
@@ -160,49 +165,73 @@ public class McNetwork extends TcpClientBasic {
     }
 
     public McDeviceContent readDeviceBatchInWord(McDeviceAddress deviceAddress) {
+        if (deviceAddress == null) {
+            throw new NullPointerException("deviceAddress");
+        }
         if (deviceAddress.getDevicePointsCount() < 1 || deviceAddress.getDevicePointsCount() > 960) {
             throw new McCommException("1 <= 字访问点数 <= 960");
         }
-        McMessageReq req = McReqBuilder.createReadDeviceBatchInWordReq(this.accessRoute, this.monitoringTimer, deviceAddress);
+        McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+        McMessageReq req = McReqBuilder.createReadDeviceBatchInWordReq(header, deviceAddress);
         McMessageAck ack = this.readFromServer(req);
         McAckData ackData = (McAckData) ack.getData();
         return McDeviceContent.createByAddress(deviceAddress, ackData.getData());
     }
 
     public void writeDeviceBatchInWord(McDeviceContent deviceContent) {
+        if (deviceContent == null) {
+            throw new NullPointerException("deviceContent");
+        }
         if (deviceContent.getDevicePointsCount() < 1 || deviceContent.getDevicePointsCount() > 960) {
             throw new McCommException("1 <= 字访问点数 <= 960");
         }
-        McMessageReq req = McReqBuilder.createWriteDeviceBatchInWordReq(this.accessRoute, this.monitoringTimer, deviceContent);
+        McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+        McMessageReq req = McReqBuilder.createWriteDeviceBatchInWordReq(header, deviceContent);
         this.readFromServer(req);
     }
 
     public McDeviceContent readDeviceBatchInBit(McDeviceAddress deviceAddress) {
+        if (deviceAddress == null) {
+            throw new NullPointerException("deviceAddress");
+        }
         if (deviceAddress.getDevicePointsCount() < 1 || deviceAddress.getDevicePointsCount() > 7168) {
             throw new McCommException("1 <= 位访问点数 <= 7168");
         }
-        McMessageReq req = McReqBuilder.createReadDeviceBatchInBitReq(this.accessRoute, this.monitoringTimer, deviceAddress);
+        McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+        McMessageReq req = McReqBuilder.createReadDeviceBatchInBitReq(header, deviceAddress);
         McMessageAck ack = this.readFromServer(req);
         McAckData ackData = (McAckData) ack.getData();
         return McDeviceContent.createByAddress(deviceAddress, ackData.getData());
     }
 
     public void writeDeviceBatchInBit(McDeviceContent deviceContent) {
+        if (deviceContent == null) {
+            throw new NullPointerException("deviceContent");
+        }
         if (deviceContent.getDevicePointsCount() < 1 || deviceContent.getDevicePointsCount() > 7168) {
             throw new McCommException("1 <= 位访问点数 <= 7168");
         }
-        McMessageReq req = McReqBuilder.createWriteDeviceBatchInBitReq(this.accessRoute, this.monitoringTimer, deviceContent);
+        McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+        McMessageReq req = McReqBuilder.createWriteDeviceBatchInBitReq(header, deviceContent);
         this.readFromServer(req);
     }
 
     public List<McDeviceContent> readDeviceRandomInWord(List<McDeviceAddress> wordAddresses, List<McDeviceAddress> dwordAddresses) {
-        if (this.series == EMcSeries.Q_L && (wordAddresses.size() + dwordAddresses.size() < 1 || wordAddresses.size() + dwordAddresses.size() > 192)) {
+        if (wordAddresses == null || dwordAddresses == null) {
+            throw new NullPointerException("wordAddresses or dwordAddresses");
+        }
+        if (wordAddresses.isEmpty() && dwordAddresses.isEmpty()) {
+            throw new IllegalArgumentException("wordAddresses and dwordAddresses 数量为空");
+        }
+        int count = wordAddresses.size() + dwordAddresses.size();
+        if (this.series == EMcSeries.Q_L && (count < 1 || count > 192)) {
             throw new McCommException("1 ≤ 字访问点数+双字访问点数 ≤ 192点");
         }
-        if (this.series != EMcSeries.Q_L && (wordAddresses.size() + dwordAddresses.size() < 1 || wordAddresses.size() + dwordAddresses.size() > 96)) {
+        if (this.series != EMcSeries.Q_L && (count < 1 || count > 96)) {
             throw new McCommException("1 ≤ 字访问点数+双字访问点数 ≤ 96点");
         }
-        McMessageReq req = McReqBuilder.createReadDeviceRandomInWordReq(this.accessRoute, this.monitoringTimer, wordAddresses, dwordAddresses);
+        McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+        McMessageReq req = McReqBuilder.createReadDeviceRandomInWordReq(header, wordAddresses, dwordAddresses);
         McMessageAck ack = this.readFromServer(req);
         McAckData ackData = (McAckData) ack.getData();
         List<McDeviceContent> result = new ArrayList<>();
@@ -217,6 +246,12 @@ public class McNetwork extends TcpClientBasic {
     }
 
     public void writeDeviceRandomInWord(List<McDeviceContent> wordContents, List<McDeviceContent> dwordContents) {
+        if (wordContents == null || dwordContents == null) {
+            throw new NullPointerException("wordContents or dwordContents");
+        }
+        if (wordContents.isEmpty() && dwordContents.isEmpty()) {
+            throw new IllegalArgumentException("wordContents and dwordContents 数量为空");
+        }
         int count = wordContents.size() * 12 + dwordContents.size() * 14;
         if (this.series == EMcSeries.Q_L && (count < 1 || count > 1920)) {
             throw new McCommException("1 ≤ (字访问点数×12)+(双字访问点数×14) ≤ 1920点");
@@ -224,17 +259,42 @@ public class McNetwork extends TcpClientBasic {
         if (this.series != EMcSeries.Q_L && (count < 1 || count > 960)) {
             throw new McCommException("1 ≤ (字访问点数×12)+(双字访问点数×14) ≤ 960点");
         }
-        McMessageReq req = McReqBuilder.createWriteDeviceRandomInWordReq(this.accessRoute, this.monitoringTimer, wordContents, dwordContents);
+        McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+        McMessageReq req = McReqBuilder.createWriteDeviceRandomInWordReq(header, wordContents, dwordContents);
         this.readFromServer(req);
     }
 
     public void writeDeviceRandomInBit(List<McDeviceContent> bitAddresses) {
-        McMessageReq req = McReqBuilder.createWriteDeviceRandomInBitReq(this.accessRoute, this.monitoringTimer, bitAddresses);
+        if (bitAddresses == null) {
+            throw new NullPointerException("bitAddresses");
+        }
+        if (this.series == EMcSeries.Q_L && (bitAddresses.isEmpty() || bitAddresses.size() > 188)) {
+            throw new McCommException("1 ≤ 位访问点数 ≤ 188点");
+        }
+        if (this.series != EMcSeries.Q_L && (bitAddresses.isEmpty() || bitAddresses.size() > 94)) {
+            throw new McCommException("1 ≤ 位访问点数 ≤ 94点");
+        }
+        McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+        McMessageReq req = McReqBuilder.createWriteDeviceRandomInBitReq(header, bitAddresses);
         this.readFromServer(req);
     }
 
     public List<McDeviceContent> readDeviceBatchMultiBlocks(List<McDeviceAddress> wordAddresses, List<McDeviceAddress> bitAddresses) {
-        McMessageReq req = McReqBuilder.createReadDeviceBatchMultiBlocksReq(this.accessRoute, this.monitoringTimer, wordAddresses, bitAddresses);
+        if (wordAddresses == null || bitAddresses == null) {
+            throw new NullPointerException("wordAddresses or bitAddresses");
+        }
+        if (wordAddresses.isEmpty() && bitAddresses.isEmpty()) {
+            throw new IllegalArgumentException("wordAddresses and bitAddresses 数量为空");
+        }
+        int count = wordAddresses.size() + bitAddresses.size();
+        if (this.series == EMcSeries.Q_L && (count < 1 || count > 120)) {
+            throw new McCommException("1 ≤ 字访问点数+双字访问点数 ≤ 120点");
+        }
+        if (this.series != EMcSeries.Q_L && (count < 1 || count > 60)) {
+            throw new McCommException("1 ≤ 字访问点数+双字访问点数 ≤ 60点");
+        }
+        McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+        McMessageReq req = McReqBuilder.createReadDeviceBatchMultiBlocksReq(header, wordAddresses, bitAddresses);
         McMessageAck ack = this.readFromServer(req);
         McAckData ackData = (McAckData) ack.getData();
         List<McDeviceContent> result = new ArrayList<>();
@@ -249,7 +309,28 @@ public class McNetwork extends TcpClientBasic {
     }
 
     public void writeDeviceBatchMultiBlocks(List<McDeviceContent> wordContents, List<McDeviceContent> bitContents) {
-        McMessageReq req = McReqBuilder.createWriteDeviceBatchMultiBlocksReq(this.accessRoute, this.monitoringTimer, wordContents, bitContents);
+        if (wordContents == null || bitContents == null) {
+            throw new NullPointerException("wordContents or bitContents");
+        }
+        if (wordContents.isEmpty() && bitContents.isEmpty()) {
+            throw new IllegalArgumentException("wordContents and bitContents 数量为空");
+        }
+        if (this.series == EMcSeries.Q_L) {
+            int count = (wordContents.size() + bitContents.size()) * 4
+                    + (wordContents.stream().mapToInt(McDeviceAddress::getDevicePointsCount).sum() + bitContents.stream().mapToInt(McDeviceAddress::getDevicePointsCount).sum());
+            if (count < 1 || count > 960) {
+                throw new McCommException("1 ≤ (各块数的合计×4)+(软元件点数的合计) ≤ 960点");
+            }
+        }
+        if (this.series != EMcSeries.Q_L) {
+            int count = (wordContents.size() + bitContents.size()) * 9
+                    + (wordContents.stream().mapToInt(McDeviceAddress::getDevicePointsCount).sum() + bitContents.stream().mapToInt(McDeviceAddress::getDevicePointsCount).sum());
+            if (count < 1 || count > 960) {
+                throw new McCommException("1 ≤ (各块数的合计×9)+(软元件点数的合计) ≤ 960点");
+            }
+        }
+        McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+        McMessageReq req = McReqBuilder.createWriteDeviceBatchMultiBlocksReq(header, wordContents, bitContents);
         this.readFromServer(req);
     }
 

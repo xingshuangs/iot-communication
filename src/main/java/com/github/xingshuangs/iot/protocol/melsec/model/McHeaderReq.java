@@ -24,6 +24,12 @@ public class McHeaderReq extends McHeader {
     public McHeaderReq() {
     }
 
+    public McHeaderReq(int subHeader, McAccessRoute accessRoute, int timer) {
+        this.subHeader = subHeader;
+        this.accessRoute = accessRoute;
+        this.monitoringTimer = timer / 250;
+    }
+
     @Override
     public int byteArrayLength() {
         return 2 + this.accessRoute.byteArrayLength() + 2 + 2;
