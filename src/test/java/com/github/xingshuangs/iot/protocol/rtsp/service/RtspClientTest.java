@@ -56,7 +56,7 @@ public class RtspClientTest {
         UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "kilox1234");
         DigestAuthenticator authenticator = new DigestAuthenticator(credential);
         RtspClient client = new RtspClient(uri, authenticator, ERtspTransportProtocol.TCP);
-        client.onCommCallback(log::info);
+        client.onCommCallback(System.out::println);
         client.onFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
             log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
@@ -64,7 +64,7 @@ public class RtspClientTest {
         client.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(15);
+                TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

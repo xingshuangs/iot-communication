@@ -11,13 +11,13 @@ import java.util.Base64;
  */
 public class BasicAuthenticator extends AbstractAuthenticator {
 
-    public static final String NAME = "Basic";
+    public static final String BASIC_NAME = "Basic";
 
     private final Base64.Encoder encoder;
 
     public BasicAuthenticator(UsernamePasswordCredential credential) {
         this.credential = credential;
-        this.name = NAME;
+        this.name = BASIC_NAME;
         this.encoder = Base64.getEncoder();
     }
 

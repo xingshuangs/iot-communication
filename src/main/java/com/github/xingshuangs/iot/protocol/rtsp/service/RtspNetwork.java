@@ -216,6 +216,9 @@ public class RtspNetwork extends TcpClientBasic {
      * @param req 请求数据
      */
     public void sendWithoutReturn(RtspMessageRequest req) {
+        if (this.needAuthorization && this.authenticator != null) {
+            this.authenticator.setMethod(req.getMethod().getCode());
+        }
         String reqString = req.toObjectString();
         if (this.commCallback != null) {
             this.commCallback.accept(reqString);
@@ -247,6 +250,9 @@ public class RtspNetwork extends TcpClientBasic {
      * @return 响应
      */
     private RtspMessageResponse sendRequest(RtspMessageRequest request) {
+        if (this.needAuthorization && this.authenticator != null) {
+            this.authenticator.setMethod(request.getMethod().getCode());
+        }
         RtspMessageResponse response = this.readFromServer(request);
         if (response.getStatusCode() == ERtspStatusCode.UNAUTHORIZED) {
             // 需要授权
@@ -399,8 +405,8 @@ public class RtspNetwork extends TcpClientBasic {
         this.checkBeforeRequest(ERtspMethod.PLAY);
 
         RtspPlayRequest request = this.needAuthorization ?
-                new RtspPlayRequest(this.uri, this.sessionInfo.getSessionId(), this.authenticator)
-                : new RtspPlayRequest(this.uri, this.sessionInfo.getSessionId());
+                new RtspPlayRequest(this.uri, this.sessionInfo.getSessionId(), new RtspRangeNpt("0.000"), this.authenticator)
+                : new RtspPlayRequest(this.uri, this.sessionInfo.getSessionId(), new RtspRangeNpt("0.000"));
         RtspPlayResponse response = (RtspPlayResponse) this.sendRequest(request);
 
         this.rtpInfos = response.getRtpInfo();

@@ -66,6 +66,14 @@ public class DigestAuthenticator extends AbstractAuthenticator {
 
     private byte[] entityBody = new byte[0];
 
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
     public DigestAuthenticator(UsernamePasswordCredential credential) {
         this.credential = credential;
         this.name = DIGEST_NAME;
