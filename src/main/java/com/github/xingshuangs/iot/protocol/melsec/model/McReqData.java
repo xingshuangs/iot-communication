@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import lombok.Data;
 
 /**
@@ -11,6 +12,11 @@ import lombok.Data;
  */
 @Data
 public class McReqData extends McData {
+
+    /**
+     * PLC系列
+     */
+    protected EMcSeries series = EMcSeries.Q_L;
 
     /**
      * 指令，2个字节

@@ -2,6 +2,8 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -21,12 +23,23 @@ public class McWriteDeviceRandomInBitReqData extends McReqData {
     private List<McDeviceContent> bitContents;
 
     public McWriteDeviceRandomInBitReqData() {
-        this.bitContents = new ArrayList<>();
+        this(EMcSeries.Q_L, new ArrayList<>());
+    }
+
+    public McWriteDeviceRandomInBitReqData(EMcSeries series) {
+        this(series, new ArrayList<>());
+    }
+
+    public McWriteDeviceRandomInBitReqData(EMcSeries series, List<McDeviceContent> bitContents) {
+        this.series = series;
+        this.command = EMcCommand.DEVICE_ACCESS_RANDOM_WRITE_IN_UNITS;
+        this.subcommand = series == EMcSeries.Q_L ? 0x0001 : 0x0003;
+        this.bitContents = bitContents;
     }
 
     @Override
     public int byteArrayLength() {
-        return 4 + 1 + this.bitContents.stream().mapToInt(McDeviceContent::byteArrayLengthWithoutPointsCount).sum();
+        return 4 + 1 + this.bitContents.stream().mapToInt(x -> x.byteArrayLengthWithoutPointsCount(this.series)).sum();
     }
 
     @Override
@@ -35,7 +48,7 @@ public class McWriteDeviceRandomInBitReqData extends McReqData {
                 .putShort(this.command.getCode())
                 .putShort(this.subcommand)
                 .putByte(this.bitContents.size());
-        this.bitContents.forEach(x -> buff.putBytes(x.toByteArrayWithoutPointsCount()));
+        this.bitContents.forEach(x -> buff.putBytes(x.toByteArrayWithoutPointsCount(this.series)));
         return buff.getData();
     }
 }

@@ -48,8 +48,9 @@ public class McReqBuilderTest {
                 0x01, 0x04, 0x02, 0x00,
                 0x58, 0x1B, 0x00, 0x00, (byte) 0xA8, 0x00, 0x02, 0x00
         };
-        McDeviceAddress deviceAddress = new McDeviceAddress(EMcSeries.IQ_R, EMcDeviceCode.D, 7000, 2);
-        McMessageReq req = McReqBuilder.createReadDeviceBatchInWordReq(deviceAddress);
+        McDeviceAddress deviceAddress = new McDeviceAddress(EMcDeviceCode.D, 7000, 2);
+        McHeaderReq header = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(), Mc4E3EFrameAccessRoute.createDefault(), 3000);
+        McMessageReq req = McReqBuilder.createReadDeviceBatchInWordReq(EMcSeries.IQ_R, header, deviceAddress);
         byte[] actual = req.toByteArray();
         assertArrayEquals(expect, actual);
     }
@@ -76,8 +77,9 @@ public class McReqBuilderTest {
                 0x01, 0x04, 0x02, 0x00,
                 0x58, 0x1B, 0x00, 0x00, (byte) 0xA8, 0x00, 0x02, 0x00
         };
-        McDeviceAddress deviceAddress = new McDeviceAddress(EMcSeries.IQ_R, EMcDeviceCode.D, 7000, 2);
-        McMessageReq req = McReqBuilder.createReadDeviceBatchInWordReq(deviceAddress);
+        McDeviceAddress deviceAddress = new McDeviceAddress(EMcDeviceCode.D, 7000, 2);
+        McHeaderReq header = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(), Mc4E3EFrameAccessRoute.createDefault(), 3000);
+        McMessageReq req = McReqBuilder.createReadDeviceBatchInWordReq(EMcSeries.IQ_R, header, deviceAddress);
         byte[] actual = req.toByteArray();
         assertArrayEquals(expect, actual);
     }
@@ -106,8 +108,9 @@ public class McReqBuilderTest {
                 0x58, 0x1B, 0x00, 0x00, (byte) 0xA8, 0x00, 0x03, 0x00, (byte) 0x95, 0x19, 0x02, 0x12, 0x30, 0x11
         };
         byte[] data = new byte[]{(byte) 0x95, 0x19, 0x02, 0x12, 0x30, 0x11};
-        McDeviceContent deviceAddress = new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.D, 7000, 3, data);
-        McMessageReq req = McReqBuilder.createWriteDeviceBatchInWordReq(deviceAddress);
+        McHeaderReq header = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(), Mc4E3EFrameAccessRoute.createDefault(), 3000);
+        McDeviceContent deviceAddress = new McDeviceContent(EMcDeviceCode.D, 7000, 3, data);
+        McMessageReq req = McReqBuilder.createWriteDeviceBatchInWordReq(EMcSeries.IQ_R, header, deviceAddress);
         byte[] actual = req.toByteArray();
         assertArrayEquals(expect, actual);
     }
@@ -136,8 +139,9 @@ public class McReqBuilderTest {
                 0x58, 0x1B, 0x00, 0x00, (byte) 0xA8, 0x00, 0x08, 0x00, 0x11, 0x00, 0x11, 0x00
         };
         byte[] data = new byte[]{0x11, 0x00, 0x11, 0x00};
-        McDeviceContent deviceAddress = new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.D, 7000, 8, data);
-        McMessageReq req = McReqBuilder.createWriteDeviceBatchInBitReq(deviceAddress);
+        McHeaderReq header = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(), Mc4E3EFrameAccessRoute.createDefault(), 3000);
+        McDeviceContent deviceAddress = new McDeviceContent(EMcDeviceCode.D, 7000, 8, data);
+        McMessageReq req = McReqBuilder.createWriteDeviceBatchInBitReq(EMcSeries.IQ_R, header, deviceAddress);
         byte[] actual = req.toByteArray();
         assertArrayEquals(expect, actual);
     }
@@ -186,16 +190,17 @@ public class McReqBuilderTest {
                 0x57, 0x04, 0x00, 0x00, (byte) 0x90, 0x00,
         };
         List<McDeviceAddress> wordAddresses = new ArrayList<>();
-        wordAddresses.add(new McDeviceAddress(EMcSeries.IQ_R, EMcDeviceCode.D, 0));
-        wordAddresses.add(new McDeviceAddress(EMcSeries.IQ_R, EMcDeviceCode.TN, 0));
-        wordAddresses.add(new McDeviceAddress(EMcSeries.IQ_R, EMcDeviceCode.M, 100));
-        wordAddresses.add(new McDeviceAddress(EMcSeries.IQ_R, EMcDeviceCode.X, 0x20));
+        wordAddresses.add(new McDeviceAddress(EMcDeviceCode.D, 0));
+        wordAddresses.add(new McDeviceAddress(EMcDeviceCode.TN, 0));
+        wordAddresses.add(new McDeviceAddress(EMcDeviceCode.M, 100));
+        wordAddresses.add(new McDeviceAddress(EMcDeviceCode.X, 0x20));
 
         List<McDeviceAddress> dwordAddresses = new ArrayList<>();
-        dwordAddresses.add(new McDeviceAddress(EMcSeries.IQ_R, EMcDeviceCode.D, 1500));
-        dwordAddresses.add(new McDeviceAddress(EMcSeries.IQ_R, EMcDeviceCode.Y, 0x160));
-        dwordAddresses.add(new McDeviceAddress(EMcSeries.IQ_R, EMcDeviceCode.M, 1111));
-        McMessageReq req = McReqBuilder.createReadDeviceRandomInWordReq(wordAddresses, dwordAddresses);
+        dwordAddresses.add(new McDeviceAddress(EMcDeviceCode.D, 1500));
+        dwordAddresses.add(new McDeviceAddress(EMcDeviceCode.Y, 0x160));
+        dwordAddresses.add(new McDeviceAddress(EMcDeviceCode.M, 1111));
+        McHeaderReq header = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(), Mc4E3EFrameAccessRoute.createDefault(), 3000);
+        McMessageReq req = McReqBuilder.createReadDeviceRandomInWordReq(EMcSeries.IQ_R, header, wordAddresses, dwordAddresses);
         byte[] actual = req.toByteArray();
         assertArrayEquals(expect, actual);
     }
@@ -244,16 +249,17 @@ public class McReqBuilderTest {
                 0x57, 0x04, 0x00, 0x00, (byte) 0x90, 0x00, 0x75, 0x04, 0x25, 0x04
         };
         List<McDeviceContent> wordAddresses = new ArrayList<>();
-        wordAddresses.add(new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.D, 0, new byte[]{0x50, 0x05}));
-        wordAddresses.add(new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.D, 1, new byte[]{0x75, 0x05}));
-        wordAddresses.add(new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.M, 100, new byte[]{0x40, 0x05}));
-        wordAddresses.add(new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.X, 0x20, new byte[]{(byte) 0x83, 0x05}));
+        wordAddresses.add(new McDeviceContent(EMcDeviceCode.D, 0, new byte[]{0x50, 0x05}));
+        wordAddresses.add(new McDeviceContent(EMcDeviceCode.D, 1, new byte[]{0x75, 0x05}));
+        wordAddresses.add(new McDeviceContent(EMcDeviceCode.M, 100, new byte[]{0x40, 0x05}));
+        wordAddresses.add(new McDeviceContent(EMcDeviceCode.X, 0x20, new byte[]{(byte) 0x83, 0x05}));
 
         List<McDeviceContent> dwordAddresses = new ArrayList<>();
-        dwordAddresses.add(new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.D, 1500, new byte[]{0x02, 0x12, 0x39, 0x04}));
-        dwordAddresses.add(new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.Y, 0x160, new byte[]{0x07, 0x26, 0x75, 0x23}));
-        dwordAddresses.add(new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.M, 1111, new byte[]{0x75, 0x04, 0x25, 0x04}));
-        McMessageReq req = McReqBuilder.createWriteDeviceRandomInWordReq(wordAddresses, dwordAddresses);
+        dwordAddresses.add(new McDeviceContent(EMcDeviceCode.D, 1500, new byte[]{0x02, 0x12, 0x39, 0x04}));
+        dwordAddresses.add(new McDeviceContent(EMcDeviceCode.Y, 0x160, new byte[]{0x07, 0x26, 0x75, 0x23}));
+        dwordAddresses.add(new McDeviceContent(EMcDeviceCode.M, 1111, new byte[]{0x75, 0x04, 0x25, 0x04}));
+        McHeaderReq header = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(), Mc4E3EFrameAccessRoute.createDefault(), 3000);
+        McMessageReq req = McReqBuilder.createWriteDeviceRandomInWordReq(EMcSeries.IQ_R, header, wordAddresses, dwordAddresses);
         byte[] actual = req.toByteArray();
         assertArrayEquals(expect, actual);
     }
@@ -285,9 +291,10 @@ public class McReqBuilderTest {
                 0x2F, 0x00, 0x00, 0x00, (byte) 0x9D, 0x00, 0x01,
         };
         List<McDeviceContent> bitAddresses = new ArrayList<>();
-        bitAddresses.add(new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.M, 50, new byte[]{0x00}));
-        bitAddresses.add(new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.Y, 0x2F, new byte[]{0x01}));
-        McMessageReq req = McReqBuilder.createWriteDeviceRandomInBitReq(bitAddresses);
+        bitAddresses.add(new McDeviceContent(EMcDeviceCode.M, 50, new byte[]{0x00}));
+        bitAddresses.add(new McDeviceContent(EMcDeviceCode.Y, 0x2F, new byte[]{0x01}));
+        McHeaderReq header = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(), Mc4E3EFrameAccessRoute.createDefault(), 3000);
+        McMessageReq req = McReqBuilder.createWriteDeviceRandomInBitReq(EMcSeries.IQ_R, header, bitAddresses);
         byte[] actual = req.toByteArray();
         assertArrayEquals(expect, actual);
     }
@@ -330,14 +337,15 @@ public class McReqBuilderTest {
                 0x00, 0x01, 0x00, 0x00, (byte) 0xA0, 0x00, 0x03, 0x00
         };
         List<McDeviceAddress> wordAddresses = new ArrayList<>();
-        wordAddresses.add(new McDeviceAddress(EMcSeries.IQ_R, EMcDeviceCode.D, 0, 4));
-        wordAddresses.add(new McDeviceAddress(EMcSeries.IQ_R, EMcDeviceCode.W, 0x100, 8));
+        wordAddresses.add(new McDeviceAddress(EMcDeviceCode.D, 0, 4));
+        wordAddresses.add(new McDeviceAddress(EMcDeviceCode.W, 0x100, 8));
 
         List<McDeviceAddress> bitAddresses = new ArrayList<>();
-        bitAddresses.add(new McDeviceAddress(EMcSeries.IQ_R, EMcDeviceCode.M, 0, 2));
-        bitAddresses.add(new McDeviceAddress(EMcSeries.IQ_R, EMcDeviceCode.M, 128, 2));
-        bitAddresses.add(new McDeviceAddress(EMcSeries.IQ_R, EMcDeviceCode.B, 0x100, 3));
-        McMessageReq req = McReqBuilder.createReadDeviceBatchMultiBlocksReq(wordAddresses, bitAddresses);
+        bitAddresses.add(new McDeviceAddress(EMcDeviceCode.M, 0, 2));
+        bitAddresses.add(new McDeviceAddress(EMcDeviceCode.M, 128, 2));
+        bitAddresses.add(new McDeviceAddress(EMcDeviceCode.B, 0x100, 3));
+        McHeaderReq header = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(), Mc4E3EFrameAccessRoute.createDefault(), 3000);
+        McMessageReq req = McReqBuilder.createReadDeviceBatchMultiBlocksReq(EMcSeries.IQ_R, header, wordAddresses, bitAddresses);
         byte[] actual = req.toByteArray();
         assertArrayEquals(expect, actual);
     }
@@ -380,14 +388,15 @@ public class McReqBuilderTest {
                 0x00, 0x01, 0x00, 0x00, (byte) 0xA0, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         };
         List<McDeviceContent> wordAddresses = new ArrayList<>();
-        wordAddresses.add(new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.D, 0, 4, new byte[8]));
-        wordAddresses.add(new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.W, 0x100, 8, new byte[16]));
+        wordAddresses.add(new McDeviceContent(EMcDeviceCode.D, 0, 4, new byte[8]));
+        wordAddresses.add(new McDeviceContent(EMcDeviceCode.W, 0x100, 8, new byte[16]));
 
         List<McDeviceContent> bitAddresses = new ArrayList<>();
-        bitAddresses.add(new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.M, 0, 2, new byte[4]));
-        bitAddresses.add(new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.M, 128, 2, new byte[4]));
-        bitAddresses.add(new McDeviceContent(EMcSeries.IQ_R, EMcDeviceCode.B, 0x100, 3, new byte[6]));
-        McMessageReq req = McReqBuilder.createWriteDeviceBatchMultiBlocksReq(wordAddresses, bitAddresses);
+        bitAddresses.add(new McDeviceContent(EMcDeviceCode.M, 0, 2, new byte[4]));
+        bitAddresses.add(new McDeviceContent(EMcDeviceCode.M, 128, 2, new byte[4]));
+        bitAddresses.add(new McDeviceContent(EMcDeviceCode.B, 0x100, 3, new byte[6]));
+        McHeaderReq header = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(), Mc4E3EFrameAccessRoute.createDefault(), 3000);
+        McMessageReq req = McReqBuilder.createWriteDeviceBatchMultiBlocksReq(EMcSeries.IQ_R, header, wordAddresses, bitAddresses);
         byte[] actual = req.toByteArray();
         assertArrayEquals(expect, actual);
     }

@@ -18,11 +18,6 @@ import java.util.regex.Pattern;
 public class McDeviceAddress {
 
     /**
-     * PLC的类型系列
-     */
-    protected EMcSeries series = EMcSeries.Q_L;
-
-    /**
      * 起始软元件编号，Q/L系列是3个字节，iQ-R系列是4个字节
      */
     protected int headDeviceNumber = 0;
@@ -50,44 +45,36 @@ public class McDeviceAddress {
         this.devicePointsCount = devicePointsCount;
     }
 
-    public McDeviceAddress(EMcSeries series, EMcDeviceCode deviceCode, int headDeviceNumber) {
-        this(series, deviceCode, headDeviceNumber, 1);
-    }
-
-    public McDeviceAddress(EMcSeries series, EMcDeviceCode deviceCode, int headDeviceNumber, int devicePointsCount) {
-        this.series = series;
-        this.headDeviceNumber = headDeviceNumber;
-        this.deviceCode = deviceCode;
-        this.devicePointsCount = devicePointsCount;
-    }
-
     /**
      * 不包含软元件点数的字节数组长度
      *
+     * @param series PLC的类型系列
      * @return 字节数组长度
      */
-    public int byteArrayLengthWithoutPointsCount() {
-        return this.series == EMcSeries.Q_L ? 4 : 6;
+    public int byteArrayLengthWithoutPointsCount(EMcSeries series) {
+        return series == EMcSeries.Q_L ? 4 : 6;
     }
 
     /**
      * 包含软元件点数的字节数组长度
      *
+     * @param series PLC的类型系列
      * @return 字节数组长度
      */
-    public int byteArrayLengthWithPointsCount() {
-        return 2 + (this.series == EMcSeries.Q_L ? 4 : 6);
+    public int byteArrayLengthWithPointsCount(EMcSeries series) {
+        return 2 + (series == EMcSeries.Q_L ? 4 : 6);
     }
 
     /**
      * 不包含软元件点数的字节内容
      *
+     * @param series PLC的类型系列
      * @return 字节数组
      */
-    public byte[] toByteArrayWithoutPointsCount() {
-        int length = this.series == EMcSeries.Q_L ? 4 : 6;
+    public byte[] toByteArrayWithoutPointsCount(EMcSeries series) {
+        int length = series == EMcSeries.Q_L ? 4 : 6;
         ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true);
-        if (this.series == EMcSeries.Q_L) {
+        if (series == EMcSeries.Q_L) {
             buff.putBytes(IntegerUtil.toCustomByteArray(this.headDeviceNumber, 0, 3, true));
             buff.putByte(this.deviceCode.getBinaryCode());
         } else {
@@ -100,12 +87,13 @@ public class McDeviceAddress {
     /**
      * 包含软元件点数的字节内容
      *
+     * @param series PLC的类型系列
      * @return 字节数组
      */
-    public byte[] toByteArrayWithPointsCount() {
-        int length = 2 + (this.series == EMcSeries.Q_L ? 4 : 6);
+    public byte[] toByteArrayWithPointsCount(EMcSeries series) {
+        int length = 2 + (series == EMcSeries.Q_L ? 4 : 6);
         ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true);
-        if (this.series == EMcSeries.Q_L) {
+        if (series == EMcSeries.Q_L) {
             buff.putBytes(IntegerUtil.toCustomByteArray(this.headDeviceNumber, 0, 3, true));
             buff.putByte(this.deviceCode.getBinaryCode());
         } else {
@@ -116,15 +104,24 @@ public class McDeviceAddress {
         return buff.getData();
     }
 
+    /**
+     * 构建McDeviceAddress
+     *
+     * @param address 地址
+     * @return McDeviceAddress对象
+     */
     public static McDeviceAddress createBy(String address) {
-        return createBy(EMcSeries.Q_L, address, 1);
+        return createBy(address, 1);
     }
 
+    /**
+     * 构建McDeviceAddress
+     *
+     * @param address 地址
+     * @param count   个数
+     * @return McDeviceAddress对象
+     */
     public static McDeviceAddress createBy(String address, int count) {
-        return createBy(EMcSeries.Q_L, address, count);
-    }
-
-    public static McDeviceAddress createBy(EMcSeries series, String address, int count) {
         if (address == null || address.length() == 0) {
             throw new IllegalArgumentException("address不能为空");
         }
@@ -135,6 +132,6 @@ public class McDeviceAddress {
         EMcDeviceCode deviceCode = EMcDeviceCode.from(letter);
         String number = Pattern.compile("\\D").matcher(address).replaceAll("").trim();
         int headDeviceNumber = Integer.parseInt(number);
-        return new McDeviceAddress(series, deviceCode, headDeviceNumber, count);
+        return new McDeviceAddress(deviceCode, headDeviceNumber, count);
     }
 }

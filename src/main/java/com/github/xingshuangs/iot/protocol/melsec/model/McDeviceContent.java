@@ -35,46 +35,36 @@ public class McDeviceContent extends McDeviceAddress {
         this.data = data;
     }
 
-    public McDeviceContent(EMcSeries series, EMcDeviceCode deviceCode, int headDeviceNumber, byte[] data) {
-        this(series, deviceCode, headDeviceNumber, 1, data);
-    }
-
-    public McDeviceContent(EMcSeries series, EMcDeviceCode deviceCode, int headDeviceNumber, int devicePointsCount, byte[] data) {
-        super(series, deviceCode, headDeviceNumber, devicePointsCount);
-        this.data = data;
+    @Override
+    public int byteArrayLengthWithoutPointsCount(EMcSeries series) {
+        return this.data.length + super.byteArrayLengthWithoutPointsCount(series);
     }
 
     @Override
-    public int byteArrayLengthWithoutPointsCount() {
-        return this.data.length + super.byteArrayLengthWithoutPointsCount();
+    public int byteArrayLengthWithPointsCount(EMcSeries series) {
+        return this.data.length + super.byteArrayLengthWithPointsCount(series);
     }
 
     @Override
-    public int byteArrayLengthWithPointsCount() {
-        return this.data.length + super.byteArrayLengthWithPointsCount();
-    }
-
-    @Override
-    public byte[] toByteArrayWithoutPointsCount() {
-        int length = this.data.length + super.byteArrayLengthWithoutPointsCount();
+    public byte[] toByteArrayWithoutPointsCount(EMcSeries series) {
+        int length = this.data.length + super.byteArrayLengthWithoutPointsCount(series);
         ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true);
-        buff.putBytes(super.toByteArrayWithoutPointsCount());
+        buff.putBytes(super.toByteArrayWithoutPointsCount(series));
         buff.putBytes(this.data);
         return buff.getData();
     }
 
     @Override
-    public byte[] toByteArrayWithPointsCount() {
-        int length = this.data.length + super.byteArrayLengthWithPointsCount();
+    public byte[] toByteArrayWithPointsCount(EMcSeries series) {
+        int length = this.data.length + super.byteArrayLengthWithPointsCount(series);
         ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true);
-        buff.putBytes(super.toByteArrayWithPointsCount());
+        buff.putBytes(super.toByteArrayWithPointsCount(series));
         buff.putBytes(this.data);
         return buff.getData();
     }
 
     public static McDeviceContent createByAddress(McDeviceAddress deviceAddress, byte[] data) {
         McDeviceContent deviceContent = new McDeviceContent();
-        deviceContent.series = deviceAddress.getSeries();
         deviceContent.headDeviceNumber = deviceAddress.headDeviceNumber;
         deviceContent.deviceCode = deviceAddress.deviceCode;
         deviceContent.devicePointsCount = deviceAddress.devicePointsCount;
@@ -83,15 +73,11 @@ public class McDeviceContent extends McDeviceAddress {
     }
 
     public static McDeviceContent createBy(String address, byte[] data) {
-        return createBy(EMcSeries.Q_L, address, 1, data);
+        return createBy(address, 1, data);
     }
 
     public static McDeviceContent createBy(String address, int count, byte[] data) {
-        return createBy(EMcSeries.Q_L, address, count, data);
-    }
-
-    public static McDeviceContent createBy(EMcSeries series, String address, int count, byte[] data) {
-        McDeviceAddress deviceAddress = McDeviceAddress.createBy(series, address, count);
+        McDeviceAddress deviceAddress = McDeviceAddress.createBy(address, count);
         return createByAddress(deviceAddress, data);
     }
 }
