@@ -31,11 +31,23 @@ public class RtspSdpMediaAttrControl {
         }
         RtspSdpMediaAttrControl control = new RtspSdpMediaAttrControl();
         int i = src.indexOf(EQUAL);
-        if (i == -1) {
+        if (i < 0) {
             throw new RtspCommException("RtspSdpMediaAttrControl数据有误，无法解析");
         }
-        control.uri = src;
-        control.trackID = Integer.parseInt(src.substring(i + 1));
+        int trackIDIndex = src.indexOf("trackID");
+        if (trackIDIndex < 0) {
+            throw new RtspCommException("RtspSdpMediaAttrControl数据有误，不存在trackID");
+        }
+        control.uri = src.substring(trackIDIndex);
+
+        String trackIDStr = src.substring(i + 1);
+        if (trackIDStr.contains("video")) {
+            control.trackID = 0;
+        } else if (trackIDStr.contains("audio")) {
+            control.trackID = 1;
+        } else {
+            control.trackID = Integer.parseInt(src.substring(i + 1));
+        }
         return control;
     }
 }

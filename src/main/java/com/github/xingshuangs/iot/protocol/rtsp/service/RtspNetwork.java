@@ -326,7 +326,7 @@ public class RtspNetwork extends TcpClientBasic {
             // TODO: 这里可能存在不同的负载解析器
             IPayloadParser iPayloadParser = new H264VideoParser();
             iPayloadParser.onFrameHandle(this::doFrameHandle);
-            URI actualUri = URI.create(media.getAttributeControl().getUri());
+            URI actualUri = URI.create(this.uri.toString() + "/" + media.getAttributeControl().getUri());
             RtpUdpClient rtpClient = new RtpUdpClient(iPayloadParser);
             RtcpUdpClient rtcpClient = new RtcpUdpClient();
             rtpClient.setRtcpUdpClient(rtcpClient);
@@ -359,7 +359,7 @@ public class RtspNetwork extends TcpClientBasic {
             int rtpChannelNumber = interleavedCount++;
             int rtcpChannelNumber = interleavedCount++;
             RtspTransport reqTransport = new RtspInterleavedTransport(rtpChannelNumber, rtcpChannelNumber);
-            URI actualUri = URI.create(media.getAttributeControl().getUri());
+            URI actualUri = URI.create(this.uri.toString() + "/" + media.getAttributeControl().getUri());
 
             this.doSetup(actualUri, reqTransport, media);
 
