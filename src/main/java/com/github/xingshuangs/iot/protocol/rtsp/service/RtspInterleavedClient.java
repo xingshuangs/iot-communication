@@ -177,9 +177,9 @@ public class RtspInterleavedClient implements IRtspDataStream {
     private byte[] readFromServer() {
         byte[] header = new byte[4];
         while (header[0] != RtspInterleaved.VERSION) {
-            this.rtspClient.read(header, 0, 1);
+            this.rtspClient.read(header, 0, 1, 1024, 0, true);
         }
-        int readLength = this.rtspClient.read(header, 1, 3);
+        int readLength = this.rtspClient.read(header, 1, 3, 1024, 0, true);
         if (readLength != 3) {
             throw new RtspCommException("头读取长度有误");
         }
