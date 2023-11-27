@@ -22,6 +22,7 @@ public class H264NaluBuilder {
             case SEI:
             case SPS:
             case PPS:
+            case AUD:
             case NON_IDR_SLICE:
             case IDR_SLICE:
                 return H264NaluSingle.fromBytes(data, offset);

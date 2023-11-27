@@ -171,7 +171,8 @@ public class RtspFMp4Proxy {
         }
         if (frame.getNaluType() == EH264NaluType.PPS
                 || frame.getNaluType() == EH264NaluType.SPS
-                || frame.getNaluType() == EH264NaluType.SEI) {
+                || frame.getNaluType() == EH264NaluType.SEI
+                || frame.getNaluType() == EH264NaluType.AUD) {
             return;
         }
         // 这里的作用是缓存10个帧数据，重新排序，因为可能收到的帧时间戳不是按时间顺序排列

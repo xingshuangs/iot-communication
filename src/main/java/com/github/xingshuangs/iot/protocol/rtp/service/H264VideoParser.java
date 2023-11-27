@@ -75,6 +75,7 @@ public class H264VideoParser implements IPayloadParser {
             case SEI:
             case PPS:
             case SPS:
+            case AUD:
             case NON_IDR_SLICE:
             case IDR_SLICE:
                 H264NaluSingle naluSingle = (H264NaluSingle) h264Nalu;
