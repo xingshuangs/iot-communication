@@ -128,8 +128,10 @@ public class McDeviceAddress {
         if (count <= 0) {
             throw new IllegalArgumentException("count个数必须为正数");
         }
+        // 提取字符数据
         String letter = Pattern.compile("\\d").matcher(address).replaceAll("").trim().toUpperCase();
         EMcDeviceCode deviceCode = EMcDeviceCode.from(letter);
+        // 提取数字数据
         String number = Pattern.compile("\\D").matcher(address).replaceAll("").trim();
         int headDeviceNumber = Integer.parseInt(number);
         return new McDeviceAddress(deviceCode, headDeviceNumber, count);

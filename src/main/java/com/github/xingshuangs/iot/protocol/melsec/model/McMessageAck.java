@@ -4,7 +4,6 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
-import com.github.xingshuangs.iot.protocol.common.buff.EByteBuffFormat;
 import lombok.Data;
 
 /**

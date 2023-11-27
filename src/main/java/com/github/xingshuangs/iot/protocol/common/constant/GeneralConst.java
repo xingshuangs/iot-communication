@@ -16,4 +16,6 @@ public class GeneralConst {
 
     public static final int MODBUS_PORT = 502;
 
+    public static final int MELSEC_PORT = 6000;
+
 }

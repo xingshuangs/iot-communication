@@ -65,7 +65,7 @@ public class McHeader implements IObjectByteArray {
         ByteReadBuff buff = new ByteReadBuff(data, offset, true);
         McHeader res = new McHeader();
         res.subHeader = buff.getUInt16();
-        res.accessRoute = Mc4E3EFrameAccessRoute.fromBytes(buff.getBytes(5));
+        res.accessRoute = McFrame4E3EAccessRoute.fromBytes(buff.getBytes(5));
         res.dataLength = buff.getUInt16();
         return res;
     }

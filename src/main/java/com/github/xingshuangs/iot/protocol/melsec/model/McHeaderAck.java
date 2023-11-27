@@ -59,7 +59,7 @@ public class McHeaderAck extends McHeader {
         ByteReadBuff buff = new ByteReadBuff(data, offset,true);
         McHeaderAck res = new McHeaderAck();
         res.subHeader = buff.getUInt16();
-        res.accessRoute = Mc4E3EFrameAccessRoute.fromBytes(buff.getBytes(5));
+        res.accessRoute = McFrame4E3EAccessRoute.fromBytes(buff.getBytes(5));
         res.dataLength = buff.getUInt16();
         res.endCode = buff.getUInt16();
         return res;

@@ -11,7 +11,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
-public class Mc4E3EFrameAccessRoute extends McAccessRoute {
+public class McFrame4E3EAccessRoute extends McAccessRoute {
 
     /**
      * 网络编号，1个字节
@@ -33,10 +33,10 @@ public class Mc4E3EFrameAccessRoute extends McAccessRoute {
      */
     private int requestDestModuleStationNumber = 0x00;
 
-    public Mc4E3EFrameAccessRoute() {
+    public McFrame4E3EAccessRoute() {
     }
 
-    public Mc4E3EFrameAccessRoute(int networkNumber, int pcNumber, int requestDestModuleIoNumber, int requestDestModuleStationNumber) {
+    public McFrame4E3EAccessRoute(int networkNumber, int pcNumber, int requestDestModuleIoNumber, int requestDestModuleStationNumber) {
         this.networkNumber = networkNumber;
         this.pcNumber = pcNumber;
         this.requestDestModuleIoNumber = requestDestModuleIoNumber;
@@ -58,8 +58,8 @@ public class Mc4E3EFrameAccessRoute extends McAccessRoute {
                 .getData();
     }
 
-    public static Mc4E3EFrameAccessRoute createDefault() {
-        Mc4E3EFrameAccessRoute route = new Mc4E3EFrameAccessRoute();
+    public static McFrame4E3EAccessRoute createDefault() {
+        McFrame4E3EAccessRoute route = new McFrame4E3EAccessRoute();
         route.networkNumber = 0x00;
         route.pcNumber = 0xFF;
         route.requestDestModuleIoNumber = 0x03FF;
@@ -73,7 +73,7 @@ public class Mc4E3EFrameAccessRoute extends McAccessRoute {
      * @param data 字节数组数据
      * @return Mc4E3EFrameAccessRoute
      */
-    public static Mc4E3EFrameAccessRoute fromBytes(final byte[] data) {
+    public static McFrame4E3EAccessRoute fromBytes(final byte[] data) {
         return fromBytes(data, 0);
     }
 
@@ -84,9 +84,9 @@ public class Mc4E3EFrameAccessRoute extends McAccessRoute {
      * @param offset 偏移量
      * @return Mc4E3EFrameAccessRoute
      */
-    public static Mc4E3EFrameAccessRoute fromBytes(final byte[] data, final int offset) {
+    public static McFrame4E3EAccessRoute fromBytes(final byte[] data, final int offset) {
         ByteReadBuff buff = new ByteReadBuff(data, offset,true);
-        Mc4E3EFrameAccessRoute res = new Mc4E3EFrameAccessRoute();
+        McFrame4E3EAccessRoute res = new McFrame4E3EAccessRoute();
         res.networkNumber = buff.getByteToInt();
         res.pcNumber = buff.getByteToInt();
         res.requestDestModuleIoNumber = buff.getUInt16();
