@@ -113,7 +113,9 @@ class Demo {
 }
 ```
 
-## 读取数据
+## 固定unitId模式（1对1）
+
+### 1. 读取数据
 
 ```java
 class Demo {
@@ -161,7 +163,7 @@ class Demo {
 }
 ```
 
-## 写入数据
+### 2. 写入数据
 
 ```java
 class Demo {
@@ -203,6 +205,108 @@ class Demo {
 
         // hold register write String，偶数长度
         plc.writeString(2, "1234");
+
+        plc.close();
+    }
+}
+```
+
+## 任意unitId模式（1对多）
+
+### 1. 读取数据
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        ModbusTcp plc = new ModbusTcp("127.0.0.1");
+        // optional
+        plc.setComCallback(x -> System.out.printf("长度[%d]:%s%n", x.length, HexUtil.toHexString(x)));
+
+        // read coil
+        List<Boolean> readCoil = plc.readCoil(2, 0, 2);
+
+        // read discrete input
+        List<Boolean> readDiscreteInput = plc.readDiscreteInput(2, 0, 4);
+
+        // read hold register
+        byte[] readHoldRegister = plc.readHoldRegister(2, 0, 4);
+
+        // read input register
+        byte[] readInputRegister = plc.readInputRegister(2, 0, 2);
+
+        // hold register read Boolean
+        boolean readBoolean = plc.readBoolean(3, 2, 1);
+
+        // hold register read Int16
+        short readInt16 = plc.readInt16(3, 2, true);
+
+        // hold register read UInt16
+        int readUInt16 = plc.readUInt16(3, 2, false);
+
+        // hold register read Int32
+        int readInt32 = plc.readInt32(4, 2, EByteBuffFormat.AB_CD);
+
+        // hold register read Int32
+        long readUInt32 = plc.readUInt32(4, 2, EByteBuffFormat.AB_CD);
+
+        // hold register read Float32
+        float readFloat32 = plc.readFloat32(4, 2, EByteBuffFormat.AB_CD);
+
+        // hold register read Float64
+        double readFloat64 = plc.readFloat64(4, 2, EByteBuffFormat.AB_CD);
+
+        // hold register read String
+        String readString = plc.readString(5, 2, 4);
+
+        plc.close();
+    }
+}
+```
+
+### 2. 写入数据
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        ModbusTcp plc = new ModbusTcp("127.0.0.1");
+        // optional
+        plc.setComCallback(x -> System.out.printf("长度[%d]:%s%n", x.length, HexUtil.toHexString(x)));
+
+        // single write coil
+        plc.writeCoil(2, 0, true);
+
+        // multiple write coil
+        List<Boolean> booleans = Arrays.asList(true, false, true, false);
+        plc.writeCoil(2, 0, booleans);
+
+        // single write hold register
+        plc.writeHoldRegister(2, 0, 33);
+        // multiple write hold register
+        plc.writeHoldRegister(2, 3, new byte[]{(byte) 0x11, (byte) 0x12});
+        // multiple write hold register
+        List<Integer> integers = Arrays.asList(11, 12, 13, 14);
+        plc.writeHoldRegister(2, 3, integers);
+
+        // hold register write int16
+        plc.writeInt16(3, 2, (short) 10, true);
+
+        // hold register write uint16
+        plc.writeUInt16(3, 2, 20, false);
+
+        // hold register write int32
+        plc.writeInt32(4, 2, 32, EByteBuffFormat.AB_CD);
+
+        // hold register write uint32
+        plc.writeUInt32(4, 2, 32L, EByteBuffFormat.AB_CD);
+
+        // hold register write float32
+        plc.writeFloat32(4, 2, 12.12f, EByteBuffFormat.AB_CD);
+
+        // hold register write float64
+        plc.writeFloat64(4, 2, 33.21, EByteBuffFormat.AB_CD);
+
+        // hold register write String
+        plc.writeString(5, 2, "1234");
 
         plc.close();
     }

@@ -16,8 +16,7 @@
 
 - 西门子S7通信协议
 - Modbus通信协议
-- RTSP、RTCP、RTP、H264协议
-- MP4 (FMP4) 协议
+- RTSP, RTCP, RTP, H264, MP4 (FMP4)协议
 - 基础字节数组解析转换工具
 
 ## 使用指南

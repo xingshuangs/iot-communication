@@ -16,8 +16,7 @@ Now, it is a tool for iot communication, it includes
 
 - Siemens S7 protocol.
 - Modbus protocol.
-- RTSP, RTCP, RTP, H264 protocol.
-- MP4 (FMP4) protocol.
+- RTSP, RTCP, RTP, H264, MP4 (FMP4) protocol.
 - Parse byte array data.
 
 ## Getting Started

@@ -5,7 +5,7 @@
 ## Foreword
 
 - The scheme of **RTSP + H264 + FMP4 + WebSocket + MSE + WEB** is adopted.
-- Support RTSP video stream of **Hikvision camera** display on the web page to achieve real-time monitoring.
+- Support RTSP video stream of **Hikvision and DaHua camera** display on the web page to achieve real-time monitoring.
 - Video stream acquisition supports **TCP/UDP** two ways, which can be switched arbitrarily according to network
   conditions.
 - Pure **JAVA** development, without any other dependencies, lightweight.
