@@ -28,11 +28,13 @@ package com.github.xingshuangs.iot.protocol.melsec.service;
 import com.github.xingshuangs.iot.exceptions.McCommException;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcDeviceCode;
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import com.github.xingshuangs.iot.protocol.melsec.model.*;
+import com.github.xingshuangs.iot.utils.ConsumerUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -241,15 +243,24 @@ public class McNetwork extends TcpClientBasic {
         if (deviceAddress == null) {
             throw new NullPointerException("deviceAddress");
         }
-        if (deviceAddress.getDevicePointsCount() < 1 || deviceAddress.getDevicePointsCount() > 960) {
-            throw new McCommException("1 <= 字访问点数 <= 960");
+        if (deviceAddress.getDevicePointsCount() < 1) {
+            throw new McCommException("1 <= 字访问点数");
         }
         try {
-            McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
-            McMessageReq req = McReqBuilder.createReadDeviceBatchInWordReq(this.series, header, deviceAddress);
-            McMessageAck ack = this.readFromServer(req);
-            McAckData ackData = (McAckData) ack.getData();
-            return McDeviceContent.createByAddress(deviceAddress, ackData.getData());
+            int actualLength = deviceAddress.getDevicePointsCount();
+            int maxLength = 960;
+            ByteWriteBuff buff = new ByteWriteBuff(deviceAddress.getDevicePointsCount() * 2);
+
+            ConsumerUtil.loopExecute(actualLength, maxLength, (off, len) -> {
+                McDeviceAddress newAddress = new McDeviceAddress(deviceAddress.getDeviceCode(),
+                        deviceAddress.getHeadDeviceNumber() + off, len);
+                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McMessageReq req = McReqBuilder.createReadDeviceBatchInWordReq(this.series, header, newAddress);
+                McMessageAck ack = this.readFromServer(req);
+                McAckData ackData = (McAckData) ack.getData();
+                buff.putBytes(ackData.getData());
+            });
+            return McDeviceContent.createByAddress(deviceAddress, buff.getData());
         } finally {
             if (!this.persistence) {
                 this.close();
@@ -267,13 +278,20 @@ public class McNetwork extends TcpClientBasic {
         if (deviceContent == null) {
             throw new NullPointerException("deviceContent");
         }
-        if (deviceContent.getDevicePointsCount() < 1 || deviceContent.getDevicePointsCount() > 960) {
-            throw new McCommException("1 <= 字访问点数 <= 960");
+        if (deviceContent.getDevicePointsCount() < 1) {
+            throw new McCommException("1 <= 字访问点数");
         }
         try {
-            McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
-            McMessageReq req = McReqBuilder.createWriteDeviceBatchInWordReq(this.series, header, deviceContent);
-            this.readFromServer(req);
+            int actualLength = deviceContent.getDevicePointsCount();
+            int maxLength = 960;
+            ByteReadBuff buff = new ByteReadBuff(deviceContent.getData());
+
+            ConsumerUtil.loopExecute(actualLength, maxLength, (off, len) -> {
+                McDeviceContent newContent = McDeviceContent.createByAddress(deviceContent, buff.getBytes(off * 2, len * 2));
+                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McMessageReq req = McReqBuilder.createWriteDeviceBatchInWordReq(this.series, header, newContent);
+                this.readFromServer(req);
+            });
         } finally {
             if (!this.persistence) {
                 this.close();
@@ -318,13 +336,20 @@ public class McNetwork extends TcpClientBasic {
         if (deviceContent == null) {
             throw new NullPointerException("deviceContent");
         }
-        if (deviceContent.getDevicePointsCount() < 1 || deviceContent.getDevicePointsCount() > 7168) {
-            throw new McCommException("1 <= 位访问点数 <= 7168");
+        if (deviceContent.getDevicePointsCount() < 1) {
+            throw new McCommException("1 <= 位访问点数");
         }
         try {
-            McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
-            McMessageReq req = McReqBuilder.createWriteDeviceBatchInBitReq(this.series, header, deviceContent);
-            this.readFromServer(req);
+            int actualLength = deviceContent.getData().length;
+            int maxLength = 7168 / 2;
+            ByteReadBuff buff = new ByteReadBuff(deviceContent.getData());
+
+            ConsumerUtil.loopExecute(actualLength, maxLength, (off, len) -> {
+                McDeviceContent newContent = McDeviceContent.createByAddress(deviceContent, buff.getBytes(off, len));
+                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McMessageReq req = McReqBuilder.createWriteDeviceBatchInBitReq(this.series, header, newContent);
+                this.readFromServer(req);
+            });
         } finally {
             if (!this.persistence) {
                 this.close();
@@ -416,18 +441,16 @@ public class McNetwork extends TcpClientBasic {
      * @param bitAddresses 位地址
      */
     public void writeDeviceRandomInBit(List<McDeviceContent> bitAddresses) {
-        if (bitAddresses == null) {
-            throw new NullPointerException("bitAddresses");
-        }
-        if (this.series == EMcSeries.Q_L && (bitAddresses.isEmpty() || bitAddresses.size() > 188)) {
-            throw new McCommException("1 ≤ 位访问点数 ≤ 188点");
-        } else if (this.series == EMcSeries.IQ_R && (bitAddresses.isEmpty() || bitAddresses.size() > 94)) {
-            throw new McCommException("1 ≤ 位访问点数 ≤ 94点");
+        if (bitAddresses == null || bitAddresses.isEmpty()) {
+            throw new IllegalArgumentException("bitAddresses为null或空");
         }
         try {
-            McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
-            McMessageReq req = McReqBuilder.createWriteDeviceRandomInBitReq(this.series, header, bitAddresses);
-            this.readFromServer(req);
+            int maxLength = this.series == EMcSeries.Q_L ? 188 : 94;
+            ConsumerUtil.loopExecute(bitAddresses.size(), maxLength, (off, len) -> {
+                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McMessageReq req = McReqBuilder.createWriteDeviceRandomInBitReq(this.series, header, bitAddresses.subList(off, off + len));
+                this.readFromServer(req);
+            });
         } finally {
             if (!this.persistence) {
                 this.close();
