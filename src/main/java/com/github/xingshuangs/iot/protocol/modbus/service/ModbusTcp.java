@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author xingshuang
  */
 @Slf4j
-public class ModbusTcp extends ModbusNetwork<MbTcpRequest, MbTcpResponse> {
+public class ModbusTcp extends ModbusSkeletonAbstract<MbTcpRequest, MbTcpResponse> {
 
     public ModbusTcp() {
         this(1, IP, PORT);

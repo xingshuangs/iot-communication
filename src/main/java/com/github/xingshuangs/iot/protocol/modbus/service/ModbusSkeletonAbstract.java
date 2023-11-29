@@ -41,12 +41,12 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * plc的网络通信
+ * Modbus网络通信的基础结构，抽象类
  *
  * @author xingshuang
  */
 @Slf4j
-public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
+public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
 
     public static final int PORT = 502;
 
@@ -92,11 +92,11 @@ public abstract class ModbusNetwork<T, R> extends TcpClientBasic {
         this.unitId = unitId;
     }
 
-    public ModbusNetwork() {
+    public ModbusSkeletonAbstract() {
         super();
     }
 
-    public ModbusNetwork(int unitId, String host, int port) {
+    public ModbusSkeletonAbstract(int unitId, String host, int port) {
         super(host, port);
         this.unitId = unitId;
     }

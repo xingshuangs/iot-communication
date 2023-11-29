@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author xingshuang
  */
 @Slf4j
-public class ModbusRtuOverTcp extends ModbusNetwork<MbRtuRequest, MbRtuResponse> {
+public class ModbusRtuOverTcp extends ModbusSkeletonAbstract<MbRtuRequest, MbRtuResponse> {
 
     public ModbusRtuOverTcp() {
         this(1, IP, PORT);

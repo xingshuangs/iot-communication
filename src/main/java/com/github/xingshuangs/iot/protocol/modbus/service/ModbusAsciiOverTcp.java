@@ -26,7 +26,6 @@ package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
 import com.github.xingshuangs.iot.exceptions.ModbusCommException;
-import com.github.xingshuangs.iot.protocol.common.buff.EByteBuffFormat;
 import com.github.xingshuangs.iot.protocol.modbus.model.MbAsciiRequest;
 import com.github.xingshuangs.iot.protocol.modbus.model.MbAsciiResponse;
 import com.github.xingshuangs.iot.protocol.modbus.model.MbErrorResponse;
@@ -34,9 +33,7 @@ import com.github.xingshuangs.iot.protocol.modbus.model.MbPdu;
 import com.github.xingshuangs.iot.utils.HexUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -45,7 +42,7 @@ import java.util.function.Consumer;
  * @author xingshuang
  */
 @Slf4j
-public class ModbusAsciiOverTcp extends ModbusNetwork<MbAsciiRequest, MbAsciiResponse> {
+public class ModbusAsciiOverTcp extends ModbusSkeletonAbstract<MbAsciiRequest, MbAsciiResponse> {
 
     /**
      * 通信回调
