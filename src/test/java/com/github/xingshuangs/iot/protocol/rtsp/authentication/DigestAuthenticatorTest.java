@@ -1,5 +1,6 @@
 package com.github.xingshuangs.iot.protocol.rtsp.authentication;
 
+import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspMethod;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -61,6 +62,55 @@ public class DigestAuthenticatorTest {
         authenticator.addServerInfoByString("Digest realm=\"IP Camera(G5366)\", nonce=\"00ea0e5bc0d4bee565d77d40502f9229\", stale=\"FALSE\"");
         authenticator.addClientInfo("rtsp://192.168.3.142:554/h264/ch1/main/av_stream", "DESCRIBE");
         String actual = authenticator.createResponse();
+        assertEquals(expect, actual);
+    }
+
+    @Test
+    public void createResponse5() {
+        UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "Jt70089999");
+        DigestAuthenticator authenticator = new DigestAuthenticator(credential);
+        authenticator.addServerInfoByString("Digest realm=\"d9ba57af23673f184a306b0b\", nonce=\"2545dad25\", algorithm=\"MD5\"");
+        authenticator.addClientInfo("rtsp://192.168.110.238:554/Streaming/Channels/201", ERtspMethod.OPTIONS.getCode());
+        String expect = "Digest username=\"admin\", realm=\"d9ba57af23673f184a306b0b\", nonce=\"2545dad25\", uri=\"rtsp://192.168.110.238:554/Streaming/Channels/201\", response=\"2a9abf52bd2f49183a7da1ca56695bd9\"";
+        String actual = authenticator.createResponse();
+        assertEquals(expect, actual);
+
+        authenticator.setMethod(ERtspMethod.DESCRIBE.getCode());
+        expect = "Digest username=\"admin\", realm=\"d9ba57af23673f184a306b0b\", nonce=\"2545dad25\", uri=\"rtsp://192.168.110.238:554/Streaming/Channels/201\", response=\"a444067f13c0211e984a79e48ea85efc\"";
+        actual = authenticator.createResponse();
+        assertEquals(expect, actual);
+
+        authenticator.setMethod(ERtspMethod.SETUP.getCode());
+        expect = "Digest username=\"admin\", realm=\"d9ba57af23673f184a306b0b\", nonce=\"2545dad25\", uri=\"rtsp://192.168.110.238:554/Streaming/Channels/201\", response=\"b1e31b066c0bea6fa262d4c6a115b66a\"";
+        actual = authenticator.createResponse();
+        assertEquals(expect, actual);
+
+        authenticator.setMethod(ERtspMethod.PLAY.getCode());
+        expect = "Digest username=\"admin\", realm=\"d9ba57af23673f184a306b0b\", nonce=\"2545dad25\", uri=\"rtsp://192.168.110.238:554/Streaming/Channels/201\", response=\"ff0e08c375f33ce90d66caffc1794f55\"";
+        actual = authenticator.createResponse();
+        assertEquals(expect, actual);
+    }
+
+    @Test
+    public void createResponse6() {
+        UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "kilox1234");
+        DigestAuthenticator authenticator = new DigestAuthenticator(credential);
+        authenticator.addServerInfoByString("Digest realm=\"IP Camera(G5366)\", nonce=\"2beea68cde935c964af4993f5535d15b\", stale=\"FALSE\"");
+        authenticator.addClientInfo("rtsp://192.168.3.142:554/h264/ch1/main/av_stream", ERtspMethod.DESCRIBE.getCode());
+        String expect = "Digest username=\"admin\", realm=\"IP Camera(G5366)\", nonce=\"2beea68cde935c964af4993f5535d15b\", uri=\"rtsp://192.168.3.142:554/h264/ch1/main/av_stream\", response=\"e89e52ddba1f60572564db63c35612b2\"";
+        String actual = authenticator.createResponse();
+        assertEquals(expect, actual);
+
+        authenticator.setUri("rtsp://192.168.3.142:554/h264/ch1/main/av_stream/");
+        authenticator.setMethod(ERtspMethod.SETUP.getCode());
+        expect = "Digest username=\"admin\", realm=\"IP Camera(G5366)\", nonce=\"2beea68cde935c964af4993f5535d15b\", uri=\"rtsp://192.168.3.142:554/h264/ch1/main/av_stream/\", response=\"593dd32ac8986b39643c69ad41861d18\"";
+        actual = authenticator.createResponse();
+        assertEquals(expect, actual);
+
+//        authenticator.setUri("rtsp://192.168.3.142:554/h264/ch1/main/av_stream/");
+        authenticator.setMethod(ERtspMethod.PLAY.getCode());
+        expect = "Digest username=\"admin\", realm=\"IP Camera(G5366)\", nonce=\"2beea68cde935c964af4993f5535d15b\", uri=\"rtsp://192.168.3.142:554/h264/ch1/main/av_stream/\", response=\"e7d858ae3f5d1c30bcfdfa1f022ff42e\"";
+        actual = authenticator.createResponse();
         assertEquals(expect, actual);
     }
 }

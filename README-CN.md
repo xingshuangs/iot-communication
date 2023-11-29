@@ -1,6 +1,6 @@
 # IOT-COMMUNICATION
 
-[![Maven-v1.4.3](https://img.shields.io/badge/Maven-v1.4.3-brightgreen)](https://mvnrepository.com/artifact/com.github.xingshuangs/iot-communication)
+[![Maven-v1.4.4](https://img.shields.io/badge/Maven-v1.4.4-brightgreen)](https://mvnrepository.com/artifact/com.github.xingshuangs/iot-communication)
 ![Language-java8](https://img.shields.io/badge/Language-java8-blue)
 ![Idea-2022.02.03](https://img.shields.io/badge/Idea-2022.02.03-lightgrey)
 ![CopyRight-Oscura](https://img.shields.io/badge/CopyRight-Oscura-yellow)
@@ -16,8 +16,7 @@
 
 - 西门子S7通信协议
 - Modbus通信协议
-- RTSP、RTCP、RTP、H264协议
-- MP4 (FMP4) 协议
+- RTSP, RTCP, RTP, H264, MP4 (FMP4)协议
 - 基础字节数组解析转换工具
 
 ## 使用指南
@@ -29,7 +28,7 @@
 <dependency>
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
-    <version>1.4.3</version>
+    <version>1.4.4</version>
 </dependency>
 ```
 

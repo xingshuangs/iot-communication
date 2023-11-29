@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 @Ignore
 public class ModbusRtuOverTcpTest {
 
-    private final ModbusRtuOverTcp plc = new ModbusRtuOverTcp(1, "127.0.0.1");
+    private final ModbusRtuOverTcp plc = new ModbusRtuOverTcp("127.0.0.1");
 
     @Before
     public void before() {
@@ -44,15 +44,34 @@ public class ModbusRtuOverTcpTest {
     }
 
     @Test
+    public void writeCoil1() {
+        plc.writeCoil(0, true);
+        List<Boolean> booleans = plc.readCoil(0, 1);
+        assertArrayEquals(new Boolean[]{true}, booleans.toArray(new Boolean[0]));
+        List<Boolean> list = Arrays.asList(true, false, true, false);
+        plc.writeCoil(0, list);
+        booleans = plc.readCoil(0, 4);
+        assertArrayEquals(new Boolean[]{true, false, true, false}, booleans.toArray(new Boolean[0]));
+
+        plc.writeCoil(2,0, true);
+        booleans = plc.readCoil(2,0, 1);
+        assertArrayEquals(new Boolean[]{true}, booleans.toArray(new Boolean[0]));
+        list = Arrays.asList(true, false, true, false);
+        plc.writeCoil(2,0, list);
+        booleans = plc.readCoil(2,0, 4);
+        assertArrayEquals(new Boolean[]{true, false, true, false}, booleans.toArray(new Boolean[0]));
+    }
+
+    @Test
     public void readDiscreteInput() {
-        List<Boolean> booleans = plc.readDiscreteInput(0, 4);
+        List<Boolean> booleans = plc.readDiscreteInput(2,0, 4);
         assertEquals(4, booleans.size());
         assertArrayEquals(new Boolean[]{true, true, true, false}, booleans.toArray(new Boolean[0]));
     }
 
     @Test
     public void readInputRegister() {
-        byte[] bytes = plc.readInputRegister(0, 2);
+        byte[] bytes = plc.readInputRegister(2,0, 2);
         assertArrayEquals(new byte[]{(byte) 0x00, (byte) 0x21, (byte) 0x00, (byte) 0x00}, bytes);
     }
 
@@ -166,5 +185,35 @@ public class ModbusRtuOverTcpTest {
         assertEquals("1234", s);
     }
 
+    @Test
+    public void readWriteData3() {
+        plc.writeInt16(1,2, (short) 10);
+        short data = plc.readInt16(1,2);
+        assertEquals(10, data);
+
+        plc.writeUInt16(2,3, 20);
+        int i = plc.readUInt16(2,3);
+        assertEquals(20, i);
+
+        plc.writeInt32(1,4, 32);
+        int i1 = plc.readInt32(1,4);
+        assertEquals(32, i1);
+
+        plc.writeUInt32(2,6, 32L);
+        long l = plc.readUInt32(2,6);
+        assertEquals(32L, l);
+
+        plc.writeFloat32(1,8, 12.12f);
+        float v = plc.readFloat32(1,8);
+        assertEquals(12.12f, v, 0.0001);
+
+        plc.writeFloat64(2,10, 33.21);
+        double v1 = plc.readFloat64(2,10);
+        assertEquals(33.21, v1, 0.0001);
+
+        plc.writeString(1,14, "pppp");
+        String s = plc.readString(1,14, 4);
+        assertEquals("pppp", s);
+    }
 
 }

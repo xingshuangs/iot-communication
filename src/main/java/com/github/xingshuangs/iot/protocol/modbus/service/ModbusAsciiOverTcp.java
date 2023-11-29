@@ -1,7 +1,32 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2021-2099 Oscura (xingshuang) <xingshuang_cool@163.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
 import com.github.xingshuangs.iot.exceptions.ModbusCommException;
+import com.github.xingshuangs.iot.protocol.common.buff.EByteBuffFormat;
 import com.github.xingshuangs.iot.protocol.modbus.model.MbAsciiRequest;
 import com.github.xingshuangs.iot.protocol.modbus.model.MbAsciiResponse;
 import com.github.xingshuangs.iot.protocol.modbus.model.MbErrorResponse;
@@ -9,7 +34,9 @@ import com.github.xingshuangs.iot.protocol.modbus.model.MbPdu;
 import com.github.xingshuangs.iot.utils.HexUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -35,6 +62,10 @@ public class ModbusAsciiOverTcp extends ModbusNetwork<MbAsciiRequest, MbAsciiRes
 
     public ModbusAsciiOverTcp(String ip) {
         this(1, ip, PORT);
+    }
+
+    public ModbusAsciiOverTcp(String ip, int port) {
+        this(1, ip, port);
     }
 
     public ModbusAsciiOverTcp(int unitId) {
@@ -105,8 +136,8 @@ public class ModbusAsciiOverTcp extends ModbusNetwork<MbAsciiRequest, MbAsciiRes
     }
 
     @Override
-    protected MbPdu readModbusData(MbPdu reqPdu) {
-        MbAsciiRequest request = new MbAsciiRequest(this.unitId, reqPdu);
+    protected MbPdu readModbusData(int unitId, MbPdu reqPdu) {
+        MbAsciiRequest request = new MbAsciiRequest(unitId, reqPdu);
         try {
             MbAsciiResponse response = this.readFromServer(request);
             return response.getPdu();
@@ -117,6 +148,4 @@ public class ModbusAsciiOverTcp extends ModbusNetwork<MbAsciiRequest, MbAsciiRes
             }
         }
     }
-
-
 }

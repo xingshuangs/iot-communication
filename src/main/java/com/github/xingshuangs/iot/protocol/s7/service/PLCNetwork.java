@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2021-2099 Oscura (xingshuang) <xingshuang_cool@163.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package com.github.xingshuangs.iot.protocol.s7.service;
 
 
@@ -327,11 +351,11 @@ public class PLCNetwork extends TcpClientBasic {
             throw new S7CommException("返回的数据个数和请求的数据个数不一致");
         }
         // 返回结果校验
-        returnItems.forEach(x -> {
-            if (x.getReturnCode() != EReturnCode.SUCCESS) {
-                throw new S7CommException(String.format("返回结果异常，原因：%s", x.getReturnCode().getDescription()));
+        for (int i = 0; i < returnItems.size(); i++) {
+            if (returnItems.get(i).getReturnCode() != EReturnCode.SUCCESS) {
+                throw new S7CommException(String.format("返回第[%d]个结果异常，原因：%s", i + 1, returnItems.get(i).getReturnCode().getDescription()));
             }
-        });
+        }
     }
 
     //endregion

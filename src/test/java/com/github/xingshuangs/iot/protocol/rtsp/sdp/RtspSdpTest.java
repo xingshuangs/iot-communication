@@ -65,7 +65,7 @@ public class RtspSdpTest {
         assertEquals(1536, media.getAttributeDimension().getHeight().intValue());
         assertEquals(2048, media.getAttributeDimension().getWidth().intValue());
         assertEquals(1, media.getAttributeControl().getTrackID().intValue());
-        assertEquals("rtsp://10.3.8.202:554/trackID=1", media.getAttributeControl().getUri());
+        assertEquals("trackID=1", media.getAttributeControl().getUri());
         assertEquals(96, media.getAttributeRtpMap().getPayloadNumber().intValue());
         assertEquals(90000, media.getAttributeRtpMap().getClockFrequency().intValue());
         assertEquals("H264", media.getAttributeRtpMap().getPayloadFormat());

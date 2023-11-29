@@ -11,6 +11,7 @@ import java.util.List;
 public class DemoReadTest {
     public static void main(String[] args) {
         ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        // optional
         plc.setComCallback(x -> System.out.printf("长度[%d]:%s%n", x.length, HexUtil.toHexString(x)));
 
         // read coil

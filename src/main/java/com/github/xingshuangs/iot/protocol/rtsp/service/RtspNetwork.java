@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2021-2099 Oscura (xingshuang) <xingshuang_cool@163.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package com.github.xingshuangs.iot.protocol.rtsp.service;
 
 
@@ -215,7 +239,10 @@ public class RtspNetwork extends TcpClientBasic {
      *
      * @param req 请求数据
      */
-    public void sendToServer(RtspMessageRequest req) {
+    public void sendWithoutReturn(RtspMessageRequest req) {
+        if (this.needAuthorization && this.authenticator != null) {
+            this.authenticator.setMethod(req.getMethod().getCode());
+        }
         String reqString = req.toObjectString();
         if (this.commCallback != null) {
             this.commCallback.accept(reqString);
@@ -241,12 +268,40 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
+     * 发送对应请求
+     *
+     * @param request 请求
+     * @return 响应
+     */
+    private RtspMessageResponse sendRequest(RtspMessageRequest request) {
+        if (this.needAuthorization && this.authenticator != null) {
+            this.authenticator.setMethod(request.getMethod().getCode());
+        }
+        RtspMessageResponse response = this.readFromServer(request);
+        if (response.getStatusCode() == ERtspStatusCode.UNAUTHORIZED) {
+            // 需要授权
+            this.needAuthorization = true;
+            if (this.authenticator == null) {
+                throw new RtspCommException(String.format("RTSP[%s]交互中authenticator为null", request.getMethod()));
+            }
+            this.authenticator.addServerInfoByString(response.getWwwAuthenticate());
+            this.authenticator.addClientInfo(this.uri.toString(), request.getMethod().getCode());
+            request.setAuthenticator(this.authenticator);
+            response = this.readFromServer(request);
+        }
+        if (response.getStatusCode() != ERtspStatusCode.OK) {
+            throw new RtspCommException(String.format("RTSP[%s]交互返回状态为[%s]", request.getMethod().getCode(),
+                    response.getStatusCode().getCode()));
+        }
+        return response;
+    }
+
+    /**
      * 选项
      */
     protected void option() {
         RtspOptionRequest request = new RtspOptionRequest(this.uri);
-        RtspOptionResponse response = (RtspOptionResponse) this.readFromServer(request);
-        this.checkAfterResponse(response, ERtspMethod.OPTIONS);
+        RtspOptionResponse response = (RtspOptionResponse) this.sendRequest(request);
         this.methods = response.getPublicMethods();
         // 清空客户端
         this.clearSocketConnection();
@@ -258,22 +313,10 @@ public class RtspNetwork extends TcpClientBasic {
     protected void describe() {
         this.checkBeforeRequest(ERtspMethod.DESCRIBE);
 
-        RtspDescribeRequest request = new RtspDescribeRequest(this.uri, Collections.singletonList(ERtspAcceptContent.SDP));
-        RtspDescribeResponse response = (RtspDescribeResponse) this.readFromServer(request);
-
-        if (response.getStatusCode() == ERtspStatusCode.UNAUTHORIZED) {
-            // 需要授权
-            this.needAuthorization = true;
-            if (this.authenticator == null) {
-                throw new RtspCommException(String.format("RTSP[%s]交互中authenticator为null", ERtspMethod.DESCRIBE));
-            }
-            this.authenticator.addServerInfoByString(response.getWwwAuthenticate());
-            this.authenticator.addClientInfo(this.uri.toString(), ERtspMethod.DESCRIBE.getCode());
-            request = new RtspDescribeRequest(this.uri, Collections.singletonList(ERtspAcceptContent.SDP), this.authenticator);
-            response = (RtspDescribeResponse) this.readFromServer(request);
-        }
-
-        this.checkAfterResponse(response, ERtspMethod.DESCRIBE);
+        RtspDescribeRequest request = this.needAuthorization ?
+                new RtspDescribeRequest(this.uri, Collections.singletonList(ERtspAcceptContent.SDP), this.authenticator)
+                : new RtspDescribeRequest(this.uri, Collections.singletonList(ERtspAcceptContent.SDP));
+        RtspDescribeResponse response = (RtspDescribeResponse) this.sendRequest(request);
 
         if (response.getSdp().getSession() == null) {
             throw new RtspCommException(String.format("RTSP[%s]没有Session", ERtspMethod.DESCRIBE));
@@ -307,7 +350,7 @@ public class RtspNetwork extends TcpClientBasic {
             // TODO: 这里可能存在不同的负载解析器
             IPayloadParser iPayloadParser = new H264VideoParser();
             iPayloadParser.onFrameHandle(this::doFrameHandle);
-            URI actualUri = URI.create(media.getAttributeControl().getUri());
+            URI actualUri = URI.create(this.uri.toString() + "/" + media.getAttributeControl().getUri());
             RtpUdpClient rtpClient = new RtpUdpClient(iPayloadParser);
             RtcpUdpClient rtcpClient = new RtcpUdpClient();
             rtpClient.setRtcpUdpClient(rtcpClient);
@@ -340,7 +383,7 @@ public class RtspNetwork extends TcpClientBasic {
             int rtpChannelNumber = interleavedCount++;
             int rtcpChannelNumber = interleavedCount++;
             RtspTransport reqTransport = new RtspInterleavedTransport(rtpChannelNumber, rtcpChannelNumber);
-            URI actualUri = URI.create(media.getAttributeControl().getUri());
+            URI actualUri = URI.create(this.uri.toString() + "/" + media.getAttributeControl().getUri());
 
             this.doSetup(actualUri, reqTransport, media);
 
@@ -364,10 +407,10 @@ public class RtspNetwork extends TcpClientBasic {
     private void doSetup(URI actualUri, RtspTransport reqTransport, RtspSdpMedia media) {
         this.checkBeforeRequest(ERtspMethod.SETUP);
         // 发送Setup
-        RtspSetupRequest request = this.needAuthorization ? new RtspSetupRequest(actualUri, reqTransport, this.authenticator)
+        RtspSetupRequest request = this.needAuthorization ?
+                new RtspSetupRequest(actualUri, reqTransport, this.authenticator)
                 : new RtspSetupRequest(actualUri, reqTransport);
-        RtspSetupResponse response = (RtspSetupResponse) this.readFromServer(request);
-        this.checkAfterResponse(response, ERtspMethod.SETUP);
+        RtspSetupResponse response = (RtspSetupResponse) this.sendRequest(request);
         // 更新Transport和Session信息
         this.transport = response.getTransport();
         this.sessionInfo = response.getSessionInfo();
@@ -385,10 +428,10 @@ public class RtspNetwork extends TcpClientBasic {
     protected void play() {
         this.checkBeforeRequest(ERtspMethod.PLAY);
 
-        RtspPlayRequest request = this.needAuthorization ? new RtspPlayRequest(this.uri, this.sessionInfo.getSessionId())
-                : new RtspPlayRequest(this.uri, this.sessionInfo.getSessionId(), this.authenticator);
-        RtspPlayResponse response = (RtspPlayResponse) this.readFromServer(request);
-        this.checkAfterResponse(response, ERtspMethod.PLAY);
+        RtspPlayRequest request = this.needAuthorization ?
+                new RtspPlayRequest(this.uri, this.sessionInfo.getSessionId(), new RtspRangeNpt("0.000"), this.authenticator)
+                : new RtspPlayRequest(this.uri, this.sessionInfo.getSessionId(), new RtspRangeNpt("0.000"));
+        RtspPlayResponse response = (RtspPlayResponse) this.sendRequest(request);
 
         this.rtpInfos = response.getRtpInfo();
         // play命令之后触发接收数据
@@ -402,15 +445,16 @@ public class RtspNetwork extends TcpClientBasic {
         this.clearSocketConnection();
         this.checkBeforeRequest(ERtspMethod.TEARDOWN);
 
-        RtspTeardownRequest request = this.needAuthorization ? new RtspTeardownRequest(this.uri, this.sessionInfo.getSessionId())
-                : new RtspTeardownRequest(this.uri, this.sessionInfo.getSessionId(), this.authenticator);
+        RtspTeardownRequest request = this.needAuthorization ?
+                new RtspTeardownRequest(this.uri, this.sessionInfo.getSessionId(), this.authenticator)
+                : new RtspTeardownRequest(this.uri, this.sessionInfo.getSessionId());
 //        if (this.transportProtocol == ERtspTransportProtocol.UDP) {
 //            RtspTeardownResponse response = (RtspTeardownResponse) this.readFromServer(request);
 //            this.checkAfterResponse(response, ERtspMethod.TEARDOWN);
 //        } else {
 //            this.sendToServer(request);
 //        }
-        this.sendToServer(request);
+        this.sendWithoutReturn(request);
         if (this.destroyHandle != null) {
             this.destroyHandle.run();
         }
@@ -423,13 +467,12 @@ public class RtspNetwork extends TcpClientBasic {
         this.checkBeforeRequest(ERtspMethod.GET_PARAMETER);
 
         RtspGetParameterRequest request = this.needAuthorization ?
-                new RtspGetParameterRequest(this.uri, this.sessionInfo.getSessionId())
-                : new RtspGetParameterRequest(this.uri, this.sessionInfo.getSessionId(), this.authenticator);
+                new RtspGetParameterRequest(this.uri, this.sessionInfo.getSessionId(), this.authenticator)
+                : new RtspGetParameterRequest(this.uri, this.sessionInfo.getSessionId());
         if (this.transportProtocol == ERtspTransportProtocol.UDP) {
-            RtspGetParameterResponse response = (RtspGetParameterResponse) this.readFromServer(request);
-            this.checkAfterResponse(response, ERtspMethod.GET_PARAMETER);
+            this.sendRequest(request);
         } else {
-            this.sendToServer(request);
+            this.sendWithoutReturn(request);
         }
     }
 
@@ -456,18 +499,6 @@ public class RtspNetwork extends TcpClientBasic {
         }
         if (this.needAuthorization && this.authenticator == null) {
             throw new RtspCommException(String.format("RTSP[%s]交互中authenticator为null", method.getCode()));
-        }
-    }
-
-    /**
-     * 响应后的数据校验
-     *
-     * @param response 响应
-     * @param method   方法
-     */
-    private void checkAfterResponse(RtspMessageResponse response, ERtspMethod method) {
-        if (response.getStatusCode() != ERtspStatusCode.OK) {
-            throw new RtspCommException(String.format("RTSP[%s]交互返回状态为[%s]", method.getCode(), response.getStatusCode().getCode()));
         }
     }
 
