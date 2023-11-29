@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2021-2099 Oscura (xingshuang) <xingshuang_cool@163.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package com.github.xingshuangs.iot.protocol.melsec.service;
 
 
@@ -207,7 +231,8 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 软元件按字批量读取
+     * 软元件按字批量读取；
+     * 软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节
      *
      * @param deviceAddress 数据地址
      * @return 数据内容
@@ -233,7 +258,8 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 软元件按字批量写入
+     * 软元件按字批量写入；
+     * 软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节
      *
      * @param deviceContent 数据内容
      */
@@ -256,7 +282,8 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 软元件按位批量读取
+     * 软元件按位批量读取；
+     * 软元件点数 = 位的数量，而非字节数量，2个位 = 1个字节
      *
      * @param deviceAddress 数据地址
      * @return 数据内容
@@ -282,7 +309,8 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 软元件按位批量写入
+     * 软元件按位批量写入；
+     * 软元件点数 = 位的数量，而非字节数量，2个位 = 1个字节
      *
      * @param deviceContent 数据内容
      */
@@ -309,7 +337,8 @@ public class McNetwork extends TcpClientBasic {
     //region 软元件随机读取和写入
 
     /**
-     * 软元件按字随机读取
+     * 软元件按字随机读取；
+     * 地址中软元件点数可以忽略，默认1，就算写入也自动忽略
      *
      * @param wordAddresses  字地址
      * @param dwordAddresses 双字地址
@@ -350,7 +379,8 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 软元件按字随机写入
+     * 软元件按字随机写入；
+     * 地址中软元件点数可以忽略，默认1，就算写入也自动忽略
      *
      * @param wordContents  字内容
      * @param dwordContents 双字内容
@@ -380,7 +410,8 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 软元件按位随机写入
+     * 软元件按位随机写入；
+     * 软元件点数可以忽略，默认1，就算写入也自动忽略
      *
      * @param bitAddresses 位地址
      */
@@ -409,7 +440,9 @@ public class McNetwork extends TcpClientBasic {
     //region 软元件多个块批量读取和写入
 
     /**
-     * 软元件多块批量读取
+     * 软元件多块批量读取；
+     * 字访问软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节；
+     * 位访问软元件点数 = 位的数量，而非字节数量，2个位 = 1个字节；
      *
      * @param wordAddresses 字地址
      * @param bitAddresses  位地址
@@ -451,6 +484,8 @@ public class McNetwork extends TcpClientBasic {
 
     /**
      * 软元件多块批量写入
+     * 字访问软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节；
+     * 位访问软元件点数 = 位的数量，而非字节数量，2个位 = 1个字节；
      *
      * @param wordContents 带写入字地址+数据
      * @param bitContents  带写入位地址+数据

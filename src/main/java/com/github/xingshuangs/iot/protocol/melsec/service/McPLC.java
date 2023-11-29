@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2021-2099 Oscura (xingshuang) <xingshuang_cool@163.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package com.github.xingshuangs.iot.protocol.melsec.service;
 
 
@@ -36,7 +60,9 @@ public class McPLC extends McNetwork {
      * @return boolean列表
      */
     public List<Boolean> readBooleans(String address, int count) {
-        McDeviceAddress deviceAddress = McDeviceAddress.createBy(address, count);
+        // 三菱1个字节对应两个boolean
+        int newCount = count % 2 == 0 ? (count / 2) : ((count + 1) / 2);
+        McDeviceAddress deviceAddress = McDeviceAddress.createBy(address, newCount);
         McDeviceContent deviceContent = this.readDeviceBatchInBit(deviceAddress);
         List<Boolean> res = this.getBooleansBy(deviceContent.getData());
         return res.subList(0, count);
@@ -50,9 +76,11 @@ public class McPLC extends McNetwork {
      * @return 字节数组
      */
     public byte[] readBytes(String address, int count) {
-        McDeviceAddress deviceAddress = McDeviceAddress.createBy(address, count);
+        // 三菱1个字占2个字节
+        int newCount = count % 2 == 0 ? (count / 2) : ((count + 1) / 2);
+        McDeviceAddress deviceAddress = McDeviceAddress.createBy(address, newCount);
         McDeviceContent deviceContent = this.readDeviceBatchInWord(deviceAddress);
-        return deviceContent.getData();
+        return ByteReadBuff.newInstance(deviceContent.getData()).getBytes(count);
     }
 
     /**
@@ -84,7 +112,7 @@ public class McPLC extends McNetwork {
      * @return short数据
      */
     public short readInt16(String address) {
-        byte[] bytes = this.readBytes(address, 1);
+        byte[] bytes = this.readBytes(address, 2);
         return ByteReadBuff.newInstance(bytes, true).getInt16();
     }
 
@@ -95,7 +123,7 @@ public class McPLC extends McNetwork {
      * @return int数据
      */
     public int readUInt16(String address) {
-        byte[] bytes = this.readBytes(address, 1);
+        byte[] bytes = this.readBytes(address, 2);
         return ByteReadBuff.newInstance(bytes, true).getUInt16();
     }
 
@@ -106,7 +134,7 @@ public class McPLC extends McNetwork {
      * @return int数据
      */
     public int readInt32(String address) {
-        byte[] bytes = this.readBytes(address, 2);
+        byte[] bytes = this.readBytes(address, 4);
         return ByteReadBuff.newInstance(bytes, true).getInt32();
     }
 
@@ -117,7 +145,7 @@ public class McPLC extends McNetwork {
      * @return long数据
      */
     public long readUInt32(String address) {
-        byte[] bytes = this.readBytes(address, 2);
+        byte[] bytes = this.readBytes(address, 4);
         return ByteReadBuff.newInstance(bytes, true).getUInt32();
     }
 
@@ -128,7 +156,7 @@ public class McPLC extends McNetwork {
      * @return float数据
      */
     public float readFloat32(String address) {
-        byte[] bytes = this.readBytes(address, 2);
+        byte[] bytes = this.readBytes(address, 4);
         return ByteReadBuff.newInstance(bytes, true).getFloat32();
     }
 
@@ -139,7 +167,7 @@ public class McPLC extends McNetwork {
      * @return double数据
      */
     public double readFloat64(String address) {
-        byte[] bytes = this.readBytes(address, 4);
+        byte[] bytes = this.readBytes(address, 8);
         return ByteReadBuff.newInstance(bytes, true).getFloat64();
     }
 
@@ -151,8 +179,7 @@ public class McPLC extends McNetwork {
      * @return 字符串
      */
     public String readString(String address, int length) {
-        int len = length % 2 == 0 ? length : (length + 1);
-        byte[] bytes = this.readBytes(address, len / 2);
+        byte[] bytes = this.readBytes(address, length);
         return ByteReadBuff.newInstance(bytes, true).getString(length);
     }
 
@@ -179,10 +206,12 @@ public class McPLC extends McNetwork {
      * @param data    字节数组
      */
     public void writeBytes(String address, byte[] data) {
+        // 三菱1个字占2个字节
         byte[] newData = data;
         if (data.length % 2 != 0) {
             newData = ByteWriteBuff.newInstance(data.length + 1, true).putBytes(data).getData();
         }
+        // 软元件按字批量读取，是字的个数，而不是字节个数
         McDeviceContent deviceContent = McDeviceContent.createBy(address, newData.length / 2, newData);
         this.writeDeviceBatchInWord(deviceContent);
     }
