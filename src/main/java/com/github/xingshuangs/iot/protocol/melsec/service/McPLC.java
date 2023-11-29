@@ -116,6 +116,13 @@ public class McPLC extends McNetwork {
         return ByteReadBuff.newInstance(bytes, true).getInt16();
     }
 
+//    public short readInt16s(List<String> addresses) {
+//        List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy).collect(Collectors.toList());
+//
+//        byte[] bytes = this.readBytes(address, 2);
+//        return ByteReadBuff.newInstance(bytes, true).getInt16();
+//    }
+
     /**
      * 读取1个UInt16数据
      *
