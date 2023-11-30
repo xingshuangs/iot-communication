@@ -22,19 +22,20 @@
  * SOFTWARE.
  */
 
-package com.github.xingshuangs.iot.utils;
+package com.github.xingshuangs.iot.protocol.melsec.algorithm;
 
 
 import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 
 /**
  * 消费相关工具
  *
  * @author xingshuang
  */
-public class ConsumerUtil {
+public class McGroupAlg {
 
-    private ConsumerUtil() {
+    private McGroupAlg() {
         // NOOP
     }
 
@@ -53,5 +54,40 @@ public class ConsumerUtil {
             biConsumer.accept(off, len);
             off += len;
         }
+    }
+
+    public static void biLoopExecute(McGroupItem item1, McGroupItem item2,
+                                     BiPredicate<McGroupItem,McGroupItem> biPredicate,
+                                     BiConsumer<McGroupItem, McGroupItem> biConsumer) {
+
+//        while (item1.outRange()||item2.outRange()){
+//            if(off1<length1&& off1+len1<length1) {
+//                if (biPredicate.test(len1, len2)) {
+//                    // 触发事件
+//                    off1 += len1;
+//                    len1 = 0;
+//                } else {
+//                    len1++;
+//                }
+//            }else if(off1<length1&&off1+len1>length1){
+//                if (biPredicate.test(len1, len2)) {
+//                    // 初始事件
+//                    off2 += len2;
+//                    len2 = 0;
+//                } else {
+//                    len2++;
+//                }
+//            }
+//        }
+//        while (off1+len1<length1){
+//            if(biPredicate.test(len1,len2)){
+//                len1++;
+//            }else {
+//                len1--;
+//                // 初始事件
+//                off1+=len1;
+//                len1 = 0;
+//            }
+//        }
     }
 }
