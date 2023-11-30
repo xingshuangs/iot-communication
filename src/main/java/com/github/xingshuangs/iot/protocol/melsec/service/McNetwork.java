@@ -396,12 +396,12 @@ public class McNetwork extends TcpClientBasic {
                 List<McDeviceAddress> newWords = new ArrayList<>();
                 List<McDeviceAddress> newDWords = new ArrayList<>();
                 if (off < wordAddresses.size() && off + len < wordAddresses.size()) {
-                    newWords = wordAddresses.subList(off, len);
+                    newWords = wordAddresses.subList(off, off + len);
                 } else if (off < wordAddresses.size() && off + len > wordAddresses.size()) {
-                    newWords = wordAddresses.subList(off, wordAddresses.size() - off);
+                    newWords = wordAddresses.subList(off, wordAddresses.size());
                     newDWords = dwordAddresses.subList(0, off + len - wordAddresses.size());
                 } else if (off > wordAddresses.size()) {
-                    newDWords = dwordAddresses.subList(off - wordAddresses.size(), len);
+                    newDWords = dwordAddresses.subList(off - wordAddresses.size(), off - wordAddresses.size() + len);
                 }
                 McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createReadDeviceRandomInWordReq(this.series, header, newWords, newDWords);
@@ -410,7 +410,7 @@ public class McNetwork extends TcpClientBasic {
                 for (McDeviceAddress word : newWords) {
                     result.add(McDeviceContent.createByAddress(word, buff.getBytes(2)));
                 }
-                for (McDeviceAddress dword : newWords) {
+                for (McDeviceAddress dword : newDWords) {
                     result.add(McDeviceContent.createByAddress(dword, buff.getBytes(4)));
                 }
             });
@@ -498,25 +498,34 @@ public class McNetwork extends TcpClientBasic {
         if (wordAddresses.isEmpty() && bitAddresses.isEmpty()) {
             throw new IllegalArgumentException("wordAddresses and bitAddresses 数量为空");
         }
-        int count = wordAddresses.size() + bitAddresses.size();
-        if (this.series == EMcSeries.Q_L && (count < 1 || count > 120)) {
-            throw new McCommException("1 ≤ 字访问点数+双字访问点数 ≤ 120点");
-        } else if (this.series == EMcSeries.IQ_R && (count < 1 || count > 60)) {
-            throw new McCommException("1 ≤ 字访问点数+双字访问点数 ≤ 60点");
-        }
+
         try {
-            McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
-            McMessageReq req = McReqBuilder.createReadDeviceBatchMultiBlocksReq(this.series, header, wordAddresses, bitAddresses);
-            McMessageAck ack = this.readFromServer(req);
-            McAckData ackData = (McAckData) ack.getData();
             List<McDeviceContent> result = new ArrayList<>();
-            ByteReadBuff buff = new ByteReadBuff(ackData.getData());
-            for (McDeviceAddress wordAddress : wordAddresses) {
-                result.add(McDeviceContent.createByAddress(wordAddress, buff.getBytes(2 * wordAddress.getDevicePointsCount())));
-            }
-            for (McDeviceAddress bitAddress : bitAddresses) {
-                result.add(McDeviceContent.createByAddress(bitAddress, buff.getBytes(2 * bitAddress.getDevicePointsCount())));
-            }
+            int actualLength = wordAddresses.size() + bitAddresses.size();
+            int maxLength = this.series == EMcSeries.Q_L ? 120 : 60;
+
+            McGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
+                List<McDeviceAddress> newWords = new ArrayList<>();
+                List<McDeviceAddress> newBits = new ArrayList<>();
+                if (off < wordAddresses.size() && off + len < wordAddresses.size()) {
+                    newWords = wordAddresses.subList(off, off + len);
+                } else if (off < wordAddresses.size() && off + len > wordAddresses.size()) {
+                    newWords = wordAddresses.subList(off, wordAddresses.size());
+                    newBits = bitAddresses.subList(0, off + len - wordAddresses.size());
+                } else if (off > wordAddresses.size()) {
+                    newBits = bitAddresses.subList(off - wordAddresses.size(), off - wordAddresses.size() + len);
+                }
+                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McMessageReq req = McReqBuilder.createReadDeviceBatchMultiBlocksReq(this.series, header, newWords, newBits);
+                McMessageAck ack = this.readFromServer(req);
+                ByteReadBuff buff = new ByteReadBuff(((McAckData) ack.getData()).getData());
+                for (McDeviceAddress word : newWords) {
+                    result.add(McDeviceContent.createByAddress(word, buff.getBytes(2 * word.getDevicePointsCount())));
+                }
+                for (McDeviceAddress bit : newBits) {
+                    result.add(McDeviceContent.createByAddress(bit, buff.getBytes(2 * bit.getDevicePointsCount())));
+                }
+            });
             return result;
         } finally {
             if (!this.persistence) {

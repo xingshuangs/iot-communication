@@ -31,8 +31,10 @@ import com.github.xingshuangs.iot.protocol.common.constant.GeneralConst;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceAddress;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceContent;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 三菱的PLC
@@ -116,12 +118,15 @@ public class McPLC extends McNetwork {
         return ByteReadBuff.newInstance(bytes, true).getInt16();
     }
 
-//    public short readInt16s(List<String> addresses) {
-//        List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy).collect(Collectors.toList());
-//
-//        byte[] bytes = this.readBytes(address, 2);
-//        return ByteReadBuff.newInstance(bytes, true).getInt16();
-//    }
+    public List<Short> readInt16s(List<String> addresses) {
+        List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
+                .collect(Collectors.toList());
+
+        List<McDeviceContent> deviceContents = this.readDeviceRandomInWord(deviceAddresses, new ArrayList<>());
+        return deviceContents.stream()
+                .map(x -> ByteReadBuff.newInstance(x.getData(), true).getInt16())
+                .collect(Collectors.toList());
+    }
 
     /**
      * 读取1个UInt16数据
@@ -132,6 +137,17 @@ public class McPLC extends McNetwork {
     public int readUInt16(String address) {
         byte[] bytes = this.readBytes(address, 2);
         return ByteReadBuff.newInstance(bytes, true).getUInt16();
+    }
+
+    public List<Integer> readUInt16s(List<String> addresses) {
+        List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
+                .collect(Collectors.toList());
+
+        List<McDeviceContent> deviceContents = this.readDeviceRandomInWord(deviceAddresses, new ArrayList<>());
+
+        return deviceContents.stream()
+                .map(x -> ByteReadBuff.newInstance(x.getData(), true).getUInt16())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -145,6 +161,17 @@ public class McPLC extends McNetwork {
         return ByteReadBuff.newInstance(bytes, true).getInt32();
     }
 
+    public List<Integer> readInt32s(List<String> addresses) {
+        List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
+                .collect(Collectors.toList());
+
+        List<McDeviceContent> deviceContents = this.readDeviceRandomInWord(new ArrayList<>(), deviceAddresses);
+
+        return deviceContents.stream()
+                .map(x -> ByteReadBuff.newInstance(x.getData(), true).getInt32())
+                .collect(Collectors.toList());
+    }
+
     /**
      * 读取1个UInt32数据
      *
@@ -154,6 +181,17 @@ public class McPLC extends McNetwork {
     public long readUInt32(String address) {
         byte[] bytes = this.readBytes(address, 4);
         return ByteReadBuff.newInstance(bytes, true).getUInt32();
+    }
+
+    public List<Long> readUInt32s(List<String> addresses) {
+        List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
+                .collect(Collectors.toList());
+
+        List<McDeviceContent> deviceContents = this.readDeviceRandomInWord(new ArrayList<>(), deviceAddresses);
+
+        return deviceContents.stream()
+                .map(x -> ByteReadBuff.newInstance(x.getData(), true).getUInt32())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -167,6 +205,17 @@ public class McPLC extends McNetwork {
         return ByteReadBuff.newInstance(bytes, true).getFloat32();
     }
 
+    public List<Float> readFloat32s(List<String> addresses) {
+        List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
+                .collect(Collectors.toList());
+
+        List<McDeviceContent> deviceContents = this.readDeviceRandomInWord(new ArrayList<>(), deviceAddresses);
+
+        return deviceContents.stream()
+                .map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat32())
+                .collect(Collectors.toList());
+    }
+
     /**
      * 读取1个Float64数据
      *
@@ -176,6 +225,17 @@ public class McPLC extends McNetwork {
     public double readFloat64(String address) {
         byte[] bytes = this.readBytes(address, 8);
         return ByteReadBuff.newInstance(bytes, true).getFloat64();
+    }
+
+    public List<Double> readFloat64s(List<String> addresses) {
+        List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
+                .collect(Collectors.toList());
+
+        List<McDeviceContent> deviceContents = this.readDeviceRandomInWord(new ArrayList<>(), deviceAddresses);
+
+        return deviceContents.stream()
+                .map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat64())
+                .collect(Collectors.toList());
     }
 
     /**
