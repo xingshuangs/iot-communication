@@ -32,6 +32,7 @@ import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceAddress;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceContent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -118,7 +119,23 @@ public class McPLC extends McNetwork {
         return ByteReadBuff.newInstance(bytes, true).getInt16();
     }
 
-    public List<Short> readInt16s(List<String> addresses) {
+    /**
+     * 读取多个Int16数据
+     *
+     * @param addresses 多地址
+     * @return short列表
+     */
+    public List<Short> readInt16(String... addresses) {
+        return this.readInt16(Arrays.asList(addresses));
+    }
+
+    /**
+     * 读取多个Int16数据
+     *
+     * @param addresses 多地址
+     * @return short列表
+     */
+    public List<Short> readInt16(List<String> addresses) {
         List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
                 .collect(Collectors.toList());
 
@@ -139,7 +156,23 @@ public class McPLC extends McNetwork {
         return ByteReadBuff.newInstance(bytes, true).getUInt16();
     }
 
-    public List<Integer> readUInt16s(List<String> addresses) {
+    /**
+     * 读取多个UInt16数据
+     *
+     * @param addresses 多地址
+     * @return integer列表
+     */
+    public List<Integer> readUInt16(String... addresses) {
+        return this.readUInt16(Arrays.asList(addresses));
+    }
+
+    /**
+     * 读取多个UInt16数据
+     *
+     * @param addresses 多地址
+     * @return integer列表
+     */
+    public List<Integer> readUInt16(List<String> addresses) {
         List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
                 .collect(Collectors.toList());
 
@@ -161,7 +194,23 @@ public class McPLC extends McNetwork {
         return ByteReadBuff.newInstance(bytes, true).getInt32();
     }
 
-    public List<Integer> readInt32s(List<String> addresses) {
+    /**
+     * 读取多个Int32数据
+     *
+     * @param addresses 多地址
+     * @return integer列表
+     */
+    public List<Integer> readInt32(String... addresses) {
+        return this.readInt32(Arrays.asList(addresses));
+    }
+
+    /**
+     * 读取多个Int32数据
+     *
+     * @param addresses 多地址
+     * @return integer列表
+     */
+    public List<Integer> readInt32(List<String> addresses) {
         List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
                 .collect(Collectors.toList());
 
@@ -183,7 +232,23 @@ public class McPLC extends McNetwork {
         return ByteReadBuff.newInstance(bytes, true).getUInt32();
     }
 
-    public List<Long> readUInt32s(List<String> addresses) {
+    /**
+     * 读取多个UInt32数据
+     *
+     * @param addresses 多地址
+     * @return long列表
+     */
+    public List<Long> readUInt32(String... addresses) {
+        return this.readUInt32(Arrays.asList(addresses));
+    }
+
+    /**
+     * 读取多个UInt32数据
+     *
+     * @param addresses 多地址
+     * @return long列表
+     */
+    public List<Long> readUInt32(List<String> addresses) {
         List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
                 .collect(Collectors.toList());
 
@@ -205,7 +270,23 @@ public class McPLC extends McNetwork {
         return ByteReadBuff.newInstance(bytes, true).getFloat32();
     }
 
-    public List<Float> readFloat32s(List<String> addresses) {
+    /**
+     * 读取多个Float32数据
+     *
+     * @param addresses 多地址
+     * @return Float列表
+     */
+    public List<Float> readFloat32(String... addresses) {
+        return this.readFloat32(Arrays.asList(addresses));
+    }
+
+    /**
+     * 读取多个Float32数据
+     *
+     * @param addresses 多地址
+     * @return Float列表
+     */
+    public List<Float> readFloat32(List<String> addresses) {
         List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
                 .collect(Collectors.toList());
 
@@ -227,7 +308,23 @@ public class McPLC extends McNetwork {
         return ByteReadBuff.newInstance(bytes, true).getFloat64();
     }
 
-    public List<Double> readFloat64s(List<String> addresses) {
+    /**
+     * 读取多个Float64数据
+     *
+     * @param addresses 多地址
+     * @return Double列表
+     */
+    public List<Double> readFloat64(String... addresses) {
+        return this.readFloat64(Arrays.asList(addresses));
+    }
+
+    /**
+     * 读取多个Float64数据
+     *
+     * @param addresses 多地址
+     * @return Double列表
+     */
+    public List<Double> readFloat64(List<String> addresses) {
         List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
                 .collect(Collectors.toList());
 
