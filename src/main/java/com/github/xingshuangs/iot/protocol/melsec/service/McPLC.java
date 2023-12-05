@@ -64,6 +64,16 @@ public class McPLC extends McNetwork {
     //region 软元件读取
 
     /**
+     * 读多地址
+     *
+     * @param multiAddressRead 多地址
+     */
+    public void readMultiAddress(McMultiAddressRead multiAddressRead) {
+        List<McDeviceAddress> words = multiAddressRead.getWords();
+        this.readDeviceBatchMultiBlocks(words, new ArrayList<>(0));
+    }
+
+    /**
      * 读取booleans数据
      *
      * @param address 地址
@@ -332,10 +342,10 @@ public class McPLC extends McNetwork {
      * @return Double列表
      */
     public List<Double> readFloat64(List<String> addresses) {
-        List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
+        List<McDeviceAddress> deviceAddresses = addresses.stream().map(x -> McDeviceAddress.createBy(x, 4))
                 .collect(Collectors.toList());
 
-        List<McDeviceContent> deviceContents = this.readDeviceRandomInWord(new ArrayList<>(), deviceAddresses);
+        List<McDeviceContent> deviceContents = this.readDeviceBatchMultiBlocks(deviceAddresses, new ArrayList<>());
 
         return deviceContents.stream()
                 .map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat64())
@@ -357,6 +367,16 @@ public class McPLC extends McNetwork {
     //endregion
 
     //region 软元件写入
+
+    /**
+     * 写多地址
+     *
+     * @param multiAddressWrite 多地址
+     */
+    public void writeMultiAddress(McMultiAddressWrite multiAddressWrite) {
+        List<McDeviceContent> words = multiAddressWrite.getWords();
+        this.writeDeviceBatchMultiBlocks(words, new ArrayList<>(0));
+    }
 
     /**
      * 写入boolean数据列表

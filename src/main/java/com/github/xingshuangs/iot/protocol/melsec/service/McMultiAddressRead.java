@@ -22,48 +22,38 @@
  * SOFTWARE.
  */
 
-package com.github.xingshuangs.iot.protocol.melsec.algorithm;
+package com.github.xingshuangs.iot.protocol.melsec.service;
 
 
+import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceAddress;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * 基础数据参数
+ * 多地址读
  *
  * @author xingshuang
  */
 @Data
-public class McGroupItem {
+public class McMultiAddressRead {
 
     /**
-     * 实际长度
+     * 请求项列表
      */
-    private int actualLength = 0;
+    private final List<McDeviceAddress> words = new ArrayList<>();
 
     /**
-     * 最大允许长度
+     * 添加获取的地址和字节个数
+     *
+     * @param address 地址
+     * @param count   字节数量
+     * @return McMultiAddressRead
      */
-    private int maxLength = 0;
-
-    /**
-     * 当前偏移量
-     */
-    private int off = 0;
-
-    /**
-     * 当前长度
-     */
-    private int len = 0;
-
-    public McGroupItem() {
-    }
-
-    public McGroupItem(int actualLength, int maxLength) {
-        this.actualLength = actualLength;
-        this.maxLength = maxLength;
-    }
-
-    public boolean inRange() {
-        return this.off + this.len < this.actualLength;
+    public McMultiAddressRead addData(String address, int count) {
+        int newCount = count % 2 == 0 ? count : (count + 1);
+        this.words.add(McDeviceAddress.createBy(address, newCount / 2));
+        return this;
     }
 }

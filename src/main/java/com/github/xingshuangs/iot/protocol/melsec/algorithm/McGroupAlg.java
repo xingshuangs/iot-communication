@@ -29,7 +29,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 
 /**
- * 消费相关工具
+ * 循环处理相关工具
  *
  * @author xingshuang
  */
@@ -57,37 +57,45 @@ public class McGroupAlg {
     }
 
     public static void biLoopExecute(McGroupItem item1, McGroupItem item2,
-                                     BiPredicate<McGroupItem,McGroupItem> biPredicate,
+                                     BiPredicate<McGroupItem, McGroupItem> biPredicate,
                                      BiConsumer<McGroupItem, McGroupItem> biConsumer) {
 
-//        while (item1.outRange()||item2.outRange()){
-//            if(off1<length1&& off1+len1<length1) {
-//                if (biPredicate.test(len1, len2)) {
-//                    // 触发事件
-//                    off1 += len1;
-//                    len1 = 0;
-//                } else {
-//                    len1++;
-//                }
-//            }else if(off1<length1&&off1+len1>length1){
-//                if (biPredicate.test(len1, len2)) {
-//                    // 初始事件
-//                    off2 += len2;
-//                    len2 = 0;
-//                } else {
-//                    len2++;
-//                }
-//            }
-//        }
-//        while (off1+len1<length1){
-//            if(biPredicate.test(len1,len2)){
-//                len1++;
-//            }else {
-//                len1--;
-//                // 初始事件
-//                off1+=len1;
-//                len1 = 0;
-//            }
-//        }
+        while (item1.inRange() || item2.inRange()) {
+            if (item1.getOff() < item1.getActualLength() && item1.inRange()) {
+                // 全在第1项中
+                if (biPredicate.test(item1, item2)) {
+                    biConsumer.accept(item1, item2);
+                    item1.setOff(item1.getOff() + item1.getLen());
+                    item1.setLen(0);
+                } else {
+                    item1.setLen(item1.getLen() + 1);
+                }
+            } else if (item1.getOff() < item1.getActualLength() && !item1.inRange() && item2.inRange()) {
+                // 既在第1项中，又在第2项中
+                if (biPredicate.test(item1, item2)) {
+                    biConsumer.accept(item1, item2);
+                    item1.setOff(item1.getActualLength());
+                    item1.setLen(0);
+                    item2.setOff(item2.getOff() + item2.getLen());
+                    item2.setLen(0);
+                } else {
+                    item2.setLen(item2.getLen() + 1);
+                }
+            } else if (item2.getOff() < item2.getActualLength() && item2.inRange()) {
+                // 全在第2项中
+                if (biPredicate.test(item1, item2)) {
+                    biConsumer.accept(item1, item2);
+                    item2.setOff(item2.getOff() + item2.getLen());
+                    item2.setLen(0);
+                } else {
+                    item2.setLen(item2.getLen() + 1);
+                }
+            }else {
+                item2.setLen(item2.getLen() + 1);
+            }
+        }
+        if (item2.getOff() < item2.getActualLength()) {
+            biConsumer.accept(item1, item2);
+        }
     }
 }
