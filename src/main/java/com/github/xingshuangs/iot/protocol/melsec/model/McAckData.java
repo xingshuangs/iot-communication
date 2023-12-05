@@ -69,7 +69,10 @@ public class McAckData extends McData {
      * @return McAckData
      */
     public static McAckData fromBytes(final byte[] data, final int offset) {
-        ByteReadBuff buff = new ByteReadBuff(data, offset,true);
+        if (data.length == 0) {
+            return new McAckData();
+        }
+        ByteReadBuff buff = new ByteReadBuff(data, offset, true);
         McAckData res = new McAckData();
         res.data = buff.getBytes();
         return res;

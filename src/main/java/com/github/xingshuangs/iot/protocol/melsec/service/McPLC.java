@@ -28,6 +28,8 @@ package com.github.xingshuangs.iot.protocol.melsec.service;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.common.constant.GeneralConst;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceAddress;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceContent;
 
@@ -45,12 +47,18 @@ import java.util.stream.Collectors;
 public class McPLC extends McNetwork {
 
     public McPLC() {
-        this(GeneralConst.LOCALHOST, GeneralConst.MELSEC_PORT);
+        this(EMcSeries.Q_L, EMcFrameType.FRAME_4E, GeneralConst.LOCALHOST, GeneralConst.MELSEC_PORT);
     }
 
     public McPLC(String host, int port) {
+        this(EMcSeries.Q_L, EMcFrameType.FRAME_4E, host, port);
+    }
+
+    public McPLC(EMcSeries series, EMcFrameType frameType, String host, int port) {
         super(host, port);
         this.tag = "Melsec";
+        this.series = series;
+        this.frameType = frameType;
     }
 
     //region 软元件读取
@@ -64,8 +72,7 @@ public class McPLC extends McNetwork {
      */
     public List<Boolean> readBooleans(String address, int count) {
         // 三菱1个字节对应两个boolean
-        int newCount = count % 2 == 0 ? (count / 2) : ((count + 1) / 2);
-        McDeviceAddress deviceAddress = McDeviceAddress.createBy(address, newCount);
+        McDeviceAddress deviceAddress = McDeviceAddress.createBy(address, count);
         McDeviceContent deviceContent = this.readDeviceBatchInBit(deviceAddress);
         List<Boolean> res = this.getBooleansBy(deviceContent.getData());
         return res.subList(0, count);

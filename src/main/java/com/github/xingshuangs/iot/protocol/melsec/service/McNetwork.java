@@ -315,7 +315,8 @@ public class McNetwork extends TcpClientBasic {
             throw new McCommException("1 <= 位访问点数 <= 7168");
         }
         try {
-            int actualLength = deviceAddress.getDevicePointsCount() / 2;
+            int actualLength = deviceAddress.getDevicePointsCount() % 2 == 0 ?
+                    (deviceAddress.getDevicePointsCount() / 2) : ((deviceAddress.getDevicePointsCount() + 1) / 2);
             int maxLength = 7168 / 2;
             ByteWriteBuff buff = new ByteWriteBuff(actualLength);
 
@@ -349,7 +350,8 @@ public class McNetwork extends TcpClientBasic {
             throw new McCommException("1 <= 位访问点数");
         }
         try {
-            int actualLength = deviceContent.getDevicePointsCount() / 2;
+            int actualLength = deviceContent.getDevicePointsCount() % 2 == 0 ?
+                    (deviceContent.getDevicePointsCount() / 2) : ((deviceContent.getDevicePointsCount() + 1) / 2);
             int maxLength = 7168 / 2;
             ByteReadBuff buff = new ByteReadBuff(deviceContent.getData());
 
