@@ -56,6 +56,14 @@ public class McGroupAlg {
         }
     }
 
+    /**
+     * 寻找满足条件的索引和长度
+     *
+     * @param item1       选项1
+     * @param item2       选项2
+     * @param biPredicate 判定条件
+     * @param biConsumer  消费执行
+     */
     public static void biLoopExecute(McGroupItem item1, McGroupItem item2,
                                      BiPredicate<McGroupItem, McGroupItem> biPredicate,
                                      BiConsumer<McGroupItem, McGroupItem> biConsumer) {
@@ -90,7 +98,7 @@ public class McGroupAlg {
                 } else {
                     item2.setLen(item2.getLen() + 1);
                 }
-            }else {
+            } else {
                 item2.setLen(item2.getLen() + 1);
             }
         }

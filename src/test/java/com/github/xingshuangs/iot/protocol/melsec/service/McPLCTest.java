@@ -2,6 +2,7 @@ package com.github.xingshuangs.iot.protocol.melsec.service;
 
 import com.github.xingshuangs.iot.protocol.common.constant.GeneralConst;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceAddress;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceContent;
 import com.github.xingshuangs.iot.utils.HexUtil;
@@ -19,12 +20,20 @@ import static org.junit.Assert.*;
 @Ignore
 public class McPLCTest {
 
+//    private final McPLC mcPLC = new McPLC("192.168.3.100", 6000);
     private final McPLC mcPLC = new McPLC(GeneralConst.LOCALHOST, 6000);
 
     @Before
     public void before() {
+        this.mcPLC.setSeries(EMcSeries.Q_L);
         this.mcPLC.setFrameType(EMcFrameType.FRAME_3E);
-        this.mcPLC.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
+        this.mcPLC.setComCallback(x -> log.debug("[{}] {}", x.length, HexUtil.toHexString(x)));
+    }
+
+    @Test
+    public void readWrite() {
+        short m100 = this.mcPLC.readInt16("M100");
+        System.out.println(m100);
     }
 
     @Test

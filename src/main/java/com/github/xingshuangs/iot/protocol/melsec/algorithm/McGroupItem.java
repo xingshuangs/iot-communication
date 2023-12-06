@@ -41,11 +41,6 @@ public class McGroupItem {
     private int actualLength = 0;
 
     /**
-     * 最大允许长度
-     */
-    private int maxLength = 0;
-
-    /**
      * 当前偏移量
      */
     private int off = 0;
@@ -58,9 +53,8 @@ public class McGroupItem {
     public McGroupItem() {
     }
 
-    public McGroupItem(int actualLength, int maxLength) {
+    public McGroupItem(int actualLength) {
         this.actualLength = actualLength;
-        this.maxLength = maxLength;
     }
 
     public boolean inRange() {

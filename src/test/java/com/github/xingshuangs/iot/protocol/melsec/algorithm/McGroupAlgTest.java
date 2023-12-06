@@ -33,8 +33,8 @@ public class McGroupAlgTest {
 
     @Test
     public void biLoopExecute() {
-        McGroupItem item1 = new McGroupItem(20, 15);
-        McGroupItem item2 = new McGroupItem(23, 15);
+        McGroupItem item1 = new McGroupItem(20);
+        McGroupItem item2 = new McGroupItem(23);
 
         AtomicInteger length = new AtomicInteger();
         AtomicInteger count = new AtomicInteger();
@@ -43,7 +43,6 @@ public class McGroupAlgTest {
             length.addAndGet(i1.getLen());
             length.addAndGet(i2.getLen());
             count.getAndIncrement();
-            System.out.println("++++");
         });
         assertEquals(43, length.get());
         assertEquals(4, count.get());
@@ -51,8 +50,8 @@ public class McGroupAlgTest {
 
     @Test
     public void biLoopExecute1() {
-        McGroupItem item1 = new McGroupItem(20, 15);
-        McGroupItem item2 = new McGroupItem(23, 15);
+        McGroupItem item1 = new McGroupItem(20);
+        McGroupItem item2 = new McGroupItem(23);
 
         AtomicInteger length = new AtomicInteger();
         AtomicInteger count = new AtomicInteger();
@@ -61,7 +60,6 @@ public class McGroupAlgTest {
             length.addAndGet(i1.getLen());
             length.addAndGet(i2.getLen());
             count.getAndIncrement();
-            System.out.println("++++");
         });
         assertEquals(43, length.get());
         assertEquals(5, count.get());

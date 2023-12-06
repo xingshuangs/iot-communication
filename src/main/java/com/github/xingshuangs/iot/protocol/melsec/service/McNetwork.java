@@ -30,6 +30,7 @@ import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.melsec.algorithm.McGroupAlg;
+import com.github.xingshuangs.iot.protocol.melsec.algorithm.McGroupItem;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcDeviceCode;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
@@ -40,6 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
 /**
@@ -391,23 +393,19 @@ public class McNetwork extends TcpClientBasic {
         }
         try {
             List<McDeviceContent> result = new ArrayList<>();
-            int actualLength = wordAddresses.size() + dwordAddresses.size();
             int maxLength = this.series == EMcSeries.Q_L ? 192 : 96;
 
-            McGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
-                List<McDeviceAddress> newWords = new ArrayList<>();
-                List<McDeviceAddress> newDWords = new ArrayList<>();
-                if (off < wordAddresses.size() && off + len < wordAddresses.size()) {
-                    newWords = wordAddresses.subList(off, off + len);
-                } else if (off < wordAddresses.size() && off + len > wordAddresses.size()) {
-                    newWords = wordAddresses.subList(off, wordAddresses.size());
-                    newDWords = dwordAddresses.subList(0, off + len - wordAddresses.size());
-                } else if (off > wordAddresses.size()) {
-                    newDWords = dwordAddresses.subList(off - wordAddresses.size(), off - wordAddresses.size() + len);
-                }
+            BiPredicate<McGroupItem, McGroupItem> biPredicate = (i1, i2) -> i1.getLen() + i2.getLen() >= maxLength;
+            McGroupItem wordItem = new McGroupItem(wordAddresses.size());
+            McGroupItem dwordItem = new McGroupItem(dwordAddresses.size());
+
+            McGroupAlg.biLoopExecute(wordItem, dwordItem, biPredicate, (i1, i2) -> {
+                List<McDeviceAddress> newWords = wordAddresses.subList(i1.getOff(), i1.getLen());
+                List<McDeviceAddress> newDWords = dwordAddresses.subList(i2.getOff(), i2.getLen());
                 McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createReadDeviceRandomInWordReq(this.series, header, newWords, newDWords);
                 McMessageAck ack = this.readFromServer(req);
+
                 ByteReadBuff buff = new ByteReadBuff(((McAckData) ack.getData()).getData());
                 for (McDeviceAddress word : newWords) {
                     result.add(McDeviceContent.createByAddress(word, buff.getBytes(2)));
@@ -438,17 +436,20 @@ public class McNetwork extends TcpClientBasic {
         if (wordContents.isEmpty() && dwordContents.isEmpty()) {
             throw new IllegalArgumentException("wordContents and dwordContents 数量为空");
         }
-        int count = wordContents.size() * 12 + dwordContents.size() * 14;
-        if (this.series == EMcSeries.Q_L && (count < 1 || count > 1920)) {
-            throw new McCommException("1 ≤ (字访问点数×12)+(双字访问点数×14) ≤ 1920点");
-        } else if (this.series == EMcSeries.IQ_R && (count < 1 || count > 960)) {
-            throw new McCommException("1 ≤ (字访问点数×12)+(双字访问点数×14) ≤ 960点");
-        }
-        try {
 
-            McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
-            McMessageReq req = McReqBuilder.createWriteDeviceRandomInWordReq(this.series, header, wordContents, dwordContents);
-            this.readFromServer(req);
+        try {
+            int maxLength = this.series == EMcSeries.Q_L ? 1920 : 960;
+            BiPredicate<McGroupItem, McGroupItem> biPredicate = (i1, i2) -> i1.getLen() * 12 + i2.getLen() * 14 >= maxLength;
+            McGroupItem wordItem = new McGroupItem(wordContents.size());
+            McGroupItem dwordItem = new McGroupItem(dwordContents.size());
+
+            McGroupAlg.biLoopExecute(wordItem, dwordItem, biPredicate, (i1, i2) -> {
+                List<McDeviceContent> newWord = wordContents.subList(i1.getOff(), i1.getLen());
+                List<McDeviceContent> newDWord = dwordContents.subList(i2.getOff(), i2.getLen());
+                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McMessageReq req = McReqBuilder.createWriteDeviceRandomInWordReq(this.series, header, newWord, newDWord);
+                this.readFromServer(req);
+            });
         } finally {
             if (!this.persistence) {
                 this.close();
@@ -503,23 +504,19 @@ public class McNetwork extends TcpClientBasic {
 
         try {
             List<McDeviceContent> result = new ArrayList<>();
-            int actualLength = wordAddresses.size() + bitAddresses.size();
             int maxLength = this.series == EMcSeries.Q_L ? 120 : 60;
 
-            McGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
-                List<McDeviceAddress> newWords = new ArrayList<>();
-                List<McDeviceAddress> newBits = new ArrayList<>();
-                if (off < wordAddresses.size() && off + len < wordAddresses.size()) {
-                    newWords = wordAddresses.subList(off, off + len);
-                } else if (off < wordAddresses.size() && off + len > wordAddresses.size()) {
-                    newWords = wordAddresses.subList(off, wordAddresses.size());
-                    newBits = bitAddresses.subList(0, off + len - wordAddresses.size());
-                } else if (off > wordAddresses.size()) {
-                    newBits = bitAddresses.subList(off - wordAddresses.size(), off - wordAddresses.size() + len);
-                }
+            BiPredicate<McGroupItem, McGroupItem> biPredicate = (i1, i2) -> i1.getLen() + i2.getLen() >= maxLength;
+            McGroupItem wordItem = new McGroupItem(wordAddresses.size());
+            McGroupItem bitItem = new McGroupItem(bitAddresses.size());
+
+            McGroupAlg.biLoopExecute(wordItem, bitItem, biPredicate, (i1, i2) -> {
+                List<McDeviceAddress> newWords = wordAddresses.subList(i1.getOff(), i1.getLen());
+                List<McDeviceAddress> newBits = bitAddresses.subList(i2.getOff(), i2.getLen());
                 McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createReadDeviceBatchMultiBlocksReq(this.series, header, newWords, newBits);
                 McMessageAck ack = this.readFromServer(req);
+
                 ByteReadBuff buff = new ByteReadBuff(((McAckData) ack.getData()).getData());
                 for (McDeviceAddress word : newWords) {
                     result.add(McDeviceContent.createByAddress(word, buff.getBytes(2 * word.getDevicePointsCount())));
@@ -551,26 +548,26 @@ public class McNetwork extends TcpClientBasic {
         if (wordContents.isEmpty() && bitContents.isEmpty()) {
             throw new IllegalArgumentException("wordContents and bitContents 数量为空");
         }
-        if (this.series == EMcSeries.Q_L) {
-            int count = (wordContents.size() + bitContents.size()) * 4
-                    + (wordContents.stream().mapToInt(McDeviceAddress::getDevicePointsCount).sum()
-                    + bitContents.stream().mapToInt(McDeviceAddress::getDevicePointsCount).sum());
-            if (count < 1 || count > 960) {
-                throw new McCommException("1 ≤ (各块数的合计×4)+(软元件点数的合计) ≤ 960点");
-            }
-        }
-        if (this.series == EMcSeries.IQ_R) {
-            int count = (wordContents.size() + bitContents.size()) * 9
-                    + (wordContents.stream().mapToInt(McDeviceAddress::getDevicePointsCount).sum()
-                    + bitContents.stream().mapToInt(McDeviceAddress::getDevicePointsCount).sum());
-            if (count < 1 || count > 960) {
-                throw new McCommException("1 ≤ (各块数的合计×9)+(软元件点数的合计) ≤ 960点");
-            }
-        }
+
         try {
-            McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
-            McMessageReq req = McReqBuilder.createWriteDeviceBatchMultiBlocksReq(this.series, header, wordContents, bitContents);
-            this.readFromServer(req);
+            BiPredicate<McGroupItem, McGroupItem> biPredicate = (i1, i2) -> {
+                List<McDeviceContent> newWord = wordContents.subList(i1.getOff(), i1.getLen());
+                List<McDeviceContent> newBit = bitContents.subList(i2.getOff(), i2.getLen());
+                int count = (newWord.size() + newBit.size()) * (this.series == EMcSeries.Q_L ? 4 : 9)
+                        + (newWord.stream().mapToInt(McDeviceAddress::getDevicePointsCount).sum()
+                        + newBit.stream().mapToInt(McDeviceAddress::getDevicePointsCount).sum());
+                return count >= 960;
+            };
+            McGroupItem wordItem = new McGroupItem(wordContents.size());
+            McGroupItem bitItem = new McGroupItem(bitContents.size());
+
+            McGroupAlg.biLoopExecute(wordItem, bitItem, biPredicate, (i1, i2) -> {
+                List<McDeviceContent> newWords = wordContents.subList(i1.getOff(), i1.getLen());
+                List<McDeviceContent> newBits = bitContents.subList(i2.getOff(), i2.getLen());
+                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McMessageReq req = McReqBuilder.createWriteDeviceBatchMultiBlocksReq(this.series, header, newWords, newBits);
+                this.readFromServer(req);
+            });
         } finally {
             if (!this.persistence) {
                 this.close();
