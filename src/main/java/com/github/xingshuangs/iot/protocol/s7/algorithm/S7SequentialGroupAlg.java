@@ -27,6 +27,7 @@ package com.github.xingshuangs.iot.protocol.s7.algorithm;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 顺序分组算法
@@ -78,7 +79,7 @@ public class S7SequentialGroupAlg {
                 }
             }
         }
-        return groupList;
+        return groupList.stream().filter(x -> !x.getItems().isEmpty()).collect(Collectors.toList());
     }
 
     /**
@@ -120,6 +121,6 @@ public class S7SequentialGroupAlg {
                 }
             }
         }
-        return groupList;
+        return groupList.stream().filter(x -> !x.getItems().isEmpty()).collect(Collectors.toList());
     }
 }

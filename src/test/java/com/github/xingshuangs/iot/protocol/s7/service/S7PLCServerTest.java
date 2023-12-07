@@ -181,4 +181,47 @@ public class S7PLCServerTest {
         String actual = this.s7PLC.readString("DB1.10", 6);
         assertEquals("123456", actual);
     }
+
+    @Test
+    public void readMultiAddress18() {
+        List<String> str = new ArrayList<>();
+        str.add("DB1.1");
+        str.add("DB1.2");
+        str.add("DB1.3");
+        str.add("DB1.4");
+        str.add("DB1.5");
+        str.add("DB1.6");
+        str.add("DB1.7");
+        str.add("DB1.8");
+        str.add("DB1.9");
+        str.add("DB1.10");
+        str.add("DB1.11");
+        str.add("DB1.12");
+        str.add("DB1.13");
+        str.add("DB1.14");
+        str.add("DB1.15");
+        str.add("DB1.16");
+        str.add("DB1.17");
+        str.add("DB1.18");
+        List<Integer> actual = s7PLC.readUInt16(str);
+        assertEquals(18, actual.size());
+    }
+
+    @Test(expected = Test.None.class)
+    public void writeMultiAddress12() {
+        MultiAddressWrite write = new MultiAddressWrite();
+        write.addUInt16("DB1.1", 1);
+        write.addUInt16("DB1.2", 1);
+        write.addUInt16("DB1.3", 1);
+        write.addUInt16("DB1.4", 1);
+        write.addUInt16("DB1.5", 1);
+        write.addUInt16("DB1.6", 1);
+        write.addUInt16("DB1.7", 1);
+        write.addUInt16("DB1.8", 1);
+        write.addUInt16("DB1.9", 1);
+        write.addUInt16("DB1.10", 1);
+        write.addUInt16("DB1.11", 1);
+        write.addUInt16("DB1.12", 1);
+        s7PLC.writeMultiData(write);
+    }
 }
