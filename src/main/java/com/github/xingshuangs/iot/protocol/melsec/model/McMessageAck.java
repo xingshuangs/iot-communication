@@ -85,10 +85,11 @@ public class McMessageAck implements IObjectByteArray {
      * @return McMessageAck
      */
     public static McMessageAck fromBytes(final byte[] data, final int offset) {
-        ByteReadBuff buff = new ByteReadBuff(data, offset,true);
+        ByteReadBuff buff = new ByteReadBuff(data, offset, true);
         McMessageAck res = new McMessageAck();
         res.header = McHeaderAck.fromBytes(buff.getBytes(11));
-        res.data = McAckData.fromBytes(buff.getBytes());
+        res.data = res.header.getEndCode() == 0 ? McAckData.fromBytes(buff.getBytes())
+                : McErrorInformationData.fromBytes(buff.getBytes());
         return res;
     }
 }

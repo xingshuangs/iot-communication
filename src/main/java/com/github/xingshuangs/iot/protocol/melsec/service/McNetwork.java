@@ -164,7 +164,49 @@ public class McNetwork extends TcpClientBasic {
                     + "，响应副帧头：" + ack.getHeader().getEndCode());
         }
         if (ack.getHeader().getEndCode() != 0) {
-            throw new McCommException("响应返回异常，异常码:" + ack.getHeader().getEndCode());
+            String errorContent = this.extractError(ack.getHeader().getEndCode());
+            String errorStr = String.format("响应返回异常，异常码:%d，%s", ack.getHeader().getEndCode(), errorContent);
+            throw new McCommException(errorStr);
+        }
+    }
+
+    /**
+     * 提取错误信息
+     *
+     * @param errorCode 错误码
+     * @return 错误信息字符串
+     */
+    private String extractError(int errorCode) {
+        switch (errorCode) {
+            case 0xC050:
+                return "在\"通信数据代码设置\"中，设置ASCII代码通信时，接收了无法转换为二进制代码的ASCII代码的数据";
+            case 0xC051:
+            case 0xC052:
+            case 0xC053:
+            case 0xC054:
+                return "写入或读取点数超出了允许范围";
+            case 0xC056:
+                return "写入及读取请求超出了最大地址";
+            case 0xC058:
+                return "ASCII-二进制转换后的请求数据长度与字符部分的数据数不一致";
+            case 0xC059:
+                return "指令、子指令的指定中有错误";
+            case 0xC05B:
+                return "CPU模块无法对指定软元件尽心写入及读取";
+            case 0xC05C:
+                return "请求内容内容中有错误。（对字软元件进行了以位为单位的写入及读取等）";
+            case 0xC05D:
+                return "未进行监视登录";
+            case 0xC05F:
+                return "是无法对对象CPU模块执行的请求";
+            case 0xC060:
+                return "请求内容中有错误。（对位软元件的数据指定中有错误）";
+            case 0xC061:
+                return "请求数据长度与字符部分的数据数不一致";
+            case 0xC0B5:
+                return "指定了CPU模块中无法处理的数据";
+            default:
+                return "请查询三菱用户手册进行错误解析";
         }
     }
 

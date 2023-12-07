@@ -1,17 +1,44 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2021-2099 Oscura (xingshuang) <xingshuang_cool@163.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package com.github.xingshuangs.iot.protocol.melsec.service;
 
 import com.github.xingshuangs.iot.exceptions.McCommException;
+import com.github.xingshuangs.iot.protocol.common.constant.GeneralConst;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceAddress;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceContent;
 import com.github.xingshuangs.iot.utils.HexUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -20,8 +47,8 @@ import static org.junit.Assert.*;
 @Ignore
 public class McPLCTest {
 
-    private final McPLC mcPLC = new McPLC("192.168.3.100", 6001);
-//    private final McPLC mcPLC = new McPLC(GeneralConst.LOCALHOST, 6001);
+//    private final McPLC mcPLC = new McPLC("192.168.3.100", 6001);
+    private final McPLC mcPLC = new McPLC(GeneralConst.LOCALHOST, 6000);
 
     @Before
     public void before() {
@@ -31,29 +58,74 @@ public class McPLCTest {
     }
 
     @Test
+    public void readWriteDeviceBatchInWord() {
+        byte[] expect = new byte[]{0x34, 0x12, 0x02, 0x00};
+        McDeviceContent reqContent = McDeviceContent.createBy("M110", 2, expect);
+        this.mcPLC.writeDeviceBatchInWord(reqContent);
+        McDeviceAddress address = McDeviceAddress.createBy("M110", 2);
+        McDeviceContent ackContent = this.mcPLC.readDeviceBatchInWord(address);
+        assertArrayEquals(expect, ackContent.getData());
+    }
+
+    @Test
+    public void readWriteDeviceBatchInBit() {
+        byte[] expect = new byte[]{0x11, 0x00, 0x01, 0x10};
+        McDeviceContent reqContent = McDeviceContent.createBy("M110", 7, expect);
+        this.mcPLC.writeDeviceBatchInBit(reqContent);
+        McDeviceAddress address = McDeviceAddress.createBy("M110", 7);
+        McDeviceContent ackContent = this.mcPLC.readDeviceBatchInBit(address);
+        assertArrayEquals(expect, ackContent.getData());
+    }
+
+    @Test(expected = Test.None.class)
+    public void readWriteDeviceRandomInWord() {
+        byte[] expect = new byte[]{0x34, 0x12, 0x02, 0x00};
+        List<McDeviceContent> writeWord = new ArrayList<>();
+        writeWord.add(McDeviceContent.createBy("D0", new byte[]{0x50, 0x05}));
+        writeWord.add(McDeviceContent.createBy("D1", new byte[]{0x75, 0x05}));
+        writeWord.add(McDeviceContent.createBy("M100", new byte[]{0x40, 0x05}));
+        List<McDeviceContent> writeDWord = new ArrayList<>();
+        writeDWord.add(McDeviceContent.createBy("D1500", new byte[]{0x02, 0x12, 0x39, 0x04}));
+        writeDWord.add(McDeviceContent.createBy("M1111", new byte[]{0x75, 0x04, 0x25, 0x04}));
+        this.mcPLC.writeDeviceRandomInWord(writeWord, writeDWord);
+
+        List<McDeviceAddress> readWord = new ArrayList<>();
+        readWord.add(McDeviceAddress.createBy("D0"));
+        readWord.add(McDeviceAddress.createBy("D1"));
+        readWord.add(McDeviceAddress.createBy("M100"));
+        List<McDeviceAddress> readDWord = new ArrayList<>();
+        readDWord.add(McDeviceAddress.createBy("D1500"));
+        readDWord.add(McDeviceAddress.createBy("M1111"));
+        List<McDeviceContent> mcDeviceContents = this.mcPLC.readDeviceRandomInWord(readWord, readDWord);
+//        assertArrayEquals(expect, ackContent.getData());
+    }
+
+    @Test(expected = Test.None.class)
+    public void writeDeviceRandomInBit(){
+        List<McDeviceContent> contents = new ArrayList<>();
+        contents.add( McDeviceContent.createBy("M110", new byte[]{0x01}));
+        contents.add( McDeviceContent.createBy("M112", new byte[]{0x01}));
+        contents.add( McDeviceContent.createBy("M113", new byte[]{0x01}));
+        this.mcPLC.writeDeviceRandomInBit(contents);
+    }
+
+    @Test
     public void readWriteBoolean() {
         this.mcPLC.writeBoolean("M110",true);
         boolean m110 = this.mcPLC.readBoolean("M110");
         assertTrue(m110);
 
+        this.mcPLC.writeBooleans("M120", true, true, true);
+        List<Boolean> booleanList = this.mcPLC.readBooleans("M120", 3);
+        assertEquals(4, booleanList.size());
+        booleanList.forEach(Assert::assertTrue);
+    }
+
+    @Test
+    public void readWriteBooleanOutRange() {
+        // 超范围读取
         List<Boolean> booleanList = this.mcPLC.readBooleans("M110", 7170);
         assertEquals(7170, booleanList.size());
-
-
-//        McDeviceContent content = McDeviceContent.createBy("M110",new byte[]{0x01});
-//        this.mcPLC.writeDeviceRandomInBit(Collections.singletonList(content));
-//        this.mcPLC.writeBooleans("M100", true, true, true);
-//        List<Boolean> booleanList = this.mcPLC.readBooleans("M100", 3);
-//        assertEquals(4, booleanList.size());
-//        booleanList.forEach(Assert::assertTrue);
-
-//        this.mcPLC.writeInt16("D111", (short) 66);
-//        this.mcPLC.writeInt16("D112", (short) 77);
-//        this.mcPLC.writeInt16("D113", (short) 6444);
-//        List<Short> actual = this.mcPLC.readInt16("D111", "D112", "D113");
-//        assertEquals(66, actual.get(0).shortValue());
-//        assertEquals(77, actual.get(1).shortValue());
-//        assertEquals(6444, actual.get(2).shortValue());
     }
 
     @Test
@@ -120,52 +192,6 @@ public class McPLCTest {
         assertEquals(66, actual.get(0).intValue());
         assertEquals(3541563, actual.get(1).intValue());
         assertEquals(546345896, actual.get(2).intValue());
-    }
-
-    @Test
-    public void readWriteDeviceBatchInWord() {
-        byte[] expect = new byte[]{0x34, 0x12, 0x02, 0x00};
-        McDeviceContent reqContent = McDeviceContent.createBy("M110", 2, expect);
-        this.mcPLC.writeDeviceBatchInWord(reqContent);
-        McDeviceAddress address = McDeviceAddress.createBy("M110", 2);
-        McDeviceContent ackContent = this.mcPLC.readDeviceBatchInWord(address);
-        assertArrayEquals(expect, ackContent.getData());
-    }
-
-    @Test
-    public void readWriteDeviceBatchInBit() {
-        byte[] expect = new byte[]{0x11, 0x00, 0x01, 0x11};
-        McDeviceContent reqContent = McDeviceContent.createBy("M110", 8, expect);
-        this.mcPLC.writeDeviceBatchInBit(reqContent);
-        McDeviceAddress address = McDeviceAddress.createBy("M110", 8);
-        McDeviceContent ackContent = this.mcPLC.readDeviceBatchInBit(address);
-        assertArrayEquals(expect, ackContent.getData());
-    }
-
-    @Test
-    public void readWriteDeviceRandomInWord() {
-        byte[] expect = new byte[]{0x34, 0x12, 0x02, 0x00};
-        List<McDeviceContent> writeWord = new ArrayList<>();
-        writeWord.add(McDeviceContent.createBy("D0", new byte[]{0x50, 0x05}));
-        writeWord.add(McDeviceContent.createBy("D1", new byte[]{0x75, 0x05}));
-        writeWord.add(McDeviceContent.createBy("M100", new byte[]{0x40, 0x05}));
-//        writeWord.add(McDeviceContent.createBy("X20", new byte[]{(byte) 0x83, 0x05}));
-        List<McDeviceContent> writeDWord = new ArrayList<>();
-        writeDWord.add(McDeviceContent.createBy("D1500", new byte[]{0x02, 0x12, 0x39, 0x04}));
-//        writeDWord.add(McDeviceContent.createBy("Y160", new byte[]{0x07, 0x26, 0x75, 0x23}));
-//        writeDWord.add(McDeviceContent.createBy("M1111", new byte[]{0x75, 0x04, 0x25, 0x04}));
-        this.mcPLC.writeDeviceRandomInWord(writeWord, writeDWord);
-        List<McDeviceAddress> readWord = new ArrayList<>();
-        readWord.add(McDeviceAddress.createBy("D0"));
-        readWord.add(McDeviceAddress.createBy("D1"));
-        readWord.add(McDeviceAddress.createBy("M100"));
-//        readWord.add(McDeviceAddress.createBy("X20"));
-        List<McDeviceAddress> readDWord = new ArrayList<>();
-        readDWord.add(McDeviceAddress.createBy("D1500"));
-//        readDWord.add(McDeviceAddress.createBy("Y160"));
-//        readDWord.add(McDeviceAddress.createBy("M1111"));
-        List<McDeviceContent> mcDeviceContents = this.mcPLC.readDeviceRandomInWord(readWord, readDWord);
-//        assertArrayEquals(expect, ackContent.getData());
     }
 
     @Test

@@ -24,40 +24,26 @@
 
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
-import com.github.xingshuangs.iot.exceptions.McCommException;
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcDeviceCode;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 
-public class McDeviceAddressTest {
-
-    @Test(expected = McCommException.class)
-    public void createByNoLetter() {
-        McDeviceAddress.createBy("133");
-    }
-
-    @Test(expected = McCommException.class)
-    public void createByNoNumber() {
-        McDeviceAddress.createBy("D");
-    }
+public class McErrorInformationDataTest {
 
     @Test
-    public void createBy1() {
-        McDeviceAddress d133 = McDeviceAddress.createBy("D133");
-        assertEquals(EMcDeviceCode.D, d133.getDeviceCode());
-        assertEquals(133, d133.getHeadDeviceNumber());
-        assertEquals(1, d133.getDevicePointsCount());
-    }
-
-    @Test
-    public void createBy2() {
-        byte[] data = new byte[]{0x01, 0x02};
-        McDeviceContent d133 = McDeviceContent.createBy("D133", data);
-        assertEquals(EMcDeviceCode.D, d133.getDeviceCode());
-        assertEquals(133, d133.getHeadDeviceNumber());
-        assertEquals(1, d133.getDevicePointsCount());
-        assertArrayEquals(data, d133.getData());
+    public void fromBytes() {
+        byte[] src = new byte[]{
+                0x00, (byte) 0xFF, (byte) 0xFF, 0x03, 0x00, 0x01, 0x04, 0x01, 0x00
+        };
+        McErrorInformationData data = McErrorInformationData.fromBytes(src);
+        McFrame4E3EAccessRoute accessRoute = (McFrame4E3EAccessRoute) data.getAccessRoute();
+        assertEquals(0, accessRoute.getNetworkNumber());
+        assertEquals(0xFF, accessRoute.getPcNumber());
+        assertEquals(0x03FF, accessRoute.getRequestDestModuleIoNumber());
+        assertEquals(0, accessRoute.getRequestDestModuleStationNumber());
+        assertEquals(EMcCommand.DEVICE_ACCESS_BATCH_READ_IN_UNITS, data.getCommand());
+        assertEquals(0x0001, data.getSubcommand());
     }
 }
