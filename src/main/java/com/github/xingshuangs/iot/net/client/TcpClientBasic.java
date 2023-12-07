@@ -266,6 +266,19 @@ public class TcpClientBasic implements ICommunicable {
     /**
      * 读取数据
      *
+     * @param data        字节数组
+     * @param offset      偏移量
+     * @param length      数据长度
+     * @param waitForMore 一直等待数据
+     * @return 读取的数据长度
+     */
+    public int read(final byte[] data, final int offset, final int length, final boolean waitForMore) {
+        return this.read(data, offset, length, 1024, this.receiveTimeout, waitForMore);
+    }
+
+    /**
+     * 读取数据
+     *
      * @param data    字节数组
      * @param offset  偏移量
      * @param length  数据长度

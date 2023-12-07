@@ -133,10 +133,10 @@ public class McNetwork extends TcpClientBasic {
             header = McHeader.fromBytes(data);
             total = new byte[9 + header.getDataLength()];
             System.arraycopy(data, 0, total, 0, data.length);
-            len = this.read(total, data.length, header.getDataLength());
+            len = this.read(total, data.length, header.getDataLength(), true);
         }
         if (len < header.getDataLength()) {
-            throw new McCommException(" McHeader后面的数据长度，长度不一致");
+            throw new McCommException("McHeader后面的数据长度，长度不一致");
         }
         if (this.comCallback != null) {
             this.comCallback.accept(total);
@@ -344,6 +344,9 @@ public class McNetwork extends TcpClientBasic {
         if (deviceAddress.getDevicePointsCount() < 1) {
             throw new McCommException("1 <= 位访问点数");
         }
+        if (!EMcDeviceCode.checkBitType(deviceAddress.getDeviceCode())) {
+            throw new McCommException("只能是位软元件");
+        }
         if (deviceAddress.getDeviceCode() == EMcDeviceCode.LTS
                 || deviceAddress.getDeviceCode() == EMcDeviceCode.LTC
                 || deviceAddress.getDeviceCode() == EMcDeviceCode.LSTS
@@ -354,14 +357,13 @@ public class McNetwork extends TcpClientBasic {
         }
 
         try {
-            int actualLength = deviceAddress.getDevicePointsCount() % 2 == 0 ?
-                    (deviceAddress.getDevicePointsCount() / 2) : ((deviceAddress.getDevicePointsCount() + 1) / 2);
-            int maxLength = 7168 / 2;
+            int actualLength = deviceAddress.getDevicePointsCount();
+            int maxLength = 7168;
             ByteWriteBuff buff = new ByteWriteBuff(actualLength);
 
             McGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
                 McDeviceAddress newAddress = new McDeviceAddress(deviceAddress.getDeviceCode(),
-                        deviceAddress.getHeadDeviceNumber() + off * 2, len * 2);
+                        deviceAddress.getHeadDeviceNumber() + off, len);
                 McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createReadDeviceBatchInBitReq(this.series, header, newAddress);
                 McMessageAck ack = this.readFromServer(req);
@@ -393,6 +395,9 @@ public class McNetwork extends TcpClientBasic {
         if (deviceContent.getDevicePointsCount() < 1) {
             throw new McCommException("1 <= 位访问点数");
         }
+        if (!EMcDeviceCode.checkBitType(deviceContent.getDeviceCode())) {
+            throw new McCommException("只能是位软元件");
+        }
 
         if (deviceContent.getDeviceCode() == EMcDeviceCode.LTS
                 || deviceContent.getDeviceCode() == EMcDeviceCode.LTC
@@ -407,15 +412,15 @@ public class McNetwork extends TcpClientBasic {
         }
 
         try {
-            int actualLength = deviceContent.getDevicePointsCount() % 2 == 0 ?
-                    (deviceContent.getDevicePointsCount() / 2) : ((deviceContent.getDevicePointsCount() + 1) / 2);
-            int maxLength = 7168 / 2;
+            int actualLength = deviceContent.getDevicePointsCount();
+            int maxLength = 7168;
             ByteReadBuff buff = new ByteReadBuff(deviceContent.getData());
 
             McGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
+                int length = len % 2 == 0 ? (len / 2) : ((len + 1) / 2);
                 McDeviceContent newContent = new McDeviceContent(deviceContent.getDeviceCode(),
-                        deviceContent.getHeadDeviceNumber() + off * 2, len * 2,
-                        buff.getBytes(off, len));
+                        deviceContent.getHeadDeviceNumber() + off, len,
+                        buff.getBytes(off / 2, length));
                 McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createWriteDeviceBatchInBitReq(this.series, header, newContent);
                 this.readFromServer(req);
@@ -637,11 +642,11 @@ public class McNetwork extends TcpClientBasic {
             throw new IllegalArgumentException("wordAddresses and bitAddresses 数量为空");
         }
         boolean b1 = words.stream().allMatch(x -> EMcDeviceCode.checkWordType(x.getDeviceCode()));
-        if (b1) {
+        if (!b1) {
             throw new McCommException("字软元件对应错误");
         }
         boolean b2 = bits.stream().allMatch(x -> EMcDeviceCode.checkBitType(x.getDeviceCode()));
-        if (b2) {
+        if (!b2) {
             throw new McCommException("位软元件对应错误");
         }
         boolean wordAllMatch = this.checkDeviceBatchMultiBlocksCode(words);

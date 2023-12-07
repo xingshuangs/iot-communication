@@ -102,7 +102,7 @@ public class McGroupAlg {
                 item2.setLen(item2.getLen() + 1);
             }
         }
-        if (item2.getOff() < item2.getActualLength()) {
+        if (item1.getOff() < item1.getActualLength() || item2.getOff() < item2.getActualLength()) {
             biConsumer.accept(item1, item2);
         }
     }

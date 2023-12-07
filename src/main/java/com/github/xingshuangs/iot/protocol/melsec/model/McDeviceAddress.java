@@ -25,6 +25,7 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
+import com.github.xingshuangs.iot.exceptions.McCommException;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcDeviceCode;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
@@ -157,8 +158,14 @@ public class McDeviceAddress {
         // 提取字符数据
         String letter = Pattern.compile("\\d").matcher(address).replaceAll("").trim().toUpperCase();
         EMcDeviceCode deviceCode = EMcDeviceCode.from(letter);
+        if (deviceCode == null) {
+            throw new McCommException("不存在对应软元件");
+        }
         // 提取数字数据
         String number = Pattern.compile("\\D").matcher(address).replaceAll("").trim();
+        if ("".equals(number)) {
+            throw new McCommException("软元件地址有误");
+        }
         int headDeviceNumber = Integer.parseInt(number);
         return new McDeviceAddress(deviceCode, headDeviceNumber, count);
     }

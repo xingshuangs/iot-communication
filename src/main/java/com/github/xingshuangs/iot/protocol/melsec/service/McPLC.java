@@ -380,6 +380,16 @@ public class McPLC extends McNetwork {
     }
 
     /**
+     * 写入多个boolean
+     *
+     * @param address  地址
+     * @param booleans boolean值
+     */
+    public void writeBooleans(String address, Boolean... booleans) {
+        this.writeBooleans(address, Arrays.asList(booleans));
+    }
+
+    /**
      * 写入boolean数据列表
      *
      * @param address  地址
@@ -387,7 +397,7 @@ public class McPLC extends McNetwork {
      */
     public void writeBooleans(String address, List<Boolean> booleans) {
         byte[] bytes = this.getBytesBy(booleans);
-        McDeviceContent deviceContent = McDeviceContent.createBy(address, bytes.length * 2, bytes);
+        McDeviceContent deviceContent = McDeviceContent.createBy(address, booleans.size(), bytes);
         this.writeDeviceBatchInBit(deviceContent);
     }
 

@@ -1,6 +1,6 @@
 package com.github.xingshuangs.iot.protocol.melsec.service;
 
-import com.github.xingshuangs.iot.protocol.common.constant.GeneralConst;
+import com.github.xingshuangs.iot.exceptions.McCommException;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceAddress;
@@ -20,8 +20,8 @@ import static org.junit.Assert.*;
 @Ignore
 public class McPLCTest {
 
-//    private final McPLC mcPLC = new McPLC("192.168.3.100", 6000);
-    private final McPLC mcPLC = new McPLC(GeneralConst.LOCALHOST, 6000);
+    private final McPLC mcPLC = new McPLC("192.168.3.100", 6001);
+//    private final McPLC mcPLC = new McPLC(GeneralConst.LOCALHOST, 6001);
 
     @Before
     public void before() {
@@ -31,27 +31,113 @@ public class McPLCTest {
     }
 
     @Test
-    public void readWrite() {
-        short m100 = this.mcPLC.readInt16("M100");
-        System.out.println(m100);
+    public void readWriteBoolean() {
+        this.mcPLC.writeBoolean("M110",true);
+        boolean m110 = this.mcPLC.readBoolean("M110");
+        assertTrue(m110);
+
+        List<Boolean> booleanList = this.mcPLC.readBooleans("M110", 7170);
+        assertEquals(7170, booleanList.size());
+
+
+//        McDeviceContent content = McDeviceContent.createBy("M110",new byte[]{0x01});
+//        this.mcPLC.writeDeviceRandomInBit(Collections.singletonList(content));
+//        this.mcPLC.writeBooleans("M100", true, true, true);
+//        List<Boolean> booleanList = this.mcPLC.readBooleans("M100", 3);
+//        assertEquals(4, booleanList.size());
+//        booleanList.forEach(Assert::assertTrue);
+
+//        this.mcPLC.writeInt16("D111", (short) 66);
+//        this.mcPLC.writeInt16("D112", (short) 77);
+//        this.mcPLC.writeInt16("D113", (short) 6444);
+//        List<Short> actual = this.mcPLC.readInt16("D111", "D112", "D113");
+//        assertEquals(66, actual.get(0).shortValue());
+//        assertEquals(77, actual.get(1).shortValue());
+//        assertEquals(6444, actual.get(2).shortValue());
+    }
+
+    @Test
+    public void readWriteInt16() {
+        this.mcPLC.writeInt16("D110", (short) 99);
+        short shortData = this.mcPLC.readInt16("D110");
+        assertEquals(99, shortData);
+
+        this.mcPLC.writeInt16("D111", (short) 66);
+        this.mcPLC.writeInt16("D112", (short) 77);
+        this.mcPLC.writeInt16("D113", (short) 6444);
+        List<Short> actual = this.mcPLC.readInt16("D111", "D112", "D113");
+        assertEquals(66, actual.get(0).shortValue());
+        assertEquals(77, actual.get(1).shortValue());
+        assertEquals(6444, actual.get(2).shortValue());
+    }
+
+    @Test
+    public void readWriteUInt16() {
+        this.mcPLC.writeUInt16("D110", 99);
+        int shortData = this.mcPLC.readUInt16("D110");
+        assertEquals(99, shortData);
+
+        this.mcPLC.writeUInt16("D111", 66);
+        this.mcPLC.writeUInt16("D112", 77);
+        this.mcPLC.writeUInt16("D113", 6444);
+        List<Integer> actual = this.mcPLC.readUInt16("D111", "D112", "D113");
+        assertEquals(66, actual.get(0).intValue());
+        assertEquals(77, actual.get(1).intValue());
+        assertEquals(6444, actual.get(2).intValue());
+    }
+
+    @Test(expected = McCommException.class)
+    public void readWriteInt16_1() {
+        short int16 = this.mcPLC.readInt16("113");
+        System.out.println(int16);
+    }
+
+    @Test
+    public void readWriteInt32() {
+        this.mcPLC.writeInt32("D114", 799864);
+        int data = this.mcPLC.readInt32("D114");
+        assertEquals(799864, data);
+
+        this.mcPLC.writeInt32("D116", 66);
+        this.mcPLC.writeInt32("D118", 3541563);
+        this.mcPLC.writeInt32("D120", 546345896);
+        List<Integer> actual = this.mcPLC.readInt32("D116", "D118", "D120");
+        assertEquals(66, actual.get(0).intValue());
+        assertEquals(3541563, actual.get(1).intValue());
+        assertEquals(546345896, actual.get(2).intValue());
+    }
+
+    @Test
+    public void readWriteUInt32() {
+        this.mcPLC.writeUInt32("D114", 799864);
+        long data = this.mcPLC.readUInt32("D114");
+        assertEquals(799864, data);
+
+        this.mcPLC.writeUInt32("D116", 66);
+        this.mcPLC.writeUInt32("D118", 3541563);
+        this.mcPLC.writeUInt32("D120", 546345896);
+        List<Long> actual = this.mcPLC.readUInt32("D116", "D118", "D120");
+        assertEquals(66, actual.get(0).intValue());
+        assertEquals(3541563, actual.get(1).intValue());
+        assertEquals(546345896, actual.get(2).intValue());
     }
 
     @Test
     public void readWriteDeviceBatchInWord() {
         byte[] expect = new byte[]{0x34, 0x12, 0x02, 0x00};
-        McDeviceContent reqContent = McDeviceContent.createBy("M100", 2, expect);
+        McDeviceContent reqContent = McDeviceContent.createBy("M110", 2, expect);
         this.mcPLC.writeDeviceBatchInWord(reqContent);
-        McDeviceAddress address = McDeviceAddress.createBy("M100", 2);
+        McDeviceAddress address = McDeviceAddress.createBy("M110", 2);
         McDeviceContent ackContent = this.mcPLC.readDeviceBatchInWord(address);
         assertArrayEquals(expect, ackContent.getData());
     }
 
     @Test
     public void readWriteDeviceBatchInBit() {
-        byte[] expect = new byte[]{0x11, 0x00, 0x11, 0x00};
-        McDeviceContent reqContent = McDeviceContent.createBy("M100", 8, expect);
+        byte[] expect = new byte[]{0x11, 0x00, 0x01, 0x11};
+        McDeviceContent reqContent = McDeviceContent.createBy("M110", 8, expect);
         this.mcPLC.writeDeviceBatchInBit(reqContent);
-        McDeviceAddress address = McDeviceAddress.createBy("M100", 8);
+        McDeviceAddress address = McDeviceAddress.createBy("M110", 8);
         McDeviceContent ackContent = this.mcPLC.readDeviceBatchInBit(address);
         assertArrayEquals(expect, ackContent.getData());
     }
