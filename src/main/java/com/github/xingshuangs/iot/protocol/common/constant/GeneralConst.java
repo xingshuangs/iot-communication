@@ -42,4 +42,10 @@ public class GeneralConst {
 
     public static final int MELSEC_PORT = 6000;
 
+    public static final int TYPE_BIT = 0;
+
+    public static final int TYPE_WORD = 1;
+
+    public static final int TYPE_DWORD = 2;
+
 }

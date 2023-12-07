@@ -26,6 +26,7 @@ package com.github.xingshuangs.iot.protocol.melsec.service;
 
 
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.EByteBuffFormat;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceContent;
 import lombok.Data;
 
@@ -123,7 +124,7 @@ public class McMultiAddressWrite {
      * @return 对象本身
      */
     public McMultiAddressWrite addUInt32(String address, long data) {
-        byte[] bytes = ByteWriteBuff.newInstance(4, true).putInteger(data).getData();
+        byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.AB_CD).putInteger(data).getData();
         this.addByte(address, bytes);
         return this;
     }
@@ -136,7 +137,7 @@ public class McMultiAddressWrite {
      * @return 对象本身
      */
     public McMultiAddressWrite addInt32(String address, int data) {
-        byte[] bytes = ByteWriteBuff.newInstance(4, true).putInteger(data).getData();
+        byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.AB_CD).putInteger(data).getData();
         this.addByte(address, bytes);
         return this;
     }
@@ -149,7 +150,7 @@ public class McMultiAddressWrite {
      * @return 对象本身
      */
     public McMultiAddressWrite addFloat32(String address, float data) {
-        byte[] bytes = ByteWriteBuff.newInstance(4, true).putFloat(data).getData();
+        byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.AB_CD).putFloat(data).getData();
         this.addByte(address, bytes);
         return this;
     }
@@ -162,7 +163,7 @@ public class McMultiAddressWrite {
      * @return 对象本身
      */
     public McMultiAddressWrite addFloat64(String address, double data) {
-        byte[] bytes = ByteWriteBuff.newInstance(8, true).putDouble(data).getData();
+        byte[] bytes = ByteWriteBuff.newInstance(8, EByteBuffFormat.AB_CD).putDouble(data).getData();
         this.addByte(address, bytes);
         return this;
     }

@@ -100,9 +100,9 @@ public class McPLCTest {
         int int32 = this.mcPLC.readInt32("D100");
         assertEquals(88, int32);
 
-        this.mcPLC.writeUInt32("D100", 88);
+        this.mcPLC.writeUInt32("D100", 99);
         long uint32 = this.mcPLC.readUInt32("D100");
-        assertEquals(88, uint32);
+        assertEquals(99, uint32);
 
         this.mcPLC.writeFloat32("D100", 99.33f);
         float float32 = this.mcPLC.readFloat32("D100");

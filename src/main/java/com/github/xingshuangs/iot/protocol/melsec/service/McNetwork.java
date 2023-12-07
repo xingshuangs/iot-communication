@@ -71,7 +71,7 @@ public class McNetwork extends TcpClientBasic {
     /**
      * 帧类型
      */
-    protected EMcFrameType frameType = EMcFrameType.FRAME_4E;
+    protected EMcFrameType frameType = EMcFrameType.FRAME_3E;
 
     /**
      * 访问路径，默认4E，3E帧访问路径
@@ -235,8 +235,12 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 软元件按字批量读取；
-     * 软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节
+     * 软元件按字批量读取；<br>
+     * 软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节<br>
+     * 不可以指定下述软元件。<br>
+     * • 长定时器(触点: LTS、线圈: LTC)<br>
+     * • 长累计定时器(触点: LSTS、线圈: LSTC)<br>
+     * • 长变址寄存器(LZ)<br>
      *
      * @param deviceAddress 数据地址
      * @return 数据内容
@@ -248,12 +252,17 @@ public class McNetwork extends TcpClientBasic {
         if (deviceAddress.getDevicePointsCount() < 1) {
             throw new McCommException("1 <= 字访问点数");
         }
+        if (deviceAddress.getDeviceCode() == EMcDeviceCode.LTS
+                || deviceAddress.getDeviceCode() == EMcDeviceCode.LTC
+                || deviceAddress.getDeviceCode() == EMcDeviceCode.LSTS
+                || deviceAddress.getDeviceCode() == EMcDeviceCode.LSTC
+                || deviceAddress.getDeviceCode() == EMcDeviceCode.LZ
+        ) {
+            throw new McCommException("限制访问LTS、LTC、LSTS、LSTC、LZ");
+        }
         try {
-            int actualLength = deviceAddress.getDevicePointsCount();
-            int maxLength = 960;
             ByteWriteBuff buff = new ByteWriteBuff(deviceAddress.getDevicePointsCount() * 2);
-
-            McGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
+            McGroupAlg.loopExecute(deviceAddress.getDevicePointsCount(), 960, (off, len) -> {
                 McDeviceAddress newAddress = new McDeviceAddress(deviceAddress.getDeviceCode(),
                         deviceAddress.getHeadDeviceNumber() + off, len);
                 McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
@@ -270,8 +279,12 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 软元件按字批量写入；
-     * 软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节
+     * 软元件按字批量写入；<br>
+     * 软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节<br>
+     * 不可以指定下述软元件。<br>
+     * • 长定时器(触点: LTS、线圈: LTC、当前值: LTN)<br>
+     * • 长累计定时器(触点: LSTS、线圈: LSTC、当前值: LSTN)<br>
+     * • 长变址寄存器(LZ)
      *
      * @param deviceContent 数据内容
      */
@@ -282,6 +295,17 @@ public class McNetwork extends TcpClientBasic {
         if (deviceContent.getDevicePointsCount() < 1) {
             throw new McCommException("1 <= 字访问点数");
         }
+        if (deviceContent.getDeviceCode() == EMcDeviceCode.LTS
+                || deviceContent.getDeviceCode() == EMcDeviceCode.LTC
+                || deviceContent.getDeviceCode() == EMcDeviceCode.LTN
+                || deviceContent.getDeviceCode() == EMcDeviceCode.LSTS
+                || deviceContent.getDeviceCode() == EMcDeviceCode.LSTC
+                || deviceContent.getDeviceCode() == EMcDeviceCode.LSTN
+                || deviceContent.getDeviceCode() == EMcDeviceCode.LZ
+        ) {
+            throw new McCommException("限制访问LTS、LTC、LTN、LSTS、LSTC、LSTN、LZ");
+        }
+
         try {
             int actualLength = deviceContent.getDevicePointsCount();
             int maxLength = 960;
@@ -305,6 +329,10 @@ public class McNetwork extends TcpClientBasic {
     /**
      * 软元件按位批量读取；
      * 软元件点数 = 位的数量，而非字节数量，2个位 = 1个字节
+     * 不可以指定下述软元件。<br>
+     * • 长定时器(触点: LTS、线圈: LTC)<br>
+     * • 长累计定时器(触点: LSTS、线圈: LSTC)<br>
+     * • 长变址寄存器(LZ)<br>
      *
      * @param deviceAddress 数据地址
      * @return 数据内容
@@ -313,9 +341,18 @@ public class McNetwork extends TcpClientBasic {
         if (deviceAddress == null) {
             throw new NullPointerException("deviceAddress");
         }
-        if (deviceAddress.getDevicePointsCount() < 1 || deviceAddress.getDevicePointsCount() > 7168) {
-            throw new McCommException("1 <= 位访问点数 <= 7168");
+        if (deviceAddress.getDevicePointsCount() < 1) {
+            throw new McCommException("1 <= 位访问点数");
         }
+        if (deviceAddress.getDeviceCode() == EMcDeviceCode.LTS
+                || deviceAddress.getDeviceCode() == EMcDeviceCode.LTC
+                || deviceAddress.getDeviceCode() == EMcDeviceCode.LSTS
+                || deviceAddress.getDeviceCode() == EMcDeviceCode.LSTC
+                || deviceAddress.getDeviceCode() == EMcDeviceCode.LZ
+        ) {
+            throw new McCommException("限制访问LTS、LTC、LSTS、LSTC、LZ");
+        }
+
         try {
             int actualLength = deviceAddress.getDevicePointsCount() % 2 == 0 ?
                     (deviceAddress.getDevicePointsCount() / 2) : ((deviceAddress.getDevicePointsCount() + 1) / 2);
@@ -339,8 +376,13 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 软元件按位批量写入；
-     * 软元件点数 = 位的数量，而非字节数量，2个位 = 1个字节
+     * 软元件按位批量写入；<br>
+     * 软元件点数 = 位的数量，而非字节数量，2个位 = 1个字节<br>
+     * 不可以指定下述软元件。<br>
+     * • 长定时器(触点: LTS、线圈: LTC、当前值: LTN)<br>
+     * • 长累计定时器(触点: LSTS、线圈: LSTC、当前值: LSTN)<br>
+     * • 长计数器(当前值: LCN)<br>
+     * • 长变址寄存器(LZ)
      *
      * @param deviceContent 数据内容
      */
@@ -351,6 +393,19 @@ public class McNetwork extends TcpClientBasic {
         if (deviceContent.getDevicePointsCount() < 1) {
             throw new McCommException("1 <= 位访问点数");
         }
+
+        if (deviceContent.getDeviceCode() == EMcDeviceCode.LTS
+                || deviceContent.getDeviceCode() == EMcDeviceCode.LTC
+                || deviceContent.getDeviceCode() == EMcDeviceCode.LTN
+                || deviceContent.getDeviceCode() == EMcDeviceCode.LSTS
+                || deviceContent.getDeviceCode() == EMcDeviceCode.LSTC
+                || deviceContent.getDeviceCode() == EMcDeviceCode.LSTN
+                || deviceContent.getDeviceCode() == EMcDeviceCode.LCN
+                || deviceContent.getDeviceCode() == EMcDeviceCode.LZ
+        ) {
+            throw new McCommException("限制访问LTS、LTC、LTN、LSTS、LSTC、LSTN、LCN、LZ");
+        }
+
         try {
             int actualLength = deviceContent.getDevicePointsCount() % 2 == 0 ?
                     (deviceContent.getDevicePointsCount() / 2) : ((deviceContent.getDevicePointsCount() + 1) / 2);
@@ -377,8 +432,12 @@ public class McNetwork extends TcpClientBasic {
     //region 软元件随机读取和写入
 
     /**
-     * 软元件按字随机读取；
-     * 地址中软元件点数可以忽略，默认1，就算写入也自动忽略
+     * 软元件按字随机读取；<br>
+     * 地址中软元件点数可以忽略，默认1，就算写入也自动忽略<br>
+     * 不可以指定下述软元件。<br>
+     * • 长定时器(触点: LTS、线圈: LTC)<br>
+     * • 长累计定时器(触点: LSTS、线圈: LSTC)<br>
+     * • 长计数器(触点: LCS、线圈: LCC)<br>
      *
      * @param wordAddresses  字地址
      * @param dwordAddresses 双字地址
@@ -390,6 +449,11 @@ public class McNetwork extends TcpClientBasic {
         }
         if (wordAddresses.isEmpty() && dwordAddresses.isEmpty()) {
             throw new IllegalArgumentException("wordAddresses and dwordAddresses 数量为空");
+        }
+        boolean wordAllMatch = this.checkDeviceRandomCode(wordAddresses);
+        boolean dwordAllMatch = this.checkDeviceRandomCode(dwordAddresses);
+        if (!wordAllMatch || !dwordAllMatch) {
+            throw new McCommException("限制访问LTS、LTC、LSTS、LSTC、LCS、LCC");
         }
         try {
             List<McDeviceContent> result = new ArrayList<>();
@@ -423,6 +487,21 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
+     * 批量随机读写软元件约束
+     *
+     * @param addresses 软元件信息
+     * @return true：符合，false：不符合
+     */
+    private boolean checkDeviceRandomCode(List<? extends McDeviceAddress> addresses) {
+        return addresses.stream().allMatch(x -> x.getDeviceCode() != EMcDeviceCode.LTS
+                && x.getDeviceCode() != EMcDeviceCode.LTC
+                && x.getDeviceCode() != EMcDeviceCode.LSTS
+                && x.getDeviceCode() != EMcDeviceCode.LSTC
+                && x.getDeviceCode() != EMcDeviceCode.LCS
+                && x.getDeviceCode() != EMcDeviceCode.LCC);
+    }
+
+    /**
      * 软元件按字随机写入；
      * 地址中软元件点数可以忽略，默认1，就算写入也自动忽略
      *
@@ -435,6 +514,11 @@ public class McNetwork extends TcpClientBasic {
         }
         if (wordContents.isEmpty() && dwordContents.isEmpty()) {
             throw new IllegalArgumentException("wordContents and dwordContents 数量为空");
+        }
+        boolean wordAllMatch = this.checkDeviceRandomCode(wordContents);
+        boolean dwordAllMatch = this.checkDeviceRandomCode(dwordContents);
+        if (!wordAllMatch || !dwordAllMatch) {
+            throw new McCommException("限制访问LTS、LTC、LSTS、LSTC、LCS、LCC");
         }
 
         try {
@@ -458,7 +542,7 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 软元件按位随机写入；
+     * 软元件按位随机写入；应指定位软元件。
      * 软元件点数可以忽略，默认1，就算写入也自动忽略
      *
      * @param bitAddresses 位地址
@@ -466,6 +550,11 @@ public class McNetwork extends TcpClientBasic {
     public void writeDeviceRandomInBit(List<McDeviceContent> bitAddresses) {
         if (bitAddresses == null || bitAddresses.isEmpty()) {
             throw new IllegalArgumentException("bitAddresses为null或空");
+        }
+        // 软元件必须是位软元件
+        boolean allMatch = bitAddresses.stream().allMatch(x -> EMcDeviceCode.checkBitType(x.getDeviceCode()));
+        if (!allMatch) {
+            throw new McCommException("只能是位软元件");
         }
         try {
             int maxLength = this.series == EMcSeries.Q_L ? 188 : 94;
@@ -486,21 +575,21 @@ public class McNetwork extends TcpClientBasic {
     //region 软元件多个块批量读取和写入
 
     /**
-     * 软元件多块批量读取；
-     * 字访问软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节；
-     * 位访问软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节；
+     * 软元件多块批量读取；<br>
+     * 字访问软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节；<br>
+     * 位访问软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节；<br>
+     * 不可以指定下述软元件。<br>
+     * • 长定时器(触点: LTS、线圈: LTC、当前值: LTN)<br>
+     * • 长累计定时器(触点: LSTS、线圈: LSTC、当前值: LSTN)<br>
+     * • 长计数器(触点: LCS、线圈: LCC、当前值: LCN)<br>
+     * • 长变址寄存器(LZ)
      *
      * @param wordAddresses 字地址
      * @param bitAddresses  位地址
      * @return 读取的数据内容
      */
     public List<McDeviceContent> readDeviceBatchMultiBlocks(List<McDeviceAddress> wordAddresses, List<McDeviceAddress> bitAddresses) {
-        if (wordAddresses == null || bitAddresses == null) {
-            throw new NullPointerException("wordAddresses or bitAddresses");
-        }
-        if (wordAddresses.isEmpty() && bitAddresses.isEmpty()) {
-            throw new IllegalArgumentException("wordAddresses and bitAddresses 数量为空");
-        }
+        this.checkDeviceBatchMultiBlocksCondition(wordAddresses, bitAddresses);
 
         try {
             List<McDeviceContent> result = new ArrayList<>();
@@ -534,6 +623,54 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
+     * 批量块读写软元件前置校验
+     *
+     * @param words words软元件信息
+     * @param bits  bits软元件信息
+     */
+    private void checkDeviceBatchMultiBlocksCondition(List<? extends McDeviceAddress> words,
+                                                      List<? extends McDeviceAddress> bits) {
+        if (words == null || bits == null) {
+            throw new NullPointerException("wordAddresses or bitAddresses");
+        }
+        if (words.isEmpty() && bits.isEmpty()) {
+            throw new IllegalArgumentException("wordAddresses and bitAddresses 数量为空");
+        }
+        boolean b1 = words.stream().allMatch(x -> EMcDeviceCode.checkWordType(x.getDeviceCode()));
+        if (b1) {
+            throw new McCommException("字软元件对应错误");
+        }
+        boolean b2 = bits.stream().allMatch(x -> EMcDeviceCode.checkBitType(x.getDeviceCode()));
+        if (b2) {
+            throw new McCommException("位软元件对应错误");
+        }
+        boolean wordAllMatch = this.checkDeviceBatchMultiBlocksCode(words);
+        boolean bitAllMatch = this.checkDeviceBatchMultiBlocksCode(bits);
+        if (!wordAllMatch || !bitAllMatch) {
+            throw new McCommException("限制访问LTS、LTC、LTN、LSTS、LSTC、LSTN、LCS、LCC、LCN、LZ");
+        }
+    }
+
+    /**
+     * 批量块读写软元件约束
+     *
+     * @param addresses 软元件信息
+     * @return true：符合，false：不符合
+     */
+    private boolean checkDeviceBatchMultiBlocksCode(List<? extends McDeviceAddress> addresses) {
+        return addresses.stream().allMatch(x -> x.getDeviceCode() != EMcDeviceCode.LTS
+                && x.getDeviceCode() != EMcDeviceCode.LTC
+                && x.getDeviceCode() != EMcDeviceCode.LTN
+                && x.getDeviceCode() != EMcDeviceCode.LSTS
+                && x.getDeviceCode() != EMcDeviceCode.LSTC
+                && x.getDeviceCode() != EMcDeviceCode.LSTN
+                && x.getDeviceCode() != EMcDeviceCode.LCS
+                && x.getDeviceCode() != EMcDeviceCode.LCC
+                && x.getDeviceCode() != EMcDeviceCode.LCN
+                && x.getDeviceCode() != EMcDeviceCode.LZ);
+    }
+
+    /**
      * 软元件多块批量写入
      * 字访问软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节；
      * 位访问软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节；
@@ -542,21 +679,17 @@ public class McNetwork extends TcpClientBasic {
      * @param bitContents  带写入位地址+数据
      */
     public void writeDeviceBatchMultiBlocks(List<McDeviceContent> wordContents, List<McDeviceContent> bitContents) {
-        if (wordContents == null || bitContents == null) {
-            throw new NullPointerException("wordContents or bitContents");
-        }
-        if (wordContents.isEmpty() && bitContents.isEmpty()) {
-            throw new IllegalArgumentException("wordContents and bitContents 数量为空");
-        }
+        this.checkDeviceBatchMultiBlocksCondition(wordContents, bitContents);
 
         try {
             BiPredicate<McGroupItem, McGroupItem> biPredicate = (i1, i2) -> {
                 List<McDeviceContent> newWord = wordContents.subList(i1.getOff(), i1.getLen());
                 List<McDeviceContent> newBit = bitContents.subList(i2.getOff(), i2.getLen());
-                int count = (newWord.size() + newBit.size()) * (this.series == EMcSeries.Q_L ? 4 : 9)
+                int blockNum = newWord.size() + newBit.size();
+                int count = blockNum * (this.series == EMcSeries.Q_L ? 4 : 9)
                         + (newWord.stream().mapToInt(McDeviceAddress::getDevicePointsCount).sum()
                         + newBit.stream().mapToInt(McDeviceAddress::getDevicePointsCount).sum());
-                return count >= 960;
+                return (blockNum >= (this.series == EMcSeries.Q_L ? 120 : 60)) || count >= 960;
             };
             McGroupItem wordItem = new McGroupItem(wordContents.size());
             McGroupItem bitItem = new McGroupItem(bitContents.size());
@@ -585,7 +718,7 @@ public class McNetwork extends TcpClientBasic {
      * @param bytes 字节数组
      * @return boolean列表
      */
-    protected List<Boolean> getBooleansBy(byte[] bytes) {
+    public List<Boolean> getBooleansBy(byte[] bytes) {
         List<Boolean> res = new ArrayList<>();
         for (byte aByte : bytes) {
             res.add((aByte & (byte) 0xF0) == 0x10);
@@ -600,7 +733,7 @@ public class McNetwork extends TcpClientBasic {
      * @param booleans boolean列表
      * @return 字节数组
      */
-    protected byte[] getBytesBy(List<Boolean> booleans) {
+    public byte[] getBytesBy(List<Boolean> booleans) {
         int len = booleans.size() % 2 == 0 ? (booleans.size() / 2) : ((booleans.size() + 1) / 2);
         byte[] result = new byte[len];
         for (int i = 0; i < len; i++) {

@@ -27,6 +27,7 @@ package com.github.xingshuangs.iot.protocol.melsec.service;
 
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.common.buff.EByteBuffFormat;
 import com.github.xingshuangs.iot.protocol.common.constant.GeneralConst;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
@@ -208,7 +209,7 @@ public class McPLC extends McNetwork {
      */
     public int readInt32(String address) {
         byte[] bytes = this.readBytes(address, 4);
-        return ByteReadBuff.newInstance(bytes, true).getInt32();
+        return ByteReadBuff.newInstance(bytes, EByteBuffFormat.AB_CD).getInt32();
     }
 
     /**
@@ -234,7 +235,7 @@ public class McPLC extends McNetwork {
         List<McDeviceContent> deviceContents = this.readDeviceRandomInWord(new ArrayList<>(), deviceAddresses);
 
         return deviceContents.stream()
-                .map(x -> ByteReadBuff.newInstance(x.getData(), true).getInt32())
+                .map(x -> ByteReadBuff.newInstance(x.getData(), EByteBuffFormat.AB_CD).getInt32())
                 .collect(Collectors.toList());
     }
 
@@ -246,7 +247,7 @@ public class McPLC extends McNetwork {
      */
     public long readUInt32(String address) {
         byte[] bytes = this.readBytes(address, 4);
-        return ByteReadBuff.newInstance(bytes, true).getUInt32();
+        return ByteReadBuff.newInstance(bytes, EByteBuffFormat.AB_CD).getUInt32();
     }
 
     /**
@@ -272,7 +273,7 @@ public class McPLC extends McNetwork {
         List<McDeviceContent> deviceContents = this.readDeviceRandomInWord(new ArrayList<>(), deviceAddresses);
 
         return deviceContents.stream()
-                .map(x -> ByteReadBuff.newInstance(x.getData(), true).getUInt32())
+                .map(x -> ByteReadBuff.newInstance(x.getData(), EByteBuffFormat.AB_CD).getUInt32())
                 .collect(Collectors.toList());
     }
 
@@ -284,7 +285,7 @@ public class McPLC extends McNetwork {
      */
     public float readFloat32(String address) {
         byte[] bytes = this.readBytes(address, 4);
-        return ByteReadBuff.newInstance(bytes, true).getFloat32();
+        return ByteReadBuff.newInstance(bytes, EByteBuffFormat.AB_CD).getFloat32();
     }
 
     /**
@@ -310,7 +311,7 @@ public class McPLC extends McNetwork {
         List<McDeviceContent> deviceContents = this.readDeviceRandomInWord(new ArrayList<>(), deviceAddresses);
 
         return deviceContents.stream()
-                .map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat32())
+                .map(x -> ByteReadBuff.newInstance(x.getData(), EByteBuffFormat.AB_CD).getFloat32())
                 .collect(Collectors.toList());
     }
 
@@ -322,7 +323,7 @@ public class McPLC extends McNetwork {
      */
     public double readFloat64(String address) {
         byte[] bytes = this.readBytes(address, 8);
-        return ByteReadBuff.newInstance(bytes, true).getFloat64();
+        return ByteReadBuff.newInstance(bytes, EByteBuffFormat.AB_CD).getFloat64();
     }
 
     /**
@@ -348,7 +349,7 @@ public class McPLC extends McNetwork {
         List<McDeviceContent> deviceContents = this.readDeviceBatchMultiBlocks(deviceAddresses, new ArrayList<>());
 
         return deviceContents.stream()
-                .map(x -> ByteReadBuff.newInstance(x.getData(), true).getFloat64())
+                .map(x -> ByteReadBuff.newInstance(x.getData(), EByteBuffFormat.AB_CD).getFloat64())
                 .collect(Collectors.toList());
     }
 
@@ -456,7 +457,7 @@ public class McPLC extends McNetwork {
      * @param data    int数据
      */
     public void writeInt32(String address, int data) {
-        byte[] bytes = ByteWriteBuff.newInstance(4, true).putInteger(data).getData();
+        byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.AB_CD).putInteger(data).getData();
         this.writeBytes(address, bytes);
     }
 
@@ -467,7 +468,7 @@ public class McPLC extends McNetwork {
      * @param data    long数据
      */
     public void writeUInt32(String address, long data) {
-        byte[] bytes = ByteWriteBuff.newInstance(4, true).putInteger(data).getData();
+        byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.AB_CD).putInteger(data).getData();
         this.writeBytes(address, bytes);
     }
 
@@ -478,7 +479,7 @@ public class McPLC extends McNetwork {
      * @param data    float数据
      */
     public void writeFloat32(String address, float data) {
-        byte[] bytes = ByteWriteBuff.newInstance(4, true).putFloat(data).getData();
+        byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.AB_CD).putFloat(data).getData();
         this.writeBytes(address, bytes);
     }
 
@@ -489,7 +490,7 @@ public class McPLC extends McNetwork {
      * @param data    double数据
      */
     public void writeFloat64(String address, double data) {
-        byte[] bytes = ByteWriteBuff.newInstance(8, true).putDouble(data).getData();
+        byte[] bytes = ByteWriteBuff.newInstance(8, EByteBuffFormat.AB_CD).putDouble(data).getData();
         this.writeBytes(address, bytes);
     }
 
