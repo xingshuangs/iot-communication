@@ -303,8 +303,12 @@ public class McNetwork extends TcpClientBasic {
             throw new McCommException("限制访问LTS、LTC、LSTS、LSTC、LZ");
         }
         try {
+            int actualLength = deviceAddress.getDevicePointsCount();
+            int maxLength = this.series.getDeviceBatchInWordPointsCount();
+//            int maxLength = 960;
             ByteWriteBuff buff = new ByteWriteBuff(deviceAddress.getDevicePointsCount() * 2);
-            McGroupAlg.loopExecute(deviceAddress.getDevicePointsCount(), 960, (off, len) -> {
+
+            McGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
                 McDeviceAddress newAddress = new McDeviceAddress(deviceAddress.getDeviceCode(),
                         deviceAddress.getHeadDeviceNumber() + off, len);
                 McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
@@ -350,7 +354,8 @@ public class McNetwork extends TcpClientBasic {
 
         try {
             int actualLength = deviceContent.getDevicePointsCount();
-            int maxLength = 960;
+            int maxLength = this.series.getDeviceBatchInWordPointsCount();
+//            int maxLength = 960;
             ByteReadBuff buff = new ByteReadBuff(deviceContent.getData());
 
             McGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
@@ -399,12 +404,14 @@ public class McNetwork extends TcpClientBasic {
         }
 
         try {
+            int maxLength = this.series.getDeviceBatchInBitPointsCount();
+//          int maxLength = 7168;
             int length = deviceAddress.getDevicePointsCount() % 2 == 0 ?
                     (deviceAddress.getDevicePointsCount() / 2) :
                     ((deviceAddress.getDevicePointsCount() + 1) / 2);
             ByteWriteBuff buff = new ByteWriteBuff(length);
 
-            McGroupAlg.loopExecute(deviceAddress.getDevicePointsCount(), 7168, (off, len) -> {
+            McGroupAlg.loopExecute(deviceAddress.getDevicePointsCount(), maxLength, (off, len) -> {
                 McDeviceAddress newAddress = new McDeviceAddress(deviceAddress.getDeviceCode(),
                         deviceAddress.getHeadDeviceNumber() + off, len);
                 McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
@@ -456,7 +463,8 @@ public class McNetwork extends TcpClientBasic {
 
         try {
             int actualLength = deviceContent.getDevicePointsCount();
-            int maxLength = 7168;
+            int maxLength = this.series.getDeviceBatchInBitPointsCount();
+//            int maxLength = 7168;
             ByteReadBuff buff = new ByteReadBuff(deviceContent.getData());
 
             McGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
@@ -505,7 +513,8 @@ public class McNetwork extends TcpClientBasic {
         }
         try {
             List<McDeviceContent> result = new ArrayList<>();
-            int maxLength = this.series == EMcSeries.Q_L ? 192 : 96;
+            int maxLength = this.series.getDeviceRandomReadInWordPointsCount();
+//            int maxLength = this.series == EMcSeries.Q_L ? 192 : 96;
 
             BiPredicate<McGroupItem, McGroupItem> biPredicate = (i1, i2) -> i1.getLen() + i2.getLen() >= maxLength;
             McGroupItem wordItem = new McGroupItem(wordAddresses.size());
@@ -570,7 +579,8 @@ public class McNetwork extends TcpClientBasic {
         }
 
         try {
-            int maxLength = this.series == EMcSeries.Q_L ? 1920 : 960;
+            int maxLength = this.series.getDeviceRandomWriteInWordPointsCount();
+//            int maxLength = this.series == EMcSeries.Q_L ? 1920 : 960;
             BiPredicate<McGroupItem, McGroupItem> biPredicate = (i1, i2) -> i1.getLen() * 12 + i2.getLen() * 14 >= maxLength;
             McGroupItem wordItem = new McGroupItem(wordContents.size());
             McGroupItem dwordItem = new McGroupItem(dwordContents.size());
@@ -605,7 +615,8 @@ public class McNetwork extends TcpClientBasic {
             throw new McCommException("只能是位软元件");
         }
         try {
-            int maxLength = this.series == EMcSeries.Q_L ? 188 : 94;
+            int maxLength = this.series.getDeviceRandomWriteInBitPointsCount();
+//            int maxLength = this.series == EMcSeries.Q_L ? 188 : 94;
             McGroupAlg.loopExecute(bitAddresses.size(), maxLength, (off, len) -> {
                 McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createWriteDeviceRandomInBitReq(this.series, header, bitAddresses.subList(off, off + len));
@@ -641,7 +652,8 @@ public class McNetwork extends TcpClientBasic {
 
         try {
             List<McDeviceContent> result = new ArrayList<>();
-            int maxLength = this.series == EMcSeries.Q_L ? 120 : 60;
+            int maxLength = this.series.getDeviceBlocksBlocksCount();
+//            int maxLength = this.series == EMcSeries.Q_L ? 120 : 60;
 
             BiPredicate<McGroupItem, McGroupItem> biPredicate = (i1, i2) -> i1.getLen() + i2.getLen() >= maxLength;
             McGroupItem wordItem = new McGroupItem(wordAddresses.size());
@@ -738,10 +750,12 @@ public class McNetwork extends TcpClientBasic {
                 List<McDeviceContent> newWord = wordContents.subList(i1.getOff(), i1.getOff() + i1.getLen());
                 List<McDeviceContent> newBit = bitContents.subList(i2.getOff(), i2.getOff() + i2.getLen());
                 int blockNum = newWord.size() + newBit.size();
-                int count = blockNum * (this.series == EMcSeries.Q_L ? 4 : 9)
+//                blockNum * (this.series == EMcSeries.Q_L ? 4 : 9)
+                int count = blockNum * this.series.getDeviceBlocksWritePointsSize()
                         + (newWord.stream().mapToInt(McDeviceAddress::getDevicePointsCount).sum()
                         + newBit.stream().mapToInt(McDeviceAddress::getDevicePointsCount).sum());
-                return (blockNum >= (this.series == EMcSeries.Q_L ? 120 : 60)) || count >= 960;
+                return (blockNum >= this.series.getDeviceBlocksBlocksCount()) || count >= this.series.getDeviceBlocksWritePointsCount();
+//                return (blockNum >= (this.series == EMcSeries.Q_L ? 120 : 60)) || count >= 960;
             };
             McGroupItem wordItem = new McGroupItem(wordContents.size());
             McGroupItem bitItem = new McGroupItem(bitContents.size());

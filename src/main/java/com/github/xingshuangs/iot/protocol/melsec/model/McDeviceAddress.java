@@ -77,7 +77,7 @@ public class McDeviceAddress {
      * @return 字节数组长度
      */
     public int byteArrayLengthWithoutPointsCount(EMcSeries series) {
-        return series == EMcSeries.Q_L ? 4 : 6;
+        return series.getDeviceCodeByteLength() + series.getHeadDeviceNumberByteLength();
     }
 
     /**
@@ -87,7 +87,7 @@ public class McDeviceAddress {
      * @return 字节数组长度
      */
     public int byteArrayLengthWithPointsCount(EMcSeries series) {
-        return 2 + (series == EMcSeries.Q_L ? 4 : 6);
+        return 2 + series.getDeviceCodeByteLength() + series.getHeadDeviceNumberByteLength();
     }
 
     /**
@@ -97,7 +97,7 @@ public class McDeviceAddress {
      * @return 字节数组
      */
     public byte[] toByteArrayWithoutPointsCount(EMcSeries series) {
-        int length = series == EMcSeries.Q_L ? 4 : 6;
+        int length = series.getDeviceCodeByteLength() + series.getHeadDeviceNumberByteLength();
         ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true);
         if (series == EMcSeries.Q_L) {
             buff.putBytes(IntegerUtil.toCustomByteArray(this.headDeviceNumber, 0, 3, true));
@@ -116,7 +116,7 @@ public class McDeviceAddress {
      * @return 字节数组
      */
     public byte[] toByteArrayWithPointsCount(EMcSeries series) {
-        int length = 2 + (series == EMcSeries.Q_L ? 4 : 6);
+        int length = 2 + series.getDeviceCodeByteLength() + series.getHeadDeviceNumberByteLength();
         ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true);
         if (series == EMcSeries.Q_L) {
             buff.putBytes(IntegerUtil.toCustomByteArray(this.headDeviceNumber, 0, 3, true));

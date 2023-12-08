@@ -46,8 +46,8 @@ import static org.junit.Assert.*;
 @Ignore
 public class McPLCTest {
 
-        private final McPLC mcPLC = new McPLC("192.168.3.100", 6001);
-//    private final McPLC mcPLC = new McPLC(GeneralConst.LOCALHOST, 6000);
+//        private final McPLC mcPLC = new McPLC("192.168.3.100", 6001);
+    private final McPLC mcPLC = new McPLC(GeneralConst.LOCALHOST, 6000);
 
     @Before
     public void before() {
