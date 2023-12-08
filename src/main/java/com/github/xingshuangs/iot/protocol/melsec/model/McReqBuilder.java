@@ -53,7 +53,7 @@ public class McReqBuilder {
      * @return 请求对象
      */
     public static McMessageReq createReadDeviceBatchInWordReq(McDeviceAddress deviceAddress) {
-        McHeaderReq header = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(),
+        McHeaderReq header = new McHeaderReq(EMcFrameType.FRAME_3E.getReqSubHeader(),
                 McFrame4E3EAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT);
         return createReadDeviceBatchInWordReq(EMcSeries.Q_L, header, deviceAddress);
     }
@@ -82,7 +82,7 @@ public class McReqBuilder {
      * @return 请求对象
      */
     public static McMessageReq createReadDeviceBatchInBitReq(McDeviceAddress deviceAddress) {
-        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(),
+        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_3E.getReqSubHeader(),
                 McFrame4E3EAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT);
         return createReadDeviceBatchInBitReq(EMcSeries.Q_L, mcHeaderReq, deviceAddress);
     }
@@ -111,7 +111,7 @@ public class McReqBuilder {
      * @return 请求对象
      */
     public static McMessageReq createWriteDeviceBatchInWordReq(McDeviceContent deviceContent) {
-        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(),
+        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_3E.getReqSubHeader(),
                 McFrame4E3EAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT);
         return createWriteDeviceBatchInWordReq(EMcSeries.Q_L, mcHeaderReq, deviceContent);
     }
@@ -140,7 +140,7 @@ public class McReqBuilder {
      * @return 请求对象
      */
     public static McMessageReq createWriteDeviceBatchInBitReq(McDeviceContent deviceContent) {
-        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(),
+        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_3E.getReqSubHeader(),
                 McFrame4E3EAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT);
         return createWriteDeviceBatchInBitReq(EMcSeries.Q_L, mcHeaderReq, deviceContent);
     }
@@ -171,7 +171,7 @@ public class McReqBuilder {
      */
     public static McMessageReq createReadDeviceRandomInWordReq(List<McDeviceAddress> wordAddresses,
                                                                List<McDeviceAddress> dwordAddresses) {
-        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(),
+        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_3E.getReqSubHeader(),
                 McFrame4E3EAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT);
         return createReadDeviceRandomInWordReq(EMcSeries.Q_L, mcHeaderReq, wordAddresses, dwordAddresses);
     }
@@ -204,7 +204,7 @@ public class McReqBuilder {
      */
     public static McMessageReq createWriteDeviceRandomInWordReq(List<McDeviceContent> wordContents,
                                                                 List<McDeviceContent> dwordContents) {
-        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(),
+        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_3E.getReqSubHeader(),
                 McFrame4E3EAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT);
         return createWriteDeviceRandomInWordReq(EMcSeries.Q_L, mcHeaderReq, wordContents, dwordContents);
     }
@@ -235,7 +235,7 @@ public class McReqBuilder {
      * @return 请求对象
      */
     public static McMessageReq createWriteDeviceRandomInBitReq(List<McDeviceContent> bitContents) {
-        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(),
+        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_3E.getReqSubHeader(),
                 McFrame4E3EAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT);
         return createWriteDeviceRandomInBitReq(EMcSeries.Q_L, mcHeaderReq, bitContents);
     }
@@ -266,7 +266,7 @@ public class McReqBuilder {
      */
     public static McMessageReq createReadDeviceBatchMultiBlocksReq(List<McDeviceAddress> wordAddresses,
                                                                    List<McDeviceAddress> bitAddresses) {
-        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(),
+        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_3E.getReqSubHeader(),
                 McFrame4E3EAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT);
         return createReadDeviceBatchMultiBlocksReq(EMcSeries.Q_L, mcHeaderReq, wordAddresses, bitAddresses);
     }
@@ -299,7 +299,7 @@ public class McReqBuilder {
      */
     public static McMessageReq createWriteDeviceBatchMultiBlocksReq(List<McDeviceContent> wordContents,
                                                                     List<McDeviceContent> bitContents) {
-        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_4E.getReqSubHeader(),
+        McHeaderReq mcHeaderReq = new McHeaderReq(EMcFrameType.FRAME_3E.getReqSubHeader(),
                 McFrame4E3EAccessRoute.createDefault(), MONITORING_TIMER_DEFAULT);
         return createWriteDeviceBatchMultiBlocksReq(EMcSeries.Q_L, mcHeaderReq, wordContents, bitContents);
     }

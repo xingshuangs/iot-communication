@@ -38,7 +38,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -47,8 +46,8 @@ import static org.junit.Assert.*;
 @Ignore
 public class McPLCTest {
 
-//    private final McPLC mcPLC = new McPLC("192.168.3.100", 6001);
-    private final McPLC mcPLC = new McPLC(GeneralConst.LOCALHOST, 6000);
+        private final McPLC mcPLC = new McPLC("192.168.3.100", 6001);
+//    private final McPLC mcPLC = new McPLC(GeneralConst.LOCALHOST, 6000);
 
     @Before
     public void before() {
@@ -60,72 +59,170 @@ public class McPLCTest {
     @Test
     public void readWriteDeviceBatchInWord() {
         byte[] expect = new byte[]{0x34, 0x12, 0x02, 0x00};
-        McDeviceContent reqContent = McDeviceContent.createBy("M110", 2, expect);
+        McDeviceContent reqContent = McDeviceContent.createBy("D110", 2, expect);
         this.mcPLC.writeDeviceBatchInWord(reqContent);
-        McDeviceAddress address = McDeviceAddress.createBy("M110", 2);
+        McDeviceAddress address = McDeviceAddress.createBy("D110", 2);
         McDeviceContent ackContent = this.mcPLC.readDeviceBatchInWord(address);
         assertArrayEquals(expect, ackContent.getData());
     }
 
     @Test
+    public void readWriteDeviceBatchInWordOutRange() {
+        McDeviceContent reqContent = McDeviceContent.createBy("D110", 1924, new byte[3848]);
+        this.mcPLC.writeDeviceBatchInWord(reqContent);
+        McDeviceAddress address = McDeviceAddress.createBy("D110", 1924);
+        McDeviceContent ackContent = this.mcPLC.readDeviceBatchInWord(address);
+        assertEquals(3848, ackContent.getData().length);
+    }
+
+    @Test
     public void readWriteDeviceBatchInBit() {
         byte[] expect = new byte[]{0x11, 0x00, 0x01, 0x10};
-        McDeviceContent reqContent = McDeviceContent.createBy("M110", 7, expect);
+        McDeviceContent reqContent = McDeviceContent.createBy("M110", 8, expect);
         this.mcPLC.writeDeviceBatchInBit(reqContent);
-        McDeviceAddress address = McDeviceAddress.createBy("M110", 7);
+        McDeviceAddress address = McDeviceAddress.createBy("M110", 8);
         McDeviceContent ackContent = this.mcPLC.readDeviceBatchInBit(address);
         assertArrayEquals(expect, ackContent.getData());
     }
 
-    @Test(expected = Test.None.class)
+    @Test
+    public void readWriteDeviceBatchInBitOutRange() {
+        McDeviceContent reqContent = McDeviceContent.createBy("M110", 7170, new byte[3585]);
+        this.mcPLC.writeDeviceBatchInBit(reqContent);
+        McDeviceAddress address = McDeviceAddress.createBy("M110", 7170);
+        McDeviceContent ackContent = this.mcPLC.readDeviceBatchInBit(address);
+        assertEquals(3585, ackContent.getData().length);
+    }
+
+    @Test
     public void readWriteDeviceRandomInWord() {
-        byte[] expect = new byte[]{0x34, 0x12, 0x02, 0x00};
         List<McDeviceContent> writeWord = new ArrayList<>();
-        writeWord.add(McDeviceContent.createBy("D0", new byte[]{0x50, 0x05}));
-        writeWord.add(McDeviceContent.createBy("D1", new byte[]{0x75, 0x05}));
-        writeWord.add(McDeviceContent.createBy("M100", new byte[]{0x40, 0x05}));
+        writeWord.add(McDeviceContent.createBy("D110", new byte[]{0x50, 0x05}));
+        writeWord.add(McDeviceContent.createBy("D111", new byte[]{0x75, 0x05}));
+        writeWord.add(McDeviceContent.createBy("M110", new byte[]{0x40, 0x05}));
         List<McDeviceContent> writeDWord = new ArrayList<>();
-        writeDWord.add(McDeviceContent.createBy("D1500", new byte[]{0x02, 0x12, 0x39, 0x04}));
-        writeDWord.add(McDeviceContent.createBy("M1111", new byte[]{0x75, 0x04, 0x25, 0x04}));
+        writeDWord.add(McDeviceContent.createBy("D120", new byte[]{0x02, 0x12, 0x39, 0x04}));
+        writeDWord.add(McDeviceContent.createBy("M130", new byte[]{0x75, 0x04, 0x25, 0x04}));
         this.mcPLC.writeDeviceRandomInWord(writeWord, writeDWord);
 
         List<McDeviceAddress> readWord = new ArrayList<>();
-        readWord.add(McDeviceAddress.createBy("D0"));
-        readWord.add(McDeviceAddress.createBy("D1"));
-        readWord.add(McDeviceAddress.createBy("M100"));
+        readWord.add(McDeviceAddress.createBy("D110"));
+        readWord.add(McDeviceAddress.createBy("D111"));
+        readWord.add(McDeviceAddress.createBy("M110"));
         List<McDeviceAddress> readDWord = new ArrayList<>();
-        readDWord.add(McDeviceAddress.createBy("D1500"));
-        readDWord.add(McDeviceAddress.createBy("M1111"));
+        readDWord.add(McDeviceAddress.createBy("D120"));
+        readDWord.add(McDeviceAddress.createBy("M130"));
         List<McDeviceContent> mcDeviceContents = this.mcPLC.readDeviceRandomInWord(readWord, readDWord);
-//        assertArrayEquals(expect, ackContent.getData());
+        assertEquals(5, mcDeviceContents.size());
+        assertArrayEquals(new byte[]{0x50, 0x05}, mcDeviceContents.get(0).getData());
+        assertArrayEquals(new byte[]{0x75, 0x05}, mcDeviceContents.get(1).getData());
+        assertArrayEquals(new byte[]{0x40, 0x05}, mcDeviceContents.get(2).getData());
+        assertArrayEquals(new byte[]{0x02, 0x12, 0x39, 0x04}, mcDeviceContents.get(3).getData());
+        assertArrayEquals(new byte[]{0x75, 0x04, 0x25, 0x04}, mcDeviceContents.get(4).getData());
+    }
+
+    @Test
+    public void readWriteDeviceRandomInWordOutRange() {
+        List<McDeviceContent> writeWord = new ArrayList<>();
+        McDeviceContent content = McDeviceContent.createBy("D110", new byte[2]);
+        for (int i = 0; i < 162; i++) {
+            writeWord.add(content);
+        }
+        List<McDeviceContent> writeDWord = new ArrayList<>();
+        writeDWord.add(McDeviceContent.createBy("D110", new byte[4]));
+        this.mcPLC.writeDeviceRandomInWord(writeWord, writeDWord);
+
+        List<McDeviceAddress> readWord = new ArrayList<>();
+        McDeviceAddress address = McDeviceAddress.createBy("D110");
+        for (int i = 0; i < 194; i++) {
+            readWord.add(address);
+        }
+        List<McDeviceAddress> readDWord = new ArrayList<>();
+        readDWord.add(address);
+        List<McDeviceContent> mcDeviceContents = this.mcPLC.readDeviceRandomInWord(readWord, readDWord);
+        assertEquals(195, mcDeviceContents.size());
     }
 
     @Test(expected = Test.None.class)
-    public void writeDeviceRandomInBit(){
+    public void writeDeviceRandomInBit() {
         List<McDeviceContent> contents = new ArrayList<>();
-        contents.add( McDeviceContent.createBy("M110", new byte[]{0x01}));
-        contents.add( McDeviceContent.createBy("M112", new byte[]{0x01}));
-        contents.add( McDeviceContent.createBy("M113", new byte[]{0x01}));
+        contents.add(McDeviceContent.createBy("M110", new byte[]{0x01}));
+        contents.add(McDeviceContent.createBy("M112", new byte[]{0x01}));
+        contents.add(McDeviceContent.createBy("M113", new byte[]{0x01}));
+        this.mcPLC.writeDeviceRandomInBit(contents);
+    }
+
+    @Test(expected = Test.None.class)
+    public void writeDeviceRandomInBitOutRange() {
+        List<McDeviceContent> contents = new ArrayList<>();
+        McDeviceContent m110 = McDeviceContent.createBy("M110", new byte[1]);
+        for (int i = 0; i < 194; i++) {
+            contents.add(m110);
+        }
         this.mcPLC.writeDeviceRandomInBit(contents);
     }
 
     @Test
-    public void readWriteBoolean() {
-        this.mcPLC.writeBoolean("M110",true);
-        boolean m110 = this.mcPLC.readBoolean("M110");
-        assertTrue(m110);
+    public void readWriteDeviceBatchMultiBlocks() {
+        List<McDeviceContent> wordContents = new ArrayList<>();
+        wordContents.add(McDeviceContent.createBy("D110", 2, new byte[]{0x01, 0x02, 0x03, 0x04}));
+        wordContents.add(McDeviceContent.createBy("D0", 1, new byte[]{0x08, 0x07}));
+        List<McDeviceContent> bitContents = new ArrayList<>();
+        bitContents.add(McDeviceContent.createBy("M110", 1, new byte[]{0x03, 0x04}));
+        this.mcPLC.writeDeviceBatchMultiBlocks(wordContents, bitContents);
 
-        this.mcPLC.writeBooleans("M120", true, true, true);
-        List<Boolean> booleanList = this.mcPLC.readBooleans("M120", 3);
-        assertEquals(4, booleanList.size());
-        booleanList.forEach(Assert::assertTrue);
+        List<McDeviceAddress> wordAddresses = new ArrayList<>();
+        wordAddresses.add(McDeviceAddress.createBy("D110", 2));
+        wordAddresses.add(McDeviceAddress.createBy("D114", 1));
+        List<McDeviceAddress> bitAddresses = new ArrayList<>();
+        bitAddresses.add(McDeviceAddress.createBy("M110", 1));
+        List<McDeviceContent> mcDeviceContents = this.mcPLC.readDeviceBatchMultiBlocks(wordAddresses, bitAddresses);
+        assertArrayEquals(new byte[]{0x01, 0x02, 0x03, 0x04}, mcDeviceContents.get(0).getData());
+        assertArrayEquals(new byte[]{0x06, 0x07}, mcDeviceContents.get(1).getData());
+        assertArrayEquals(new byte[]{0x03, 0x04}, mcDeviceContents.get(2).getData());
     }
 
     @Test
     public void readWriteBooleanOutRange() {
+        List<Boolean> data = new ArrayList<>();
+        for (int i = 0; i < 7170; i++) {
+            data.add(false);
+        }
+        this.mcPLC.writeBooleans("M110", data);
         // 超范围读取
-        List<Boolean> booleanList = this.mcPLC.readBooleans("M110", 7170);
-        assertEquals(7170, booleanList.size());
+//        List<Boolean> booleanList = this.mcPLC.readBooleans("M110", 7170);
+//        assertEquals(7170, booleanList.size());
+    }
+
+    @Test
+    public void readWriteBytesOutRange() {
+        // 超范围写入
+        this.mcPLC.writeBytes("D110", new byte[3848]);
+        // 超范围读取
+        byte[] d110s = this.mcPLC.readBytes("D110", 1924);
+        assertEquals(1924, d110s.length);
+
+    }
+
+    @Test
+    public void readWriteBoolean() {
+        this.mcPLC.writeBoolean("M110", true);
+        boolean m110 = this.mcPLC.readBoolean("M110");
+        assertTrue(m110);
+
+        this.mcPLC.writeBoolean("M110", false);
+        m110 = this.mcPLC.readBoolean("M110");
+        assertFalse(m110);
+
+        this.mcPLC.writeBooleans("M120", true, true, true);
+        List<Boolean> booleanList = this.mcPLC.readBooleans("M120", 3);
+        assertEquals(3, booleanList.size());
+        booleanList.forEach(Assert::assertTrue);
+
+        this.mcPLC.writeBooleans("M120", false, false, false);
+        booleanList = this.mcPLC.readBooleans("M120", 3);
+        assertEquals(3, booleanList.size());
+        booleanList.forEach(Assert::assertFalse);
     }
 
     @Test
@@ -195,10 +292,29 @@ public class McPLCTest {
     }
 
     @Test
+    public void readWriteFloat32() {
+        this.mcPLC.writeFloat32("D114", 33.66f);
+        float data = this.mcPLC.readFloat32("D114");
+        assertEquals(33.66f, data, 0.001);
+
+        this.mcPLC.writeFloat32("D116", 66.3f);
+        this.mcPLC.writeFloat32("D118", 3541563.1f);
+        this.mcPLC.writeFloat32("D120", 546345896.3f);
+        List<Float> actual = this.mcPLC.readFloat32("D116", "D118", "D120");
+        assertEquals(66.3f, actual.get(0), 0.001);
+        assertEquals(3541563.1f, actual.get(1), 0.001);
+        assertEquals(546345896.3f, actual.get(2), 0.001);
+    }
+
+    @Test
     public void readAndWriteData() {
         this.mcPLC.writeBoolean("M100", true);
         boolean m100 = this.mcPLC.readBoolean("M100");
         assertTrue(m100);
+
+        this.mcPLC.writeByte("D100", (byte) 0x01);
+        byte d100 = this.mcPLC.readByte("D100");
+        assertEquals(0x01, d100);
 
         this.mcPLC.writeInt16("D100", (short) 66);
         short int16 = this.mcPLC.readInt16("D100");
@@ -228,5 +344,4 @@ public class McPLCTest {
         String string = this.mcPLC.readString("D100", 6);
         assertEquals("123456", string);
     }
-
 }

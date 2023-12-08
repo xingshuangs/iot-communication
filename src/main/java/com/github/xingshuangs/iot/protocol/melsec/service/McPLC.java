@@ -48,11 +48,11 @@ import java.util.stream.Collectors;
 public class McPLC extends McNetwork {
 
     public McPLC() {
-        this(EMcSeries.Q_L, EMcFrameType.FRAME_4E, GeneralConst.LOCALHOST, GeneralConst.MELSEC_PORT);
+        this(EMcSeries.Q_L, EMcFrameType.FRAME_3E, GeneralConst.LOCALHOST, GeneralConst.MELSEC_PORT);
     }
 
     public McPLC(String host, int port) {
-        this(EMcSeries.Q_L, EMcFrameType.FRAME_4E, host, port);
+        this(EMcSeries.Q_L, EMcFrameType.FRAME_3E, host, port);
     }
 
     public McPLC(EMcSeries series, EMcFrameType frameType, String host, int port) {
@@ -64,15 +64,15 @@ public class McPLC extends McNetwork {
 
     //region 软元件读取
 
-    /**
-     * 读多地址
-     *
-     * @param multiAddressRead 多地址
-     */
-    public void readMultiAddress(McMultiAddressRead multiAddressRead) {
-        List<McDeviceAddress> words = multiAddressRead.getWords();
-        this.readDeviceBatchMultiBlocks(words, new ArrayList<>(0));
-    }
+//    /**
+//     * 读多地址
+//     *
+//     * @param multiAddressRead 多地址
+//     */
+//    public void readMultiAddress(McMultiAddressRead multiAddressRead) {
+//        List<McDeviceAddress> words = multiAddressRead.getWords();
+//        this.readDeviceBatchMultiBlocks(words, new ArrayList<>(0));
+//    }
 
     /**
      * 读取booleans数据
@@ -326,32 +326,32 @@ public class McPLC extends McNetwork {
         return ByteReadBuff.newInstance(bytes, EByteBuffFormat.AB_CD).getFloat64();
     }
 
-    /**
-     * 读取多个Float64数据
-     *
-     * @param addresses 多地址
-     * @return Double列表
-     */
-    public List<Double> readFloat64(String... addresses) {
-        return this.readFloat64(Arrays.asList(addresses));
-    }
-
-    /**
-     * 读取多个Float64数据
-     *
-     * @param addresses 多地址
-     * @return Double列表
-     */
-    public List<Double> readFloat64(List<String> addresses) {
-        List<McDeviceAddress> deviceAddresses = addresses.stream().map(x -> McDeviceAddress.createBy(x, 4))
-                .collect(Collectors.toList());
-
-        List<McDeviceContent> deviceContents = this.readDeviceBatchMultiBlocks(deviceAddresses, new ArrayList<>());
-
-        return deviceContents.stream()
-                .map(x -> ByteReadBuff.newInstance(x.getData(), EByteBuffFormat.AB_CD).getFloat64())
-                .collect(Collectors.toList());
-    }
+//    /**
+//     * 读取多个Float64数据
+//     *
+//     * @param addresses 多地址
+//     * @return Double列表
+//     */
+//    public List<Double> readFloat64(String... addresses) {
+//        return this.readFloat64(Arrays.asList(addresses));
+//    }
+//
+//    /**
+//     * 读取多个Float64数据
+//     *
+//     * @param addresses 多地址
+//     * @return Double列表
+//     */
+//    public List<Double> readFloat64(List<String> addresses) {
+//        List<McDeviceAddress> deviceAddresses = addresses.stream().map(x -> McDeviceAddress.createBy(x, 4))
+//                .collect(Collectors.toList());
+//
+//        List<McDeviceContent> deviceContents = this.readDeviceBatchMultiBlocks(deviceAddresses, new ArrayList<>());
+//
+//        return deviceContents.stream()
+//                .map(x -> ByteReadBuff.newInstance(x.getData(), EByteBuffFormat.AB_CD).getFloat64())
+//                .collect(Collectors.toList());
+//    }
 
     /**
      * 读取字符串数据
@@ -369,15 +369,15 @@ public class McPLC extends McNetwork {
 
     //region 软元件写入
 
-    /**
-     * 写多地址
-     *
-     * @param multiAddressWrite 多地址
-     */
-    public void writeMultiAddress(McMultiAddressWrite multiAddressWrite) {
-        List<McDeviceContent> words = multiAddressWrite.getWords();
-        this.writeDeviceBatchMultiBlocks(words, new ArrayList<>(0));
-    }
+//    /**
+//     * 写多地址
+//     *
+//     * @param multiAddressWrite 多地址
+//     */
+//    public void writeMultiAddress(McMultiAddressWrite multiAddressWrite) {
+//        List<McDeviceContent> words = multiAddressWrite.getWords();
+//        this.writeDeviceBatchMultiBlocks(words, new ArrayList<>(0));
+//    }
 
     /**
      * 写入多个boolean

@@ -399,11 +399,12 @@ public class McNetwork extends TcpClientBasic {
         }
 
         try {
-            int actualLength = deviceAddress.getDevicePointsCount();
-            int maxLength = 7168;
-            ByteWriteBuff buff = new ByteWriteBuff(actualLength);
+            int length = deviceAddress.getDevicePointsCount() % 2 == 0 ?
+                    (deviceAddress.getDevicePointsCount() / 2) :
+                    ((deviceAddress.getDevicePointsCount() + 1) / 2);
+            ByteWriteBuff buff = new ByteWriteBuff(length);
 
-            McGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
+            McGroupAlg.loopExecute(deviceAddress.getDevicePointsCount(), 7168, (off, len) -> {
                 McDeviceAddress newAddress = new McDeviceAddress(deviceAddress.getDeviceCode(),
                         deviceAddress.getHeadDeviceNumber() + off, len);
                 McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
@@ -511,8 +512,8 @@ public class McNetwork extends TcpClientBasic {
             McGroupItem dwordItem = new McGroupItem(dwordAddresses.size());
 
             McGroupAlg.biLoopExecute(wordItem, dwordItem, biPredicate, (i1, i2) -> {
-                List<McDeviceAddress> newWords = wordAddresses.subList(i1.getOff(), i1.getLen());
-                List<McDeviceAddress> newDWords = dwordAddresses.subList(i2.getOff(), i2.getLen());
+                List<McDeviceAddress> newWords = wordAddresses.subList(i1.getOff(), i1.getOff() + i1.getLen());
+                List<McDeviceAddress> newDWords = dwordAddresses.subList(i2.getOff(), i2.getOff() + i2.getLen());
                 McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createReadDeviceRandomInWordReq(this.series, header, newWords, newDWords);
                 McMessageAck ack = this.readFromServer(req);
@@ -575,8 +576,8 @@ public class McNetwork extends TcpClientBasic {
             McGroupItem dwordItem = new McGroupItem(dwordContents.size());
 
             McGroupAlg.biLoopExecute(wordItem, dwordItem, biPredicate, (i1, i2) -> {
-                List<McDeviceContent> newWord = wordContents.subList(i1.getOff(), i1.getLen());
-                List<McDeviceContent> newDWord = dwordContents.subList(i2.getOff(), i2.getLen());
+                List<McDeviceContent> newWord = wordContents.subList(i1.getOff(), i1.getOff() + i1.getLen());
+                List<McDeviceContent> newDWord = dwordContents.subList(i2.getOff(), i2.getOff() + i2.getLen());
                 McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createWriteDeviceRandomInWordReq(this.series, header, newWord, newDWord);
                 this.readFromServer(req);
@@ -647,8 +648,8 @@ public class McNetwork extends TcpClientBasic {
             McGroupItem bitItem = new McGroupItem(bitAddresses.size());
 
             McGroupAlg.biLoopExecute(wordItem, bitItem, biPredicate, (i1, i2) -> {
-                List<McDeviceAddress> newWords = wordAddresses.subList(i1.getOff(), i1.getLen());
-                List<McDeviceAddress> newBits = bitAddresses.subList(i2.getOff(), i2.getLen());
+                List<McDeviceAddress> newWords = wordAddresses.subList(i1.getOff(), i1.getOff() + i1.getLen());
+                List<McDeviceAddress> newBits = bitAddresses.subList(i2.getOff(), i2.getOff() + i2.getLen());
                 McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createReadDeviceBatchMultiBlocksReq(this.series, header, newWords, newBits);
                 McMessageAck ack = this.readFromServer(req);
@@ -682,6 +683,10 @@ public class McNetwork extends TcpClientBasic {
         }
         if (words.isEmpty() && bits.isEmpty()) {
             throw new IllegalArgumentException("wordAddresses and bitAddresses 数量为空");
+        }
+        // TODO: 待确认
+        if (this.frameType == EMcFrameType.FRAME_3E) {
+            throw new McCommException("3E暂不支持批量块读写");
         }
         boolean b1 = words.stream().allMatch(x -> EMcDeviceCode.checkWordType(x.getDeviceCode()));
         if (!b1) {
@@ -730,8 +735,8 @@ public class McNetwork extends TcpClientBasic {
 
         try {
             BiPredicate<McGroupItem, McGroupItem> biPredicate = (i1, i2) -> {
-                List<McDeviceContent> newWord = wordContents.subList(i1.getOff(), i1.getLen());
-                List<McDeviceContent> newBit = bitContents.subList(i2.getOff(), i2.getLen());
+                List<McDeviceContent> newWord = wordContents.subList(i1.getOff(), i1.getOff() + i1.getLen());
+                List<McDeviceContent> newBit = bitContents.subList(i2.getOff(), i2.getOff() + i2.getLen());
                 int blockNum = newWord.size() + newBit.size();
                 int count = blockNum * (this.series == EMcSeries.Q_L ? 4 : 9)
                         + (newWord.stream().mapToInt(McDeviceAddress::getDevicePointsCount).sum()
@@ -742,8 +747,8 @@ public class McNetwork extends TcpClientBasic {
             McGroupItem bitItem = new McGroupItem(bitContents.size());
 
             McGroupAlg.biLoopExecute(wordItem, bitItem, biPredicate, (i1, i2) -> {
-                List<McDeviceContent> newWords = wordContents.subList(i1.getOff(), i1.getLen());
-                List<McDeviceContent> newBits = bitContents.subList(i2.getOff(), i2.getLen());
+                List<McDeviceContent> newWords = wordContents.subList(i1.getOff(), i1.getOff() + i1.getLen());
+                List<McDeviceContent> newBits = bitContents.subList(i2.getOff(), i2.getOff() + i2.getLen());
                 McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createWriteDeviceBatchMultiBlocksReq(this.series, header, newWords, newBits);
                 this.readFromServer(req);
