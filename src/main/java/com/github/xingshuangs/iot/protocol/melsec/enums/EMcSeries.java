@@ -34,6 +34,7 @@ import lombok.Getter;
  */
 @Getter
 public enum EMcSeries {
+
     /**
      * QnA系列
      */
@@ -78,24 +79,54 @@ public enum EMcSeries {
         this.deviceBlocksWritePointsCount = deviceBlocksWritePointsCount;
     }
 
+    /**
+     * 软元件代码字节长度
+     */
     private final int deviceCodeByteLength;
 
+    /**
+     * 起始软元件编号字节长度
+     */
     private final int headDeviceNumberByteLength;
 
+    /**
+     * 软元件按字批量读写的点数
+     */
     private final int deviceBatchInWordPointsCount;
 
+    /**
+     * 软元件按位批量读写的点数
+     */
     private final int deviceBatchInBitPointsCount;
 
+    /**
+     * 软元件按字随机读的点数
+     */
     private final int deviceRandomReadInWordPointsCount;
 
+    /**
+     * 软元件按字随机写的点数
+     */
     private final int deviceRandomWriteInWordPointsCount;
 
+    /**
+     * 软元件按位随机写的点数
+     */
     private final int deviceRandomWriteInBitPointsCount;
 
+    /**
+     * 软元件按块批量读写的块数
+     */
     private final int deviceBlocksBlocksCount;
 
+    /**
+     * 软元件按块批量写的点大小
+     */
     private final int deviceBlocksWritePointsSize;
 
+    /**
+     * 软元件按块批量写的点数
+     */
     private final int deviceBlocksWritePointsCount;
 
 

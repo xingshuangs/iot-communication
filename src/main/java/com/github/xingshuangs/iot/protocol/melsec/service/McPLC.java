@@ -59,7 +59,7 @@ public class McPLC extends McNetwork {
         super(host, port);
         this.tag = "Melsec";
         this.series = series;
-        this.frameType = frameType;
+        this.frameType = series == EMcSeries.QnA ? EMcFrameType.FRAME_3E : frameType;
     }
 
     //region 软元件读取

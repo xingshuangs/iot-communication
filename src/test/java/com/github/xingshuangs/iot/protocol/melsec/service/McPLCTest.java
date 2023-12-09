@@ -182,7 +182,7 @@ public class McPLCTest {
         assertArrayEquals(new byte[]{0x03, 0x04}, mcDeviceContents.get(2).getData());
     }
 
-    @Test
+    @Test()
     public void readWriteBooleanOutRange() {
         List<Boolean> data = new ArrayList<>();
         for (int i = 0; i < 7170; i++) {
@@ -190,8 +190,8 @@ public class McPLCTest {
         }
         this.mcPLC.writeBooleans("M110", data);
         // 超范围读取
-//        List<Boolean> booleanList = this.mcPLC.readBooleans("M110", 7170);
-//        assertEquals(7170, booleanList.size());
+        List<Boolean> booleanList = this.mcPLC.readBooleans("M110", 7170);
+        assertEquals(7170, booleanList.size());
     }
 
     @Test

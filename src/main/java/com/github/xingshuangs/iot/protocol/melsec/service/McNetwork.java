@@ -125,13 +125,14 @@ public class McNetwork extends TcpClientBasic {
         synchronized (this.objLock) {
             this.write(req.toByteArray());
 
-            byte[] data = new byte[9];
+            int headerLength = this.frameType == EMcFrameType.FRAME_4E ? 13 : 9;
+            byte[] data = new byte[headerLength];
             len = this.read(data);
-            if (len < 9) {
+            if (len < headerLength) {
                 throw new McCommException(" McHeader 无效，读取长度不一致");
             }
-            header = McHeader.fromBytes(data);
-            total = new byte[9 + header.getDataLength()];
+            header = McHeader.fromBytes(data, this.frameType);
+            total = new byte[headerLength + header.getDataLength()];
             System.arraycopy(data, 0, total, 0, data.length);
             len = this.read(total, data.length, header.getDataLength(), true);
         }
@@ -141,7 +142,7 @@ public class McNetwork extends TcpClientBasic {
         if (this.comCallback != null) {
             this.comCallback.accept(total);
         }
-        McMessageAck ack = McMessageAck.fromBytes(total);
+        McMessageAck ack = McMessageAck.fromBytes(total, this.frameType);
         this.checkResult(req, ack);
         return ack;
     }
@@ -153,14 +154,12 @@ public class McNetwork extends TcpClientBasic {
      * @param ack 响应数据
      */
     protected void checkResult(McMessageReq req, McMessageAck ack) {
-        if (req.getHeader().getSubHeader() == EMcFrameType.FRAME_4E.getReqSubHeader()
-                && ack.getHeader().getSubHeader() != EMcFrameType.FRAME_4E.getAckSubHeader()) {
-            throw new McCommException("响应副帧头和请求副帧头不一致，请求副帧头：" + req.getHeader().getSubHeader()
+        if (this.frameType==EMcFrameType.FRAME_4E && ack.getHeader().getSubHeader() != EMcFrameType.FRAME_4E.getAckSubHeader()) {
+            throw new McCommException("4E帧类型，响应副帧头和请求副帧头不一致，请求副帧头：" + req.getHeader().getSubHeader()
                     + "，响应副帧头：" + ack.getHeader().getEndCode());
         }
-        if (req.getHeader().getSubHeader() == EMcFrameType.FRAME_3E.getReqSubHeader()
-                && ack.getHeader().getSubHeader() != EMcFrameType.FRAME_3E.getAckSubHeader()) {
-            throw new McCommException("响应副帧头和请求副帧头不一致，请求副帧头：" + req.getHeader().getSubHeader()
+        if (this.frameType==EMcFrameType.FRAME_3E && ack.getHeader().getSubHeader() != EMcFrameType.FRAME_3E.getAckSubHeader()) {
+            throw new McCommException("3E帧类型，响应副帧头和请求副帧头不一致，请求副帧头：" + req.getHeader().getSubHeader()
                     + "，响应副帧头：" + ack.getHeader().getEndCode());
         }
         if (ack.getHeader().getEndCode() != 0) {

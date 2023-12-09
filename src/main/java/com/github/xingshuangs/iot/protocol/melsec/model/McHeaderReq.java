@@ -26,6 +26,7 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import lombok.Data;
 
 /**
@@ -56,14 +57,20 @@ public class McHeaderReq extends McHeader {
 
     @Override
     public int byteArrayLength() {
-        return 2 + this.accessRoute.byteArrayLength() + 2 + 2;
+        return (frameType == EMcFrameType.FRAME_4E ? 6 : 2) + this.accessRoute.byteArrayLength() + 2 + 2;
     }
 
     @Override
     public byte[] toByteArray() {
-        return ByteWriteBuff.newInstance(this.byteArrayLength(), true)
-                .putShort(this.subHeader)
-                .putBytes(this.accessRoute.toByteArray())
+        int length = (frameType == EMcFrameType.FRAME_4E ? 6 : 2) + this.accessRoute.byteArrayLength() + 2 + 2;
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true)
+                .putShort(this.subHeader);
+
+        if (frameType == EMcFrameType.FRAME_4E) {
+            buff.putShort(this.serialNumber);
+            buff.putShort(this.fixedNumber);
+        }
+        return buff.putBytes(this.accessRoute.toByteArray())
                 .putShort(this.dataLength)
                 .putShort(this.monitoringTimer)
                 .getData();

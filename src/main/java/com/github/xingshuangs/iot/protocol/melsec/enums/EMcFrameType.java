@@ -25,14 +25,17 @@
 package com.github.xingshuangs.iot.protocol.melsec.enums;
 
 
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 副帧头
+ * 帧类型
  *
  * @author xingshuang
  */
+@Getter
 public enum EMcFrameType {
 
     /**
@@ -58,10 +61,19 @@ public enum EMcFrameType {
         return map.get(data);
     }
 
+    /**
+     * 类型码
+     */
     private final String code;
 
+    /**
+     * 请求副帧头
+     */
     private final int reqSubHeader;
 
+    /**
+     * 响应副帧头
+     */
     private final int ackSubHeader;
 
     EMcFrameType(String code, int reqSubHeader, int ackSubHeader) {
@@ -70,15 +82,5 @@ public enum EMcFrameType {
         this.ackSubHeader = ackSubHeader;
     }
 
-    public String getCode() {
-        return code;
-    }
 
-    public int getReqSubHeader() {
-        return reqSubHeader;
-    }
-
-    public int getAckSubHeader() {
-        return ackSubHeader;
-    }
 }

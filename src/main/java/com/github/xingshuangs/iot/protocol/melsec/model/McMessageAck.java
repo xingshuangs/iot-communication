@@ -28,6 +28,7 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import lombok.Data;
 
 /**
@@ -73,8 +74,8 @@ public class McMessageAck implements IObjectByteArray {
      * @param data 字节数组数据
      * @return McMessageAck
      */
-    public static McMessageAck fromBytes(final byte[] data) {
-        return fromBytes(data, 0);
+    public static McMessageAck fromBytes(final byte[] data, EMcFrameType frameType) {
+        return fromBytes(data, 0, frameType);
     }
 
     /**
@@ -84,10 +85,11 @@ public class McMessageAck implements IObjectByteArray {
      * @param offset 偏移量
      * @return McMessageAck
      */
-    public static McMessageAck fromBytes(final byte[] data, final int offset) {
+    public static McMessageAck fromBytes(final byte[] data, final int offset, EMcFrameType frameType) {
         ByteReadBuff buff = new ByteReadBuff(data, offset, true);
         McMessageAck res = new McMessageAck();
-        res.header = McHeaderAck.fromBytes(buff.getBytes(11));
+        byte[] headerBytes = frameType == EMcFrameType.FRAME_4E ? buff.getBytes(15) : buff.getBytes(11);
+        res.header = McHeaderAck.fromBytes(headerBytes, frameType);
         res.data = res.header.getEndCode() == 0 ? McAckData.fromBytes(buff.getBytes())
                 : McErrorInformationData.fromBytes(buff.getBytes());
         return res;

@@ -30,32 +30,43 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 
-public class McMessageAckTest {
+public class McHeaderAckTest {
 
     @Test
-    public void mcDeviceBatchReadAckData() {
+    public void fromBytes4E() {
+
         byte[] src = new byte[]{
-                0x54, 0x00, 0x00, (byte) 0xFF, (byte) 0xFF, 0x03, 0x00,
-                0x0C, 0x00, 0x00, 0x00,
-                0x01, 0x04, 0x00, 0x00,
-                0x58, 0x1B, 0x00, (byte) 0xA8, 0x02, 0x00
+                (byte)0xD4, 0x00, 0x34, 0x12, 0x00, 0x00, 0x00, (byte) 0xFF, (byte) 0xFF, 0x03, 0x00,
+                0x0C, 0x00, 0x00, 0x00
         };
 
-        McMessageAck ack = McMessageAck.fromBytes(src, EMcFrameType.FRAME_3E);
-        McHeaderAck header = ack.getHeader();
-        assertEquals(0x0054, header.getSubHeader());
-        McFrame4E3EAccessRoute accessRoute = (McFrame4E3EAccessRoute) header.getAccessRoute();
+        McHeaderAck ack = McHeaderAck.fromBytes(src, EMcFrameType.FRAME_4E);
+        assertEquals(EMcFrameType.FRAME_4E.getAckSubHeader(), ack.getSubHeader());
+        assertEquals(4660, ack.getSerialNumber());
+        assertEquals(0, ack.getFixedNumber());
+        McFrame4E3EAccessRoute accessRoute = (McFrame4E3EAccessRoute) ack.getAccessRoute();
         assertEquals(0, accessRoute.getNetworkNumber());
         assertEquals(0xFF, accessRoute.getPcNumber());
         assertEquals(0x03FF, accessRoute.getRequestDestModuleIoNumber());
         assertEquals(0, accessRoute.getRequestDestModuleStationNumber());
-        assertEquals(12, header.getDataLength());
-        McAckData data = (McAckData) ack.getData();
-        assertEquals(10, data.getData().length);
-        byte[] dataBytes = new byte[]{
-                0x01, 0x04, 0x00, 0x00,
-                0x58, 0x1B, 0x00, (byte) 0xA8, 0x02, 0x00
+        assertEquals(12, ack.getDataLength());
+    }
+
+    @Test
+    public void fromBytes3E() {
+
+        byte[] src = new byte[]{
+                (byte)0xD0, 0x00, 0x00, (byte) 0xFF, (byte) 0xFF, 0x03, 0x00,
+                0x0C, 0x00, 0x00, 0x00
         };
-        assertArrayEquals(dataBytes, data.getData());
+
+        McHeaderAck ack = McHeaderAck.fromBytes(src, EMcFrameType.FRAME_3E);
+        assertEquals(EMcFrameType.FRAME_3E.getAckSubHeader(), ack.getSubHeader());
+        McFrame4E3EAccessRoute accessRoute = (McFrame4E3EAccessRoute) ack.getAccessRoute();
+        assertEquals(0, accessRoute.getNetworkNumber());
+        assertEquals(0xFF, accessRoute.getPcNumber());
+        assertEquals(0x03FF, accessRoute.getRequestDestModuleIoNumber());
+        assertEquals(0, accessRoute.getRequestDestModuleStationNumber());
+        assertEquals(12, ack.getDataLength());
     }
 }

@@ -27,6 +27,7 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import lombok.Data;
 
 /**
@@ -49,14 +50,19 @@ public class McHeaderAck extends McHeader {
 
     @Override
     public int byteArrayLength() {
-        return 2 + this.accessRoute.byteArrayLength() + 2 + 2;
+        return (frameType == EMcFrameType.FRAME_4E ? 6 : 2) + this.accessRoute.byteArrayLength() + 2 + 2;
     }
 
     @Override
     public byte[] toByteArray() {
-        return ByteWriteBuff.newInstance(this.byteArrayLength(), true)
-                .putShort(this.subHeader)
-                .putBytes(this.accessRoute.toByteArray())
+        int length = (frameType == EMcFrameType.FRAME_4E ? 6 : 2) + this.accessRoute.byteArrayLength() + 2 + 2;
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true)
+                .putShort(this.subHeader);
+        if (frameType == EMcFrameType.FRAME_4E) {
+            buff.putShort(this.serialNumber);
+            buff.putShort(this.fixedNumber);
+        }
+        return buff.putBytes(this.accessRoute.toByteArray())
                 .putShort(this.dataLength)
                 .putShort(this.endCode)
                 .getData();
@@ -68,8 +74,8 @@ public class McHeaderAck extends McHeader {
      * @param data 字节数组数据
      * @return McHeaderAck
      */
-    public static McHeaderAck fromBytes(final byte[] data) {
-        return fromBytes(data, 0);
+    public static McHeaderAck fromBytes(final byte[] data, EMcFrameType frameType) {
+        return fromBytes(data, 0, frameType);
     }
 
     /**
@@ -79,10 +85,15 @@ public class McHeaderAck extends McHeader {
      * @param offset 偏移量
      * @return McHeaderAck
      */
-    public static McHeaderAck fromBytes(final byte[] data, final int offset) {
-        ByteReadBuff buff = new ByteReadBuff(data, offset,true);
+    public static McHeaderAck fromBytes(final byte[] data, final int offset, EMcFrameType frameType) {
+        ByteReadBuff buff = new ByteReadBuff(data, offset, true);
         McHeaderAck res = new McHeaderAck();
+        res.frameType = frameType;
         res.subHeader = buff.getUInt16();
+        if (frameType == EMcFrameType.FRAME_4E) {
+            res.serialNumber = buff.getUInt16();
+            res.fixedNumber = buff.getUInt16();
+        }
         res.accessRoute = McFrame4E3EAccessRoute.fromBytes(buff.getBytes(5));
         res.dataLength = buff.getUInt16();
         res.endCode = buff.getUInt16();
