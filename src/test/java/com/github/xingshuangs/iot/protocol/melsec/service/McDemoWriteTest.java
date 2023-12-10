@@ -28,8 +28,6 @@ package com.github.xingshuangs.iot.protocol.melsec.service;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import com.github.xingshuangs.iot.utils.HexUtil;
 
-import java.util.List;
-
 /**
  * @author xingshuang
  */
@@ -45,7 +43,7 @@ public class McDemoWriteTest {
         mcPLC.writeBoolean("M100", true);
 
         // write multi boolean
-        mcPLC.writeBooleans("M100", true, false, true);
+        mcPLC.writeBoolean("M100", true, false, true);
 
         // write one byte
         mcPLC.writeByte("D100", (byte) 0x01);

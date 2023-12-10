@@ -25,7 +25,6 @@
 package com.github.xingshuangs.iot.protocol.melsec.service;
 
 import com.github.xingshuangs.iot.exceptions.McCommException;
-import com.github.xingshuangs.iot.protocol.common.constant.GeneralConst;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceAddress;
@@ -46,8 +45,8 @@ import static org.junit.Assert.*;
 @Ignore
 public class McPLCTest {
 
-//        private final McPLC mcPLC = new McPLC("192.168.3.100", 6001);
-    private final McPLC mcPLC = new McPLC(GeneralConst.LOCALHOST, 6000);
+    private final McPLC mcPLC = new McPLC(EMcSeries.Q_L, "192.168.3.100", 6001);
+//    private final McPLC mcPLC = new McPLC(EMcSeries.Q_L, GeneralConst.LOCALHOST, 6000);
 
     @Before
     public void before() {
@@ -188,9 +187,9 @@ public class McPLCTest {
         for (int i = 0; i < 7170; i++) {
             data.add(false);
         }
-        this.mcPLC.writeBooleans("M110", data);
+        this.mcPLC.writeBoolean("M110", data);
         // 超范围读取
-        List<Boolean> booleanList = this.mcPLC.readBooleans("M110", 7170);
+        List<Boolean> booleanList = this.mcPLC.readBoolean("M110", 7170);
         assertEquals(7170, booleanList.size());
     }
 
@@ -214,13 +213,13 @@ public class McPLCTest {
         m110 = this.mcPLC.readBoolean("M110");
         assertFalse(m110);
 
-        this.mcPLC.writeBooleans("M120", true, true, true);
-        List<Boolean> booleanList = this.mcPLC.readBooleans("M120", 3);
+        this.mcPLC.writeBoolean("M120", true, true, true);
+        List<Boolean> booleanList = this.mcPLC.readBoolean("M120", 3);
         assertEquals(3, booleanList.size());
         booleanList.forEach(Assert::assertTrue);
 
-        this.mcPLC.writeBooleans("M120", false, false, false);
-        booleanList = this.mcPLC.readBooleans("M120", 3);
+        this.mcPLC.writeBoolean("M120", false, false, false);
+        booleanList = this.mcPLC.readBoolean("M120", 3);
         assertEquals(3, booleanList.size());
         booleanList.forEach(Assert::assertFalse);
     }
@@ -343,5 +342,45 @@ public class McPLCTest {
         this.mcPLC.writeString("D100", "123456");
         String string = this.mcPLC.readString("D100", 6);
         assertEquals("123456", string);
+    }
+
+    @Test
+    public void readAndWriteMultiData() {
+        this.mcPLC.writeBoolean("M100", true, false, true);
+        List<Boolean> booleanList = this.mcPLC.readBoolean("M100", 3);
+        assertTrue(booleanList.get(0));
+        assertFalse(booleanList.get(1));
+        assertTrue(booleanList.get(2));
+
+        this.mcPLC.writeInt16("D100", (short) 16, (short) 17, (short) 118);
+        List<Short> int16List = this.mcPLC.readInt16("D100", "D101", "D102");
+        assertEquals((short) 16, int16List.get(0).shortValue());
+        assertEquals((short) 17, int16List.get(1).shortValue());
+        assertEquals((short) 118, int16List.get(2).shortValue());
+
+        this.mcPLC.writeUInt16("D100", 26, 27, 218);
+        List<Integer> uint16List = this.mcPLC.readUInt16("D100", "D101", "D102");
+        assertEquals(26, uint16List.get(0).intValue());
+        assertEquals(27, uint16List.get(1).intValue());
+        assertEquals(218, uint16List.get(2).intValue());
+
+        this.mcPLC.writeInt32("D100", 88, 99, 100);
+        List<Integer> int32List = this.mcPLC.readInt32("D100", "D102", "D104");
+        assertEquals(88, int32List.get(0).intValue());
+        assertEquals(99, int32List.get(1).intValue());
+        assertEquals(100, int32List.get(2).intValue());
+
+        this.mcPLC.writeUInt32("D100", 78L, 89L, 200L);
+        List<Long> uint32List = this.mcPLC.readUInt32("D100", "D102", "D104");
+        assertEquals(78L, uint32List.get(0).longValue());
+        assertEquals(89L, uint32List.get(1).longValue());
+        assertEquals(200L, uint32List.get(2).longValue());
+
+        this.mcPLC.writeFloat32("D100", 99.33f, 112.3f, 22.55f);
+        List<Float> float32List = this.mcPLC.readFloat32("D100", "D102", "D104");
+        assertEquals(99.33f, float32List.get(0), 0.001);
+        assertEquals(112.3f, float32List.get(1), 0.001);
+        assertEquals(22.55f, float32List.get(2), 0.001);
+
     }
 }

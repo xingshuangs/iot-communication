@@ -84,7 +84,7 @@ public class McDemoCustomReadAndWriteTest {
         contents.add(McDeviceContent.createBy("M113", new byte[]{0x01}));
         mcPLC.writeDeviceRandomInBit(contents);
 
-        // ---------------------- read and write device multi blocks (test failed, no reason) ---------------------
+        // ---------- read and write device multi blocks (test failed, not get reason) ----
         List<McDeviceContent> wordContents = new ArrayList<>();
         wordContents.add(McDeviceContent.createBy("D110", 2, new byte[]{0x01, 0x02, 0x03, 0x04}));
         wordContents.add(McDeviceContent.createBy("D0", 1, new byte[]{0x08, 0x07}));

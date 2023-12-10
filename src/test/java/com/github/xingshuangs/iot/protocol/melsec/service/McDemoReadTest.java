@@ -46,7 +46,7 @@ public class McDemoReadTest {
         boolean booleanData = mcPLC.readBoolean("M100");
 
         // read boolean list
-        List<Boolean> booleanList = mcPLC.readBooleans("M100", 10);
+        List<Boolean> booleanList = mcPLC.readBoolean("M100", 10);
 
         // read one byte
         byte byteData = mcPLC.readByte("D100");

@@ -84,7 +84,7 @@ public class McPLC extends McNetwork {
      * @param count   boolean个数
      * @return boolean列表
      */
-    public List<Boolean> readBooleans(String address, int count) {
+    public List<Boolean> readBoolean(String address, int count) {
         // 三菱1个字节对应两个boolean
         McDeviceAddress deviceAddress = McDeviceAddress.createBy(address, count);
         McDeviceContent deviceContent = this.readDeviceBatchInBit(deviceAddress);
@@ -114,7 +114,7 @@ public class McPLC extends McNetwork {
      * @return boolean
      */
     public boolean readBoolean(String address) {
-        List<Boolean> booleans = this.readBooleans(address, 1);
+        List<Boolean> booleans = this.readBoolean(address, 1);
         return booleans.get(0);
     }
 
@@ -387,8 +387,8 @@ public class McPLC extends McNetwork {
      * @param address  地址
      * @param booleans boolean值
      */
-    public void writeBooleans(String address, Boolean... booleans) {
-        this.writeBooleans(address, Arrays.asList(booleans));
+    public void writeBoolean(String address, Boolean... booleans) {
+        this.writeBoolean(address, Arrays.asList(booleans));
     }
 
     /**
@@ -397,7 +397,7 @@ public class McPLC extends McNetwork {
      * @param address  地址
      * @param booleans boolean列表
      */
-    public void writeBooleans(String address, List<Boolean> booleans) {
+    public void writeBoolean(String address, List<Boolean> booleans) {
         byte[] bytes = this.getBytesBy(booleans);
         McDeviceContent deviceContent = McDeviceContent.createBy(address, booleans.size(), bytes);
         this.writeDeviceBatchInBit(deviceContent);
@@ -427,7 +427,7 @@ public class McPLC extends McNetwork {
      * @param data    boolean数据
      */
     public void writeBoolean(String address, boolean data) {
-        this.writeBooleans(address, Collections.singletonList(data));
+        this.writeBoolean(address, Collections.singletonList(data));
     }
 
     /**
