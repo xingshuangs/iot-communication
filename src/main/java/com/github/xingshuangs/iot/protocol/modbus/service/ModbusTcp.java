@@ -25,9 +25,13 @@
 package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
+import com.github.xingshuangs.iot.common.constant.GeneralConst;
 import com.github.xingshuangs.iot.exceptions.ModbusCommException;
 import com.github.xingshuangs.iot.protocol.modbus.model.*;
 import lombok.extern.slf4j.Slf4j;
+
+import static com.github.xingshuangs.iot.common.constant.GeneralConst.LOCALHOST;
+import static com.github.xingshuangs.iot.common.constant.GeneralConst.MODBUS_PORT;
 
 /**
  * modbus 1个寄存器占2个字节
@@ -38,11 +42,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ModbusTcp extends ModbusSkeletonAbstract<MbTcpRequest, MbTcpResponse> {
 
     public ModbusTcp() {
-        this(1, IP, PORT);
+        this(1, LOCALHOST, MODBUS_PORT);
     }
 
     public ModbusTcp(String ip) {
-        this(1, ip, PORT);
+        this(1, ip, MODBUS_PORT);
     }
 
     public ModbusTcp(String ip, int port) {
@@ -50,11 +54,11 @@ public class ModbusTcp extends ModbusSkeletonAbstract<MbTcpRequest, MbTcpRespons
     }
 
     public ModbusTcp(int unitId) {
-        this(unitId, IP, PORT);
+        this(unitId, LOCALHOST, MODBUS_PORT);
     }
 
     public ModbusTcp(int unitId, String ip) {
-        this(unitId, ip, PORT);
+        this(unitId, ip, MODBUS_PORT);
     }
 
     public ModbusTcp(int unitId, String ip, int port) {

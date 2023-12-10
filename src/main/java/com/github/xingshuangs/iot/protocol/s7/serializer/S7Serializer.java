@@ -26,10 +26,10 @@ package com.github.xingshuangs.iot.protocol.s7.serializer;
 
 
 import com.github.xingshuangs.iot.exceptions.S7CommException;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
-import com.github.xingshuangs.iot.protocol.common.enums.EDataType;
-import com.github.xingshuangs.iot.protocol.common.serializer.IPLCSerializable;
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.common.enums.EDataType;
+import com.github.xingshuangs.iot.common.serializer.IPLCSerializable;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import com.github.xingshuangs.iot.protocol.s7.model.DataItem;
 import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;

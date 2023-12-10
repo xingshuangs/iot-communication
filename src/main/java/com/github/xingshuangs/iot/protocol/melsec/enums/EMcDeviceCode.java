@@ -25,7 +25,7 @@
 package com.github.xingshuangs.iot.protocol.melsec.enums;
 
 
-import com.github.xingshuangs.iot.protocol.common.constant.GeneralConst;
+import com.github.xingshuangs.iot.common.constant.GeneralConst;
 
 import java.util.HashMap;
 import java.util.Map;

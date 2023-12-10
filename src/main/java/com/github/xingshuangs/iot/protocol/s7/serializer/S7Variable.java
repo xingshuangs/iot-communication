@@ -25,7 +25,7 @@
 package com.github.xingshuangs.iot.protocol.s7.serializer;
 
 
-import com.github.xingshuangs.iot.protocol.common.enums.EDataType;
+import com.github.xingshuangs.iot.common.enums.EDataType;
 
 import java.lang.annotation.*;
 

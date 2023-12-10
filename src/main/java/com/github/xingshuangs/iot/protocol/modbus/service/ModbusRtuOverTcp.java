@@ -32,6 +32,9 @@ import com.github.xingshuangs.iot.protocol.modbus.model.MbRtuRequest;
 import com.github.xingshuangs.iot.protocol.modbus.model.MbRtuResponse;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.github.xingshuangs.iot.common.constant.GeneralConst.LOCALHOST;
+import static com.github.xingshuangs.iot.common.constant.GeneralConst.MODBUS_PORT;
+
 /**
  * modbus 1个寄存器占2个字节
  *
@@ -41,11 +44,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ModbusRtuOverTcp extends ModbusSkeletonAbstract<MbRtuRequest, MbRtuResponse> {
 
     public ModbusRtuOverTcp() {
-        this(1, IP, PORT);
+        this(1, LOCALHOST, MODBUS_PORT);
     }
 
     public ModbusRtuOverTcp(String ip) {
-        this(1, ip, PORT);
+        this(1, ip, MODBUS_PORT);
     }
 
     public ModbusRtuOverTcp(String ip, int port) {
@@ -53,11 +56,11 @@ public class ModbusRtuOverTcp extends ModbusSkeletonAbstract<MbRtuRequest, MbRtu
     }
 
     public ModbusRtuOverTcp(int unitId) {
-        this(unitId, IP, PORT);
+        this(unitId, LOCALHOST, MODBUS_PORT);
     }
 
     public ModbusRtuOverTcp(int unitId, String ip) {
-        this(unitId, ip, PORT);
+        this(unitId, ip, MODBUS_PORT);
     }
 
     public ModbusRtuOverTcp(int unitId, String ip, int port) {

@@ -25,9 +25,9 @@
 package com.github.xingshuangs.iot.protocol.s7.service;
 
 
-import com.github.xingshuangs.iot.exceptions.S7CommException;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.common.constant.GeneralConst;
 import com.github.xingshuangs.iot.protocol.s7.enums.*;
 import com.github.xingshuangs.iot.protocol.s7.model.*;
 import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
@@ -42,27 +42,26 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.github.xingshuangs.iot.common.constant.GeneralConst.LOCALHOST;
+import static com.github.xingshuangs.iot.common.constant.GeneralConst.S7_PORT;
+
 /**
  * @author xingshuang
  */
 public class S7PLC extends PLCNetwork {
 
-    public static final int PORT = 102;
-
     public static final int DEFAULT_PDU_LENGTH = 240;
 
-    public static final String IP = "127.0.0.1";
-
     public S7PLC() {
-        this(EPlcType.S1200, IP, PORT, 0, 1, DEFAULT_PDU_LENGTH);
+        this(EPlcType.S1200, LOCALHOST, S7_PORT, 0, 1, DEFAULT_PDU_LENGTH);
     }
 
     public S7PLC(EPlcType plcType) {
-        this(plcType, IP, PORT, 0, 1, DEFAULT_PDU_LENGTH);
+        this(plcType, LOCALHOST, S7_PORT, 0, 1, DEFAULT_PDU_LENGTH);
     }
 
     public S7PLC(EPlcType plcType, String ip) {
-        this(plcType, ip, PORT, 0, 1, DEFAULT_PDU_LENGTH);
+        this(plcType, ip, S7_PORT, 0, 1, DEFAULT_PDU_LENGTH);
     }
 
     public S7PLC(EPlcType plcType, String ip, int port) {
@@ -765,8 +764,8 @@ public class S7PLC extends PLCNetwork {
     /**
      * 创建插入文件指令
      *
-     * @param blockType             块类型
-     * @param blockNumber           块编号
+     * @param blockType   块类型
+     * @param blockNumber 块编号
      */
     public void insert(EFileBlockType blockType, int blockNumber) {
         this.readFromServerByPersistence(S7Data.createInsert(blockType, blockNumber, EDestinationFileSystem.P));

@@ -26,7 +26,7 @@ package com.github.xingshuangs.iot.protocol.rtp.service;
 
 
 import com.github.xingshuangs.iot.exceptions.RtpCommException;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264NaluType;
 import com.github.xingshuangs.iot.protocol.rtp.model.RtpPackage;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;

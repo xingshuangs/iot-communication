@@ -25,7 +25,7 @@
 package com.github.xingshuangs.iot.protocol.rtcp.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.rtcp.enums.ERtcpPackageType;
 import lombok.Data;
 

@@ -25,7 +25,7 @@
 package com.github.xingshuangs.iot.protocol.rtcp.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
+import com.github.xingshuangs.iot.common.IObjectByteArray;
 
 /**
  * 基础包

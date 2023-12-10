@@ -31,6 +31,8 @@ import com.github.xingshuangs.iot.net.ICommunicable;
 import java.io.IOException;
 import java.net.*;
 
+import static com.github.xingshuangs.iot.common.constant.GeneralConst.LOCALHOST;
+
 /**
  * UDP客户端通信协议
  *
@@ -59,7 +61,7 @@ public class UdpClientBasic implements ICommunicable {
     }
 
     public UdpClientBasic() {
-        this("127.0.0.1", 8088);
+        this(LOCALHOST, 8088);
     }
 
     /**

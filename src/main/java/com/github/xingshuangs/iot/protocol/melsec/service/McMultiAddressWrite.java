@@ -25,8 +25,8 @@
 package com.github.xingshuangs.iot.protocol.melsec.service;
 
 
-import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
-import com.github.xingshuangs.iot.protocol.common.buff.EByteBuffFormat;
+import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.common.buff.EByteBuffFormat;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceContent;
 import lombok.Data;
 

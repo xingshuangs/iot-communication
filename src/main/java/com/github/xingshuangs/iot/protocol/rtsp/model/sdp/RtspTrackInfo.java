@@ -26,7 +26,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model.sdp;
 
 
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.attribute.RtspSdpMediaAttrDimension;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.attribute.RtspSdpMediaAttrFmtp;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.attribute.RtspSdpMediaAttrRtpMap;

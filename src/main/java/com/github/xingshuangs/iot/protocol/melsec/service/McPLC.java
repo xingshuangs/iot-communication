@@ -25,10 +25,10 @@
 package com.github.xingshuangs.iot.protocol.melsec.service;
 
 
-import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
-import com.github.xingshuangs.iot.protocol.common.buff.EByteBuffFormat;
-import com.github.xingshuangs.iot.protocol.common.constant.GeneralConst;
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.common.buff.EByteBuffFormat;
+import com.github.xingshuangs.iot.common.constant.GeneralConst;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceAddress;
@@ -40,6 +40,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.github.xingshuangs.iot.common.constant.GeneralConst.LOCALHOST;
+import static com.github.xingshuangs.iot.common.constant.GeneralConst.MELSEC_PORT;
+
 /**
  * 三菱的PLC
  *
@@ -48,7 +51,7 @@ import java.util.stream.Collectors;
 public class McPLC extends McNetwork {
 
     public McPLC() {
-        this(EMcSeries.Q_L, EMcFrameType.FRAME_3E, GeneralConst.LOCALHOST, GeneralConst.MELSEC_PORT);
+        this(EMcSeries.Q_L, EMcFrameType.FRAME_3E, LOCALHOST, MELSEC_PORT);
     }
 
     public McPLC(String host, int port) {
@@ -72,6 +75,7 @@ public class McPLC extends McNetwork {
      * 读多地址
      *
      * @param multiAddressRead 多地址
+     * @return 数据列表
      */
     public List<McDeviceContent> readMultiAddress(McMultiAddressRead multiAddressRead) {
         return this.readDeviceRandomInWord(multiAddressRead.getWords(), multiAddressRead.getDwords());

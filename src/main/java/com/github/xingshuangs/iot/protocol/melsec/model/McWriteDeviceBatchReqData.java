@@ -25,9 +25,7 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
+import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import lombok.Data;
 
 /**

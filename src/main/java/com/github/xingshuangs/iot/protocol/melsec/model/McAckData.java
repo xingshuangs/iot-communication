@@ -25,7 +25,7 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import lombok.Data;
 
 /**

@@ -25,7 +25,7 @@
 package com.github.xingshuangs.iot.protocol.rtsp.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IObjectString;
+import com.github.xingshuangs.iot.common.IObjectString;
 import lombok.Getter;
 import lombok.Setter;
 

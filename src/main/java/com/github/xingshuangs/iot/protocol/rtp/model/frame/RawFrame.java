@@ -25,7 +25,7 @@
 package com.github.xingshuangs.iot.protocol.rtp.model.frame;
 
 
-import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
+import com.github.xingshuangs.iot.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EFrameType;
 import lombok.Getter;
 

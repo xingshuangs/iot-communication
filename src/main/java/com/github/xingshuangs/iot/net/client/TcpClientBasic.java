@@ -35,6 +35,8 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.github.xingshuangs.iot.common.constant.GeneralConst.LOCALHOST;
+
 /**
  * @author xingshuang
  */
@@ -110,7 +112,7 @@ public class TcpClientBasic implements ICommunicable {
 
     // region 构造方法
     public TcpClientBasic() {
-        this("127.0.0.1", 8088);
+        this(LOCALHOST, 8088);
     }
 
     public TcpClientBasic(String host, int port) {

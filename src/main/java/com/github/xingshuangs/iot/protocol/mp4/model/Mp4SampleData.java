@@ -25,7 +25,7 @@
 package com.github.xingshuangs.iot.protocol.mp4.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 
 /**
  * @author xingshuang

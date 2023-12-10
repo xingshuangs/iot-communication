@@ -26,8 +26,8 @@ package com.github.xingshuangs.iot.protocol.modbus.model;
 
 
 import com.github.xingshuangs.iot.protocol.modbus.enums.EMbFunctionCode;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -25,7 +25,7 @@
 package com.github.xingshuangs.iot.protocol.mp4.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
+import com.github.xingshuangs.iot.common.IObjectByteArray;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**

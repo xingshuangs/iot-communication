@@ -27,8 +27,8 @@ package com.github.xingshuangs.iot.protocol.melsec.service;
 
 import com.github.xingshuangs.iot.exceptions.McCommException;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.melsec.algorithm.McGroupAlg;
 import com.github.xingshuangs.iot.protocol.melsec.algorithm.McGroupItem;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;

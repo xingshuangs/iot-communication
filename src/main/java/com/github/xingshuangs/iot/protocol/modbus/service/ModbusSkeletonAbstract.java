@@ -26,9 +26,9 @@ package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
-import com.github.xingshuangs.iot.protocol.common.buff.EByteBuffFormat;
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.common.buff.EByteBuffFormat;
 import com.github.xingshuangs.iot.protocol.modbus.model.*;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
 import com.github.xingshuangs.iot.utils.ByteUtil;
@@ -47,10 +47,6 @@ import java.util.function.Consumer;
  */
 @Slf4j
 public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
-
-    public static final int PORT = 502;
-
-    public static final String IP = "127.0.0.1";
 
     /**
      * 从站编号

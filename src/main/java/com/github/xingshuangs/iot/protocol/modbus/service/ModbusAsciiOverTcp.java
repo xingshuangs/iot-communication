@@ -36,6 +36,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 
+import static com.github.xingshuangs.iot.common.constant.GeneralConst.LOCALHOST;
+import static com.github.xingshuangs.iot.common.constant.GeneralConst.MODBUS_PORT;
+
 /**
  * modbus 1个寄存器占2个字节
  *
@@ -54,11 +57,11 @@ public class ModbusAsciiOverTcp extends ModbusSkeletonAbstract<MbAsciiRequest, M
     }
 
     public ModbusAsciiOverTcp() {
-        this(1, IP, PORT);
+        this(1, LOCALHOST, MODBUS_PORT);
     }
 
     public ModbusAsciiOverTcp(String ip) {
-        this(1, ip, PORT);
+        this(1, ip, MODBUS_PORT);
     }
 
     public ModbusAsciiOverTcp(String ip, int port) {
@@ -66,11 +69,11 @@ public class ModbusAsciiOverTcp extends ModbusSkeletonAbstract<MbAsciiRequest, M
     }
 
     public ModbusAsciiOverTcp(int unitId) {
-        this(unitId, IP, PORT);
+        this(unitId, LOCALHOST, MODBUS_PORT);
     }
 
     public ModbusAsciiOverTcp(int unitId, String ip) {
-        this(unitId, ip, PORT);
+        this(unitId, ip, MODBUS_PORT);
     }
 
     public ModbusAsciiOverTcp(int unitId, String ip, int port) {

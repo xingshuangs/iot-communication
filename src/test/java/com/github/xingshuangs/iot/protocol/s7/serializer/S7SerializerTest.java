@@ -1,6 +1,30 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2021-2099 Oscura (xingshuang) <xingshuang_cool@163.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package com.github.xingshuangs.iot.protocol.s7.serializer;
 
-import com.github.xingshuangs.iot.protocol.common.enums.EDataType;
+import com.github.xingshuangs.iot.common.enums.EDataType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EPlcType;
 import com.github.xingshuangs.iot.protocol.s7.service.S7PLC;
 import com.github.xingshuangs.iot.utils.HexUtil;
@@ -23,8 +47,8 @@ public class S7SerializerTest {
 
     @Test
     public void read() {
-        s7PLC.setComCallback(x -> System.out.printf("长度[%d]:%s%n", x.length, HexUtil.toHexString(x)));
-//        s7PLC.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
+        s7PLC.setComCallback(x -> System.out.printf("[%d] %s%n", x.length, HexUtil.toHexString(x)));
+//        s7PLC.setComCallback(x -> log.debug("[{}] {}", x.length, HexUtil.toHexString(x)));
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
         DemoBean bean = s7Serializer.read(DemoBean.class);
         log.info(bean.toString());
@@ -32,7 +56,7 @@ public class S7SerializerTest {
 
     @Test
     public void write() {
-        s7PLC.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
+        s7PLC.setComCallback(x -> log.debug("[{}] {}", x.length, HexUtil.toHexString(x)));
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
         byte[] byteData = new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03};
         DemoBean bean = new DemoBean();
@@ -68,7 +92,7 @@ public class S7SerializerTest {
 
     @Test
     public void writeLargeData() {
-        s7PLC.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
+        s7PLC.setComCallback(x -> log.debug("[{}] {}", x.length, HexUtil.toHexString(x)));
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
         DemoLargeBean bean = s7Serializer.read(DemoLargeBean.class);
         System.out.println("-------------------------------");
@@ -90,7 +114,7 @@ public class S7SerializerTest {
 
     @Test
     public void dbData() {
-        s7PLC.setComCallback(x -> log.debug("长度[{}]，内容：{}", x.length, HexUtil.toHexString(x)));
+        s7PLC.setComCallback(x -> log.debug("[{}] {}", x.length, HexUtil.toHexString(x)));
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
         DB80 bean = s7Serializer.read(DB80.class);
         System.out.println(bean);

@@ -25,8 +25,8 @@
 package com.github.xingshuangs.iot.protocol.rtp.model.payload;
 
 
-import com.github.xingshuangs.iot.protocol.common.IObjectByteArray;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.common.IObjectByteArray;
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264NaluType;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
 import lombok.Data;

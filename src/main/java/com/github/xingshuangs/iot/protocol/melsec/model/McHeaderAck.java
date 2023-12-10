@@ -25,8 +25,8 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import lombok.Data;
 
@@ -71,7 +71,8 @@ public class McHeaderAck extends McHeader {
     /**
      * 解析字节数组数据
      *
-     * @param data 字节数组数据
+     * @param data      字节数组数据
+     * @param frameType 帧类型
      * @return McHeaderAck
      */
     public static McHeaderAck fromBytes(final byte[] data, EMcFrameType frameType) {
@@ -81,8 +82,9 @@ public class McHeaderAck extends McHeader {
     /**
      * 解析字节数组数据
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data      字节数组数据
+     * @param offset    偏移量
+     * @param frameType 帧类型
      * @return McHeaderAck
      */
     public static McHeaderAck fromBytes(final byte[] data, final int offset, EMcFrameType frameType) {

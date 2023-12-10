@@ -25,7 +25,7 @@
 package com.github.xingshuangs.iot.protocol.s7.model;
 
 
-import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.s7.enums.EDestinationFileSystem;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFileBlockType;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;

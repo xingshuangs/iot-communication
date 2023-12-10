@@ -28,7 +28,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.service;
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import com.github.xingshuangs.iot.exceptions.SocketRuntimeException;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
-import com.github.xingshuangs.iot.protocol.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.protocol.rtcp.model.RtcpBasePackage;
 import com.github.xingshuangs.iot.protocol.rtcp.model.RtcpPackageBuilder;
 import com.github.xingshuangs.iot.protocol.rtcp.service.RtcpDataStatistics;
