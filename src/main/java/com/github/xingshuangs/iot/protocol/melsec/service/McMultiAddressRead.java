@@ -40,20 +40,34 @@ import java.util.List;
 public class McMultiAddressRead {
 
     /**
-     * 请求项列表
+     * word列表
      */
     private final List<McDeviceAddress> words = new ArrayList<>();
 
     /**
-     * 添加获取的地址和字节个数
+     * dword列表
+     */
+    private final List<McDeviceAddress> dwords = new ArrayList<>();
+
+    /**
+     * 添加获取word的地址
      *
      * @param address 地址
-     * @param count   字节数量
      * @return McMultiAddressRead
      */
-    public McMultiAddressRead addData(String address, int count) {
-        int newCount = count % 2 == 0 ? count : (count + 1);
-        this.words.add(McDeviceAddress.createBy(address, newCount / 2));
+    public McMultiAddressRead addWordData(String address) {
+        this.words.add(McDeviceAddress.createBy(address));
+        return this;
+    }
+
+    /**
+     * 添加获取word的地址
+     *
+     * @param address 地址
+     * @return McMultiAddressRead
+     */
+    public McMultiAddressRead addDWordData(String address) {
+        this.dwords.add(McDeviceAddress.createBy(address));
         return this;
     }
 }

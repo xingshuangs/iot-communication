@@ -55,6 +55,10 @@ public class McPLC extends McNetwork {
         this(EMcSeries.Q_L, EMcFrameType.FRAME_3E, host, port);
     }
 
+    public McPLC(EMcSeries series, String host, int port) {
+        this(series, EMcFrameType.FRAME_3E, host, port);
+    }
+
     public McPLC(EMcSeries series, EMcFrameType frameType, String host, int port) {
         super(host, port);
         this.tag = "Melsec";
@@ -64,15 +68,14 @@ public class McPLC extends McNetwork {
 
     //region 软元件读取
 
-//    /**
-//     * 读多地址
-//     *
-//     * @param multiAddressRead 多地址
-//     */
-//    public void readMultiAddress(McMultiAddressRead multiAddressRead) {
-//        List<McDeviceAddress> words = multiAddressRead.getWords();
-//        this.readDeviceBatchMultiBlocks(words, new ArrayList<>(0));
-//    }
+    /**
+     * 读多地址
+     *
+     * @param multiAddressRead 多地址
+     */
+    public List<McDeviceContent> readMultiAddress(McMultiAddressRead multiAddressRead) {
+        return this.readDeviceRandomInWord(multiAddressRead.getWords(), multiAddressRead.getDwords());
+    }
 
     /**
      * 读取booleans数据
@@ -369,15 +372,14 @@ public class McPLC extends McNetwork {
 
     //region 软元件写入
 
-//    /**
-//     * 写多地址
-//     *
-//     * @param multiAddressWrite 多地址
-//     */
-//    public void writeMultiAddress(McMultiAddressWrite multiAddressWrite) {
-//        List<McDeviceContent> words = multiAddressWrite.getWords();
-//        this.writeDeviceBatchMultiBlocks(words, new ArrayList<>(0));
-//    }
+    /**
+     * 写多地址
+     *
+     * @param multiAddressWrite 多地址
+     */
+    public void writeMultiAddress(McMultiAddressWrite multiAddressWrite) {
+        this.writeDeviceRandomInWord(multiAddressWrite.getWords(), multiAddressWrite.getDwords());
+    }
 
     /**
      * 写入多个boolean
@@ -450,6 +452,31 @@ public class McPLC extends McNetwork {
     }
 
     /**
+     * 写入多个Int16数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeInt16(String address, Short... data) {
+        this.writeInt16(address, Arrays.asList(data));
+    }
+
+    /**
+     * 写入多个Int16数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeInt16(String address, List<Short> data) {
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException("列表为空");
+        }
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(data.size() * 2, true);
+        data.forEach(buff::putShort);
+        this.writeBytes(address, buff.getData());
+    }
+
+    /**
      * 写入1个UInt16数据
      *
      * @param address 地址
@@ -458,6 +485,31 @@ public class McPLC extends McNetwork {
     public void writeUInt16(String address, int data) {
         byte[] bytes = ByteWriteBuff.newInstance(2, true).putShort(data).getData();
         this.writeBytes(address, bytes);
+    }
+
+    /**
+     * 写入多个UInt16数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeUInt16(String address, Integer... data) {
+        this.writeUInt16(address, Arrays.asList(data));
+    }
+
+    /**
+     * 写入多个UInt16数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeUInt16(String address, List<Integer> data) {
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException("列表为空");
+        }
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(data.size() * 2, true);
+        data.forEach(buff::putShort);
+        this.writeBytes(address, buff.getData());
     }
 
     /**
@@ -472,6 +524,31 @@ public class McPLC extends McNetwork {
     }
 
     /**
+     * 写入多个Int32数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeInt32(String address, Integer... data) {
+        this.writeInt32(address, Arrays.asList(data));
+    }
+
+    /**
+     * 写入多个Int32数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeInt32(String address, List<Integer> data) {
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException("列表为空");
+        }
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(data.size() * 4, EByteBuffFormat.AB_CD);
+        data.forEach(buff::putInteger);
+        this.writeBytes(address, buff.getData());
+    }
+
+    /**
      * 写入1个UInt32数据
      *
      * @param address 地址
@@ -480,6 +557,31 @@ public class McPLC extends McNetwork {
     public void writeUInt32(String address, long data) {
         byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.AB_CD).putInteger(data).getData();
         this.writeBytes(address, bytes);
+    }
+
+    /**
+     * 写入多个UInt32数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeUInt32(String address, Long... data) {
+        this.writeUInt32(address, Arrays.asList(data));
+    }
+
+    /**
+     * 写入多个UInt32数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeUInt32(String address, List<Long> data) {
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException("列表为空");
+        }
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(data.size() * 4, EByteBuffFormat.AB_CD);
+        data.forEach(buff::putInteger);
+        this.writeBytes(address, buff.getData());
     }
 
     /**
@@ -494,6 +596,31 @@ public class McPLC extends McNetwork {
     }
 
     /**
+     * 写入多个Float32数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeFloat32(String address, Float... data) {
+        this.writeFloat32(address, Arrays.asList(data));
+    }
+
+    /**
+     * 写入多个Float32数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeFloat32(String address, List<Float> data) {
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException("列表为空");
+        }
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(data.size() * 4, EByteBuffFormat.AB_CD);
+        data.forEach(buff::putFloat);
+        this.writeBytes(address, buff.getData());
+    }
+
+    /**
      * 写入1个Float64数据
      *
      * @param address 地址
@@ -502,6 +629,31 @@ public class McPLC extends McNetwork {
     public void writeFloat64(String address, double data) {
         byte[] bytes = ByteWriteBuff.newInstance(8, EByteBuffFormat.AB_CD).putDouble(data).getData();
         this.writeBytes(address, bytes);
+    }
+
+    /**
+     * 写入多个Float64数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeFloat64(String address, Double... data) {
+        this.writeFloat64(address, Arrays.asList(data));
+    }
+
+    /**
+     * 写入多个Float64数据
+     *
+     * @param address 地址
+     * @param data    数据
+     */
+    public void writeFloat64(String address, List<Double> data) {
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException("列表为空");
+        }
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(data.size() * 8, EByteBuffFormat.AB_CD);
+        data.forEach(buff::putDouble);
+        this.writeBytes(address, buff.getData());
     }
 
     /**
