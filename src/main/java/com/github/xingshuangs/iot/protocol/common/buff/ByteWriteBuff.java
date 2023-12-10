@@ -63,6 +63,10 @@ public class ByteWriteBuff extends ByteBuffBase {
         this(capacity, false, EByteBuffFormat.DC_BA);
     }
 
+    public ByteWriteBuff(int capacity, boolean littleEndian) {
+        this(capacity, littleEndian, EByteBuffFormat.DC_BA);
+    }
+
     public ByteWriteBuff(int capacity, EByteBuffFormat format) {
         this(capacity, false, format);
     }
@@ -77,12 +81,12 @@ public class ByteWriteBuff extends ByteBuffBase {
         return new ByteWriteBuff(capacity);
     }
 
-    public static ByteWriteBuff newInstance(int capacity, EByteBuffFormat format) {
-        return new ByteWriteBuff(capacity, false, format);
-    }
-
     public static ByteWriteBuff newInstance(int capacity, boolean littleEndian) {
         return new ByteWriteBuff(capacity, littleEndian, EByteBuffFormat.DC_BA);
+    }
+
+    public static ByteWriteBuff newInstance(int capacity, EByteBuffFormat format) {
+        return new ByteWriteBuff(capacity, false, format);
     }
 
     public static ByteWriteBuff newInstance(int capacity, boolean littleEndian, EByteBuffFormat format) {

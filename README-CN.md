@@ -14,9 +14,10 @@
 
 目前它只是一个物联网通信的工具，包含
 
-- 西门子S7通信协议
-- Modbus通信协议
-- RTSP, RTCP, RTP, H264, MP4 (FMP4)协议
+- 西门子S7通信协议，支持西门子S1500，S1200，S400，S300，S200Smart，西门子机床828D
+- Modbus通信协议，支持ModbusTcp，ModbusRtuOverTcp，ModbusAsciiOverTcp
+- 三菱MELSEC（MC）通信协议，支持PLC iQ-R系列, Q/L系列, QnA系列, 目前只测试了L系列
+- RTSP, RTCP, RTP, H264, MP4 (FMP4)协议，RTSP + H264 + FMP4 + WebSocket + MSE + WEB
 - 基础字节数组解析转换工具
 
 ## 使用指南
@@ -36,6 +37,7 @@
 
 - [西门子S7通信协议](./tutorial/README-S7-CN.md)
 - [Modbus通信协议](./tutorial/README-Modbus-CN.md)
+- [三菱MC通信协议](./tutorial/README-Melsec-CN.md)
 - [RTSP/RTCP/RTP/H264/FMP4协议](./tutorial/README-RTSP-CN.md)
 - [WEB视频监控](./tutorial/README-WebVideo-CN.md)
 - [字节数据解析转换工具](./tutorial/README-ByteArray-CN.md)
