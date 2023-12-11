@@ -7,10 +7,10 @@
 > Tips
 
 - Device is divided into bit device and word device.
-- **1** register address = **2** bytes.
+- **1** device address = **2** bytes.
 - The small-end mode is adopted, the encoding format of **4 bytes** data = **AB_CD**. (big-endian mode = **DC_BA**，little-endian mode = **AB_CD**)
-- Only binary read and write is supported. ASCII read and write is not supported
-- In TCP mode, serial ports are not supported
+- Only read and write in binary is supported. Read and write in ASCII is not supported
+- Support TCP mode, serial ports are not supported
 - Support PLC: iQ-R series, Q/L series, QnA series, Only the L Series has been tested so far（L02CPU）
 - Support automatic reconnection.
 

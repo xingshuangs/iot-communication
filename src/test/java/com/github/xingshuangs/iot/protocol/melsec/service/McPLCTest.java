@@ -39,14 +39,15 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.xingshuangs.iot.common.constant.GeneralConst.LOCALHOST;
 import static org.junit.Assert.*;
 
 @Slf4j
 @Ignore
 public class McPLCTest {
 
-    private final McPLC mcPLC = new McPLC(EMcSeries.Q_L, "192.168.3.100", 6001);
-//    private final McPLC mcPLC = new McPLC(EMcSeries.Q_L, GeneralConst.LOCALHOST, 6000);
+//    private final McPLC mcPLC = new McPLC(EMcSeries.Q_L, "192.168.3.100", 6001);
+    private final McPLC mcPLC = new McPLC(EMcSeries.Q_L, LOCALHOST, 6000);
 
     @Before
     public void before() {
