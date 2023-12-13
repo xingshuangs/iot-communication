@@ -29,6 +29,8 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import lombok.Data;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * 请求头
  *
@@ -36,6 +38,8 @@ import lombok.Data;
  */
 @Data
 public class McHeaderReq extends McHeader {
+
+    private static final AtomicInteger index = new AtomicInteger();
 
     /**
      * 监视定时器，2字节，设置读取及写入的处理完成之前的等待时间。设置连接站E71向访问目标发出处理请求之后到返回响应为止的等待时间。
@@ -53,6 +57,21 @@ public class McHeaderReq extends McHeader {
         this.subHeader = subHeader;
         this.accessRoute = accessRoute;
         this.monitoringTimer = timer / 250;
+        this.serialNumber = getNewNumber();
+    }
+
+    /**
+     * 获取新的pduNumber
+     *
+     * @return 编号
+     */
+    public static int getNewNumber() {
+        int res = index.getAndIncrement();
+        if (res >= 65536) {
+            index.set(0);
+            res = 0;
+        }
+        return res;
     }
 
     @Override

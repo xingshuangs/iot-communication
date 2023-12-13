@@ -10,7 +10,14 @@
     <packaging>jar</packaging>
 
     <name>iot-communication</name>
-    <description>iot-communication is a tool 目前支持S7协议、Modbus通信协议、字节数据转换、RTSP-WEB视频监控</description>
+    <description>
+        目前它只是一个物联网通信的工具，包含
+        1、西门子S7通信协议，支持西门子S1500，S1200，S400，S300，S200Smart，西门子机床828D；
+        2、Modbus通信协议，支持ModbusTcp，ModbusRtuOverTcp，ModbusAsciiOverTcp；
+        3、三菱MELSEC（MC）通信协议，支持PLC iQ-R系列, Q/L系列, QnA系列, 目前只测试了L系列；
+        4、RTSP, RTCP, RTP, H264, MP4 (FMP4)协议，RTSP + H264 + FMP4 + WebSocket + MSE + WEB；
+        5、基础字节数组解析转换工具
+    </description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -92,12 +99,12 @@
                 <plugins>
                     <!-- 编译插件，设置源码以及编译的jdk版本 -->
                     <!--<plugin>-->
-                        <!--<groupId>org.apache.maven.plugins</groupId>-->
-                        <!--<artifactId>maven-compiler-plugin</artifactId>-->
-                        <!--<configuration>-->
-                            <!--<source>8</source>-->
-                            <!--<target>8</target>-->
-                        <!--</configuration>-->
+                    <!--<groupId>org.apache.maven.plugins</groupId>-->
+                    <!--<artifactId>maven-compiler-plugin</artifactId>-->
+                    <!--<configuration>-->
+                    <!--<source>8</source>-->
+                    <!--<target>8</target>-->
+                    <!--</configuration>-->
                     <!--</plugin>-->
                     <!--打包源码的插件-->
                     <plugin>
@@ -180,8 +187,12 @@
                 <repository>
                     <id>central</id>
                     <url>https://repo1.maven.org/maven2</url>
-                    <releases><enabled>true</enabled></releases>
-                    <snapshots><enabled>true</enabled></snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
                 </repository>
                 <repository>
                     <id>github</id>
