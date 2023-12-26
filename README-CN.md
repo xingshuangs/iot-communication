@@ -10,13 +10,13 @@
 
 ## 简述
 
-**如果这个库对你有帮助，请给作者一颗:star:**<br>
+**如果这个库对你有帮助，请给作者一颗** ⭐ <br>
 
-目前它只是一个物联网通信的工具，包含
+目前它只是一个物联网通信的工具，主要用于相关协议的学习和开发，包含
 
 - 西门子S7通信协议，支持西门子S1500，S1200，S400，S300，S200Smart，西门子机床828D
 - Modbus通信协议，支持ModbusTcp，ModbusRtuOverTcp，ModbusAsciiOverTcp
-- 三菱MELSEC（MC）通信协议，支持PLC iQ-R系列, Q/L系列, QnA系列, 目前只测试了L系列
+- 三菱Melsec（MC）通信协议，支持PLC iQ-R系列, Q/L系列, QnA系列, 目前只测试了L系列
 - RTSP, RTCP, RTP, H264, MP4 (FMP4)协议，RTSP + H264 + FMP4 + WebSocket + MSE + WEB
 - 基础字节数组解析转换工具
 
@@ -53,7 +53,20 @@
 ## 许可证
 
 根据MIT许可证发布，更多信息请参见[`LICENSE`](./LICENSE)。<br>
-@2019 - 2099 Oscura版权所有。
+@2019 - 2099 Oscura (xingshuang) 版权所有。<br>
+
+❗❗❗ **请各位使用者严格遵守MIT协议，使用时添加作者的版权许可声明。** 
+
+## 免责声明
+
+本项目所使用的依赖如下：
+
+| 序号  | 使用范围     | 依赖           | 版本      |   协议    |    时间     | 版权             | URL                              |
+|:---:|----------|:-------------|---------|:-------:|:---------:|:---------------|----------------------------------|
+|  1  | provided | lombok       | 1.18.26 |   MIT   | 2009-2021 | Lombok Authors | https://projectlombok.org/       |
+|  2  | test     | junit        | 4.13.2  | EPL-1.0 | 2002-2021 | junit          | https://junit.org/junit4/        |
+|  3  | test     | slf4j-simple | 2.0.6   |   MIT   | 2004-2023 | QOS.ch         | https://www.slf4j.org/index.html |
+|  4  | compile  | slf4j-api    | 2.0.6   |   MIT   | 2004-2023 | QOS.ch         | https://www.slf4j.org/index.html |
 
 ## 赞助
 

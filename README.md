@@ -10,13 +10,14 @@
 
 ## Overview
 
-**If this project helps you, please give the author a :star: .**<br>
+**If this project helps you, please give the author a** ⭐ .<br>
 
-Now, it is a tool for iot communication, it includes
+Now, it is a tool for iot communication, used for the learning and development of protocols, it includes
 
 - Siemens S7 protocol, support PLC S1500, S1200, S400, S300, S200Smart, Siemens Machine Tool 828D.
 - Modbus protocol, support ModbusTcp, ModbusRtuOverTcp, ModbusAsciiOverTcp.
-- MITSUBISHI MELSEC(MC) Protocol, support PLC iQ-R series, Q/L series, QnA series, Only the L Series has been tested so far.
+- Mitsubishi Melsec(MC) Protocol, support PLC iQ-R series, Q/L series, QnA series, Only the L Series has been tested so
+  far.
 - RTSP, RTCP, RTP, H264, MP4 (FMP4) protocol, RTSP + H264 + FMP4 + WebSocket + MSE + WEB.
 - Parse byte array data.
 
@@ -54,10 +55,23 @@ spare time.
 ## License
 
 Distributed under the MIT License. See [`LICENSE`](./LICENSE) for more information.<br>
-@2019 - 2099 Oscura, All Rights Reserved <br>
+@2019 - 2099 Oscura (xingshuang), All Rights Reserved. <br>
+
+❗❗❗ **Please strictly abide by the MIT agreement and add the author's copyright license notice when using.**
+
+## Disclaimer
+
+The dependencies used in this project are as follows:
+
+| Number | Scope    | Dependency   | Version | License |   Date    | Copyright      | URL                              |
+|:------:|----------|:-------------|---------|:-------:|:---------:|:---------------|----------------------------------|
+|   1    | provided | lombok       | 1.18.26 |   MIT   | 2009-2021 | Lombok Authors | https://projectlombok.org/       |
+|   2    | test     | junit        | 4.13.2  | EPL-1.0 | 2002-2021 | junit          | https://junit.org/junit4/        |
+|   3    | test     | slf4j-simple | 2.0.6   |   MIT   | 2004-2023 | QOS.ch         | https://www.slf4j.org/index.html |
+|   4    | compile  | slf4j-api    | 2.0.6   |   MIT   | 2004-2023 | QOS.ch         | https://www.slf4j.org/index.html |
 
 ## Sponsor
 
 Buy me a cup of coffee. <br>
 **WeChat** (Please note your name)<br>
-![微信](https://i.postimg.cc/brBG5vx8/image.png)
+![wechat](https://i.postimg.cc/brBG5vx8/image.png)
