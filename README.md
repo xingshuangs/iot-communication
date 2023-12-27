@@ -63,12 +63,12 @@ Distributed under the MIT License. See [`LICENSE`](./LICENSE) for more informati
 
 The dependencies used in this project are as follows:
 
-| Number | Scope    | Dependency   | Version | License |   Date    | Copyright      | URL                              |
-|:------:|----------|:-------------|---------|:-------:|:---------:|:---------------|----------------------------------|
-|   1    | provided | lombok       | 1.18.26 |   MIT   | 2009-2021 | Lombok Authors | https://projectlombok.org/       |
-|   2    | test     | junit        | 4.13.2  | EPL-1.0 | 2002-2021 | junit          | https://junit.org/junit4/        |
-|   3    | test     | slf4j-simple | 2.0.6   |   MIT   | 2004-2023 | QOS.ch         | https://www.slf4j.org/index.html |
-|   4    | compile  | slf4j-api    | 2.0.6   |   MIT   | 2004-2023 | QOS.ch         | https://www.slf4j.org/index.html |
+| Number | Scope    | Dependency                                       | Version | License |   Date    | Copyright      |
+|:------:|----------|:-------------------------------------------------|---------|:-------:|:---------:|:---------------|
+|   1    | provided | [lombok](https://projectlombok.org/)             | 1.18.26 |   MIT   | 2009-2021 | Lombok Authors |
+|   2    | test     | [junit](https://junit.org/junit4/)               | 4.13.2  | EPL-1.0 | 2002-2021 | junit          |
+|   3    | test     | [slf4j-simple](https://www.slf4j.org/index.html) | 2.0.6   |   MIT   | 2004-2023 | QOS.ch         |
+|   4    | compile  | [slf4j-api](https://www.slf4j.org/index.html)    | 2.0.6   |   MIT   | 2004-2023 | QOS.ch         |
 
 ## Sponsor
 
