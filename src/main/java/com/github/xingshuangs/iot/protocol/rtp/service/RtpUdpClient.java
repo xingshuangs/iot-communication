@@ -145,7 +145,7 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
                 break;
             } catch (Exception e) {
                 if (!this.terminal) {
-                    log.error(e.getMessage());
+                    log.error(e.getMessage(), e);
                 }
             }
         }

@@ -145,7 +145,7 @@ public class TcpClientBasic implements ICommunicable {
      *
      * @return socket对象
      */
-    protected Socket getAvailableSocket() {
+    public Socket getAvailableSocket() {
         // socket连接过了，同时又不支持自动重连，直接返回
         if (this.socket != null && !this.enableReconnect) {
             return this.socket;

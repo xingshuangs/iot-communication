@@ -186,7 +186,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
                 this.terminal = true;
                 break;
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error(e.getMessage(), e);
             }
         }
         log.debug("[RTSP + TCP] Interleaved 关闭异步接收数据线程，远程的IP[/{}:{}]",
