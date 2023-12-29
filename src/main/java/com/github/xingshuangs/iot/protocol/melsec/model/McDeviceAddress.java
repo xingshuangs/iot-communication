@@ -32,6 +32,7 @@ import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import com.github.xingshuangs.iot.utils.IntegerUtil;
 import lombok.Data;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -155,18 +156,25 @@ public class McDeviceAddress {
         }
         // 转换为大写
         address = address.toUpperCase();
+        Matcher matcher = Pattern.compile("\\d").matcher(address);
+        if (!matcher.find()) {
+            throw new McCommException("地址有问题");
+        }
+
         // 提取字符数据
-        String letter = Pattern.compile("\\d").matcher(address).replaceAll("").trim().toUpperCase();
+//        String letter = Pattern.compile("\\d").matcher(address).replaceAll("").trim().toUpperCase();
+        String letter = address.substring(0, matcher.start()).trim();
         EMcDeviceCode deviceCode = EMcDeviceCode.from(letter);
         if (deviceCode == null) {
             throw new McCommException("不存在对应软元件");
         }
         // 提取数字数据
-        String number = Pattern.compile("\\D").matcher(address).replaceAll("").trim();
+//        String number = Pattern.compile("\\D").matcher(address).replaceAll("").trim();
+        String number = address.substring(matcher.start()).trim();
         if ("".equals(number)) {
             throw new McCommException("软元件地址有误");
         }
-        int headDeviceNumber = Integer.parseInt(number);
+        int headDeviceNumber = Integer.parseInt(number, deviceCode.getNotation());
         return new McDeviceAddress(deviceCode, headDeviceNumber, count);
     }
 }

@@ -49,6 +49,21 @@ public class McDeviceAddressTest {
         assertEquals(EMcDeviceCode.D, d133.getDeviceCode());
         assertEquals(133, d133.getHeadDeviceNumber());
         assertEquals(1, d133.getDevicePointsCount());
+
+        McDeviceAddress y17F = McDeviceAddress.createBy("Y17F");
+        assertEquals(EMcDeviceCode.Y, y17F.getDeviceCode());
+        assertEquals(0x17F, y17F.getHeadDeviceNumber());
+        assertEquals(1, y17F.getDevicePointsCount());
+
+        McDeviceAddress m1141 = McDeviceAddress.createBy("M1141", 2);
+        assertEquals(EMcDeviceCode.M, m1141.getDeviceCode());
+        assertEquals(1141, m1141.getHeadDeviceNumber());
+        assertEquals(2, m1141.getDevicePointsCount());
+
+        McDeviceAddress x2F = McDeviceAddress.createBy("X2F");
+        assertEquals(EMcDeviceCode.X, x2F.getDeviceCode());
+        assertEquals(0x2F, x2F.getHeadDeviceNumber());
+        assertEquals(1, x2F.getDevicePointsCount());
     }
 
     @Test
