@@ -24,6 +24,8 @@
 
 package com.github.xingshuangs.iot.net;
 
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 
@@ -32,78 +34,44 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author xingshuang
  */
+@Getter
 public class AckCallback<T> {
 
     /**
      * 响应数据
      */
-    private T ackData;
+    protected T ackData;
 
     /**
      * 数据响应监听器
      */
-    private final IAckListener<T> listener;
+    protected final IAckListener<T> listener;
 
     /**
      * 是否完成
      */
-    private boolean completed;
+    protected boolean completed;
 
     /**
      * 错误消息
      */
-    private String errorMessage;
+    protected String errorMessage;
 
     /**
      * 超时时间ms
      */
-    private final long timeoutMs;
+    protected final long timeoutMs;
 
     /**
      * 锁对象
      */
-    private final Object lock = new Object();
+    protected final Object lock = new Object();
 
     /**
      * 创建时间
      */
-    private final LocalDateTime createTime = LocalDateTime.now();
+    protected final LocalDateTime createTime = LocalDateTime.now();
 
-    /**
-     * 是否完成
-     *
-     * @return true：完成，false：未完成
-     */
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    /**
-     * 获取异常消息
-     *
-     * @return 异常消息
-     */
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    /**
-     * 获取超时时间，毫秒级
-     *
-     * @return 超时时间
-     */
-    public long getTimeoutMs() {
-        return timeoutMs;
-    }
-
-    /**
-     * 获取当前时间
-     *
-     * @return 当前时间
-     */
-    public LocalDateTime getCreateTime() {
-        return createTime;
-    }
 
     public AckCallback() {
         this(null);
