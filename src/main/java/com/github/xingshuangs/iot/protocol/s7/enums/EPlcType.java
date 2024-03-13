@@ -31,11 +31,37 @@ package com.github.xingshuangs.iot.protocol.s7.enums;
  * @author xingshuang
  */
 public enum EPlcType {
-    S200,
-    S200_SMART,
-    S300,
-    S400,
-    S1200,
-    S1500,
-    SINUMERIK_828D,
+    S200(0, 1, 240),
+    S200_SMART(0, 1, 240),
+    S300(0, 2, 240),
+    S400(0, 3, 480),
+    S1200(0, 1, 240),
+    S1500(0, 1, 960),
+    SINUMERIK_828D(0, 1, 240),
+
+    ;
+
+    private final int rack;
+
+    private final int slot;
+
+    private final int pduLength;
+
+    EPlcType(int rack, int slot, int pduLength) {
+        this.rack = rack;
+        this.slot = slot;
+        this.pduLength = pduLength;
+    }
+
+    public int getRack() {
+        return rack;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
+    public int getPduLength() {
+        return pduLength;
+    }
 }

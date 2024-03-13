@@ -35,6 +35,7 @@ import com.github.xingshuangs.iot.protocol.s7.algorithm.S7SequentialGroupAlg;
 import com.github.xingshuangs.iot.protocol.s7.constant.ErrorCode;
 import com.github.xingshuangs.iot.protocol.s7.enums.*;
 import com.github.xingshuangs.iot.protocol.s7.model.*;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
@@ -54,6 +55,7 @@ import java.util.stream.Collectors;
  *
  * @author xingshuang
  */
+@Data
 @SuppressWarnings("DuplicatedCode")
 @Slf4j
 public class PLCNetwork extends TcpClientBasic {
@@ -92,34 +94,6 @@ public class PLCNetwork extends TcpClientBasic {
      * 通信回调
      */
     private Consumer<byte[]> comCallback;
-
-    public void setComCallback(Consumer<byte[]> comCallback) {
-        this.comCallback = comCallback;
-    }
-
-    public boolean isPersistence() {
-        return persistence;
-    }
-
-    public void setPersistence(boolean persistence) {
-        this.persistence = persistence;
-    }
-
-    public EPlcType getPlcType() {
-        return plcType;
-    }
-
-    public int getRack() {
-        return rack;
-    }
-
-    public int getSlot() {
-        return slot;
-    }
-
-    public int getPduLength() {
-        return pduLength;
-    }
 
     public PLCNetwork() {
         super();

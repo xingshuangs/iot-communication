@@ -117,8 +117,8 @@ public class RtspSdpTest {
     public void base641() {
         Base64.Decoder decoder = Base64.getDecoder();
         byte[] sps = decoder.decode("Z00AH5Y1QKALdNwEBAQI");
-        System.out.println(sps);
+        System.out.println(HexUtil.toHexString(sps));
         byte[] pps = decoder.decode("aO48gA==");
-        System.out.println(pps);
+        System.out.println(HexUtil.toHexString(pps));
     }
 }

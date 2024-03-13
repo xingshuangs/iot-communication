@@ -27,9 +27,11 @@ package com.github.xingshuangs.iot.protocol.s7.service;
 
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
-import com.github.xingshuangs.iot.common.constant.GeneralConst;
 import com.github.xingshuangs.iot.protocol.s7.enums.*;
-import com.github.xingshuangs.iot.protocol.s7.model.*;
+import com.github.xingshuangs.iot.protocol.s7.model.DataItem;
+import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
+import com.github.xingshuangs.iot.protocol.s7.model.RequestNckItem;
+import com.github.xingshuangs.iot.protocol.s7.model.S7Data;
 import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
 import com.github.xingshuangs.iot.utils.*;
 
@@ -53,23 +55,23 @@ public class S7PLC extends PLCNetwork {
     public static final int DEFAULT_PDU_LENGTH = 240;
 
     public S7PLC() {
-        this(EPlcType.S1200, LOCALHOST, S7_PORT, 0, 1, DEFAULT_PDU_LENGTH);
+        this(EPlcType.S1200, LOCALHOST, S7_PORT, EPlcType.S1200.getRack(), EPlcType.S1200.getSlot(), EPlcType.S1200.getPduLength());
     }
 
     public S7PLC(EPlcType plcType) {
-        this(plcType, LOCALHOST, S7_PORT, 0, 1, DEFAULT_PDU_LENGTH);
+        this(plcType, LOCALHOST, S7_PORT, plcType.getRack(), plcType.getSlot(), plcType.getPduLength());
     }
 
     public S7PLC(EPlcType plcType, String ip) {
-        this(plcType, ip, S7_PORT, 0, 1, DEFAULT_PDU_LENGTH);
+        this(plcType, ip, S7_PORT, plcType.getRack(), plcType.getSlot(), plcType.getPduLength());
     }
 
     public S7PLC(EPlcType plcType, String ip, int port) {
-        this(plcType, ip, port, 0, 1, DEFAULT_PDU_LENGTH);
+        this(plcType, ip, port, plcType.getRack(), plcType.getSlot(), plcType.getPduLength());
     }
 
     public S7PLC(EPlcType plcType, String ip, int port, int rack, int slot) {
-        this(plcType, ip, port, rack, slot, DEFAULT_PDU_LENGTH);
+        this(plcType, ip, port, rack, slot, plcType.getPduLength());
     }
 
     public S7PLC(EPlcType plcType, String ip, int port, int rack, int slot, int pduLength) {
