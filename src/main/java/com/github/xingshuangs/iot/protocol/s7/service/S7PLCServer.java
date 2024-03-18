@@ -25,14 +25,18 @@
 package com.github.xingshuangs.iot.protocol.s7.service;
 
 
-import com.github.xingshuangs.iot.net.server.TcpServerBasic;
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.exceptions.SocketRuntimeException;
+import com.github.xingshuangs.iot.net.SocketUtils;
+import com.github.xingshuangs.iot.net.server.TcpServerBasic;
 import com.github.xingshuangs.iot.protocol.s7.enums.*;
 import com.github.xingshuangs.iot.protocol.s7.model.*;
 import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -255,5 +259,34 @@ public class S7PLCServer extends TcpServerBasic {
     private S7Data readS7DataFromClient(Socket socket) {
         byte[] data = this.readClientData(socket);
         return S7Data.fromBytes(data);
+    }
+
+    /**
+     * 重写读取客户端数据，针对粘包粘包的数据处理
+     * @param socket 客户端socket对象
+     * @return 字节数据
+     */
+    @Override
+    protected byte[] readClientData(Socket socket) {
+        try {
+            InputStream in = socket.getInputStream();
+            int firstByte = in.read();
+            if (firstByte == -1) {
+                SocketUtils.close(socket);
+                throw new SocketRuntimeException("客户端主动断开");
+            }
+            // 先获取TPKT
+            byte[] tpktData = new byte[4];
+            tpktData[0] = (byte) firstByte;
+            this.read(socket, tpktData, 1, 3, 1024, 0, true);
+            TPKT tpkt = TPKT.fromBytes(tpktData);
+            // 根据内部的长度获取剩余部分内容
+            byte[] data = new byte[tpkt.getLength()];
+            System.arraycopy(tpktData, 0, data, 0, tpktData.length);
+            this.read(socket, data, 4, data.length - 4, 1024, 0, true);
+            return data;
+        } catch (IOException e) {
+            throw new SocketRuntimeException(e);
+        }
     }
 }

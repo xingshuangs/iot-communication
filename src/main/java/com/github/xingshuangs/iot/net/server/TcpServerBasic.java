@@ -266,7 +266,7 @@ public class TcpServerBasic {
      * @param length 写入长度
      * @return 返回读取的数据长度
      */
-    private int read(final Socket socket, final byte[] data, final int offset, final int length) {
+    protected int read(final Socket socket, final byte[] data, final int offset, final int length) {
         return this.read(socket, data, offset, length, 1024);
     }
 
@@ -288,6 +288,26 @@ public class TcpServerBasic {
         }
     }
 
+    /**
+     * 读取数据
+     *
+     * @param socket      socket对象
+     * @param data        字节数组
+     * @param offset      偏移量
+     * @param length      读取长度
+     * @param maxLength   单次通信允许的对最大长度
+     * @param timeout     超时时间，0：没有超时时间，无限等
+     * @param waitForMore 若数据不够，是否等待，等待更多数据，大部分都是不等待的，等待都适用于分包粘包的情况
+     * @return 读取数据个数
+     */
+    protected int read(final Socket socket, final byte[] data, final int offset, final int length,
+                       final int maxLength, final int timeout, final boolean waitForMore) {
+        try {
+            return SocketUtils.read(socket, data, offset, length, maxLength, timeout, waitForMore);
+        } catch (IOException e) {
+            throw new SocketRuntimeException(e);
+        }
+    }
 
     //endregion
 }
