@@ -74,12 +74,18 @@ public class RtspTrackInfo {
         RtspSdpMediaAttrRtpMap rtpMap = media.getAttributeRtpMap();
         trackInfo.timescale = rtpMap.getClockFrequency();
         trackInfo.duration = rtpMap.getClockFrequency();
+        if ("H265".equalsIgnoreCase(rtpMap.getPayloadFormat())) {
+            throw new RtspCommException("暂不支持H265协议，可以自行去摄像头设置为H264协议");
+        }
         RtspSdpMediaAttrDimension dimension = media.getAttributeDimension();
         trackInfo.width = dimension == null ? 1920 : dimension.getWidth();
         trackInfo.height = dimension == null ? 1080 : dimension.getHeight();
         RtspSdpMediaAttrFmtp fmtp = media.getAttributeFmtp();
         trackInfo.sps = fmtp.getSps();
         trackInfo.pps = fmtp.getPps();
+        if (trackInfo.sps == null || trackInfo.sps.length < 4) {
+            throw new RtspCommException("sps信息为空");
+        }
         ByteReadBuff buff = new ByteReadBuff(trackInfo.sps);
         byte[] bytes = buff.getBytes(1, 3);
         trackInfo.codec = "avc1." + HexUtil.toHexString(bytes, "", false);

@@ -39,32 +39,32 @@ public class ByteArrayParameter {
     /**
      * 字节偏移量
      */
-    private int byteOffset = 0;
+    protected int byteOffset = 0;
 
     /**
      * 位偏移量
      */
-    private int bitOffset = 0;
+    protected int bitOffset = 0;
 
     /**
      * 数量，数量大于1的时候对应的数据必须使用list
      */
-    private int count = 1;
+    protected int count = 1;
 
     /**
      * 类型
      */
-    private EDataType type = EDataType.BYTE;
+    protected EDataType type = EDataType.BYTE;
 
     /**
      * 是否小端模式
      */
-    private boolean littleEndian = false;
+    protected boolean littleEndian = false;
 
     /**
      * 具体的值
      */
-    private Object value;
+    protected Object value;
 
     public ByteArrayParameter() {
     }

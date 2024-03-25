@@ -39,23 +39,23 @@ public class S7Parameter {
     /**
      * 地址
      */
-    private String address = "";
+    protected String address = "";
 
     /**
      * 数据类型
      */
-    private EDataType dataType = EDataType.BYTE;
+    protected EDataType dataType = EDataType.BYTE;
 
     /**
      * 个数
      * 除字节Byte和String类型外，其他类型对应的count必须为1
      */
-    private Integer count = 1;
+    protected Integer count = 1;
 
     /**
      * 对应的值
      */
-    private Object value;
+    protected Object value;
 
     public S7Parameter() {
     }
