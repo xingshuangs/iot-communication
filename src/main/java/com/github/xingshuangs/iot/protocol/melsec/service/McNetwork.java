@@ -205,7 +205,7 @@ public class McNetwork extends TcpClientBasic {
             case 0xC0B5:
                 return "指定了CPU模块中无法处理的数据";
             default:
-                return "请查询三菱用户手册进行错误解析";
+                return "请查询三菱用户手册进行错误解析，"+ errorCode;
         }
     }
 
@@ -338,7 +338,7 @@ public class McNetwork extends TcpClientBasic {
             throw new NullPointerException("deviceContent");
         }
         if (deviceContent.getDevicePointsCount() < 1) {
-            throw new McCommException("1 <= 字访问点数");
+            throw new McCommException("1 < 字访问点数");
         }
         if (deviceContent.getDeviceCode() == EMcDeviceCode.LTS
                 || deviceContent.getDeviceCode() == EMcDeviceCode.LTC
@@ -388,7 +388,7 @@ public class McNetwork extends TcpClientBasic {
             throw new NullPointerException("deviceAddress");
         }
         if (deviceAddress.getDevicePointsCount() < 1) {
-            throw new McCommException("1 <= 位访问点数");
+            throw new McCommException("1 < 位访问点数");
         }
         if (!EMcDeviceCode.checkBitType(deviceAddress.getDeviceCode())) {
             throw new McCommException("只能是位软元件");
@@ -442,7 +442,7 @@ public class McNetwork extends TcpClientBasic {
             throw new NullPointerException("deviceContent");
         }
         if (deviceContent.getDevicePointsCount() < 1) {
-            throw new McCommException("1 <= 位访问点数");
+            throw new McCommException("1 < 位访问点数");
         }
         if (!EMcDeviceCode.checkBitType(deviceContent.getDeviceCode())) {
             throw new McCommException("只能是位软元件");
