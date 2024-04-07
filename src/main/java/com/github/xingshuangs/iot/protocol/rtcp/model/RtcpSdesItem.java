@@ -82,7 +82,7 @@ public class RtcpSdesItem implements IObjectByteArray {
      */
     public static RtcpSdesItem fromBytes(final byte[] data, final int offset) {
         if (data.length < 2) {
-            throw new IndexOutOfBoundsException("解析RtcpSdesItem时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("RtcpSdesItem, data length < 2");
         }
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         RtcpSdesItem res = new RtcpSdesItem();

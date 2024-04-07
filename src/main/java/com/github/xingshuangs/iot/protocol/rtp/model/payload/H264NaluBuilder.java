@@ -63,7 +63,7 @@ public class H264NaluBuilder {
             case MTAP24:
                 return H264NaluMtap24.fromBytes(data, offset);
             default:
-                throw new RtpCommException("无法识别类型");
+                throw new RtpCommException("unrecognized type");
         }
     }
 }

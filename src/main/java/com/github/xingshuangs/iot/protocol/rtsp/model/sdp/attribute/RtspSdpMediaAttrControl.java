@@ -51,16 +51,16 @@ public class RtspSdpMediaAttrControl {
 
     public static RtspSdpMediaAttrControl fromString(String src) {
         if (src == null || src.equals("")) {
-            throw new IllegalArgumentException("SDP解析MediaAttrControl部分数据源错误");
+            throw new IllegalArgumentException("MediaAttrControl of Sdp data error");
         }
         RtspSdpMediaAttrControl control = new RtspSdpMediaAttrControl();
         int i = src.indexOf(EQUAL);
         if (i < 0) {
-            throw new RtspCommException("RtspSdpMediaAttrControl数据有误，无法解析");
+            throw new RtspCommException("RtspSdpMediaAttrControl data error");
         }
         int trackIDIndex = src.indexOf("trackID");
         if (trackIDIndex < 0) {
-            throw new RtspCommException("RtspSdpMediaAttrControl数据有误，不存在trackID");
+            throw new RtspCommException("RtspSdpMediaAttrControl data error, trackID is not exist");
         }
         control.uri = src.substring(trackIDIndex);
 

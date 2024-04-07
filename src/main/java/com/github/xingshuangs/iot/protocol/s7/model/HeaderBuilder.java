@@ -57,7 +57,7 @@ public class HeaderBuilder {
             case USER_DATA:
                 return null;
             default:
-                throw new S7CommException("COTP的pduType数据类型无法解析");
+                throw new S7CommException("Header message type not recognized");
         }
     }
 }

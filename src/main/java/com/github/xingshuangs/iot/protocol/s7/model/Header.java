@@ -125,7 +125,7 @@ public class Header implements IObjectByteArray {
      */
     public static Header fromBytes(final byte[] data) {
         if (data.length < BYTE_LENGTH) {
-            throw new IndexOutOfBoundsException("解析header时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("header, data length < 10");
         }
         ByteReadBuff buff = new ByteReadBuff(data);
         Header header = new Header();

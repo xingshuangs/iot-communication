@@ -46,7 +46,7 @@ public final class RtspSetParameterResponse extends RtspMessageResponse {
 
     public static RtspSetParameterResponse fromHeaderString(String src) {
         if (src == null || src.equals("")) {
-            throw new RtspCommException("解析RtspSetParameterResponse时字符串为空");
+            throw new RtspCommException("src is null or empty in RtspSetParameterResponse");
         }
         RtspSetParameterResponse response = new RtspSetParameterResponse();
         response.parseHeaderAndReturnMap(src);

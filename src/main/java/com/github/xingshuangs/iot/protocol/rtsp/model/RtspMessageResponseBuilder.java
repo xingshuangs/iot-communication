@@ -57,7 +57,7 @@ public class RtspMessageResponseBuilder {
             case SET_PARAMETER:
                 return RtspSetParameterResponse.fromHeaderString(src);
             default:
-                throw new RtspCommException(String.format("未实现对该Method[%s]的数据解析", request.getMethod().getCode()));
+                throw new RtspCommException(String.format("data parsing for the Method[%s] is not implemented", request.getMethod().getCode()));
         }
     }
 }

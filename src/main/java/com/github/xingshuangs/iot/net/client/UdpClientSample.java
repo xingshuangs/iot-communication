@@ -66,11 +66,12 @@ public class UdpClientSample extends UdpClientBasic {
     }
 
     private void waitForReceiveData() {
-        log.debug("开启接收数据线程，远程的IP:{}，端口号：{}", this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
+        // 开启接收数据线程，远程的IP:{}，端口号：{}
+        log.debug("Open the receiving thread, remote IP:{}, port number :{}", this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
         while (!this.terminal) {
             try {
                 byte[] data = this.read();
-                log.debug("数据长度：{}", data.length);
+                log.debug("data length：{}", data.length);
                 if (this.commCallback != null) {
                     this.commCallback.accept(data);
                 }

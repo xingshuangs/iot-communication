@@ -89,7 +89,7 @@ public class UploadAckParameter extends Parameter implements IObjectByteArray {
      */
     public static UploadAckParameter fromBytes(final byte[] data, final int offset) {
         if (data.length < 2) {
-            throw new IndexOutOfBoundsException("解析DownloadAckParameter时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("DownloadAckParameter, data length < 2");
         }
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         UploadAckParameter res = new UploadAckParameter();

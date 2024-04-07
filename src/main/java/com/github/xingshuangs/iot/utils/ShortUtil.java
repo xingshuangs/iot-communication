@@ -105,10 +105,10 @@ public class ShortUtil {
      */
     public static short toInt16(byte[] data, int offset, boolean littleEndian) {
         if (data.length < 2) {
-            throw new IndexOutOfBoundsException("data小于2个字节");
+            throw new IndexOutOfBoundsException("data length < 2");
         }
         if (offset + 2 > data.length) {
-            throw new IndexOutOfBoundsException("offset + 2 > 字节长度");
+            throw new IndexOutOfBoundsException("offset + 2 > data length");
         }
         int b = littleEndian ? 1 : 0;
         int d = littleEndian ? 1 : -1;
@@ -147,10 +147,10 @@ public class ShortUtil {
      */
     public static int toUInt16(byte[] data, int offset, boolean littleEndian) {
         if (data.length < 2) {
-            throw new IndexOutOfBoundsException("data小于2个字节");
+            throw new IndexOutOfBoundsException("data length < 2");
         }
         if (offset + 2 > data.length) {
-            throw new IndexOutOfBoundsException("offset + 2 > 字节长度");
+            throw new IndexOutOfBoundsException("offset + 2 > data length");
         }
         int b = littleEndian ? 1 : 0;
         int d = littleEndian ? 1 : -1;

@@ -161,7 +161,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
      */
     private void waitForReceiveData() {
         InetSocketAddress socketAddress = this.rtspClient.getSocketAddress();
-        log.debug("[RTSP + TCP] Interleaved 开启异步接收数据线程，远程的IP[/{}:{}]",
+        log.debug("[RTSP + TCP] Interleaved enable asynchronous data receiving thread, remote IP[/{}:{}]",
                 socketAddress.getAddress().getHostAddress(), socketAddress.getPort());
         while (!this.terminal) {
             try {
@@ -189,7 +189,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
                 log.error(e.getMessage(), e);
             }
         }
-        log.debug("[RTSP + TCP] Interleaved 关闭异步接收数据线程，远程的IP[/{}:{}]",
+        log.debug("[RTSP + TCP] Interleaved closes asynchronous receiving thread, remote IP[/{}:{}]",
                 socketAddress.getAddress().getHostAddress(), socketAddress.getPort());
     }
 
@@ -205,7 +205,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
         }
         int readLength = this.rtspClient.read(header, 1, 3, 1024, 0, true);
         if (readLength != 3) {
-            throw new RtspCommException("头读取长度有误");
+            throw new RtspCommException("Header read length is incorrect");
         }
         int offset = 4;
         int length = ByteReadBuff.newInstance(header, 2).getUInt16();
@@ -215,7 +215,7 @@ public class RtspInterleavedClient implements IRtspDataStream {
         int read = this.rtspClient.read(total, offset, length, 1024, 0, true);
         if (offset + read != total.length) {
             log.error(HexUtil.toHexString(total));
-            throw new RtspCommException("数据体读取长度有误，原来长度[" + (total.length) + "], 现在长度[" + (offset + read) + "]");
+            throw new RtspCommException("The read length is incorrect，original length[" + (total.length) + "], present length[" + (offset + read) + "]");
         }
         return total;
     }

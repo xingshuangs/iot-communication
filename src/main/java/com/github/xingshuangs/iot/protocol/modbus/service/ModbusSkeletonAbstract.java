@@ -218,7 +218,7 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("address<0");
         }
         if (coilStatus.isEmpty()) {
-            throw new IllegalArgumentException("coilStatus为空或null");
+            throw new IllegalArgumentException("coilStatus list is empty");
         }
         byte[] values = BooleanUtil.listToByteArray(coilStatus);
         MbWriteMultipleCoilRequest reqPdu = new MbWriteMultipleCoilRequest(address, coilStatus.size(), values);
@@ -338,7 +338,7 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("address<0");
         }
         if (values.length % 2 != 0) {
-            throw new IllegalArgumentException("values长度必须是偶数");
+            throw new IllegalArgumentException("values must have an even length");
         }
         MbWriteMultipleRegisterRequest reqPdu = new MbWriteMultipleRegisterRequest(address, values.length / 2, values);
         this.readModbusData(unitId, reqPdu);

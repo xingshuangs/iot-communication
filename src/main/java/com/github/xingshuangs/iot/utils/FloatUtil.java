@@ -107,10 +107,10 @@ public class FloatUtil {
      */
     public static float toFloat32(byte[] data, int offset, boolean littleEndian) {
         if (data.length < 4) {
-            throw new IndexOutOfBoundsException("data小于4个字节");
+            throw new IndexOutOfBoundsException("data length < 4");
         }
         if (offset + 4 > data.length) {
-            throw new IndexOutOfBoundsException("offset + 4 > 字节长度");
+            throw new IndexOutOfBoundsException("offset + 4 > data length");
         }
         int b = littleEndian ? 3 : 0;
         int d = littleEndian ? 1 : -1;
@@ -152,10 +152,10 @@ public class FloatUtil {
      */
     public static double toFloat64(byte[] data, int offset, boolean littleEndian) {
         if (data.length < 8) {
-            throw new IndexOutOfBoundsException("data小于8个字节");
+            throw new IndexOutOfBoundsException("data length < 8");
         }
         if (offset + 8 > data.length) {
-            throw new IndexOutOfBoundsException("offset + 8 > 字节长度");
+            throw new IndexOutOfBoundsException("offset + 8 > data length");
         }
         int b = littleEndian ? 7 : 0;
         int d = littleEndian ? 1 : -1;

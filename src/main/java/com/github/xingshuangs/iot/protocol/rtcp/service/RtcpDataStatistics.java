@@ -161,7 +161,7 @@ public class RtcpDataStatistics {
      */
     public void processRtcpPackage(List<RtcpBasePackage> basePackages) {
         for (RtcpBasePackage rtcp : basePackages) {
-            log.debug("RTCP接收[{}]数据，{}", rtcp.getHeader().getPackageType(), rtcp);
+            log.debug("RTCP receives [{}] data，{}", rtcp.getHeader().getPackageType(), rtcp);
             if (rtcp instanceof RtcpSenderReport) {
                 this.lastNtpTimeSenderReportReceived = ((RtcpSenderReport) rtcp).getSenderInfo().getMswTimestamp();
                 this.lastTimeRtcpReportReceived = System.currentTimeMillis();
@@ -249,7 +249,7 @@ public class RtcpDataStatistics {
     public byte[] createReceiverAndByteContent() {
         RtcpReceiverReport receiverReport = this.createReceiverReport();
         RtcpBye aByte = this.createByte();
-        log.debug("RTCP发送[{}]，[{}]数据", receiverReport.getHeader().getPackageType(), aByte.getHeader().getPackageType());
+        log.debug("RTCP sends [{}], [{}] data", receiverReport.getHeader().getPackageType(), aByte.getHeader().getPackageType());
         byte[] res = new byte[receiverReport.byteArrayLength() + aByte.byteArrayLength()];
         System.arraycopy(receiverReport.toByteArray(), 0, res, 0, receiverReport.byteArrayLength());
         System.arraycopy(aByte.toByteArray(), 0, res, receiverReport.byteArrayLength(), aByte.byteArrayLength());

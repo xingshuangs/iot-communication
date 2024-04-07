@@ -60,12 +60,12 @@ public class RtspSdpMediaDesc {
 
     public static RtspSdpMediaDesc fromString(String src) {
         if (src == null || src.equals("")) {
-            throw new IllegalArgumentException("SDP解析MediaDesc部分数据源错误");
+            throw new IllegalArgumentException("The SDP failed to parse some data sources of MediaDesc");
         }
         RtspSdpMediaDesc desc = new RtspSdpMediaDesc();
         String[] split = src.split(SP);
         if (split.length != 4) {
-            throw new RtspCommException("RtspSdpMediaDesc数据有误，无法解析");
+            throw new RtspCommException("RtspSdpMediaDesc data is incorrect and cannot be parsed");
         }
         desc.type = split[0];
         desc.port = Integer.parseInt(split[1]);

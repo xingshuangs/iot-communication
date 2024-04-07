@@ -88,7 +88,8 @@ public class ModbusTcp extends ModbusSkeletonAbstract<MbTcpRequest, MbTcpRespons
             byte[] data = new byte[MbapHeader.BYTE_LENGTH];
             len = this.read(data);
             if (len < MbapHeader.BYTE_LENGTH) {
-                throw new ModbusCommException(" MbapHeader 无效，读取长度不一致");
+                // MbapHeader 无效，读取长度不一致
+                throw new ModbusCommException("MbapHeader is invalid, the read length is inconsistent");
             }
             header = MbapHeader.fromBytes(data);
             total = new byte[data.length + header.getLength() - 1];
@@ -96,7 +97,8 @@ public class ModbusTcp extends ModbusSkeletonAbstract<MbTcpRequest, MbTcpRespons
             len = this.read(total, data.length, header.getLength() - 1);
         }
         if (len < header.getLength() - 1) {
-            throw new ModbusCommException(" MbapHeader后面的数据长度，长度不一致");
+            //  MbapHeader后面的数据长度不一致
+            throw new ModbusCommException("The length of the data after MbapHeader is inconsistent");
         }
         if (this.comCallback != null) {
             this.comCallback.accept(total);
@@ -115,18 +117,21 @@ public class ModbusTcp extends ModbusSkeletonAbstract<MbTcpRequest, MbTcpRespons
     @Override
     protected void checkResult(MbTcpRequest req, MbTcpResponse ack) {
         if (ack.getPdu() == null) {
-            throw new ModbusCommException("PDU数据为null");
+            throw new ModbusCommException("PDU is null");
         }
         if (req.getHeader().getTransactionId() != ack.getHeader().getTransactionId()) {
-            throw new ModbusCommException("事务元标识符Id不一致");
+            // 事务元标识符Id不一致
+            throw new ModbusCommException("The transaction meta identifier Id is inconsistent");
         }
         if (ack.getPdu().getFunctionCode().getCode() == (req.getPdu().getFunctionCode().getCode() | (byte) 0x80)) {
             MbErrorResponse response = (MbErrorResponse) ack.getPdu();
-            throw new ModbusCommException("响应返回异常，异常码:" + response.getErrorCode().getDescription());
+            // 响应返回异常，异常码:
+            throw new ModbusCommException("The response returns an exception, the exception code:" + response.getErrorCode().getDescription());
         }
         if (ack.getPdu().getFunctionCode().getCode() != req.getPdu().getFunctionCode().getCode()) {
             MbErrorResponse response = (MbErrorResponse) ack.getPdu();
-            throw new ModbusCommException("返回功能码和发送功能码不一致，异常码:" + response.getErrorCode().getDescription());
+            // 返回功能码和发送功能码不一致，异常码:
+            throw new ModbusCommException("The return function code is inconsistent with the send function code. The exception code is: " + response.getErrorCode().getDescription());
         }
     }
 
@@ -149,7 +154,7 @@ public class ModbusTcp extends ModbusSkeletonAbstract<MbTcpRequest, MbTcpRespons
             return response.getPdu();
         } finally {
             if (!this.persistence) {
-                log.debug("由于短连接方式，通信完毕触发关闭连接通道，服务端IP[{}]", this.socketAddress);
+                log.debug("Due to the short connection mode, the communication is triggered to close the connection channel, and the server IP[{}]", this.socketAddress);
                 this.close();
             }
         }

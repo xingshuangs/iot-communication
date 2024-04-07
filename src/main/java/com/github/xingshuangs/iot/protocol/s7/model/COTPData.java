@@ -81,7 +81,8 @@ public class COTPData extends COTP implements IObjectByteArray {
      */
     public static COTPData fromBytes(final byte[] data) {
         if (data.length < BYTE_LENGTH) {
-            throw new S7CommException("COTPData数据字节长度不够，无法解析");
+            // COTPData数据字节长度不够，无法解析
+            throw new S7CommException("COTPData Data byte length is not enough to parse");
         }
         ByteReadBuff buff = new ByteReadBuff(data);
         COTPData cotpData = new COTPData();

@@ -90,7 +90,8 @@ public class UpDownloadDatum extends Datum {
      */
     public static UpDownloadDatum fromBytes(byte[] data, int offset, EMessageType messageType) {
         if (EMessageType.ACK_DATA != messageType) {
-            throw new S7CommException("不是响应数据");
+            // 不是响应数据
+            throw new S7CommException("Not response data");
         }
         UpDownloadDatum res = new UpDownloadDatum();
         ByteReadBuff buff = new ByteReadBuff(data, offset);

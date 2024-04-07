@@ -61,12 +61,12 @@ public class RtspSdpMediaAttrRtpMap {
 
     public static RtspSdpMediaAttrRtpMap fromString(String src) {
         if (src == null || src.equals("")) {
-            throw new IllegalArgumentException("SDP解析MediaAttrRtpMap部分数据源错误");
+            throw new IllegalArgumentException("MediaAttrRtpMap data error");
         }
         RtspSdpMediaAttrRtpMap rtpMap = new RtspSdpMediaAttrRtpMap();
         int i = src.indexOf(SP);
         if (i == -1) {
-            throw new RtspCommException("RtspSdpMediaAttrRtpMap数据有误，无法解析");
+            throw new RtspCommException("RtspSdpMediaAttrRtpMap data error");
         }
         rtpMap.payloadNumber = Integer.parseInt(src.substring(0, i));
         String sub = src.substring(i + 1).trim();

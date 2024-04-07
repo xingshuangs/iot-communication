@@ -88,7 +88,8 @@ public class TcpServerBasic {
         try {
             if (this.isAlive()) {
                 this.serverSocket.close();
-                log.debug("关闭服务端，端口号[{}]", this.port);
+                // 关闭服务端，端口号[{}]
+                log.debug("Close the server, port number [{}]", this.port);
             }
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
@@ -108,7 +109,8 @@ public class TcpServerBasic {
      * 等待客户端连入
      */
     protected void waitForClients() {
-        log.debug("开启等待客户端线程，端口号[{}]", this.port);
+        // 开启等待客户端线程，端口号[{}]
+        log.debug("Open waiting client thread, port number [{}]", this.port);
         while (this.isAlive()) {
             try {
                 Socket client = this.serverSocket.accept();
@@ -147,7 +149,8 @@ public class TcpServerBasic {
      * @param client 客户端
      */
     protected void doClientConnected(Socket client) {
-        log.debug("有客户端[{}]连入", client.getRemoteSocketAddress());
+        // 有客户端[{}]连入
+        log.debug("The client [{}] is connected", client.getRemoteSocketAddress());
         this.clientConnected(client);
         try {
             if (this.checkHandshake(client)) {
@@ -168,7 +171,8 @@ public class TcpServerBasic {
         }
 
         this.clientDisconnected(client);
-        log.debug("有客户端[{}]断开", client.getRemoteSocketAddress());
+        // 有客户端[{}]断开
+        log.debug("The client [{}] is disconnected", client.getRemoteSocketAddress());
     }
 
     /**
@@ -221,7 +225,7 @@ public class TcpServerBasic {
             int firstByte = in.read();
             if (firstByte == -1) {
                 SocketUtils.close(socket);
-                throw new SocketRuntimeException("客户端主动断开");
+                throw new SocketRuntimeException("The client is actively disconnected");
             }
             byte[] data = new byte[in.available() + 1];
             data[0] = (byte) firstByte;

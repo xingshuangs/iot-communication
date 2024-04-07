@@ -108,7 +108,7 @@ public class RtcpSenderInfo implements IObjectByteArray {
      */
     public static RtcpSenderInfo fromBytes(final byte[] data, final int offset) {
         if (data.length < 20) {
-            throw new IndexOutOfBoundsException("解析RtcpSenderInfo时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("RtcpSenderInfo, data length < 20");
         }
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         RtcpSenderInfo res = new RtcpSenderInfo();

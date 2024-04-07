@@ -102,7 +102,7 @@ public class RtcpHeader implements IObjectByteArray {
      */
     public static RtcpHeader fromBytes(final byte[] data, final int offset) {
         if (data.length < 4) {
-            throw new IndexOutOfBoundsException("解析header时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("header, data length < 4");
         }
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         RtcpHeader res = new RtcpHeader();

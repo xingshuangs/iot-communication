@@ -48,7 +48,7 @@ public class RtspSessionInfo {
 
     public static RtspSessionInfo fromString(String src) {
         if (src == null || src.equals("")) {
-            throw new IllegalArgumentException("RtspSessionInfo部分数据解析错误");
+            throw new IllegalArgumentException("RtspSessionInfo, src is null or empty");
         }
         RtspSessionInfo sessionInfo = new RtspSessionInfo();
         int commaIndex = src.indexOf(";");

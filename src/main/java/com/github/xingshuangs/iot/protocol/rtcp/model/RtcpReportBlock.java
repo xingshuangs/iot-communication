@@ -117,7 +117,7 @@ public class RtcpReportBlock implements IObjectByteArray {
      */
     public static RtcpReportBlock fromBytes(final byte[] data, final int offset) {
         if (data.length < 24) {
-            throw new IndexOutOfBoundsException("解析RtcpSdesChunk时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("RtcpSdesChunk, data length < 24");
         }
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         RtcpReportBlock res = new RtcpReportBlock();

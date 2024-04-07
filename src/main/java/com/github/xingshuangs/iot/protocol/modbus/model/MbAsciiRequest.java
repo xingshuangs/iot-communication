@@ -84,7 +84,7 @@ public class MbAsciiRequest implements IObjectByteArray {
      */
     public void selfCheck() {
         if (this.pdu == null) {
-            throw new ModbusCommException("pdu不能为null");
+            throw new ModbusCommException("pdu is null");
         }
         byte[] data = ByteWriteBuff.newInstance(1 + this.pdu.byteArrayLength())
                 .putByte(this.unitId)

@@ -137,7 +137,7 @@ public final class RtcpSenderReport extends RtcpBasePackage {
      */
     public static RtcpSenderReport fromBytes(final byte[] data, final int offset) {
         if (data.length < 28) {
-            throw new IndexOutOfBoundsException("解析RtcpSenderReport时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("RtcpSenderReport, data length < 28");
         }
         int off = offset;
         RtcpSenderReport res = new RtcpSenderReport();

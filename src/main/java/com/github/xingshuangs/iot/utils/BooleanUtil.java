@@ -62,7 +62,7 @@ public class BooleanUtil {
      */
     public static byte setBit(byte data, int bit, boolean res) {
         if (bit > 7 || bit < 0) {
-            throw new IndexOutOfBoundsException("0<=bit<=7");
+            throw new IndexOutOfBoundsException("0 <= bit <= 7");
         }
         return res ? (byte) (((data & 0xFF) | (1 << bit)) & 0xFF) : (byte) ((data & 0xFF) & ~(1 << bit) & 0xFF);
     }
@@ -76,7 +76,7 @@ public class BooleanUtil {
      */
     public static boolean getValue(byte data, int bit) {
         if (bit > 7 || bit < 0) {
-            throw new IndexOutOfBoundsException("0<=bit<=7");
+            throw new IndexOutOfBoundsException("0 <= bit <= 7");
         }
         return (((data & 0xFF) & (1 << bit)) != 0);
     }
@@ -90,7 +90,7 @@ public class BooleanUtil {
      */
     public static int getValueToInt(byte data, int bit) {
         if (bit > 7 || bit < 0) {
-            throw new IndexOutOfBoundsException("0<=bit<=7");
+            throw new IndexOutOfBoundsException("0 <= bit <= 7");
         }
         return (((data & 0xFF) & (1 << bit)) >> bit);
     }
@@ -107,7 +107,8 @@ public class BooleanUtil {
             throw new NullPointerException("src");
         }
         if (src.length * 8 < quantity) {
-            throw new IllegalArgumentException("quantity数量操作字节数组的位总和");
+            // quantity数量操作字节数组的位总和
+            throw new IllegalArgumentException("The sum of the bits of the operation byte array");
         }
         int count = 1;
         List<Boolean> res = new ArrayList<>();
@@ -130,7 +131,7 @@ public class BooleanUtil {
      */
     public static byte[] listToByteArray(List<Boolean> list) {
         if (list == null || list.isEmpty()) {
-            throw new IllegalArgumentException("list为空");
+            throw new IllegalArgumentException("list is null or empty");
         }
         int index = 0;
         byte[] values = new byte[list.size() / 8 + list.size() % 8 == 0 ? 0 : 1];

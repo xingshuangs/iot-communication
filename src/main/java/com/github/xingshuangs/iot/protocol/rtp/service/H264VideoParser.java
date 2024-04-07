@@ -64,7 +64,7 @@ public class H264VideoParser implements IPayloadParser {
 
     private H264VideoFrame doBuffers(long timestamp) {
         if (this.buffers.isEmpty()) {
-            throw new RtpCommException("buffer缓存数量为0");
+            throw new RtpCommException("the number of buffers is 0");
         }
         H264NaluFuA naluFuA = this.buffers.get(0);
         int sum = this.buffers.stream().mapToInt(x -> x.getPayload().length).sum();
@@ -116,7 +116,7 @@ public class H264VideoParser implements IPayloadParser {
                 }
                 break;
             default:
-                log.error("RTP解析未知数据类型[{}]，时间戳[{}]", naluType, rtp.getHeader().getTimestamp());
+                log.error("RTP parsing unknown data type [{}], timestamp [{}]", naluType, rtp.getHeader().getTimestamp());
                 break;
         }
         if (this.frameHandle == null || frame == null) {
@@ -130,7 +130,7 @@ public class H264VideoParser implements IPayloadParser {
                 log.error(e.getMessage(), e);
             }
         } else {
-            log.warn("存在一帧数据，负载为空，[{}], [{}]", frame.getTimestamp(), frame.getNaluType());
+            log.warn("There is a frame of data, the load is empty, [{}], [{}]", frame.getTimestamp(), frame.getNaluType());
         }
     }
 

@@ -48,7 +48,7 @@ public final class RtspTeardownResponse extends RtspMessageResponse {
 
     public static RtspTeardownResponse fromHeaderString(String src) {
         if (src == null || src.equals("")) {
-            throw new RtspCommException("解析RtspTeardownResponse时字符串为空");
+            throw new RtspCommException("src is null or empty in RtspTeardownResponse");
         }
         RtspTeardownResponse response = new RtspTeardownResponse();
         Map<String, String> map = response.parseHeaderAndReturnMap(src);

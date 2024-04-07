@@ -222,7 +222,7 @@ public class RtpHeader implements IObjectByteArray {
      */
     public static RtpHeader fromBytes(final byte[] data, final int offset) {
         if (data.length < 12) {
-            throw new IndexOutOfBoundsException("解析header时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("header, data length < 12");
         }
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         RtpHeader res = new RtpHeader();

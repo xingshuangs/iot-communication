@@ -119,7 +119,7 @@ public final class RtcpSdesReport extends RtcpBasePackage {
      */
     public static RtcpSdesReport fromBytes(final byte[] data, final int offset) {
         if (data.length < 4) {
-            throw new IndexOutOfBoundsException("解析RtcpReceiverReport时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("RtcpReceiverReport, data length < 4");
         }
         int off = offset;
         RtcpSdesReport res = new RtcpSdesReport();

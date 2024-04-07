@@ -36,18 +36,39 @@ public class GeneralConst {
         // NOOP
     }
 
+    /**
+     * 本地ip，127.0.0.1
+     */
     public static final String LOCALHOST = "127.0.0.1";
 
+    /**
+     * S7的端口号
+     */
     public static final int S7_PORT = 102;
 
+    /**
+     * Modbus的端口号
+     */
     public static final int MODBUS_PORT = 502;
 
+    /**
+     * 三菱的端口号
+     */
     public static final int MELSEC_PORT = 6000;
 
+    /**
+     * bit类型
+     */
     public static final int TYPE_BIT = 0;
 
+    /**
+     * word类型
+     */
     public static final int TYPE_WORD = 1;
 
+    /**
+     * dword类型
+     */
     public static final int TYPE_DWORD = 2;
 
 }

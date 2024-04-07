@@ -78,7 +78,7 @@ public class MbRtuResponse implements IObjectByteArray {
      */
     public void selfCheck() {
         if (this.pdu == null) {
-            throw new ModbusCommException("pdu不能为null");
+            throw new ModbusCommException("pdu is null");
         }
         byte[] data = ByteWriteBuff.newInstance(1 + this.pdu.byteArrayLength())
                 .putByte(this.unitId)
@@ -94,7 +94,7 @@ public class MbRtuResponse implements IObjectByteArray {
      */
     public boolean checkCrc() {
         if (this.pdu == null) {
-            throw new ModbusCommException("pdu不能为null");
+            throw new ModbusCommException("pdu is null");
         }
         byte[] data = ByteWriteBuff.newInstance(1 + this.pdu.byteArrayLength())
                 .putByte(this.unitId)

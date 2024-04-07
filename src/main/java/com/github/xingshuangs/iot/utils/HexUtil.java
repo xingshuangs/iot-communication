@@ -53,13 +53,16 @@ public class HexUtil {
      */
     public static byte[] toHexArray(String src) {
         if (src == null || src.length() == 0) {
-            throw new HexParseException("字符串不能为null或长度不能为0");
+            // 字符串不能为null或长度不能为0
+            throw new HexParseException("The string cannot be null or the length cannot be 0");
         }
         if ((src.length() & -src.length()) == 1) {
-            throw new HexParseException("输入的字符串个数必须为偶数");
+            // 输入的字符串个数必须为偶数
+            throw new HexParseException("The number of strings entered must be an even number");
         }
         if (!src.matches(REGEX)) {
-            throw new HexParseException("字符串内容必须是[0-9|a-f|A-F]");
+            // 字符串内容必须是[0-9|a-f|A-F]
+            throw new HexParseException("The string content must be [0-9|a-f|A-F].");
         }
 
         char[] chars = src.toCharArray();

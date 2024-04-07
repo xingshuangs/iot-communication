@@ -68,7 +68,7 @@ public class H264NaluStapSingle extends H264NaluSingle {
      */
     public static H264NaluStapSingle fromBytes(final byte[] data, final int offset) {
         if (data.length < 3) {
-            throw new IndexOutOfBoundsException("解析H264NaluStapSingle时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("H264NaluStapSingle, data length < 1");
         }
         int index = offset;
         H264NaluStapSingle res = new H264NaluStapSingle();

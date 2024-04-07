@@ -99,7 +99,8 @@ public class ModbusAsciiOverTcp extends ModbusSkeletonAbstract<MbAsciiRequest, M
             len = this.read(data);
         }
         if (len <= 0) {
-            throw new ModbusCommException(" Modbus数据读取长度有误");
+            // Modbus数据读取长度有误
+            throw new ModbusCommException("The length of Modbus data read is incorrect");
         }
         byte[] total = new byte[len];
         System.arraycopy(data, 0, total, 0, len);
@@ -120,18 +121,21 @@ public class ModbusAsciiOverTcp extends ModbusSkeletonAbstract<MbAsciiRequest, M
     @Override
     protected void checkResult(MbAsciiRequest req, MbAsciiResponse ack) {
         if (!ack.checkLrc()) {
-            throw new ModbusCommException("响应数据LRC校验失败");
+            // 响应数据LRC校验失败
+            throw new ModbusCommException("Response data LRC verification failed");
         }
         if (ack.getPdu() == null) {
-            throw new ModbusCommException("PDU数据为null");
+            throw new ModbusCommException("PDU is null");
         }
         if (ack.getPdu().getFunctionCode().getCode() == (req.getPdu().getFunctionCode().getCode() | (byte) 0x80)) {
             MbErrorResponse response = (MbErrorResponse) ack.getPdu();
-            throw new ModbusCommException("响应返回异常，异常码:" + response.getErrorCode().getDescription());
+            // 响应返回异常，异常码:
+            throw new ModbusCommException("The response returns an exception, the exception code:" + response.getErrorCode().getDescription());
         }
         if (ack.getPdu().getFunctionCode().getCode() != req.getPdu().getFunctionCode().getCode()) {
             MbErrorResponse response = (MbErrorResponse) ack.getPdu();
-            throw new ModbusCommException("返回功能码和发送功能码不一致，异常码:" + response.getErrorCode().getDescription());
+            // 返回功能码和发送功能码不一致，异常码:
+            throw new ModbusCommException("The return function code is inconsistent with the send function code. The exception code is:" + response.getErrorCode().getDescription());
         }
     }
 
@@ -143,7 +147,8 @@ public class ModbusAsciiOverTcp extends ModbusSkeletonAbstract<MbAsciiRequest, M
             return response.getPdu();
         } finally {
             if (!this.persistence) {
-                log.debug("由于短连接方式，通信完毕触发关闭连接通道，服务端IP[{}]", this.socketAddress);
+                // 由于短连接方式，通信完毕触发关闭连接通道，服务端IP
+                log.debug("Due to the short connection mode, the communication is completed and the connection channel is triggered to close, Server IP[{}]", this.socketAddress);
                 this.close();
             }
         }

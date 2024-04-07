@@ -67,12 +67,12 @@ public class RtspSdpMediaAttrFmtp {
 
     public static RtspSdpMediaAttrFmtp fromString(String src) {
         if (src == null || src.equals("")) {
-            throw new IllegalArgumentException("SDP解析MediaAttrFmtp部分数据源错误");
+            throw new IllegalArgumentException("MediaAttrFmtp of SDP data error");
         }
         RtspSdpMediaAttrFmtp rtpMap = new RtspSdpMediaAttrFmtp();
         int i = src.indexOf(SP);
         if (i == -1) {
-            throw new RtspCommException("RtspSdpMediaAttrFmtp数据有误，无法解析");
+            throw new RtspCommException("RtspSdpMediaAttrFmtp data error");
         }
         rtpMap.number = Integer.parseInt(src.substring(0, i));
         String sub = src.substring(i + 1);

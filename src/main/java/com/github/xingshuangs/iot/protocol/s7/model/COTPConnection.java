@@ -212,7 +212,8 @@ public class COTPConnection extends COTP implements IObjectByteArray {
      */
     public static COTPConnection fromBytes(final byte[] data) {
         if (data.length < BYTE_LENGTH) {
-            throw new S7CommException("COTPConnection数据字节长度不够，无法解析");
+            // COTPConnection数据字节长度不够，无法解析
+            throw new S7CommException("The COTPConnection data bytes are not long enough to parse");
         }
         ByteReadBuff buff = new ByteReadBuff(data);
         COTPConnection connection = new COTPConnection();

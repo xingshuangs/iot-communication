@@ -51,12 +51,12 @@ public class RtspSdpTime {
 
     public static RtspSdpTime fromString(String src) {
         if (src == null || src.equals("")) {
-            throw new IllegalArgumentException("SDP解析Time部分数据源错误");
+            throw new IllegalArgumentException("when SDP parses Time, data error");
         }
         RtspSdpTime time = new RtspSdpTime();
         String[] split = src.split(SP);
         if (split.length != 2) {
-            throw new RtspCommException("RtspSdpTime数据有误，无法解析");
+            throw new RtspCommException("RtspSdpTime data is incorrect and cannot be parsed");
         }
         time.startTime = Integer.parseInt(split[0]);
         time.endTime = Integer.parseInt(split[1]);

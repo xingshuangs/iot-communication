@@ -76,10 +76,10 @@ public class ByteUtil {
      */
     public static int toUInt8(byte[] data, int offset) {
         if (data.length < 1) {
-            throw new IndexOutOfBoundsException("data小于1个字节");
+            throw new IndexOutOfBoundsException("data length < 1");
         }
         if (offset + 1 > data.length) {
-            throw new IndexOutOfBoundsException("offset + 1 > 字节长度");
+            throw new IndexOutOfBoundsException("offset + 1 > data length");
         }
         return (data[offset] & 0xFF);
     }
@@ -94,7 +94,7 @@ public class ByteUtil {
      */
     public static int toUInt8(byte data, int startBitIndex, int bitLength) {
         if (startBitIndex < 0 || startBitIndex > 7) {
-            throw new IllegalArgumentException("起始位只能是[0,7]");
+            throw new IllegalArgumentException("The start bit index can only be[0,7]");
         }
         if (startBitIndex + bitLength > 8) {
             throw new IllegalArgumentException("startBitIndex + length > 8");
@@ -146,13 +146,13 @@ public class ByteUtil {
      */
     public static String toStr(byte[] data, int offset, int length, Charset charsetName) {
         if (offset < 0) {
-            throw new IllegalArgumentException("偏移量offset < 0");
+            throw new IllegalArgumentException("offset < 0");
         }
         if (length < 0) {
-            throw new IllegalArgumentException("长度length < 0");
+            throw new IllegalArgumentException("length < 0");
         }
         if (offset > data.length || offset + length > data.length) {
-            throw new IllegalArgumentException("偏移量 > 字节数组长度 || 偏移量 + 长度 > 字节数组长度");
+            throw new IllegalArgumentException("offset > data length || offset + length > data length");
         }
         return new String(data, offset, length, charsetName).trim();
     }

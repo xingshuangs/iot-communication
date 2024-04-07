@@ -93,7 +93,8 @@ public class PlcStopParameter extends Parameter implements IObjectByteArray {
      */
     public static PlcStopParameter fromBytes(final byte[] data) {
         if (data.length < 7) {
-            throw new S7CommException("StopParameter解析有误，StopParameter字节数组长度 < 7");
+            // StopParameter解析有误，StopParameter字节数组长度 < 7
+            throw new S7CommException("The StopParameter resolution is incorrect. The StopParameter byte array length is less than 7");
         }
         ByteReadBuff buff = new ByteReadBuff(data);
         PlcStopParameter parameter = new PlcStopParameter();

@@ -91,7 +91,8 @@ public class ByteBuffBase {
                 res[3] = data[index + 3];
                 break;
             default:
-                throw new HexParseException("未实现该数据格式");
+                // 未实现该数据格式
+                throw new HexParseException("The data format is not implemented");
         }
         return res;
     }
@@ -157,7 +158,7 @@ public class ByteBuffBase {
                 res[7] = data[index + 7];
                 break;
             default:
-                throw new HexParseException("未实现该数据格式");
+                throw new HexParseException("The data format is not implemented");
         }
         return res;
     }

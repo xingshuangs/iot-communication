@@ -52,7 +52,7 @@ public class RtspSdp {
 
     public static RtspSdp fromString(String src) {
         if (src == null || src.equals("")) {
-            throw new IllegalArgumentException("SDP解析数据源错误src");
+            throw new IllegalArgumentException("SDP, src is null or empty");
         }
         // v= 字符串的索引，到第一个 m= 为session部分的内容
         int startSession = src.indexOf("v=");

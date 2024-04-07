@@ -87,7 +87,7 @@ public class TPKT implements IObjectByteArray {
      */
     public static TPKT fromBytes(final byte[] data) {
         if (data.length < BYTE_LENGTH) {
-            throw new IndexOutOfBoundsException(String.format("TPKT转换过程中，字节数据长度小于%d", BYTE_LENGTH));
+            throw new IndexOutOfBoundsException(String.format("During TPKT conversion, the length of byte data is less than %d", BYTE_LENGTH));
         }
         ByteReadBuff buff = new ByteReadBuff(data);
         TPKT tpkt = new TPKT();

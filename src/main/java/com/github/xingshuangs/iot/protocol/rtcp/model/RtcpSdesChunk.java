@@ -99,7 +99,7 @@ public class RtcpSdesChunk implements IObjectByteArray {
      */
     public static RtcpSdesChunk fromBytes(final byte[] data, final int offset) {
         if (data.length < 4) {
-            throw new IndexOutOfBoundsException("解析RtcpSdesChunk时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("RtcpSdesChunk, data length < 4");
         }
         int len = offset;
         ByteReadBuff buff = new ByteReadBuff(data, offset);

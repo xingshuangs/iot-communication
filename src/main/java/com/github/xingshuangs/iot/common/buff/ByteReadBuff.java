@@ -125,10 +125,12 @@ public class ByteReadBuff extends ByteBuffBase {
      */
     private void checkCondition(int index) {
         if (index < 0) {
-            throw new IndexOutOfBoundsException("索引不能小于0");
+            // 索引不能小于0
+            throw new IndexOutOfBoundsException("Index less than 0");
         }
         if (index >= data.length) {
-            throw new IndexOutOfBoundsException("超过字节数组最大容量");
+            // 超过字节数组最大容量
+            throw new IndexOutOfBoundsException("Exceeds the maximum capacity of the byte array");
         }
     }
 

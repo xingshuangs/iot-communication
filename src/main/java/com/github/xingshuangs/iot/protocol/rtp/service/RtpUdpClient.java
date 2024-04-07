@@ -122,7 +122,7 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
      * 接收数据的线程
      */
     private void waitForReceiveData() {
-        log.debug("[RTSP + UDP] RTP 开启异步接收数据线程，远程的IP[/{}:{}]",
+        log.debug("[RTSP + UDP] RTP enable asynchronous data receiving thread, remote IP[/{}:{}]",
                 this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
         while (!this.terminal) {
             try {
@@ -132,7 +132,8 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
                 }
                 RtpPackage rtp = RtpPackage.fromBytes(data);
                 if (data.length > rtp.byteArrayLength()) {
-                    log.warn("rtp数据还有未处理部分，未处理字节个数[{}]", data.length - rtp.byteArrayLength());
+                    // rtp数据还有未处理部分，未处理字节个数[{}]
+                    log.warn("rtp data has unprocessed parts, number of unprocessed bytes [{}]", data.length - rtp.byteArrayLength());
                 }
                 if (this.rtcpUdpClient != null) {
                     this.rtcpUdpClient.processRtpPackage(rtp);
@@ -149,7 +150,7 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
                 }
             }
         }
-        log.debug("[RTSP + UDP] RTP 关闭异步接收数据线程，远程的IP[/{}:{}]",
+        log.debug("[RTSP + UDP] RTP disables asynchronous data receiving thread, remote IP[/{}:{}]",
                 this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
     }
 }

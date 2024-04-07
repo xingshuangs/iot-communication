@@ -98,7 +98,7 @@ public class H264NaluFuB extends H264NaluBase {
      */
     public static H264NaluFuB fromBytes(final byte[] data, final int offset) {
         if (data.length < 1) {
-            throw new IndexOutOfBoundsException("解析H264NaluSingle时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("H264NaluSingle, data length < 1");
         }
         H264NaluFuB res = new H264NaluFuB();
         int index = offset;

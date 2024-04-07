@@ -52,7 +52,7 @@ public final class RtspOptionResponse extends RtspMessageResponse {
 
     public static RtspOptionResponse fromHeaderString(String src) {
         if (src == null || src.equals("")) {
-            throw new RtspCommException("解析RtspOptionResponse时字符串为空");
+            throw new RtspCommException("src is null or empty in RtspOptionResponse");
         }
         RtspOptionResponse response = new RtspOptionResponse();
         Map<String, String> map = response.parseHeaderAndReturnMap(src);

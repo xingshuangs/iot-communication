@@ -65,7 +65,7 @@ public class EndUploadParameter extends UploadParameter {
      */
     public static EndUploadParameter fromBytes(final byte[] data, final int offset) {
         if (data.length < 8) {
-            throw new IndexOutOfBoundsException("解析UploadParameter时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("UploadParameter, data length < 8");
         }
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         EndUploadParameter res = new EndUploadParameter();

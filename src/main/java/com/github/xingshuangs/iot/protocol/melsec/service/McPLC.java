@@ -581,7 +581,7 @@ public class McPLC extends McNetwork {
      */
     public void writeUInt32(String address, List<Long> data) {
         if (data.isEmpty()) {
-            throw new IllegalArgumentException("列表为空");
+            throw new IllegalArgumentException("data list is empty");
         }
         ByteWriteBuff buff = ByteWriteBuff.newInstance(data.size() * 4, EByteBuffFormat.AB_CD);
         data.forEach(buff::putInteger);
@@ -617,7 +617,7 @@ public class McPLC extends McNetwork {
      */
     public void writeFloat32(String address, List<Float> data) {
         if (data.isEmpty()) {
-            throw new IllegalArgumentException("列表为空");
+            throw new IllegalArgumentException("data list is empty");
         }
         ByteWriteBuff buff = ByteWriteBuff.newInstance(data.size() * 4, EByteBuffFormat.AB_CD);
         data.forEach(buff::putFloat);
@@ -653,7 +653,7 @@ public class McPLC extends McNetwork {
      */
     public void writeFloat64(String address, List<Double> data) {
         if (data.isEmpty()) {
-            throw new IllegalArgumentException("列表为空");
+            throw new IllegalArgumentException("data list is empty");
         }
         ByteWriteBuff buff = ByteWriteBuff.newInstance(data.size() * 8, EByteBuffFormat.AB_CD);
         data.forEach(buff::putDouble);

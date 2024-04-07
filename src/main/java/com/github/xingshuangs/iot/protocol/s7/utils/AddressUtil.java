@@ -78,10 +78,10 @@ public class AddressUtil {
      */
     public static RequestItem parse(String address, int count, EParamVariableType variableType) {
         if (address == null || address.length() == 0) {
-            throw new IllegalArgumentException("address不能为空");
+            throw new IllegalArgumentException("address is null or empty");
         }
         if (count <= 0) {
-            throw new IllegalArgumentException("count个数必须为正数");
+            throw new IllegalArgumentException("count must be positive");
         }
         // 转换为大写
         address = address.toUpperCase();
@@ -95,7 +95,8 @@ public class AddressUtil {
         item.setByteAddress(parseByteAddress(addList));
         item.setBitAddress(parseBitAddress(addList, variableType));
         if (item.getBitAddress() > 7) {
-            throw new IllegalArgumentException("address地址信息格式错误，位索引只能[0-7]");
+            // address地址信息格式错误，位索引只能[0-7]
+            throw new IllegalArgumentException("address address information format is incorrect, the bit index can only be [0-7]");
         }
         return item;
     }
@@ -123,7 +124,8 @@ public class AddressUtil {
             case "C":
                 return EArea.S7_COUNTERS;
             default:
-                throw new IllegalArgumentException("传入的参数有误，无法解析Area");
+                // 传入的参数有误，无法解析Area
+                throw new IllegalArgumentException("The parameter passed in was incorrect and the Area could not be resolved");
         }
     }
 
@@ -198,7 +200,7 @@ public class AddressUtil {
             case S7_COUNTERS:
                 return "C";
             default:
-                throw new IllegalArgumentException("不支持访问");
+                throw new IllegalArgumentException("This area is not accessible");
         }
     }
 

@@ -71,7 +71,7 @@ public class RtcpPackageBuilder {
             case APP:
                 return RtcpApp.fromBytes(data, offset);
             default:
-                throw new RtcpCommException("无法识别类型");
+                throw new RtcpCommException("unrecognized type");
         }
     }
 }

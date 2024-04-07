@@ -70,13 +70,13 @@ public class RtspSdpOrigin {
 
     public static RtspSdpOrigin fromString(String src) {
         if (src == null || src.equals("")) {
-            throw new IllegalArgumentException("SDP解析Origin部分数据源错误");
+            throw new IllegalArgumentException("The SDP fails to parse Origin data sources");
         }
 
         RtspSdpOrigin origin = new RtspSdpOrigin();
         String[] split = src.split(SP);
         if (split.length != 6) {
-            throw new RtspCommException("RtspSdpOrigin数据有误，无法解析");
+            throw new RtspCommException("RtspSdpOrigin data is incorrect and cannot be parsed");
         }
         origin.username = split[0];
         origin.sessionId = split[1];

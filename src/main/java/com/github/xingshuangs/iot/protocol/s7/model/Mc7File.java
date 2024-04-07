@@ -75,7 +75,7 @@ public class Mc7File {
      */
     public static Mc7File fromBytes(final byte[] data) {
         if (data == null || data.length < 36) {
-            throw new IllegalArgumentException("MC7文件内容至少要36个字节长度");
+            throw new IllegalArgumentException("MC7, data length < 36");
         }
         ByteReadBuff buff = new ByteReadBuff(data);
         Mc7File res = new Mc7File();

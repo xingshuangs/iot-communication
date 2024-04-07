@@ -79,7 +79,7 @@ public class AckHeader extends Header {
      */
     public static AckHeader fromBytes(final byte[] data) {
         if (data.length < BYTE_LENGTH) {
-            throw new IndexOutOfBoundsException("解析header时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("header, data length < 12");
         }
         ByteReadBuff buff = new ByteReadBuff(data);
         AckHeader header = new AckHeader();

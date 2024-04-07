@@ -164,7 +164,8 @@ public class TcpClientBasic implements ICommunicable {
             this.socket.setSoTimeout(this.receiveTimeout);
             this.socket.connect(this.socketAddress, this.connectTimeout);
             this.socketError.set(false);
-            log.debug("创建并连接{}服务端[{}]成功", this.tag, this.socketAddress);
+            // 创建并连接{}服务端[{}]成功
+            log.debug("Succeeded in creating and connecting {} server [{}]", this.tag, this.socketAddress);
             this.doAfterConnected();
             return socket;
         } catch (IOException e) {

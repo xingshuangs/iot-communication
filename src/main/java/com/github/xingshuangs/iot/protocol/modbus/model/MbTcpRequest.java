@@ -66,10 +66,10 @@ public class MbTcpRequest implements IObjectByteArray {
      */
     public void selfCheck() {
         if (this.header == null) {
-            throw new ModbusCommException("header不能为null");
+            throw new ModbusCommException("header is null");
         }
         if (this.pdu == null) {
-            throw new ModbusCommException("pdu不能为null");
+            throw new ModbusCommException("pdu is null");
         }
         this.header.setLength(this.pdu.byteArrayLength() + 1);
     }

@@ -211,7 +211,8 @@ public class RtspFMp4Proxy {
             this.lastFrame = videoFrame;
         }
         if (this.lastFrame.getTimestamp() > videoFrame.getTimestamp()) {
-            log.warn("出现一帧数据时间戳小于之前的一帧的时间戳");
+            // 出现一帧数据时间戳小于之前的一帧的时间戳
+            log.warn("The timestamp of a frame is smaller than the timestamp of the previous frame");
         }
         this.lastFrame = videoFrame;
 
@@ -288,7 +289,8 @@ public class RtspFMp4Proxy {
      * 事件执行
      */
     private void executeHandle() {
-        log.debug("开启代理服务端发送FMp4字节数据的异步线程");
+        // 开启代理服务端发送FMp4字节数据的异步线程
+        log.debug("Start the asynchronous thread that sends FMp4 bytes of data from the proxy server");
         while (!this.terminal) {
             // 没数据的时候等待
             while (this.buffers.isEmpty() && !this.terminal) {
@@ -313,7 +315,8 @@ public class RtspFMp4Proxy {
                 }
             }
         }
-        log.debug("关闭代理服务端发送FMp4字节数据的异步线程");
+        // 关闭代理服务端发送FMp4字节数据的异步线程
+        log.debug("Shut down the asynchronous thread that sends FMp4 bytes of data from the proxy server");
     }
 
     /**
@@ -322,7 +325,8 @@ public class RtspFMp4Proxy {
      * @return 异步结果
      */
     public CompletableFuture<Void> start() {
-        log.info("开启FMp4代理服务端，模式[{}]，地址[{}]", this.asyncSend ? "异步" : "同步", this.client.getUri());
+        // 开启FMp4代理服务端，模式[{}]，地址[{}]
+        log.info("Open FMp4 agent server, mode [{}], address [{}]", this.asyncSend ? "async" : "sync", this.client.getUri());
         return this.client.start();
     }
 
@@ -343,6 +347,7 @@ public class RtspFMp4Proxy {
             }
         }
         this.client.stop();
-        log.info("关闭FMp4代理服务端，地址[{}]", this.client.getUri());
+        // 关闭FMp4代理服务端，地址[{}]
+        log.info("Close FMp4 agent server, address [{}]", this.client.getUri());
     }
 }

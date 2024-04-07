@@ -108,10 +108,11 @@ public class RtspInterleaved implements IObjectByteArray {
      */
     public static RtspInterleaved fromBytes(final byte[] data, final int offset) {
         if (data.length < 4) {
-            throw new IndexOutOfBoundsException("解析RtspInterleaved时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("RtspInterleaved, data length < 4");
         }
         if (data[offset] != VERSION) {
-            throw new IllegalArgumentException("报文版本不一致，第一个字节不是0x24");
+            // 报文版本不一致，第一个字节不是0x24
+            throw new IllegalArgumentException("The versions of the packets are different, the first byte is not 0x24");
         }
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         RtspInterleaved res = new RtspInterleaved();

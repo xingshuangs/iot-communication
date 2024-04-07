@@ -103,7 +103,7 @@ public class RtspSdpSession {
 
     public static RtspSdpSession fromString(String src) {
         if (src == null || src.equals("")) {
-            throw new IllegalArgumentException("SDP解析session部分数据源错误");
+            throw new IllegalArgumentException("session, src is null or empty");
         }
         RtspSdpSession session = new RtspSdpSession();
         Map<String, String> map = StringSpUtil.splitTwoStepByLine(src, CRLF, EQUAL);

@@ -106,16 +106,16 @@ public class DigestAuthenticator extends AbstractAuthenticator {
 
     public String createResponse() {
         if (this.realm == null || this.realm.equals("")) {
-            throw new AuthenticationException("realm为空");
+            throw new AuthenticationException("realm is empty");
         }
         if (this.nonce == null || this.nonce.equals("")) {
-            throw new AuthenticationException("nonce为空");
+            throw new AuthenticationException("nonce is empty");
         }
         if (this.uri == null || this.uri.equals("")) {
-            throw new AuthenticationException("uri为空");
+            throw new AuthenticationException("uri is empty");
         }
         if (this.method == null || this.method.equals("")) {
-            throw new AuthenticationException("method为空");
+            throw new AuthenticationException("method is empty");
         }
         StringBuilder sb = new StringBuilder();
         sb.append(DIGEST_NAME).append(" ")
@@ -210,7 +210,8 @@ public class DigestAuthenticator extends AbstractAuthenticator {
         // Digest realm="testrealm@host.com", qop="auth", nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093"
         int i = src.indexOf(" ");
         if (i < 0) {
-            throw new AuthenticationException("传入的服务端Digest数据格式错误");
+            // 传入的服务端Digest数据格式错误
+            throw new AuthenticationException("the format of the incoming server Digest data is incorrect");
         }
         Map<String, String> map = new HashMap<>();
         String content = src.substring(i + 1);

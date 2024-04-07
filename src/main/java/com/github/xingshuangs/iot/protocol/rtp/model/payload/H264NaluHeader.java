@@ -92,7 +92,7 @@ public class H264NaluHeader implements IObjectByteArray {
      */
     public static H264NaluHeader fromBytes(final byte[] data, final int offset) {
         if (data.length < 1) {
-            throw new IndexOutOfBoundsException("解析header时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("header, data length < 1");
         }
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         H264NaluHeader res = new H264NaluHeader();

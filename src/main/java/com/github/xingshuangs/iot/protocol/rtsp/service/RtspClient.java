@@ -74,7 +74,7 @@ public class RtspClient extends RtspNetwork {
      * @return 执行的future
      */
     public CompletableFuture<Void> start() {
-        log.info("开启RTSP连接，地址[{}]，通信模式[{}]", this.uri, this.transportProtocol);
+        log.info("Enable RTSP connection, address [{}], communication mode [{}]", this.uri, this.transportProtocol);
         this.connect();
         // 保证连接成功后在置true
         this.alive = true;
@@ -94,7 +94,8 @@ public class RtspClient extends RtspNetwork {
                     }
                     if (System.currentTimeMillis() - lastTime > (this.sessionInfo.getTimeout() - 1) / 2) {
                         lastTime = System.currentTimeMillis();
-                        log.debug("[{}]触发session心跳，发送参数获取信号", this.uri);
+                        // 触发session心跳，发送参数获取信号
+                        log.debug("[{}] Triggers the session heartbeat and sends parameters to obtain signal", this.uri);
                         this.getParameter();
                     }
                 }

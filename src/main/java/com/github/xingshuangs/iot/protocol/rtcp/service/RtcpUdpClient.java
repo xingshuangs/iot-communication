@@ -119,7 +119,7 @@ public class RtcpUdpClient extends UdpClientBasic implements IRtspDataStream {
     }
 
     private void waitForReceiveData() {
-        log.debug("[RTSP + UDP] RTCP 开启异步接收数据线程，远程的IP[/{}:{}]",
+        log.debug("[RTSP + UDP] RTCP enables asynchronous data receiving thread, remote IP[/{}:{}]",
                 this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
         while (!this.terminal) {
             try {
@@ -140,7 +140,7 @@ public class RtcpUdpClient extends UdpClientBasic implements IRtspDataStream {
                 }
             }
         }
-        log.debug("[RTSP + UDP] RTCP 关闭异步接收数据线程，远程的IP[/{}:{}]",
+        log.debug("[RTSP + UDP] RTCP closes asynchronous receiving thread, remote IP[/{}:{}]",
                 this.serverAddress.getAddress().getHostAddress(), this.serverAddress.getPort());
     }
 

@@ -63,7 +63,7 @@ public class RtspTransport {
 
     public static RtspTransport fromString(String src) {
         if (src == null || src.equals("")) {
-            throw new IllegalArgumentException("RtspTransport部分数据解析错误");
+            throw new IllegalArgumentException("RtspTransport, src is null or empty");
         }
         if (src.contains("interleaved")) {
             return RtspInterleavedTransport.fromString(src);
@@ -86,10 +86,10 @@ public class RtspTransport {
     @Override
     public String toString() {
         if (this.protocol == null || this.protocol.equals("")) {
-            throw new RtspCommException("RtspTransport的protocol异常");
+            throw new RtspCommException("protocol of RtspTransport is null or empty");
         }
         if (this.castMode == null || this.castMode.equals("")) {
-            throw new RtspCommException("RtspTransport的castMode异常");
+            throw new RtspCommException("castMode of RtspTransport is null or empty");
         }
         List<String> res = new ArrayList<>();
         res.add(this.protocol);

@@ -58,7 +58,7 @@ public class RtspRtpInfo {
 
     public static RtspRtpInfo fromString(String src) {
         if (src == null || src.equals("")) {
-            throw new IllegalArgumentException("RtspRtpInfo部分数据解析错误");
+            throw new IllegalArgumentException("RtspRtpInfo, src is null or empty");
         }
         Map<String, String> map = StringSpUtil.splitTwoStepByLine(src, SEMICOLON, EQUAL);
         RtspRtpInfo rtpInfo = new RtspRtpInfo();

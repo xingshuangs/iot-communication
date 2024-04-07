@@ -140,10 +140,10 @@ public class IntegerUtil {
      */
     public static int toInt32(byte[] data, int offset, boolean littleEndian) {
         if (data.length < 4) {
-            throw new IndexOutOfBoundsException("data小于4个字节");
+            throw new IndexOutOfBoundsException("data length < 4");
         }
         if (offset + 4 > data.length) {
-            throw new IndexOutOfBoundsException("offset + 4 > 字节长度");
+            throw new IndexOutOfBoundsException("offset + 4 > data length");
         }
         int b = littleEndian ? 3 : 0;
         int d = littleEndian ? 1 : -1;
@@ -174,10 +174,10 @@ public class IntegerUtil {
      */
     public static int toInt32In3Bytes(byte[] data, int offset, boolean littleEndian) {
         if (data.length < 3) {
-            throw new IndexOutOfBoundsException("data小于3个字节");
+            throw new IndexOutOfBoundsException("data length < 3");
         }
         if (offset + 3 > data.length) {
-            throw new IndexOutOfBoundsException("offset + 3 > 字节长度");
+            throw new IndexOutOfBoundsException("offset + 3 > data length");
         }
         int b = littleEndian ? 2 : 0;
         int d = littleEndian ? 1 : -1;
@@ -217,10 +217,10 @@ public class IntegerUtil {
      */
     public static long toUInt32(byte[] data, int offset, boolean littleEndian) {
         if (data.length < 4) {
-            throw new IndexOutOfBoundsException("data小于4个字节");
+            throw new IndexOutOfBoundsException("data length < 4");
         }
         if (offset + 4 > data.length) {
-            throw new IndexOutOfBoundsException("offset + 4 > 字节长度");
+            throw new IndexOutOfBoundsException("offset + 4 > data length");
         }
         int b = littleEndian ? 3 : 0;
         int d = littleEndian ? 1 : -1;

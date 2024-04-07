@@ -87,7 +87,7 @@ public class UploadParameter extends UploadAckParameter {
      */
     public static UploadParameter fromBytes(final byte[] data, final int offset) {
         if (data.length < 8) {
-            throw new IndexOutOfBoundsException("解析UploadParameter时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("UploadParameter时, data length < 8");
         }
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         UploadParameter res = new UploadParameter();

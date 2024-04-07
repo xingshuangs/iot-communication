@@ -633,7 +633,7 @@ public class S7PLC extends PLCNetwork {
      */
     public void writeString(String address, String data) {
         if (data.length() == 0) {
-            throw new IllegalArgumentException("data字符串参数长度为0");
+            throw new IllegalArgumentException("data length == 0");
         }
         int offset = this.plcType == EPlcType.S200_SMART ? 0 : 1;
         // 填充字节长度数据

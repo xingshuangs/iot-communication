@@ -68,7 +68,8 @@ public class ByteArraySerializer implements IByteArraySerializable {
             }
             return bean;
         } catch (Exception e) {
-            throw new ByteArrayParseException("解析成对象错误，原因：" + e.getMessage(), e);
+            // 解析成对象错误，原因：
+            throw new ByteArrayParseException("parsing to object error, cause:" + e.getMessage(), e);
         }
     }
 
@@ -94,7 +95,7 @@ public class ByteArraySerializer implements IByteArraySerializable {
         try {
             for (final ByteArrayParameter parameter : parameters) {
                 if (parameter == null) {
-                    throw new ByteArrayParseException("ByteArrayParameter列表中存在null");
+                    throw new ByteArrayParseException("null exists in the list of ByteArrayParameter");
                 }
 
                 this.checkByteArrayVariable(parameter);
@@ -103,7 +104,7 @@ public class ByteArraySerializer implements IByteArraySerializable {
             }
             return parameters;
         } catch (Exception e) {
-            throw new ByteArrayParseException("解析成对象错误，原因：" + e.getMessage(), e);
+            throw new ByteArrayParseException("parsing to object error, cause:" + e.getMessage(), e);
         }
     }
 
@@ -146,7 +147,7 @@ public class ByteArraySerializer implements IByteArraySerializable {
             }
             return buff.getData();
         } catch (Exception e) {
-            throw new ByteArrayParseException("解析成对象错误，原因：" + e.getMessage(), e);
+            throw new ByteArrayParseException("parsing to object error, cause:" + e.getMessage(), e);
         }
     }
 
@@ -219,7 +220,8 @@ public class ByteArraySerializer implements IByteArraySerializable {
                 field.set(bean, buff.getString(variable.getByteOffset(), variable.getCount()));
                 break;
             default:
-                throw new ByteArrayParseException("提取数据的时候无法识别数据类型");
+                // 提取数据的时候无法识别数据类型
+                throw new ByteArrayParseException("The data type is not recognized when extracting the data");
         }
     }
 
@@ -230,13 +232,16 @@ public class ByteArraySerializer implements IByteArraySerializable {
      */
     private void checkByteArrayVariable(ByteArrayParameter variable) {
         if (variable.getByteOffset() < 0) {
-            throw new ByteArrayParseException("字节偏移量不能为负数");
+            // 字节偏移量不能为负数
+            throw new ByteArrayParseException("The byte offset can't be negative");
         }
         if (variable.getCount() < 0) {
-            throw new ByteArrayParseException("数据个数不能为负数");
+            // 数据个数不能为负数
+            throw new ByteArrayParseException("The number of data can't be negative");
         }
         if (variable.getType() == BOOL && (variable.getBitOffset() > 7 || variable.getBitOffset() < 0)) {
-            throw new ByteArrayParseException("当数据类型为bool时，位偏移量只能是[0,7]");
+            // 当数据类型为bool时，位偏移量只能是[0,7]
+            throw new ByteArrayParseException("When the data type is bool, the bit offset can only be [0,7].");
         }
     }
 
@@ -281,7 +286,8 @@ public class ByteArraySerializer implements IByteArraySerializable {
                 buff.putString((String) data, StandardCharsets.US_ASCII, variable.byteOffset());
                 break;
             default:
-                throw new ByteArrayParseException("填充数据的时候无法识别数据类型");
+                // 填充数据的时候无法识别数据类型
+                throw new ByteArrayParseException("The data type is not recognized when populating the data");
         }
     }
 

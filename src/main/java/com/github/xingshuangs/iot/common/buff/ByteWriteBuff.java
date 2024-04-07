@@ -101,7 +101,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      */
     public byte getByte(int index) {
         if (index > data.length - 1) {
-            throw new IndexOutOfBoundsException("超出索引");
+            throw new IndexOutOfBoundsException("index");
         }
         return this.data[index];
     }
@@ -114,7 +114,8 @@ public class ByteWriteBuff extends ByteBuffBase {
      */
     private void checkCondition(int desIndex, int targetLength) {
         if (desIndex + targetLength > data.length) {
-            throw new IllegalArgumentException("超过字节数组最大容量");
+            // 超过字节数组最大容量
+            throw new IllegalArgumentException("Exceeds the maximum capacity of the byte array");
         }
     }
 

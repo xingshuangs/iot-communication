@@ -85,7 +85,7 @@ public class RtpPackage implements IObjectByteArray {
      */
     public static RtpPackage fromBytes(final byte[] data, final int offset) {
         if (data.length < 12) {
-            throw new IndexOutOfBoundsException("解析RtpPackage时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("RtpPackage, data length < 12");
         }
         int index = offset;
         RtpPackage res = new RtpPackage();

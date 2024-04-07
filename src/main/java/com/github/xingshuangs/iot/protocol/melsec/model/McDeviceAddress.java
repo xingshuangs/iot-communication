@@ -149,16 +149,17 @@ public class McDeviceAddress {
      */
     public static McDeviceAddress createBy(String address, int count) {
         if (address == null || address.length() == 0) {
-            throw new IllegalArgumentException("address不能为空");
+            throw new IllegalArgumentException("address is null or empty");
         }
         if (count <= 0) {
-            throw new IllegalArgumentException("count个数必须为正数");
+            throw new IllegalArgumentException("count <= 0");
         }
         // 转换为大写
         address = address.toUpperCase();
         Matcher matcher = Pattern.compile("\\d").matcher(address);
         if (!matcher.find()) {
-            throw new McCommException("地址有问题");
+            // 地址有问题
+            throw new McCommException("address error");
         }
 
         // 提取字符数据
@@ -166,13 +167,13 @@ public class McDeviceAddress {
         String letter = address.substring(0, matcher.start()).trim();
         EMcDeviceCode deviceCode = EMcDeviceCode.from(letter);
         if (deviceCode == null) {
-            throw new McCommException("不存在对应软元件");
+            throw new McCommException("device code is not exist");
         }
         // 提取数字数据
 //        String number = Pattern.compile("\\D").matcher(address).replaceAll("").trim();
         String number = address.substring(matcher.start()).trim();
         if ("".equals(number)) {
-            throw new McCommException("软元件地址有误");
+            throw new McCommException("address of device is error");
         }
         int headDeviceNumber = Integer.parseInt(number, deviceCode.getNotation());
         return new McDeviceAddress(deviceCode, headDeviceNumber, count);

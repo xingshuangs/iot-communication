@@ -65,7 +65,8 @@ public class RtspTrackInfo {
     public static RtspTrackInfo createTrackInfo(RtspSdp sdp) {
         Optional<RtspSdpMedia> optional = sdp.getMedias().stream().filter(x -> x.getMediaDesc().getType().equals("video")).findFirst();
         if (!optional.isPresent()) {
-            throw new RtspCommException("不存在视频相关的SDP");
+            // 不存在视频相关的SDP
+            throw new RtspCommException("No SDP related to video exists");
         }
         RtspSdpMedia media = optional.get();
         RtspTrackInfo trackInfo = new RtspTrackInfo();
@@ -75,7 +76,8 @@ public class RtspTrackInfo {
         trackInfo.timescale = rtpMap.getClockFrequency();
         trackInfo.duration = rtpMap.getClockFrequency();
         if ("H265".equalsIgnoreCase(rtpMap.getPayloadFormat())) {
-            throw new RtspCommException("暂不支持H265协议，可以自行去摄像头设置为H264协议");
+            // 暂不支持H265协议，可以自行去摄像头设置为H264协议
+            throw new RtspCommException("The H265 protocol is not currently supported. You can set the camera to H264");
         }
         RtspSdpMediaAttrDimension dimension = media.getAttributeDimension();
         trackInfo.width = dimension == null ? 1920 : dimension.getWidth();
@@ -84,7 +86,7 @@ public class RtspTrackInfo {
         trackInfo.sps = fmtp.getSps();
         trackInfo.pps = fmtp.getPps();
         if (trackInfo.sps == null || trackInfo.sps.length < 4) {
-            throw new RtspCommException("sps信息为空");
+            throw new RtspCommException("sps is null or empty");
         }
         ByteReadBuff buff = new ByteReadBuff(trackInfo.sps);
         byte[] bytes = buff.getBytes(1, 3);

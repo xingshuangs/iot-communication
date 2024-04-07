@@ -225,7 +225,7 @@ public class RtspNetwork extends TcpClientBasic {
             }
         }
         if (headerLen == 0) {
-            throw new RtspCommException("RTSP数据接收长度为0，错误");
+            throw new RtspCommException("RTSP data receive length is 0");
         }
         if (this.commCallback != null) {
             this.commCallback.accept(contentString);
@@ -260,10 +260,12 @@ public class RtspNetwork extends TcpClientBasic {
      */
     private void checkPostedCom(RtspMessageRequest req, RtspMessageResponse ack) {
         if (!req.getVersion().equals(ack.getVersion())) {
-            throw new RtspCommException("请求和响应的版本号不一致");
+            // 请求和响应的版本号不一致
+            throw new RtspCommException("The version numbers of the request and response are inconsistent");
         }
         if (req.getCSeq() != ack.getCSeq()) {
-            throw new RtspCommException("请求和响应的序列号不一致");
+            // 请求和响应的序列号不一致
+            throw new RtspCommException("The sequence numbers of the request and response are inconsistent");
         }
     }
 
@@ -282,7 +284,7 @@ public class RtspNetwork extends TcpClientBasic {
             // 需要授权
             this.needAuthorization = true;
             if (this.authenticator == null) {
-                throw new RtspCommException(String.format("RTSP[%s]交互中authenticator为null", request.getMethod()));
+                throw new RtspCommException(String.format("RTSP[%s] authenticator is null", request.getMethod()));
             }
             this.authenticator.addServerInfoByString(response.getWwwAuthenticate());
             this.authenticator.addClientInfo(this.uri.toString(), request.getMethod().getCode());
@@ -290,7 +292,7 @@ public class RtspNetwork extends TcpClientBasic {
             response = this.readFromServer(request);
         }
         if (response.getStatusCode() != ERtspStatusCode.OK) {
-            throw new RtspCommException(String.format("RTSP[%s]交互返回状态为[%s]", request.getMethod().getCode(),
+            throw new RtspCommException(String.format("RTSP[%s] status code is [%s]", request.getMethod().getCode(),
                     response.getStatusCode().getCode()));
         }
         return response;
@@ -319,10 +321,10 @@ public class RtspNetwork extends TcpClientBasic {
         RtspDescribeResponse response = (RtspDescribeResponse) this.sendRequest(request);
 
         if (response.getSdp().getSession() == null) {
-            throw new RtspCommException(String.format("RTSP[%s]没有Session", ERtspMethod.DESCRIBE));
+            throw new RtspCommException(String.format("RTSP[%s] no Session", ERtspMethod.DESCRIBE));
         }
         if (response.getSdp().getMedias().isEmpty()) {
-            throw new RtspCommException(String.format("RTSP[%s]没有Media", ERtspMethod.DESCRIBE));
+            throw new RtspCommException(String.format("RTSP[%s] no Media", ERtspMethod.DESCRIBE));
         }
         this.sdp = response.getSdp();
         this.trackInfo = RtspTrackInfo.createTrackInfo(this.sdp);
@@ -495,10 +497,10 @@ public class RtspNetwork extends TcpClientBasic {
      */
     private void checkBeforeRequest(ERtspMethod method) {
         if (!methods.contains(method)) {
-            throw new RtspCommException(String.format("RTSP不支持[%s]", method.getCode()));
+            throw new RtspCommException(String.format("RTSP nonsupport [%s]", method.getCode()));
         }
         if (this.needAuthorization && this.authenticator == null) {
-            throw new RtspCommException(String.format("RTSP[%s]交互中authenticator为null", method.getCode()));
+            throw new RtspCommException(String.format("RTSP[%s] authenticator is null", method.getCode()));
         }
     }
 

@@ -70,7 +70,7 @@ public class RtspSdpMedia {
 
     public static RtspSdpMedia fromString(String src) {
         if (src == null || src.equals("")) {
-            throw new IllegalArgumentException("SDP解析media部分数据源错误");
+            throw new IllegalArgumentException("media, src is null or empty");
         }
         RtspSdpMedia media = new RtspSdpMedia();
         List<String> list = StringSpUtil.splitOneStepByLine(src, CRLF);

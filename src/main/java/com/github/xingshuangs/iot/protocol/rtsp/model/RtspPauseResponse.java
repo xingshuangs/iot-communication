@@ -48,7 +48,7 @@ public final class RtspPauseResponse extends RtspMessageResponse {
 
     public static RtspPauseResponse fromHeaderString(String src) {
         if (src == null || src.equals("")) {
-            throw new RtspCommException("解析RtspPlayResponse时字符串为空");
+            throw new RtspCommException("src is null or empty in RtspPlayResponse");
         }
         RtspPauseResponse response = new RtspPauseResponse();
         Map<String, String> map = response.parseHeaderAndReturnMap(src);

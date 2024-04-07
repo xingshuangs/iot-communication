@@ -105,7 +105,7 @@ public class MbPdu implements IObjectByteArray {
             case ERROR_WRITE_MULTIPLE_REGISTER:
                 return MbErrorResponse.fromBytes(data, offset);
             default:
-                throw new ModbusCommException("无法识别功能码：" + functionCode.getDescription());
+                throw new ModbusCommException("Function code not recognized：" + functionCode.getDescription());
         }
     }
 }

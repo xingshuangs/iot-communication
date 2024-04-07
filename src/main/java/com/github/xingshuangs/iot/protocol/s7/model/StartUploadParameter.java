@@ -76,7 +76,7 @@ public class StartUploadParameter extends DownloadParameter {
      */
     public static StartUploadParameter fromBytes(final byte[] data, final int offset) {
         if (data.length < 18) {
-            throw new IndexOutOfBoundsException("解析DownloadParameter时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("DownloadParameter, data length < 18");
         }
         ByteReadBuff buff = new ByteReadBuff(data, offset);
         StartUploadParameter res = new StartUploadParameter();

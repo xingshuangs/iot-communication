@@ -85,7 +85,7 @@ public class H264NaluSingle extends H264NaluBase {
      */
     public static H264NaluSingle fromBytes(final byte[] data, final int offset) {
         if (data.length < 1) {
-            throw new IndexOutOfBoundsException("解析H264NaluSingle时，字节数组长度不够");
+            throw new IndexOutOfBoundsException("H264NaluSingle, data length < 1");
         }
         H264NaluSingle res = new H264NaluSingle();
         int index = offset;

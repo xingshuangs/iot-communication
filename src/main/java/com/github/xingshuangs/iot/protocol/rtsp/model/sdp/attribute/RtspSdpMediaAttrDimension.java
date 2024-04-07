@@ -51,12 +51,12 @@ public class RtspSdpMediaAttrDimension {
 
     public static RtspSdpMediaAttrDimension fromString(String src) {
         if (src == null || src.equals("")) {
-            throw new IllegalArgumentException("SDP解析MediaAttrDimension部分数据源错误");
+            throw new IllegalArgumentException("MediaAttrDimension of SDP data error");
         }
         RtspSdpMediaAttrDimension dimension = new RtspSdpMediaAttrDimension();
         String[] split = src.split(COMMA);
         if (split.length != 2) {
-            throw new RtspCommException("RtspSdpMediaAttrDimension数据有误，无法解析");
+            throw new RtspCommException("RtspSdpMediaAttrDimension data error");
         }
         dimension.width = Integer.parseInt(split[0]);
         dimension.height = Integer.parseInt(split[1]);

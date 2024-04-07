@@ -44,7 +44,7 @@ public final class RtspDescribeResponse extends RtspMessageResponse {
 
     public static RtspDescribeResponse fromHeaderString(String src) {
         if (src == null || src.equals("")) {
-            throw new RtspCommException("解析RtspDescribeResponse时字符串为空");
+            throw new RtspCommException("src is null or empty in RtspGetParameterResponse");
         }
         RtspDescribeResponse response = new RtspDescribeResponse();
         response.parseHeaderAndReturnMap(src);
