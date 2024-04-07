@@ -32,6 +32,7 @@ import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.attribute.RtspSdpMedia
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.attribute.RtspSdpMediaAttrRtpMap;
 import com.github.xingshuangs.iot.utils.HexUtil;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
@@ -40,6 +41,7 @@ import java.util.Optional;
  *
  * @author xingshuang
  */
+@Slf4j
 @Data
 public class RtspTrackInfo {
 
@@ -86,7 +88,8 @@ public class RtspTrackInfo {
         trackInfo.sps = fmtp.getSps();
         trackInfo.pps = fmtp.getPps();
         if (trackInfo.sps == null || trackInfo.sps.length < 4) {
-            throw new RtspCommException("sps is null or empty");
+            log.warn("sps is missing from SDP");
+            return trackInfo;
         }
         ByteReadBuff buff = new ByteReadBuff(trackInfo.sps);
         byte[] bytes = buff.getBytes(1, 3);

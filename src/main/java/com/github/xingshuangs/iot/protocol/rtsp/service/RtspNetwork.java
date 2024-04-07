@@ -418,10 +418,10 @@ public class RtspNetwork extends TcpClientBasic {
         this.sessionInfo = response.getSessionInfo();
 
         // 发送SPS和PPS
-        if (this.frameHandle != null && media.getMediaDesc().getType().equals("video")) {
-            this.frameHandle.accept(H264VideoFrame.createSpsPpsFrame(media.getAttributeFmtp().getSps()));
-            this.frameHandle.accept(H264VideoFrame.createSpsPpsFrame(media.getAttributeFmtp().getPps()));
-        }
+//        if (this.frameHandle != null && media.getMediaDesc().getType().equals("video")) {
+//            this.frameHandle.accept(H264VideoFrame.createSpsPpsFrame(media.getAttributeFmtp().getSps()));
+//            this.frameHandle.accept(H264VideoFrame.createSpsPpsFrame(media.getAttributeFmtp().getPps()));
+//        }
     }
 
     /**

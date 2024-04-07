@@ -26,11 +26,14 @@ package com.github.xingshuangs.iot.protocol.rtsp.service;
 
 
 import com.github.xingshuangs.iot.common.IObjectByteArray;
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import com.github.xingshuangs.iot.protocol.mp4.model.*;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EFrameType;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264NaluType;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspTrackInfo;
+import com.github.xingshuangs.iot.utils.HexUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -152,7 +155,6 @@ public class RtspFMp4Proxy {
         this.client = client;
         this.client.onFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
-            this.initHeaderHandle();
             this.frameHandle(f);
         });
         this.client.onDestroyHandle(() -> {
@@ -168,20 +170,36 @@ public class RtspFMp4Proxy {
     }
 
     /**
-     * 初始化头部事件
+     * 处理SPS，只处理一次
+     *
+     * @param frame 帧数据
      */
-    private void initHeaderHandle() {
-        if (this.trackInfo == null) {
-            this.trackInfo = this.client.getTrackInfo();
-            log.debug(this.trackInfo.toString());
-            if (this.codecHandle != null) {
-                this.codecHandle.accept(this.trackInfo.getCodec());
-            }
-
-            this.mp4TrackInfo = this.toMp4TrackInfo(this.trackInfo);
-            this.mp4Header = new Mp4Header(mp4TrackInfo);
-            this.addFMp4Data(mp4Header);
+    private void handleSPS(H264VideoFrame frame) {
+        // 只处理一次
+        if (this.trackInfo != null) {
+            return;
         }
+        byte[] sps = frame.getFrameSegment();
+        if (sps == null || sps.length < 4) {
+            throw new RtspCommException("SPS is not exist");
+        }
+        ByteReadBuff buff = new ByteReadBuff(sps);
+        byte[] bytes = buff.getBytes(1, 3);
+        String codec = "avc1." + HexUtil.toHexString(bytes, "", false);
+
+        // 处理trackInfo
+        this.trackInfo = this.client.getTrackInfo();
+        if (this.codecHandle != null) {
+            this.codecHandle.accept(codec);
+        }
+
+        this.mp4TrackInfo = this.toMp4TrackInfo(this.trackInfo);
+        this.mp4TrackInfo.setSps(sps);
+        this.mp4TrackInfo.setCodec(codec);
+        log.debug(this.mp4TrackInfo.toString());
+
+        this.mp4Header = new Mp4Header(mp4TrackInfo);
+        this.addFMp4Data(mp4Header);
     }
 
     /**
@@ -194,9 +212,12 @@ public class RtspFMp4Proxy {
             return;
         }
         if (frame.getNaluType() == EH264NaluType.PPS
-                || frame.getNaluType() == EH264NaluType.SPS
                 || frame.getNaluType() == EH264NaluType.SEI
                 || frame.getNaluType() == EH264NaluType.AUD) {
+            return;
+        }
+        if (frame.getNaluType() == EH264NaluType.SPS) {
+            this.handleSPS(frame);
             return;
         }
         // 这里的作用是缓存10个帧数据，重新排序，因为可能收到的帧时间戳不是按时间顺序排列
