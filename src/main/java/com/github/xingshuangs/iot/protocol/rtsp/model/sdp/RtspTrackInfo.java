@@ -27,6 +27,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model.sdp;
 
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.protocol.rtp.model.payload.SeqParameterSet;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.attribute.RtspSdpMediaAttrDimension;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.attribute.RtspSdpMediaAttrFmtp;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.attribute.RtspSdpMediaAttrRtpMap;
@@ -91,6 +92,9 @@ public class RtspTrackInfo {
             log.warn("sps is missing from SDP");
             return trackInfo;
         }
+        SeqParameterSet sps = SeqParameterSet.createSPS(trackInfo.sps);
+        trackInfo.width = sps.getWidth();
+        trackInfo.height = sps.getHeight();
         ByteReadBuff buff = new ByteReadBuff(trackInfo.sps);
         byte[] bytes = buff.getBytes(1, 3);
         trackInfo.codec = "avc1." + HexUtil.toHexString(bytes, "", false);

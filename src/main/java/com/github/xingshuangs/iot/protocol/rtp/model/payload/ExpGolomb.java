@@ -26,18 +26,28 @@ package com.github.xingshuangs.iot.protocol.rtp.model.payload;
 
 
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
+import lombok.Getter;
 
 /**
  * 指数哥伦布编码
  *
  * @author xingshuang
  */
+@Getter
 public class ExpGolomb {
+    /**
+     * 数据源
+     */
+    private final ByteReadBuff readBuff;
 
-    private int bitNumber;
+    /**
+     * 位索引
+     */
+    private int bitIndex;
 
-    private ByteReadBuff readBuff;
-
+    /**
+     * 当前的字节数据
+     */
     private byte currentByte;
 
     public ExpGolomb(byte[] data) {
@@ -45,32 +55,38 @@ public class ExpGolomb {
             throw new IllegalArgumentException("data");
         }
         this.readBuff = new ByteReadBuff(data);
-        this.bitNumber = 0;
+        this.bitIndex = 0;
         this.currentByte = this.readBuff.getByte();
     }
 
+    /**
+     * 更新下一个字节，若没有则直接抛异常
+     */
     private void updateNext() {
-        this.bitNumber = 0;
+        this.bitIndex = 0;
         this.currentByte = this.readBuff.getByte();
     }
 
+    /**
+     * 读取1位
+     *
+     * @return 位结果
+     */
     public int read1Bit() {
-        if (this.bitNumber == 8) {
+        if (this.bitIndex == 8) {
             this.updateNext();
         }
-        int res = (this.currentByte >> (7 - this.bitNumber)) & 0x01;
-        this.bitNumber++;
+        int res = (this.currentByte >> (7 - this.bitIndex)) & 0x01;
+        this.bitIndex++;
         return res;
     }
 
-    public int skipLZ(){
-        int count = 0;
-        while (this.read1Bit() == 0) {
-            count++;
-        }
-        return count;
-    }
-
+    /**
+     * 读取指定位数
+     *
+     * @param size 位数量
+     * @return 结果
+     */
     public long readNBit(int size) {
         if (size > 32) {
             throw new IllegalArgumentException("size > 32");
@@ -84,22 +100,85 @@ public class ExpGolomb {
         return res;
     }
 
-    public int readUE() {
+    public void skipBit(int size) {
+        this.readNBit(size);
+    }
+
+    /**
+     * 前导零计数
+     *
+     * @return 零的个数
+     */
+    public int skipLZ() {
         int count = 0;
         while (this.read1Bit() == 0) {
             count++;
         }
-
-        return (int) ((1 << count) - 1 + this.readNBit(count));
+        return count;
     }
 
+    /**
+     * 跳过一个无符号指数哥伦布编码数值
+     */
+    public void skipUE() {
+        int count = this.skipLZ();
+        this.readNBit(1 + count);
+    }
+
+    /**
+     * 跳过一个有符号指数哥伦布编码数值
+     */
+    public void skipSE() {
+        int count = this.skipLZ();
+        this.readNBit(1 + count);
+    }
+
+    /**
+     * 跳过多个缩放列表
+     *
+     * @param count 个数
+     */
+    public void skipScalingList(int count) {
+        int lastScale = 8;
+        int nextScale = 8;
+        for (int i = 0; i < count; i++) {
+            if (nextScale != 0) {
+                int deltaScale = this.readSE();
+                nextScale = (lastScale + deltaScale + 256) % 256;
+            }
+            lastScale = (nextScale == 0) ? lastScale : nextScale;
+        }
+    }
+
+    /**
+     * 读取一个boolean值
+     *
+     * @return true，false
+     */
     public boolean readBoolean() {
         return this.read1Bit() == 1;
     }
 
+    /**
+     * 读取一个无符号指数哥伦布编码数值
+     *
+     * @return 无符号指数哥伦布编码数值
+     */
+    public int readUE() {
+        int count = this.skipLZ();
+        return (int) ((1 << count) - 1 + this.readNBit(count));
+    }
+
+    /**
+     * 读取一个有符号指数哥伦布编码数值
+     *
+     * @return 有符号指数哥伦布编码数值
+     */
     public int readSE() {
         int value = this.readUE();
         int sign = ((value & 0x01) << 1) - 1;
         return ((value >> 1) + (value & 0x01)) * sign;
     }
+
+
 }

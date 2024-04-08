@@ -159,19 +159,19 @@ public class RtspFMp4ProxyTest {
 
     @Test
     public void runUdpAsync() {
-        URI uri = URI.create("rtsp://192.168.3.142:554/h264/ch1/main/av_stream");
-        UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "kilox1234");
+        URI uri = URI.create("rtsp://192.168.3.251:554/h264/ch1/main/av_stream");
+        UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "hb123456");
         DigestAuthenticator authenticator = new DigestAuthenticator(credential);
         RtspClient client = new RtspClient(uri, authenticator, ERtspTransportProtocol.UDP);
         RtspFMp4Proxy proxy = new RtspFMp4Proxy(client, true);
         proxy.onFmp4DataHandle(x -> {
-//            log.debug("length：{}", x.length);
+            log.debug("length：{}", x.length);
         });
         proxy.onCodecHandle(log::debug);
         proxy.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(200);
+                TimeUnit.SECONDS.sleep(5);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

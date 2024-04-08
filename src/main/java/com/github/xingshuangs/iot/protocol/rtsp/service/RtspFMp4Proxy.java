@@ -32,6 +32,7 @@ import com.github.xingshuangs.iot.protocol.mp4.model.*;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EFrameType;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264NaluType;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
+import com.github.xingshuangs.iot.protocol.rtp.model.payload.SeqParameterSet;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspTrackInfo;
 import com.github.xingshuangs.iot.utils.HexUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -179,13 +180,15 @@ public class RtspFMp4Proxy {
         if (this.trackInfo != null) {
             return;
         }
-        byte[] sps = frame.getFrameSegment();
-        if (sps == null || sps.length < 4) {
+        byte[] spsBytes = frame.getFrameSegment();
+        if (spsBytes == null || spsBytes.length < 4) {
             throw new RtspCommException("SPS is not exist");
         }
-        ByteReadBuff buff = new ByteReadBuff(sps);
+        ByteReadBuff buff = new ByteReadBuff(spsBytes);
         byte[] bytes = buff.getBytes(1, 3);
         String codec = "avc1." + HexUtil.toHexString(bytes, "", false);
+
+        SeqParameterSet sps = SeqParameterSet.createSPS(spsBytes);
 
         // 处理trackInfo
         this.trackInfo = this.client.getTrackInfo();
@@ -194,8 +197,10 @@ public class RtspFMp4Proxy {
         }
 
         this.mp4TrackInfo = this.toMp4TrackInfo(this.trackInfo);
-        this.mp4TrackInfo.setSps(sps);
+        this.mp4TrackInfo.setSps(spsBytes);
         this.mp4TrackInfo.setCodec(codec);
+        this.mp4TrackInfo.setWidth(sps.getWidth());
+        this.mp4TrackInfo.setHeight(sps.getHeight());
         log.debug(this.mp4TrackInfo.toString());
 
         this.mp4Header = new Mp4Header(mp4TrackInfo);
