@@ -57,6 +57,11 @@ public class McGroupItem {
         this.actualLength = actualLength;
     }
 
+    /**
+     * 判定是否在有效范围内
+     *
+     * @return true：是，false：否
+     */
     public boolean inRange() {
         return this.off + this.len < this.actualLength;
     }

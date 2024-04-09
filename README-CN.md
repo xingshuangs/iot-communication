@@ -1,6 +1,6 @@
 # IOT-COMMUNICATION
 
-[![Maven-v1.5.0](https://img.shields.io/badge/Maven-v1.5.0-brightgreen)](https://mvnrepository.com/artifact/com.github.xingshuangs/iot-communication)
+[![Maven-v1.5.1](https://img.shields.io/badge/Maven-v1.5.1-brightgreen)](https://mvnrepository.com/artifact/com.github.xingshuangs/iot-communication)
 ![Language-java8](https://img.shields.io/badge/Language-java8-blue)
 ![Idea-2022.02.03](https://img.shields.io/badge/Idea-2022.02.03-lightgrey)
 ![CopyRight-Oscura](https://img.shields.io/badge/CopyRight-Oscura-yellow)
@@ -29,7 +29,7 @@
 <dependency>
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
-    <version>1.5.0</version>
+    <version>1.5.1</version>
 </dependency>
 ```
 

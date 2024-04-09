@@ -49,7 +49,14 @@ public class MultiAddressRead {
      */
     List<RequestItem> requestItems = new ArrayList<>();
 
-    public MultiAddressRead addData(String address, int count){
+    /**
+     * 添加数据
+     *
+     * @param address 地址
+     * @param count   字节数量
+     * @return MultiAddressRead
+     */
+    public MultiAddressRead addData(String address, int count) {
         this.requestItems.add(AddressUtil.parseByte(address, count));
         return this;
     }

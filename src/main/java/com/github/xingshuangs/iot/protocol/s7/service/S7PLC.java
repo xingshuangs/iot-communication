@@ -52,8 +52,6 @@ import static com.github.xingshuangs.iot.common.constant.GeneralConst.S7_PORT;
  */
 public class S7PLC extends PLCNetwork {
 
-    public static final int DEFAULT_PDU_LENGTH = 240;
-
     public S7PLC() {
         this(EPlcType.S1200, LOCALHOST, S7_PORT, EPlcType.S1200.getRack(), EPlcType.S1200.getSlot(), EPlcType.S1200.getPduLength());
     }

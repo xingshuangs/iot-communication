@@ -39,7 +39,7 @@ public interface IPayloadParser {
     /**
      * 处理数据包
      *
-     * @param rtp         rtp数据包
+     * @param rtp rtp数据包
      */
     void processPackage(RtpPackage rtp);
 

@@ -693,3 +693,5 @@ Receive：The maximum byte write length is 225 = 240 - 15, 15(response PDU) = 12
 | S400       |      480       | **0** | **3** |
 | S1200      |      240       | **0** | **1** |
 | S1500      |      960       | **0** | **1** |
+
+> 7、General PLC online connection number is limited, do not repeat new S7PLC()!!!

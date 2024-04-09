@@ -66,10 +66,20 @@ public class SeqParameterSet {
     private boolean aspectRatioInfoPresentFlag;
     private double sarScale = 1;
 
+    /**
+     * 视频宽度
+     *
+     * @return 宽度
+     */
     public int getWidth() {
         return (int) Math.ceil((((this.picWidthInMbsMinus1 + 1) * 16) - this.frameCropLeftOffset * 2 - this.frameCropRightOffset * 2) * this.sarScale);
     }
 
+    /**
+     * 视频高度
+     *
+     * @return 高度
+     */
     public int getHeight() {
         return ((2 - (this.frameMbsOnlyFlag ? 1 : 0)) * (this.picHeightInMapUnitsMinus1 + 1) * 16)
                 - ((this.frameMbsOnlyFlag ? 2 : 4) * (this.frameCropTopOffset + this.frameCropBottomOffset));
@@ -262,6 +272,4 @@ public class SeqParameterSet {
             return 1;
         }
     }
-
-
 }

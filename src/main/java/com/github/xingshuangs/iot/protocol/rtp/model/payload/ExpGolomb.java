@@ -100,6 +100,11 @@ public class ExpGolomb {
         return res;
     }
 
+    /**
+     * 跳过指定size的bit数量
+     *
+     * @param size bit数量
+     */
     public void skipBit(int size) {
         this.readNBit(size);
     }

@@ -52,7 +52,7 @@ public class H264VideoParser implements IPayloadParser {
     /**
      * 负载编号
      */
-    private Integer payloadNumber;
+    private final Integer payloadNumber;
 
     /**
      * 基准时间戳
@@ -75,6 +75,7 @@ public class H264VideoParser implements IPayloadParser {
         if (this.buffers.isEmpty()) {
             throw new RtpCommException("the number of buffers is 0");
         }
+
         H264NaluFuA naluFuA = this.buffers.get(0);
         int sum = this.buffers.stream().mapToInt(x -> x.getPayload().length).sum();
         ByteWriteBuff buff = new ByteWriteBuff(sum);
@@ -97,6 +98,7 @@ public class H264VideoParser implements IPayloadParser {
      */
     @Override
     public void processPackage(RtpPackage rtp) {
+        // 过滤负载编号不一致的rtp
         if (rtp.getHeader().getPayloadType() != this.payloadNumber) {
             log.warn("payload numbers are inconsistent, expect[{}], actual[{}]", this.payloadNumber, rtp.getHeader().getPayloadType());
             return;
