@@ -50,6 +50,11 @@ import java.util.function.Consumer;
 public class H264VideoParser implements IPayloadParser {
 
     /**
+     * 负载编号
+     */
+    private Integer payloadNumber;
+
+    /**
      * 基准时间戳
      */
     private long baseTimestamp = 0;
@@ -57,6 +62,10 @@ public class H264VideoParser implements IPayloadParser {
     private Consumer<RawFrame> frameHandle;
 
     private final List<H264NaluFuA> buffers = new ArrayList<>();
+
+    public H264VideoParser(Integer payloadNumber) {
+        this.payloadNumber = payloadNumber;
+    }
 
     private void resetBuffers() {
         this.buffers.clear();
@@ -88,6 +97,10 @@ public class H264VideoParser implements IPayloadParser {
      */
     @Override
     public void processPackage(RtpPackage rtp) {
+        if (rtp.getHeader().getPayloadType() != this.payloadNumber) {
+            log.warn("payload numbers are inconsistent, expect[{}], actual[{}]", this.payloadNumber, rtp.getHeader().getPayloadType());
+            return;
+        }
         // 第一次更新时间
         if (this.baseTimestamp == 0) {
             this.baseTimestamp = rtp.getHeader().getTimestamp();

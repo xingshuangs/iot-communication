@@ -43,6 +43,7 @@ import com.github.xingshuangs.iot.protocol.rtsp.model.base.*;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdp;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdpMedia;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspTrackInfo;
+import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.attribute.RtspSdpMediaAttrRtpMap;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -350,7 +351,8 @@ public class RtspNetwork extends TcpClientBasic {
                 continue;
             }
             // TODO: 这里可能存在不同的负载解析器
-            IPayloadParser iPayloadParser = new H264VideoParser();
+            RtspSdpMediaAttrRtpMap rtpMap = media.getAttributeRtpMap();
+            IPayloadParser iPayloadParser = new H264VideoParser(rtpMap.getPayloadNumber());
             iPayloadParser.onFrameHandle(this::doFrameHandle);
             URI actualUri = URI.create(this.uri.toString() + "/" + media.getAttributeControl().getUri());
             RtpUdpClient rtpClient = new RtpUdpClient(iPayloadParser);
@@ -389,7 +391,8 @@ public class RtspNetwork extends TcpClientBasic {
 
             this.doSetup(actualUri, reqTransport, media);
 
-            IPayloadParser iPayloadParser = new H264VideoParser();
+            RtspSdpMediaAttrRtpMap rtpMap = media.getAttributeRtpMap();
+            IPayloadParser iPayloadParser = new H264VideoParser(rtpMap.getPayloadNumber());
             iPayloadParser.onFrameHandle(this::doFrameHandle);
             RtspInterleavedTransport ackTransport = (RtspInterleavedTransport) this.transport;
             RtspInterleavedClient rtspInterleavedClient = new RtspInterleavedClient(iPayloadParser, this);

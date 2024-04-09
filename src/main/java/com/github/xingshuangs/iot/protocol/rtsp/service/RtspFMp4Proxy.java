@@ -176,8 +176,7 @@ public class RtspFMp4Proxy {
      * @param frame 帧数据
      */
     private void handleSPS(H264VideoFrame frame) {
-        // 只处理一次
-        if (this.trackInfo != null) {
+        if (this.trackInfo != null && this.trackInfo.getSps() != null) {
             return;
         }
         byte[] spsBytes = frame.getFrameSegment();
@@ -192,17 +191,39 @@ public class RtspFMp4Proxy {
 
         // 处理trackInfo
         this.trackInfo = this.client.getTrackInfo();
+        this.trackInfo.setSps(spsBytes);
+        this.trackInfo.setCodec(codec);
+        this.trackInfo.setWidth(sps.getWidth());
+        this.trackInfo.setHeight(sps.getHeight());
+
         if (this.codecHandle != null) {
             this.codecHandle.accept(codec);
         }
+    }
 
-        this.mp4TrackInfo = this.toMp4TrackInfo(this.trackInfo);
-        this.mp4TrackInfo.setSps(spsBytes);
-        this.mp4TrackInfo.setCodec(codec);
-        this.mp4TrackInfo.setWidth(sps.getWidth());
-        this.mp4TrackInfo.setHeight(sps.getHeight());
+    /**
+     * 处理PPS，只处理一次
+     *
+     * @param frame 帧数据
+     */
+    private void handlePPS(H264VideoFrame frame) {
+        if (this.trackInfo != null && this.trackInfo.getPps() != null) {
+            return;
+        }
+        // 处理trackInfo
+        this.trackInfo = this.client.getTrackInfo();
+        this.trackInfo.setPps(frame.getFrameSegment());
+    }
+
+    /**
+     * 处理Mp4，只处理一次
+     */
+    private void handleMp4Header() {
+        if (this.mp4Header != null) {
+            return;
+        }
+        this.mp4TrackInfo = this.toMp4TrackInfo(this.client.getTrackInfo());
         log.debug(this.mp4TrackInfo.toString());
-
         this.mp4Header = new Mp4Header(mp4TrackInfo);
         this.addFMp4Data(mp4Header);
     }
@@ -216,15 +237,19 @@ public class RtspFMp4Proxy {
         if (frame.getFrameType() == EFrameType.AUDIO) {
             return;
         }
-        if (frame.getNaluType() == EH264NaluType.PPS
-                || frame.getNaluType() == EH264NaluType.SEI
+        if (frame.getNaluType() == EH264NaluType.SEI
                 || frame.getNaluType() == EH264NaluType.AUD) {
             return;
-        }
-        if (frame.getNaluType() == EH264NaluType.SPS) {
+        } else if (frame.getNaluType() == EH264NaluType.SPS) {
             this.handleSPS(frame);
             return;
+        } else if (frame.getNaluType() == EH264NaluType.PPS) {
+            this.handlePPS(frame);
+            return;
         }
+        // 处理map4的header，只处理1次
+        this.handleMp4Header();
+
         // 这里的作用是缓存10个帧数据，重新排序，因为可能收到的帧时间戳不是按时间顺序排列
         this.gop.add(frame);
         if (this.gop.size() < 10) {
