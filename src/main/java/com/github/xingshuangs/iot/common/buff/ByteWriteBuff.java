@@ -37,7 +37,12 @@ import java.nio.charset.StandardCharsets;
  * @author xingshuang
  */
 @Getter
-public class ByteWriteBuff extends ByteBuffBase {
+public class ByteWriteBuff {
+
+    /**
+     * 4字节或8字节的编码格式
+     */
+    private final EByteBuffFormat format;
 
     /**
      * 数据
@@ -72,9 +77,9 @@ public class ByteWriteBuff extends ByteBuffBase {
     }
 
     public ByteWriteBuff(int capacity, boolean littleEndian, EByteBuffFormat format) {
-        super(format);
         this.littleEndian = littleEndian;
         this.data = new byte[capacity];
+        this.format = format;
     }
 
     public static ByteWriteBuff newInstance(int capacity) {
@@ -390,7 +395,7 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putInteger(int src, int desIndex, boolean littleEndian) {
-        return this.putBytes(this.reorderByFormatIn4Bytes(IntegerUtil.toByteArray(src, littleEndian)), 0, desIndex);
+        return this.putBytes(this.format.formatIn4Bytes(IntegerUtil.toByteArray(src, littleEndian)), 0, desIndex);
     }
 
     /**
@@ -402,7 +407,20 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putInteger(long src, int desIndex, boolean littleEndian) {
-        return this.putBytes(this.reorderByFormatIn4Bytes(IntegerUtil.toByteArray((int) src, littleEndian)), 0, desIndex);
+        return this.putBytes(this.format.formatIn4Bytes(IntegerUtil.toByteArray((int) src, littleEndian)), 0, desIndex);
+    }
+
+    /**
+     * 添加integer数据，针对特殊EByteBuffFormat的处理
+     *
+     * @param src          数据源
+     * @param desIndex     目标索引
+     * @param littleEndian 是否小端模式
+     * @param format       与自身ByteWriteBuff不一致的EByteBuffFormat
+     * @return 对象本身
+     */
+    public ByteWriteBuff putInteger(long src, int desIndex, boolean littleEndian, EByteBuffFormat format) {
+        return this.putBytes(format.formatIn4Bytes(IntegerUtil.toByteArray((int) src, littleEndian)), 0, desIndex);
     }
 
     /**
@@ -414,7 +432,20 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putLong(long src, int desIndex, boolean littleEndian) {
-        return this.putBytes(this.reorderByFormatIn8Bytes(LongUtil.toByteArray(src, littleEndian)), 0, desIndex);
+        return this.putBytes(this.format.formatIn8Bytes(LongUtil.toByteArray(src, littleEndian)), 0, desIndex);
+    }
+
+    /**
+     * 添加long数据，针对特殊EByteBuffFormat的处理
+     *
+     * @param src          数据源
+     * @param desIndex     目标索引
+     * @param littleEndian 是否小端模式
+     * @param format       与自身ByteWriteBuff不一致的EByteBuffFormat
+     * @return 对象本身
+     */
+    public ByteWriteBuff putLong(long src, int desIndex, boolean littleEndian, EByteBuffFormat format) {
+        return this.putBytes(format.formatIn8Bytes(LongUtil.toByteArray(src, littleEndian)), 0, desIndex);
     }
 
     /**
@@ -426,7 +457,20 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putFloat(float src, int desIndex, boolean littleEndian) {
-        return this.putBytes(this.reorderByFormatIn4Bytes(FloatUtil.toByteArray(src, littleEndian)), 0, desIndex);
+        return this.putBytes(this.format.formatIn4Bytes(FloatUtil.toByteArray(src, littleEndian)), 0, desIndex);
+    }
+
+    /**
+     * 添加float数据，针对特殊EByteBuffFormat的处理
+     *
+     * @param src          数据源
+     * @param desIndex     目标索引
+     * @param littleEndian 是否小端模式
+     * @param format       与自身ByteWriteBuff不一致的EByteBuffFormat
+     * @return 对象本身
+     */
+    public ByteWriteBuff putFloat(float src, int desIndex, boolean littleEndian, EByteBuffFormat format) {
+        return this.putBytes(format.formatIn4Bytes(FloatUtil.toByteArray(src, littleEndian)), 0, desIndex);
     }
 
     /**
@@ -438,7 +482,20 @@ public class ByteWriteBuff extends ByteBuffBase {
      * @return 对象本身
      */
     public ByteWriteBuff putDouble(double src, int desIndex, boolean littleEndian) {
-        return this.putBytes(this.reorderByFormatIn8Bytes(FloatUtil.toByteArray(src, littleEndian)), 0, desIndex);
+        return this.putBytes(this.format.formatIn8Bytes(FloatUtil.toByteArray(src, littleEndian)), 0, desIndex);
+    }
+
+    /**
+     * 添加double数据，针对特殊EByteBuffFormat的处理
+     *
+     * @param src          数据源
+     * @param desIndex     目标索引
+     * @param littleEndian 是否小端模式
+     * @param format       与自身ByteWriteBuff不一致的EByteBuffFormat
+     * @return 对象本身
+     */
+    public ByteWriteBuff putDouble(double src, int desIndex, boolean littleEndian, EByteBuffFormat format) {
+        return this.putBytes(format.formatIn8Bytes(FloatUtil.toByteArray(src, littleEndian)), 0, desIndex);
     }
 
     /**

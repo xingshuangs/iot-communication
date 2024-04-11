@@ -25,6 +25,7 @@
 package com.github.xingshuangs.iot.common.serializer;
 
 
+import com.github.xingshuangs.iot.common.buff.EByteBuffFormat;
 import com.github.xingshuangs.iot.common.enums.EDataType;
 import lombok.Data;
 
@@ -62,6 +63,11 @@ public class ByteArrayParameter {
     protected boolean littleEndian = false;
 
     /**
+     * 4字节和8字节的编码格式
+     */
+    protected EByteBuffFormat format = EByteBuffFormat.DC_BA;
+
+    /**
      * 具体的值
      */
     protected Object value;
@@ -70,17 +76,19 @@ public class ByteArrayParameter {
     }
 
     public ByteArrayParameter(int byteOffset, int bitOffset, int count, EDataType type) {
-        this.byteOffset = byteOffset;
-        this.bitOffset = bitOffset;
-        this.count = count;
-        this.type = type;
+        this(byteOffset, bitOffset, count, type, false, EByteBuffFormat.DC_BA);
     }
 
     public ByteArrayParameter(int byteOffset, int bitOffset, int count, EDataType type, boolean littleEndian) {
+        this(byteOffset, bitOffset, count, type, littleEndian, EByteBuffFormat.DC_BA);
+    }
+
+    public ByteArrayParameter(int byteOffset, int bitOffset, int count, EDataType type, boolean littleEndian, EByteBuffFormat format) {
         this.byteOffset = byteOffset;
         this.bitOffset = bitOffset;
         this.count = count;
         this.type = type;
         this.littleEndian = littleEndian;
+        this.format = format;
     }
 }

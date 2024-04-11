@@ -27,56 +27,38 @@ package com.github.xingshuangs.iot.common.serializer;
 
 import com.github.xingshuangs.iot.common.buff.EByteBuffFormat;
 import com.github.xingshuangs.iot.common.enums.EDataType;
-
-import java.lang.annotation.*;
+import lombok.Data;
 
 /**
- * 字节数组变量参数
+ * @author xingshuang
  */
-@Target(value = {ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface ByteArrayVariable {
+@Data
+public class ByteFormatBean {
 
-    /**
-     * 字节偏移量
-     *
-     * @return 字节偏移量
-     */
-    int byteOffset() default 0;
+    @ByteArrayVariable(byteOffset = 0, bitOffset = 0, count = 1, type = EDataType.BOOL)
+    Boolean boolData;
 
-    /**
-     * 位偏移量
-     *
-     * @return 位偏移量
-     */
-    int bitOffset() default 0;
+    @ByteArrayVariable(byteOffset = 0, count = 1, type = EDataType.BYTE)
+    Byte byteData;
 
-    /**
-     * 数量，数量大于1的时候对应的数据必须使用list
-     *
-     * @return 数量
-     */
-    int count() default 1;
+    @ByteArrayVariable(byteOffset = 3, count = 1, type = EDataType.UINT16)
+    Integer uint16Data;
 
-    /**
-     * 类型
-     *
-     * @return 类型
-     */
-    EDataType type() default EDataType.BYTE;
+    @ByteArrayVariable(byteOffset = 3, count = 1, type = EDataType.INT16)
+    Short int16Data;
 
-    /**
-     * 是否小端模式
-     *
-     * @return 是否小端模式
-     */
-    boolean littleEndian() default false;
+    @ByteArrayVariable(byteOffset = 5, count = 1, type = EDataType.UINT32, format = EByteBuffFormat.BA_DC)
+    Long uint32Data;
 
-    /**
-     * 数据格式
-     *
-     * @return 数据格式
-     */
-    EByteBuffFormat format() default EByteBuffFormat.DC_BA;
+    @ByteArrayVariable(byteOffset = 9, count = 1, type = EDataType.INT32, format = EByteBuffFormat.BA_DC)
+    Integer int32Data;
+
+    @ByteArrayVariable(byteOffset = 13, count = 1, type = EDataType.FLOAT32, format = EByteBuffFormat.BA_DC)
+    Float float32Data;
+
+    @ByteArrayVariable(byteOffset = 21, count = 1, type = EDataType.FLOAT64, format = EByteBuffFormat.BA_DC)
+    Double float64Data;
+
+    @ByteArrayVariable(byteOffset = 37, count = 3, type = EDataType.STRING)
+    String stringData;
 }

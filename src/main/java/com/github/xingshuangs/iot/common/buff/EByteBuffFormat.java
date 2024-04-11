@@ -25,6 +25,8 @@
 package com.github.xingshuangs.iot.common.buff;
 
 
+import com.github.xingshuangs.iot.exceptions.HexParseException;
+
 /**
  * 字节缓存格式
  *
@@ -34,20 +36,143 @@ public enum EByteBuffFormat {
     /**
      * 按照原始顺序排列
      */
-    AB_CD,
+    AB_CD("AB_CD"),
 
     /**
      * 按照单字节反转
      */
-    BA_DC,
+    BA_DC("BA_DC"),
 
     /**
      * 按照双字节反转
      */
-    CD_AB,
+    CD_AB("CD_AB"),
 
     /**
      * 按照倒序排列
      */
-    DC_BA
+    DC_BA("DC_BA");
+
+    private final String code;
+
+    EByteBuffFormat(String code) {
+        this.code = code;
+    }
+
+    /**
+     * 4字节数据按EByteBuffFormat重新格式化
+     *
+     * @param data 数据源
+     * @return 对应新的4字节数据
+     */
+    public byte[] formatIn4Bytes(byte[] data) {
+        return this.formatIn4Bytes(data, 0);
+    }
+
+    /**
+     * 4字节数据按EByteBuffFormat重新格式化
+     *
+     * @param data  数据源
+     * @param index 索引
+     * @return 对应新的4字节数据
+     */
+    public byte[] formatIn4Bytes(byte[] data, int index) {
+        byte[] res = new byte[4];
+        switch (this.code) {
+            case "AB_CD":
+                res[0] = data[index + 3];
+                res[1] = data[index + 2];
+                res[2] = data[index + 1];
+                res[3] = data[index + 0];
+                break;
+            case "BA_DC":
+                res[0] = data[index + 2];
+                res[1] = data[index + 3];
+                res[2] = data[index + 0];
+                res[3] = data[index + 1];
+                break;
+            case "CD_AB":
+                res[0] = data[index + 1];
+                res[1] = data[index + 0];
+                res[2] = data[index + 3];
+                res[3] = data[index + 2];
+                break;
+            case "DC_BA":
+                res[0] = data[index + 0];
+                res[1] = data[index + 1];
+                res[2] = data[index + 2];
+                res[3] = data[index + 3];
+                break;
+            default:
+                // 未实现该数据格式
+                throw new HexParseException("The data format is not implemented");
+        }
+        return res;
+    }
+
+    /**
+     * 8字节数据按EByteBuffFormat重新格式化
+     *
+     * @param data 数据源
+     * @return 对应新的8字节数据
+     */
+    public byte[] formatIn8Bytes(byte[] data) {
+        return this.formatIn8Bytes(data, 0);
+    }
+
+    /**
+     * 8字节数据按EByteBuffFormat重新格式化
+     *
+     * @param data  数据源
+     * @param index 索引
+     * @return 对应新的8字节数据
+     */
+    public byte[] formatIn8Bytes(byte[] data, int index) {
+        byte[] res = new byte[8];
+        switch (this.code) {
+            case "AB_CD":
+                res[0] = data[index + 7];
+                res[1] = data[index + 6];
+                res[2] = data[index + 5];
+                res[3] = data[index + 4];
+                res[4] = data[index + 3];
+                res[5] = data[index + 2];
+                res[6] = data[index + 1];
+                res[7] = data[index + 0];
+                break;
+            case "BA_DC":
+                res[0] = data[index + 6];
+                res[1] = data[index + 7];
+                res[2] = data[index + 4];
+                res[3] = data[index + 5];
+                res[4] = data[index + 2];
+                res[5] = data[index + 3];
+                res[6] = data[index + 0];
+                res[7] = data[index + 1];
+                break;
+            case "CD_AB":
+                res[0] = data[index + 1];
+                res[1] = data[index + 0];
+                res[2] = data[index + 3];
+                res[3] = data[index + 2];
+                res[4] = data[index + 5];
+                res[5] = data[index + 4];
+                res[6] = data[index + 7];
+                res[7] = data[index + 6];
+                break;
+            case "DC_BA":
+                res[0] = data[index + 0];
+                res[1] = data[index + 1];
+                res[2] = data[index + 2];
+                res[3] = data[index + 3];
+                res[4] = data[index + 4];
+                res[5] = data[index + 5];
+                res[6] = data[index + 6];
+                res[7] = data[index + 7];
+                break;
+            default:
+                throw new HexParseException("The data format is not implemented");
+        }
+        return res;
+    }
 }

@@ -35,9 +35,9 @@ public class LongUtil {
     }
 
     /**
-     * 将short转换为字节数组
+     * 将long转换为字节数组
      *
-     * @param data short数据
+     * @param data long数据
      * @return 字节数组
      */
     public static byte[] toByteArray(long data) {
@@ -45,9 +45,9 @@ public class LongUtil {
     }
 
     /**
-     * 将short转换为字节数组
+     * 将long转换为字节数组
      *
-     * @param data         short数据
+     * @param data         long数据
      * @param littleEndian true:小端，false：大端
      * @return 字节数组
      */

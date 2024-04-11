@@ -36,7 +36,12 @@ import java.util.Arrays;
  *
  * @author xingshuang
  */
-public class ByteReadBuff extends ByteBuffBase {
+public class ByteReadBuff {
+
+    /**
+     * 4字节或8字节的编码格式
+     */
+    private final EByteBuffFormat format;
 
     /**
      * 数据
@@ -88,10 +93,10 @@ public class ByteReadBuff extends ByteBuffBase {
     }
 
     public ByteReadBuff(byte[] data, int offset, boolean littleEndian, EByteBuffFormat format) {
-        super(format);
         this.littleEndian = littleEndian;
         this.data = data;
         this.offset = offset;
+        this.format = format;
     }
 
     public static ByteReadBuff newInstance(byte[] data) {
@@ -382,7 +387,7 @@ public class ByteReadBuff extends ByteBuffBase {
      */
     public int getInt32(int index) {
         this.checkCondition(index);
-        return IntegerUtil.toInt32(this.reorderByFormatIn4Bytes(this.data, index), 0, this.littleEndian);
+        return IntegerUtil.toInt32(this.format.formatIn4Bytes(this.data, index), 0, this.littleEndian);
     }
 
     /**
@@ -393,7 +398,7 @@ public class ByteReadBuff extends ByteBuffBase {
      */
     public long getUInt32(int index) {
         this.checkCondition(index);
-        return IntegerUtil.toUInt32(this.reorderByFormatIn4Bytes(this.data, index), 0, this.littleEndian);
+        return IntegerUtil.toUInt32(this.format.formatIn4Bytes(this.data, index), 0, this.littleEndian);
     }
 
     /**
@@ -404,7 +409,7 @@ public class ByteReadBuff extends ByteBuffBase {
      */
     public float getFloat32(int index) {
         this.checkCondition(index);
-        return FloatUtil.toFloat32(this.reorderByFormatIn4Bytes(this.data, index), 0, this.littleEndian);
+        return FloatUtil.toFloat32(this.format.formatIn4Bytes(this.data, index), 0, this.littleEndian);
     }
 
     /**
@@ -415,7 +420,7 @@ public class ByteReadBuff extends ByteBuffBase {
      */
     public double getFloat64(int index) {
         this.checkCondition(index);
-        return FloatUtil.toFloat64(this.reorderByFormatIn8Bytes(this.data, index), 0, this.littleEndian);
+        return FloatUtil.toFloat64(this.format.formatIn8Bytes(this.data, index), 0, this.littleEndian);
     }
 
     /**

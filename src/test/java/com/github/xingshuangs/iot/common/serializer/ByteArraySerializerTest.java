@@ -222,4 +222,27 @@ public class ByteArraySerializerTest {
         byte[] actual = serializer.toByteArray(bean);
         assertArrayEquals(expect, actual);
     }
+
+    @Test
+    public void toByteArray2() {
+        ByteArraySerializer serializer = ByteArraySerializer.newInstance();
+        byte[] expect = new byte[]{(byte) 0x01,
+                // 0, 25689
+                (byte) 0x00, (byte) 0x00, (byte) 0x64, (byte) 0x59,
+                // 523975585
+                (byte) 0x3B, (byte) 0xA1, (byte) 0x1F, (byte) 0x3B, (byte) 0x3B, (byte) 0xA1, (byte) 0x1F, (byte) 0x3B,
+                // 33.16f, -15.62f
+                (byte) 0xA3, (byte) 0xD7, (byte) 0x42, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                // 156665.35455556
+                (byte) 0xD6, (byte) 0x21, (byte) 0x39, (byte) 0xB7, (byte) 0x41, (byte) 0x03, (byte) 0x1F, (byte) 0xCA,
+                // -56516.66664
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                // 23A
+                (byte) 0x32, (byte) 0x33, (byte) 0x41};
+
+        ByteFormatBean bean = serializer.toObject(ByteFormatBean.class, expect);
+        byte[] actual = serializer.toByteArray(bean);
+        assertArrayEquals(expect, actual);
+        bean.getInt32Data().byteValue();
+    }
 }
