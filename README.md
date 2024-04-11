@@ -16,7 +16,7 @@ Now, it is a tool for iot communication, used for the learning and development o
 
 - Siemens S7 protocol, support PLC S1500, S1200, S400, S300, S200Smart, Siemens SINUMERIK 828D. [S7Client DEMO](https://github.com/xingshuangs/SiemensWindowProgram).
 - Modbus protocol, support ModbusTcp, ModbusRtuOverTcp, ModbusAsciiOverTcp.
-- Mitsubishi Melsec(MC) Protocol, support PLC iQ-R series, Q/L series, QnA series, Only the L Series has been tested so
+- Mitsubishi Melsec(MC) Protocol, support PLC iQ-R series, Q/L series, QnA series, Only the L Series and FX5U has been tested so
   far.
 - RTSP, RTCP, RTP, H264, MP4 (FMP4) protocol, RTSP + H264 + FMP4 + WebSocket + MSE + WEB. [WEB Monitor DEMO](https://github.com/xingshuangs/rtsp-websocket-server).
 - Parse byte array data.

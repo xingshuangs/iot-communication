@@ -11,7 +11,7 @@
 - The small-end mode is adopted, the encoding format of **4 bytes** data = **AB_CD**. (big-endian mode = **DC_BA**，little-endian mode = **AB_CD**)
 - Only read and write in binary is supported. Read and write in ASCII is not supported
 - Support TCP mode, serial ports are not supported
-- Support PLC: iQ-R series, Q/L series, QnA series, Only the L Series has been tested so far（L02CPU）
+- Support PLC: iQ-R series, Q/L series, QnA series, the L Series(L02CPU) and FX Series(FX5U-32M) has been tested
 - Support automatic reconnection.
 
 > Address format, case compatible.
