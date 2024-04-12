@@ -65,10 +65,10 @@ public class McMessageAck implements IObjectByteArray {
      * 自我校验，主要核对数据长度
      */
     public void selfCheck() {
-        if(this.header.getFrameType()== EMcFrameType.FRAME_1E){
+        if (this.header.getFrameType() == EMcFrameType.FRAME_1E) {
             return;
         }
-        McHeader3EAck header3EAck = (McHeader3EAck)this.header;
+        McHeader3EAck header3EAck = (McHeader3EAck) this.header;
         header3EAck.dataLength = 2 + this.data.byteArrayLength();
     }
 
@@ -92,12 +92,16 @@ public class McMessageAck implements IObjectByteArray {
      * @return McMessageAck
      */
     public static McMessageAck fromBytes(final byte[] data, final int offset, EMcFrameType frameType) {
-        ByteReadBuff buff = new ByteReadBuff(data, offset, true);
         McMessageAck res = new McMessageAck();
-        byte[] headerBytes = frameType == EMcFrameType.FRAME_4E ? buff.getBytes(15) : buff.getBytes(11);
-        res.header = McHeaderAck.fromBytes(headerBytes, frameType);
-        res.data = res.header.getEndCode() == 0 ? McAckData.fromBytes(buff.getBytes())
-                : McErrorInformationData.fromBytes(buff.getBytes());
+        res.header = McHeaderAck.fromBytes(data, offset, frameType);
+        int off = offset + res.header.byteArrayLength();
+        if (res.header.getEndCode() == 0) {
+            res.data = McAckData.fromBytes(data, off);
+        } else if (frameType == EMcFrameType.FRAME_1E) {
+            res.data = McError1EData.fromBytes(data, off);
+        } else {
+            res.data = McError4E3EData.fromBytes(data, off);
+        }
         return res;
     }
 }

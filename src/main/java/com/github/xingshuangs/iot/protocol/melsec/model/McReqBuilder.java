@@ -25,6 +25,7 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 
@@ -69,6 +70,9 @@ public class McReqBuilder {
     public static McMessageReq createReadDeviceBatchInWordReq(EMcSeries series,
                                                               McHeaderReq header,
                                                               McDeviceAddress deviceAddress) {
+        if (series.getFrameType() == EMcFrameType.FRAME_1E) {
+            header.setSubHeader(EMcCommand.DEVICE_ACCESS_BATCH_READ_IN_WORD.getCode());
+        }
         McReadDeviceBatchInWordReqData data = new McReadDeviceBatchInWordReqData(series, deviceAddress);
         McMessageReq req = new McMessageReq(header, data);
         req.selfCheck();
@@ -98,6 +102,9 @@ public class McReqBuilder {
     public static McMessageReq createReadDeviceBatchInBitReq(EMcSeries series,
                                                              McHeaderReq header,
                                                              McDeviceAddress deviceAddress) {
+        if (series.getFrameType() == EMcFrameType.FRAME_1E) {
+            header.setSubHeader(EMcCommand.DEVICE_ACCESS_BATCH_READ_IN_BIT.getCode());
+        }
         McReadDeviceBatchInBitReqData data = new McReadDeviceBatchInBitReqData(series, deviceAddress);
         McMessageReq req = new McMessageReq(header, data);
         req.selfCheck();
@@ -127,6 +134,9 @@ public class McReqBuilder {
     public static McMessageReq createWriteDeviceBatchInWordReq(EMcSeries series,
                                                                McHeaderReq header,
                                                                McDeviceContent deviceContent) {
+        if (series.getFrameType() == EMcFrameType.FRAME_1E) {
+            header.setSubHeader(EMcCommand.DEVICE_ACCESS_BATCH_WRITE_IN_WORD.getCode());
+        }
         McWriteDeviceBatchInWordReqData data = new McWriteDeviceBatchInWordReqData(series, deviceContent);
         McMessageReq req = new McMessageReq(header, data);
         req.selfCheck();
@@ -156,6 +166,9 @@ public class McReqBuilder {
     public static McMessageReq createWriteDeviceBatchInBitReq(EMcSeries series,
                                                               McHeaderReq header,
                                                               McDeviceContent deviceContent) {
+        if (series.getFrameType() == EMcFrameType.FRAME_1E) {
+            header.setSubHeader(EMcCommand.DEVICE_ACCESS_BATCH_WRITE_IN_BIT.getCode());
+        }
         McWriteDeviceBatchInBitReqData data = new McWriteDeviceBatchInBitReqData(series, deviceContent);
         McMessageReq req = new McMessageReq(header, data);
         req.selfCheck();
@@ -189,6 +202,9 @@ public class McReqBuilder {
                                                                McHeaderReq header,
                                                                List<McDeviceAddress> wordAddresses,
                                                                List<McDeviceAddress> dwordAddresses) {
+        if (series.getFrameType() == EMcFrameType.FRAME_1E) {
+            header.setSubHeader(EMcCommand.DEVICE_ACCESS_RANDOM_WRITE_IN_WORD.getCode());
+        }
         McReadDeviceRandomInWordReqData data = new McReadDeviceRandomInWordReqData(series, wordAddresses, dwordAddresses);
         McMessageReq req = new McMessageReq(header, data);
         req.selfCheck();
@@ -222,6 +238,9 @@ public class McReqBuilder {
                                                                 McHeaderReq header,
                                                                 List<McDeviceContent> wordContents,
                                                                 List<McDeviceContent> dwordContents) {
+        if (series.getFrameType() == EMcFrameType.FRAME_1E) {
+            header.setSubHeader(EMcCommand.DEVICE_ACCESS_RANDOM_WRITE_IN_WORD.getCode());
+        }
         McWriteDeviceRandomInWordReqData data = new McWriteDeviceRandomInWordReqData(series, wordContents, dwordContents);
         McMessageReq req = new McMessageReq(header, data);
         req.selfCheck();
@@ -251,6 +270,9 @@ public class McReqBuilder {
     public static McMessageReq createWriteDeviceRandomInBitReq(EMcSeries series,
                                                                McHeaderReq header,
                                                                List<McDeviceContent> bitContents) {
+        if (series.getFrameType() == EMcFrameType.FRAME_1E) {
+            header.setSubHeader(EMcCommand.DEVICE_ACCESS_RANDOM_WRITE_IN_BIT.getCode());
+        }
         McWriteDeviceRandomInBitReqData data = new McWriteDeviceRandomInBitReqData(series, bitContents);
         McMessageReq req = new McMessageReq(header, data);
         req.selfCheck();

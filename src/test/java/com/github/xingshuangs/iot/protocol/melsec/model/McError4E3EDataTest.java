@@ -30,14 +30,14 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 
-public class McErrorInformationDataTest {
+public class McError4E3EDataTest {
 
     @Test
     public void fromBytes() {
         byte[] src = new byte[]{
                 0x00, (byte) 0xFF, (byte) 0xFF, 0x03, 0x00, 0x01, 0x04, 0x01, 0x00
         };
-        McErrorInformationData data = McErrorInformationData.fromBytes(src);
+        McError4E3EData data = McError4E3EData.fromBytes(src);
         McFrame4E3EAccessRoute accessRoute = (McFrame4E3EAccessRoute) data.getAccessRoute();
         assertEquals(0, accessRoute.getNetworkNumber());
         assertEquals(0xFF, accessRoute.getPcNumber());

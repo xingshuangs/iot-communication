@@ -99,14 +99,7 @@ public class McDeviceAddress {
      */
     public byte[] toByteArrayWithoutPointsCount(EMcSeries series) {
         int length = series.getDeviceCodeByteLength() + series.getHeadDeviceNumberByteLength();
-        ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true);
-        if (series == EMcSeries.QnA || series == EMcSeries.Q_L) {
-            buff.putBytes(IntegerUtil.toCustomByteArray(this.headDeviceNumber, 0, 3, true));
-            buff.putByte(this.deviceCode.getBinaryCode());
-        } else {
-            buff.putInteger(this.headDeviceNumber);
-            buff.putShort(this.deviceCode.getBinaryCodeIqr());
-        }
+        ByteWriteBuff buff = addBaseData(series, length);
         return buff.getData();
     }
 
@@ -118,16 +111,31 @@ public class McDeviceAddress {
      */
     public byte[] toByteArrayWithPointsCount(EMcSeries series) {
         int length = 2 + series.getDeviceCodeByteLength() + series.getHeadDeviceNumberByteLength();
+        ByteWriteBuff buff = addBaseData(series, length);
+        buff.putShort(this.devicePointsCount);
+        return buff.getData();
+    }
+
+    /**
+     * 更加条件添加基础数据
+     *
+     * @param series PLC系列
+     * @param length 字节数组长度
+     * @return ByteWriteBuff
+     */
+    private ByteWriteBuff addBaseData(EMcSeries series, int length) {
         ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true);
         if (series == EMcSeries.QnA || series == EMcSeries.Q_L) {
             buff.putBytes(IntegerUtil.toCustomByteArray(this.headDeviceNumber, 0, 3, true));
             buff.putByte(this.deviceCode.getBinaryCode());
-        } else {
+        } else if (series == EMcSeries.IQ_R) {
             buff.putInteger(this.headDeviceNumber);
             buff.putShort(this.deviceCode.getBinaryCodeIqr());
+        } else if (series == EMcSeries.A) {
+            buff.putInteger(this.headDeviceNumber);
+            buff.putShort(this.deviceCode.getBinaryCode1E());
         }
-        buff.putShort(this.devicePointsCount);
-        return buff.getData();
+        return buff;
     }
 
     /**

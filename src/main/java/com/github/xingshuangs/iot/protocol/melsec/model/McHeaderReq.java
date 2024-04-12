@@ -73,7 +73,6 @@ public class McHeaderReq implements IObjectByteArray {
     }
 
     public static McHeaderReq createByFrameType(EMcFrameType frameType, McAccessRoute accessRoute, int timer) {
-        McHeaderReq headerReq;
         switch (frameType) {
             case FRAME_1E:
                 return new McHeader1EReq(accessRoute, timer);

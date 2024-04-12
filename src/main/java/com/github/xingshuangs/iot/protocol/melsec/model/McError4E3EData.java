@@ -25,40 +25,72 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
 import lombok.Data;
 
 /**
- * 请求头
+ * 协议体数据：错误信息
  *
  * @author xingshuang
  */
 @Data
-public class McHeader1EReq extends McHeaderReq {
+public class McError4E3EData extends McData {
 
-    public McHeader1EReq() {
-    }
+    /**
+     * 访问路径，存在多种访问路径
+     */
+    private McAccessRoute accessRoute;
 
-    public McHeader1EReq(McAccessRoute accessRoute, int timer) {
-        this.frameType = EMcFrameType.FRAME_1E;
-        this.subHeader = this.frameType.getReqSubHeader();
-        this.accessRoute = accessRoute;
-        this.monitoringTimer = timer / 250;
-    }
+    /**
+     * 指令，2个字节
+     */
+    private EMcCommand command;
+
+    /**
+     * 子指令，2个字节
+     */
+    private int subcommand = 0x0000;
 
     @Override
     public int byteArrayLength() {
-        return 1 + this.accessRoute.byteArrayLength() + 2;
+        return 4 + this.accessRoute.byteArrayLength();
     }
 
     @Override
     public byte[] toByteArray() {
-        int length = 1 + this.accessRoute.byteArrayLength() + 2;
-        return ByteWriteBuff.newInstance(length, true)
-                .putByte(this.subHeader)
+        int length = 4 + this.accessRoute.byteArrayLength();
+        return ByteWriteBuff.newInstance(length)
                 .putBytes(this.accessRoute.toByteArray())
-                .putShort(this.monitoringTimer)
+                .putShort(this.command.getCode())
+                .putShort(this.subcommand)
                 .getData();
+    }
+
+    /**
+     * 解析字节数组数据
+     *
+     * @param data 字节数组数据
+     * @return McErrorInformationData
+     */
+    public static McError4E3EData fromBytes(final byte[] data) {
+        return fromBytes(data, 0);
+    }
+
+    /**
+     * 解析字节数组数据
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return McErrorInformationData
+     */
+    public static McError4E3EData fromBytes(final byte[] data, final int offset) {
+        ByteReadBuff buff = new ByteReadBuff(data, offset, true);
+        McError4E3EData res = new McError4E3EData();
+        res.accessRoute = McFrame4E3EAccessRoute.fromBytes(buff.getBytes(5));
+        res.command = EMcCommand.from(buff.getUInt16());
+        res.subcommand = buff.getUInt16();
+        return res;
     }
 }

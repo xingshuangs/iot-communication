@@ -335,6 +335,10 @@ public enum EMcDeviceCode {
         return asciiCodeIqr;
     }
 
+    public int getBinaryCode1E() {
+        return binaryCode1E;
+    }
+
     /**
      * 是否为位类型数据
      *

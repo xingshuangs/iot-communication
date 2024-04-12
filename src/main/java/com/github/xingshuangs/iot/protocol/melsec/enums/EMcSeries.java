@@ -56,11 +56,11 @@ import lombok.Getter;
 public enum EMcSeries {
 
     /**
-     * A系列
+     * A系列，批量读：位单位256点，字单位32个；批量写：位单位160点，字单位10个
      */
-    A(EMcFrameType.FRAME_1E, 2, 4, 480, 3584,
-            96, 960, 94,
-            120, 4, 960),
+    A(EMcFrameType.FRAME_1E, 2, 4, 10, 160,
+            0, 10, 80,
+            0, 0, 0),
 
     /**
      * QnA系列

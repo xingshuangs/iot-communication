@@ -27,7 +27,6 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
 import lombok.Data;
 
 /**
@@ -36,35 +35,22 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
-public class McErrorInformationData extends McData {
+public class McError1EData extends McData {
 
     /**
-     * 访问路径，存在多种访问路径
+     * 错误信息，1个字节
      */
-    private McAccessRoute accessRoute;
-
-    /**
-     * 指令，2个字节
-     */
-    private EMcCommand command;
-
-    /**
-     * 子指令，2个字节
-     */
-    private int subcommand = 0x0000;
+    private int error = 0x0000;
 
     @Override
     public int byteArrayLength() {
-        return 4 + this.accessRoute.byteArrayLength();
+        return 1;
     }
 
     @Override
     public byte[] toByteArray() {
-        int length = 4 + this.accessRoute.byteArrayLength();
-        return ByteWriteBuff.newInstance(length)
-                .putBytes(this.accessRoute.toByteArray())
-                .putShort(this.command.getCode())
-                .putShort(this.subcommand)
+        return ByteWriteBuff.newInstance(1)
+                .putByte(this.error)
                 .getData();
     }
 
@@ -74,7 +60,7 @@ public class McErrorInformationData extends McData {
      * @param data 字节数组数据
      * @return McErrorInformationData
      */
-    public static McErrorInformationData fromBytes(final byte[] data) {
+    public static McError1EData fromBytes(final byte[] data) {
         return fromBytes(data, 0);
     }
 
@@ -85,12 +71,10 @@ public class McErrorInformationData extends McData {
      * @param offset 偏移量
      * @return McErrorInformationData
      */
-    public static McErrorInformationData fromBytes(final byte[] data, final int offset) {
+    public static McError1EData fromBytes(final byte[] data, final int offset) {
         ByteReadBuff buff = new ByteReadBuff(data, offset, true);
-        McErrorInformationData res = new McErrorInformationData();
-        res.accessRoute = McFrame4E3EAccessRoute.fromBytes(buff.getBytes(5));
-        res.command = EMcCommand.from(buff.getUInt16());
-        res.subcommand = buff.getUInt16();
+        McError1EData res = new McError1EData();
+        res.error = buff.getByteToInt();
         return res;
     }
 }
