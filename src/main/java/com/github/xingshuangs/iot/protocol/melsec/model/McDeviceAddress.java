@@ -100,7 +100,7 @@ public class McDeviceAddress {
     public byte[] toByteArrayWithoutPointsCount(EMcSeries series) {
         int length = series.getDeviceCodeByteLength() + series.getHeadDeviceNumberByteLength();
         ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true);
-        if (series == EMcSeries.Q_L) {
+        if (series == EMcSeries.QnA || series == EMcSeries.Q_L) {
             buff.putBytes(IntegerUtil.toCustomByteArray(this.headDeviceNumber, 0, 3, true));
             buff.putByte(this.deviceCode.getBinaryCode());
         } else {
@@ -119,7 +119,7 @@ public class McDeviceAddress {
     public byte[] toByteArrayWithPointsCount(EMcSeries series) {
         int length = 2 + series.getDeviceCodeByteLength() + series.getHeadDeviceNumberByteLength();
         ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true);
-        if (series == EMcSeries.Q_L) {
+        if (series == EMcSeries.QnA || series == EMcSeries.Q_L) {
             buff.putBytes(IntegerUtil.toCustomByteArray(this.headDeviceNumber, 0, 3, true));
             buff.putByte(this.deviceCode.getBinaryCode());
         } else {

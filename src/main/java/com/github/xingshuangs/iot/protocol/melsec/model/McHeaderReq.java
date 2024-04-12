@@ -25,11 +25,10 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
-import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.common.IObjectByteArray;
+import com.github.xingshuangs.iot.exceptions.McCommException;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import lombok.Data;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 请求头
@@ -37,9 +36,22 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author xingshuang
  */
 @Data
-public class McHeaderReq extends McHeader {
+public class McHeaderReq implements IObjectByteArray {
+    /**
+     * 帧类型
+     */
+    protected EMcFrameType frameType = EMcFrameType.FRAME_3E;
 
-    private static final AtomicInteger index = new AtomicInteger();
+    /**
+     * 副帧头，2字节，根据报文的类型定义设置的值。
+     * 1E帧，1个字节
+     */
+    protected int subHeader = 0;
+
+    /**
+     * 访问路径，存在多种访问路径
+     */
+    protected McAccessRoute accessRoute;
 
     /**
      * 监视定时器，2字节，设置读取及写入的处理完成之前的等待时间。设置连接站E71向访问目标发出处理请求之后到返回响应为止的等待时间。
@@ -48,50 +60,29 @@ public class McHeaderReq extends McHeader {
      * 连接站(本站):0001H～0028H(0.25秒～10秒)
      * 其它站:0002H～00F0H(0.5秒～60秒)
      */
-    private int monitoringTimer;
-
-    public McHeaderReq() {
-    }
-
-    public McHeaderReq(int subHeader, McAccessRoute accessRoute, int timer) {
-        this.subHeader = subHeader;
-        this.accessRoute = accessRoute;
-        this.monitoringTimer = timer / 250;
-        this.serialNumber = getNewNumber();
-    }
-
-    /**
-     * 获取新的pduNumber
-     *
-     * @return 编号
-     */
-    public static int getNewNumber() {
-        int res = index.getAndIncrement();
-        if (res >= 65536) {
-            index.set(0);
-            res = 0;
-        }
-        return res;
-    }
+    protected int monitoringTimer;
 
     @Override
     public int byteArrayLength() {
-        return (frameType == EMcFrameType.FRAME_4E ? 6 : 2) + this.accessRoute.byteArrayLength() + 2 + 2;
+        throw new UnsupportedOperationException("未实现");
     }
 
     @Override
     public byte[] toByteArray() {
-        int length = (frameType == EMcFrameType.FRAME_4E ? 6 : 2) + this.accessRoute.byteArrayLength() + 2 + 2;
-        ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true)
-                .putShort(this.subHeader);
+        throw new UnsupportedOperationException("未实现");
+    }
 
-        if (frameType == EMcFrameType.FRAME_4E) {
-            buff.putShort(this.serialNumber);
-            buff.putShort(this.fixedNumber);
+    public static McHeaderReq createByFrameType(EMcFrameType frameType, McAccessRoute accessRoute, int timer) {
+        McHeaderReq headerReq;
+        switch (frameType) {
+            case FRAME_1E:
+                return new McHeader1EReq(accessRoute, timer);
+            case FRAME_3E:
+                return new McHeader3EReq(accessRoute, timer);
+            case FRAME_4E:
+                return new McHeader4EReq(accessRoute, timer);
+            default:
+                throw new McCommException("unknown frame type");
         }
-        return buff.putBytes(this.accessRoute.toByteArray())
-                .putShort(this.dataLength)
-                .putShort(this.monitoringTimer)
-                .getData();
     }
 }

@@ -26,7 +26,9 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.exceptions.McCommException;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import lombok.Data;
 
@@ -62,9 +64,12 @@ public class McReadDeviceBatchMultiBlocksReqData extends McReqData {
     public McReadDeviceBatchMultiBlocksReqData(EMcSeries series,
                                                List<McDeviceAddress> wordAddresses,
                                                List<McDeviceAddress> bitAddresses) {
+        if (series.getFrameType() == EMcFrameType.FRAME_1E) {
+            throw new McCommException("Frame 1E not supported");
+        }
         this.series = series;
         this.command = EMcCommand.DEVICE_ACCESS_BATCH_READ_MULTIPLE_BLOCKS;
-        this.subcommand = series == EMcSeries.Q_L ? 0x0000 : 0x0002;
+        this.subcommand = series != EMcSeries.IQ_R ? 0x0000 : 0x0002;
         this.wordAddresses = wordAddresses;
         this.bitAddresses = bitAddresses;
     }

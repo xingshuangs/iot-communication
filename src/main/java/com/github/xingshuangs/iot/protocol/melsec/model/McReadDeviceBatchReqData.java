@@ -26,6 +26,8 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import lombok.Data;
 
 /**
@@ -43,15 +45,17 @@ public class McReadDeviceBatchReqData extends McReqData {
 
     @Override
     public int byteArrayLength() {
-        return 4 + this.deviceAddress.byteArrayLengthWithPointsCount(this.series);
+        return (this.series.getFrameType() == EMcFrameType.FRAME_1E ? 0 : 4) + this.deviceAddress.byteArrayLengthWithPointsCount(this.series);
     }
 
     @Override
     public byte[] toByteArray() {
-        return ByteWriteBuff.newInstance(this.byteArrayLength(), true)
-                .putShort(this.command.getCode())
-                .putShort(this.subcommand)
-                .putBytes(this.deviceAddress.toByteArrayWithPointsCount(this.series))
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(this.byteArrayLength(), true);
+        if (this.series.getFrameType() != EMcFrameType.FRAME_1E) {
+            buff.putShort(this.command.getCode())
+                    .putShort(this.subcommand);
+        }
+        return buff.putBytes(this.deviceAddress.toByteArrayWithPointsCount(this.series))
                 .getData();
     }
 }

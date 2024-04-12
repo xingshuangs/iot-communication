@@ -42,7 +42,7 @@ public class McMessageAckTest {
         };
 
         McMessageAck ack = McMessageAck.fromBytes(src, EMcFrameType.FRAME_3E);
-        McHeaderAck header = ack.getHeader();
+        McHeader3EAck header = (McHeader3EAck)ack.getHeader();
         assertEquals(0x0054, header.getSubHeader());
         McFrame4E3EAccessRoute accessRoute = (McFrame4E3EAccessRoute) header.getAccessRoute();
         assertEquals(0, accessRoute.getNetworkNumber());

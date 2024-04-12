@@ -28,7 +28,27 @@ package com.github.xingshuangs.iot.protocol.melsec.enums;
 import lombok.Getter;
 
 /**
- * PLC系列
+ * PLC系列<br>
+ * 通信帧命名规格<br>
+ * 通信帧命名格式如下：<br>
+ * xxx 兼容 n m 帧(示例: QnA 兼容 3C 帧、QnA 兼容 3E 帧)<br>
+ * 1、xxx 用于表示与以前产品模块的指令兼容性的对象可编程控制器 CPU<br>
+ * A : A 系列可编程控制器 CPU<br>
+ * QnA : QnA 系列可编程控制器 CPU<br>
+ * 2、n对应的以前产品模块的帧<br>
+ * 1 : 兼容 A 系列的计算机链接模块、以太网接口模块支持的指令的通信帧<br>
+ * 2 : 兼容 QnA 系列串行通信模块支持的 QnA 简易帧<br>
+ * 3 : QnA 系列串行通信模块支持的 QnA 帧及兼容 QnA 系列以太网接口模块支持的通信帧<br>
+ * 4 : 兼容 QnA 系列串行通信模块支持的 QnA 扩展帧<br>
+ * 3、m是指相应帧进行数据通信的对象模块<br>
+ * C : C24<br>
+ * E : E71<br>
+ * <p>
+ * 通信方式<br>
+ * 一般我们使用比较多的是以太网通信，<br>
+ * 对于FX5U系列/Q系列/Qna系列/L系列的PLC，通常会使用QnA兼容3E帧，<br>
+ * 对于FX3U系列，我们需要加以太网模块，采用A兼容1E帧。<br>
+ * 对于串口设备，一般会使用QnA兼容2C帧和QnA兼容4C帧。<br>
  *
  * @author xingshuang
  */
@@ -36,28 +56,37 @@ import lombok.Getter;
 public enum EMcSeries {
 
     /**
+     * A系列
+     */
+    A(EMcFrameType.FRAME_1E, 2, 4, 480, 3584,
+            96, 960, 94,
+            120, 4, 960),
+
+    /**
      * QnA系列
      */
-    QnA(1, 3, 480, 3584,
+    QnA(EMcFrameType.FRAME_3E, 1, 3, 480, 3584,
             96, 960, 94,
             120, 4, 960),
 
     /**
      * MELSEC-Q/L系列
      */
-    Q_L(1, 3, 960, 7168,
+    Q_L(EMcFrameType.FRAME_3E, 1, 3, 960, 7168,
             192, 1920, 188,
             120, 4, 960),
 
     /**
      * MELSEC iQ-R系列
+     * TODO: 不是很确定IQ-R是否为3E帧类型
      */
-    IQ_R(2, 4, 960, 7168,
+    IQ_R(EMcFrameType.FRAME_3E, 2, 4, 960, 7168,
             96, 960, 94,
             60, 9, 960),
     ;
 
-    EMcSeries(int deviceCodeByteLength,
+    EMcSeries(EMcFrameType frameType,
+              int deviceCodeByteLength,
               int headDeviceNumberByteLength,
               int deviceBatchInWordPointsCount,
               int deviceBatchInBitPointsCount,
@@ -67,6 +96,7 @@ public enum EMcSeries {
               int deviceBlocksBlocksCount,
               int deviceBlocksWritePointsSize,
               int deviceBlocksWritePointsCount) {
+        this.frameType = frameType;
         this.deviceCodeByteLength = deviceCodeByteLength;
         this.headDeviceNumberByteLength = headDeviceNumberByteLength;
         this.deviceBatchInWordPointsCount = deviceBatchInWordPointsCount;
@@ -78,6 +108,11 @@ public enum EMcSeries {
         this.deviceBlocksWritePointsSize = deviceBlocksWritePointsSize;
         this.deviceBlocksWritePointsCount = deviceBlocksWritePointsCount;
     }
+
+    /**
+     * 对应帧类型
+     */
+    private final EMcFrameType frameType;
 
     /**
      * 软元件代码字节长度
@@ -128,6 +163,4 @@ public enum EMcSeries {
      * 软元件按块批量写的点数
      */
     private final int deviceBlocksWritePointsCount;
-
-
 }

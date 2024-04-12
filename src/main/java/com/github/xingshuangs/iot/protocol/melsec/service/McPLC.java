@@ -28,7 +28,6 @@ package com.github.xingshuangs.iot.protocol.melsec.service;
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.common.buff.EByteBuffFormat;
-import com.github.xingshuangs.iot.common.constant.GeneralConst;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceAddress;
@@ -51,22 +50,22 @@ import static com.github.xingshuangs.iot.common.constant.GeneralConst.MELSEC_POR
 public class McPLC extends McNetwork {
 
     public McPLC() {
-        this(EMcSeries.Q_L, EMcFrameType.FRAME_3E, LOCALHOST, MELSEC_PORT);
+        this(EMcSeries.QnA, EMcSeries.QnA.getFrameType(), LOCALHOST, MELSEC_PORT);
     }
 
     public McPLC(String host, int port) {
-        this(EMcSeries.Q_L, EMcFrameType.FRAME_3E, host, port);
+        this(EMcSeries.QnA, EMcSeries.QnA.getFrameType(), host, port);
     }
 
     public McPLC(EMcSeries series, String host, int port) {
-        this(series, EMcFrameType.FRAME_3E, host, port);
+        this(series, series.getFrameType(), host, port);
     }
 
     public McPLC(EMcSeries series, EMcFrameType frameType, String host, int port) {
         super(host, port);
         this.tag = "Melsec";
         this.series = series;
-        this.frameType = series == EMcSeries.QnA ? EMcFrameType.FRAME_3E : frameType;
+        this.frameType = frameType;
     }
 
     //region 软元件读取
@@ -672,5 +671,4 @@ public class McPLC extends McNetwork {
     }
 
     //endregion
-
 }

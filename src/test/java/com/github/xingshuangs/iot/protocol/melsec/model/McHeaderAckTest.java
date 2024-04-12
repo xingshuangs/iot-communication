@@ -40,7 +40,7 @@ public class McHeaderAckTest {
                 0x0C, 0x00, 0x00, 0x00
         };
 
-        McHeaderAck ack = McHeaderAck.fromBytes(src, EMcFrameType.FRAME_4E);
+        McHeader4EAck ack = (McHeader4EAck)McHeaderAck.fromBytes(src, EMcFrameType.FRAME_4E);
         assertEquals(EMcFrameType.FRAME_4E.getAckSubHeader(), ack.getSubHeader());
         assertEquals(4660, ack.getSerialNumber());
         assertEquals(0, ack.getFixedNumber());
@@ -60,7 +60,7 @@ public class McHeaderAckTest {
                 0x0C, 0x00, 0x00, 0x00
         };
 
-        McHeaderAck ack = McHeaderAck.fromBytes(src, EMcFrameType.FRAME_3E);
+        McHeader3EAck ack = (McHeader3EAck)McHeaderAck.fromBytes(src, EMcFrameType.FRAME_3E);
         assertEquals(EMcFrameType.FRAME_3E.getAckSubHeader(), ack.getSubHeader());
         McFrame4E3EAccessRoute accessRoute = (McFrame4E3EAccessRoute) ack.getAccessRoute();
         assertEquals(0, accessRoute.getNetworkNumber());

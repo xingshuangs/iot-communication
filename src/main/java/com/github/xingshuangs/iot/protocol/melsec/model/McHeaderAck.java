@@ -25,8 +25,8 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
-import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
-import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.common.IObjectByteArray;
+import com.github.xingshuangs.iot.exceptions.McCommException;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import lombok.Data;
 
@@ -36,36 +36,37 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
-public class McHeaderAck extends McHeader {
+public class McHeaderAck implements IObjectByteArray {
 
     /**
-     * 结束代码，2字节
+     * 帧类型
+     */
+    protected EMcFrameType frameType = EMcFrameType.FRAME_3E;
+
+    /**
+     * 副帧头，2字节，根据报文的类型定义设置的值。
+     * 1E帧，1个字节
+     */
+    protected int subHeader = 0;
+
+    /**
+     * 结束代码，2字节， 1E帧只有1个字节
      * 存储指令处理结果。
      * 正常结束时将存储0。
      * 异常结束时将存储访问目标的出错代码。
      * 出错代码表示发生的出错内容。
      * 同时发生了多个出错的情况下，将返回最初检测的出错代码。
      */
-    private int endCode;
+    protected int endCode;
 
     @Override
     public int byteArrayLength() {
-        return (frameType == EMcFrameType.FRAME_4E ? 6 : 2) + this.accessRoute.byteArrayLength() + 2 + 2;
+        throw new UnsupportedOperationException("未实现");
     }
 
     @Override
     public byte[] toByteArray() {
-        int length = (frameType == EMcFrameType.FRAME_4E ? 6 : 2) + this.accessRoute.byteArrayLength() + 2 + 2;
-        ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true)
-                .putShort(this.subHeader);
-        if (frameType == EMcFrameType.FRAME_4E) {
-            buff.putShort(this.serialNumber);
-            buff.putShort(this.fixedNumber);
-        }
-        return buff.putBytes(this.accessRoute.toByteArray())
-                .putShort(this.dataLength)
-                .putShort(this.endCode)
-                .getData();
+        throw new UnsupportedOperationException("未实现");
     }
 
     /**
@@ -88,17 +89,15 @@ public class McHeaderAck extends McHeader {
      * @return McHeaderAck
      */
     public static McHeaderAck fromBytes(final byte[] data, final int offset, EMcFrameType frameType) {
-        ByteReadBuff buff = new ByteReadBuff(data, offset, true);
-        McHeaderAck res = new McHeaderAck();
-        res.frameType = frameType;
-        res.subHeader = buff.getUInt16();
-        if (frameType == EMcFrameType.FRAME_4E) {
-            res.serialNumber = buff.getUInt16();
-            res.fixedNumber = buff.getUInt16();
+        switch (frameType) {
+            case FRAME_1E:
+                return McHeader1EAck.fromBytes(data, offset);
+            case FRAME_3E:
+                return McHeader3EAck.fromBytes(data, offset);
+            case FRAME_4E:
+                return McHeader4EAck.fromBytes(data, offset);
+            default:
+                throw new McCommException("unknown frame type");
         }
-        res.accessRoute = McFrame4E3EAccessRoute.fromBytes(buff.getBytes(5));
-        res.dataLength = buff.getUInt16();
-        res.endCode = buff.getUInt16();
-        return res;
     }
 }

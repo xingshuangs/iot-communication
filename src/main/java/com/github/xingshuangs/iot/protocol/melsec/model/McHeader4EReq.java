@@ -27,37 +27,55 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import lombok.Data;
 
 /**
- * 软元件访问批量写请求数据
+ * 请求头
  *
  * @author xingshuang
  */
 @Data
-public class McWriteDeviceBatchReqData extends McReqData {
+public class McHeader4EReq extends McHeader3EReq {
 
     /**
-     * 软元件设备地址+内容
+     * 序列号，2字节
      */
-    protected McDeviceContent deviceContent;
+    protected int serialNumber = 0;
+
+    /**
+     * 固定值编号，2字节
+     */
+    protected int fixedNumber = 0;
+
+    public McHeader4EReq() {
+    }
+
+    public McHeader4EReq( int timer) {
+        this(McFrame4E3EAccessRoute.createDefault(), timer);
+    }
+
+    public McHeader4EReq( McAccessRoute accessRoute, int timer) {
+        this.frameType = EMcFrameType.FRAME_4E;
+        this.subHeader = this.frameType.getReqSubHeader();
+        this.accessRoute = accessRoute;
+        this.monitoringTimer = timer / 250;
+    }
 
     @Override
     public int byteArrayLength() {
-        return (this.series.getFrameType() == EMcFrameType.FRAME_1E ? 0 : 4)
-                + this.deviceContent.byteArrayLengthWithPointsCount(this.series);
+        return 6 + this.accessRoute.byteArrayLength() + 2 + 2;
     }
 
     @Override
     public byte[] toByteArray() {
-        ByteWriteBuff buff = ByteWriteBuff.newInstance(this.byteArrayLength(), true);
-        if (this.series.getFrameType() != EMcFrameType.FRAME_1E) {
-            buff.putShort(this.command.getCode())
-                    .putShort(this.subcommand);
-        }
-        return buff.putBytes(this.deviceContent.toByteArrayWithPointsCount(this.series))
+        int length = 6 + this.accessRoute.byteArrayLength() + 2 + 2;
+        return ByteWriteBuff.newInstance(length, true)
+                .putShort(this.subHeader)
+                .putShort(this.serialNumber)
+                .putShort(this.fixedNumber)
+                .putBytes(this.accessRoute.toByteArray())
+                .putShort(this.dataLength)
+                .putShort(this.monitoringTimer)
                 .getData();
-
     }
 }

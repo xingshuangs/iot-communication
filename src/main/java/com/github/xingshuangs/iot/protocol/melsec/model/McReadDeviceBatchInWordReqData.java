@@ -48,7 +48,7 @@ public class McReadDeviceBatchInWordReqData extends McReadDeviceBatchReqData {
     public McReadDeviceBatchInWordReqData(EMcSeries series, McDeviceAddress deviceAddress) {
         this.series = series;
         this.command = EMcCommand.DEVICE_ACCESS_BATCH_READ_IN_UNITS;
-        this.subcommand = series == EMcSeries.Q_L ? 0x0000 : 0x0002;
+        this.subcommand = series != EMcSeries.IQ_R ? 0x0000 : 0x0002;
         this.deviceAddress = deviceAddress;
     }
 }

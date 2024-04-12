@@ -47,6 +47,11 @@ public enum EMcFrameType {
      * 3E
      */
     FRAME_3E("3E", 0x0050, 0x00D0),
+
+    /**
+     * 1E，副帧头就是指令类型，这里先写个临时的数据
+     */
+    FRAME_1E("1E", 0x00, 0x00),
     ;
 
     private static Map<String, EMcFrameType> map;

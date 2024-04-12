@@ -27,6 +27,7 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 import com.github.xingshuangs.iot.common.IObjectByteArray;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import lombok.Data;
 
 /**
@@ -72,6 +73,10 @@ public class McMessageReq implements IObjectByteArray {
      * 自我校验，主要核对数据长度
      */
     public void selfCheck() {
-        this.header.dataLength = 2 + this.data.byteArrayLength();
+        if(this.header.getFrameType()== EMcFrameType.FRAME_1E){
+            return;
+        }
+        McHeader3EReq header3EReq = (McHeader3EReq)this.header;
+        header3EReq.dataLength = 2 + this.data.byteArrayLength();
     }
 }

@@ -25,30 +25,40 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
+import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import lombok.Data;
 
 /**
- * 软元件访问批量读请求数据，位单位
+ * 请求头
  *
  * @author xingshuang
  */
 @Data
-public class McReadDeviceBatchInBitReqData extends McReadDeviceBatchReqData {
+public class McHeader1EReq extends McHeaderReq {
 
-    public McReadDeviceBatchInBitReqData() {
-        this(EMcSeries.Q_L, new McDeviceAddress());
+    public McHeader1EReq() {
     }
 
-    public McReadDeviceBatchInBitReqData(EMcSeries series) {
-        this(series, new McDeviceAddress());
+    public McHeader1EReq(McAccessRoute accessRoute,int timer) {
+        this.frameType = EMcFrameType.FRAME_1E;
+        this.subHeader = this.frameType.getReqSubHeader();
+        this.accessRoute = accessRoute;
+        this.monitoringTimer = timer / 250;
     }
 
-    public McReadDeviceBatchInBitReqData(EMcSeries series, McDeviceAddress deviceAddress) {
-        this.series = series;
-        this.command = EMcCommand.DEVICE_ACCESS_BATCH_READ_IN_UNITS;
-        this.subcommand = series != EMcSeries.IQ_R ? 0x0001 : 0x0003;
-        this.deviceAddress = deviceAddress;
+    @Override
+    public int byteArrayLength() {
+        return 1 + this.accessRoute.byteArrayLength() + 2;
+    }
+
+    @Override
+    public byte[] toByteArray() {
+        int length = 1 + this.accessRoute.byteArrayLength();
+        return ByteWriteBuff.newInstance(length, true)
+                .putByte(this.subHeader)
+                .putBytes(this.accessRoute.toByteArray())
+                .putShort(this.monitoringTimer)
+                .getData();
     }
 }

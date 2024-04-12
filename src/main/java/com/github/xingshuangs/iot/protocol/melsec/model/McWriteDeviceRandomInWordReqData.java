@@ -26,7 +26,9 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.exceptions.McCommException;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import lombok.Data;
 
@@ -62,26 +64,34 @@ public class McWriteDeviceRandomInWordReqData extends McReqData {
     public McWriteDeviceRandomInWordReqData(EMcSeries series,
                                             List<McDeviceContent> wordContents,
                                             List<McDeviceContent> dwordContents) {
+        if (series.getFrameType() == EMcFrameType.FRAME_1E && !this.dwordContents.isEmpty()) {
+            throw new McCommException("Frame 1E only supports word, not dword");
+        }
         this.series = series;
         this.command = EMcCommand.DEVICE_ACCESS_RANDOM_WRITE_IN_UNITS;
-        this.subcommand = series == EMcSeries.Q_L ? 0x0000 : 0x0002;
+        this.subcommand = series != EMcSeries.IQ_R ? 0x0000 : 0x0002;
         this.wordContents = wordContents;
         this.dwordContents = dwordContents;
     }
 
     @Override
     public int byteArrayLength() {
-        return 4 + 2 + this.wordContents.stream().mapToInt(x -> x.byteArrayLengthWithoutPointsCount(this.series)).sum()
+        return (this.series.getFrameType() == EMcFrameType.FRAME_1E ? 2 : 6)
+                + this.wordContents.stream().mapToInt(x -> x.byteArrayLengthWithoutPointsCount(this.series)).sum()
                 + this.dwordContents.stream().mapToInt(x -> x.byteArrayLengthWithoutPointsCount(this.series)).sum();
     }
 
     @Override
     public byte[] toByteArray() {
-        ByteWriteBuff buff = ByteWriteBuff.newInstance(this.byteArrayLength(), true)
-                .putShort(this.command.getCode())
-                .putShort(this.subcommand)
-                .putByte(this.wordContents.size())
-                .putByte(this.dwordContents.size());
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(this.byteArrayLength(), true);
+        if (this.series.getFrameType() == EMcFrameType.FRAME_1E) {
+            buff.putShort(this.wordContents.size());
+        } else {
+            buff.putShort(this.command.getCode())
+                    .putShort(this.subcommand)
+                    .putByte(this.wordContents.size())
+                    .putByte(this.dwordContents.size());
+        }
         this.wordContents.forEach(x -> buff.putBytes(x.toByteArrayWithoutPointsCount(this.series)));
         this.dwordContents.forEach(x -> buff.putBytes(x.toByteArrayWithoutPointsCount(this.series)));
         return buff.getData();

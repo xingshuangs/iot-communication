@@ -25,39 +25,69 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import lombok.Data;
 
 /**
- * 软元件访问批量写请求数据
+ * 1E帧访问路径
  *
  * @author xingshuang
  */
 @Data
-public class McWriteDeviceBatchReqData extends McReqData {
+public class McFrame1EAccessRoute extends McAccessRoute {
 
     /**
-     * 软元件设备地址+内容
+     * 可编程控制器编号，1个字节
      */
-    protected McDeviceContent deviceContent;
+    private int pcNumber = 0xFF;
+
+    public McFrame1EAccessRoute() {
+    }
+
+    public McFrame1EAccessRoute(int pcNumber) {
+        this.pcNumber = pcNumber;
+    }
 
     @Override
     public int byteArrayLength() {
-        return (this.series.getFrameType() == EMcFrameType.FRAME_1E ? 0 : 4)
-                + this.deviceContent.byteArrayLengthWithPointsCount(this.series);
+        return 1;
     }
 
     @Override
     public byte[] toByteArray() {
-        ByteWriteBuff buff = ByteWriteBuff.newInstance(this.byteArrayLength(), true);
-        if (this.series.getFrameType() != EMcFrameType.FRAME_1E) {
-            buff.putShort(this.command.getCode())
-                    .putShort(this.subcommand);
-        }
-        return buff.putBytes(this.deviceContent.toByteArrayWithPointsCount(this.series))
+        return ByteWriteBuff.newInstance(this.byteArrayLength(), true)
+                .putByte(this.pcNumber)
                 .getData();
+    }
 
+    public static McFrame1EAccessRoute createDefault() {
+        McFrame1EAccessRoute route = new McFrame1EAccessRoute();
+        route.pcNumber = 0xFF;
+        return route;
+    }
+
+    /**
+     * 解析字节数组数据
+     *
+     * @param data 字节数组数据
+     * @return Mc4E3EFrameAccessRoute
+     */
+    public static McFrame1EAccessRoute fromBytes(final byte[] data) {
+        return fromBytes(data, 0);
+    }
+
+    /**
+     * 解析字节数组数据
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return Mc4E3EFrameAccessRoute
+     */
+    public static McFrame1EAccessRoute fromBytes(final byte[] data, final int offset) {
+        ByteReadBuff buff = new ByteReadBuff(data, offset,true);
+        McFrame1EAccessRoute res = new McFrame1EAccessRoute();
+        res.pcNumber = buff.getByteToInt();
+        return res;
     }
 }

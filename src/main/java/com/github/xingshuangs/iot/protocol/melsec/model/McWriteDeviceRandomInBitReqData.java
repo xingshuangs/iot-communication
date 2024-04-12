@@ -27,6 +27,7 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import lombok.Data;
 
@@ -57,21 +58,26 @@ public class McWriteDeviceRandomInBitReqData extends McReqData {
     public McWriteDeviceRandomInBitReqData(EMcSeries series, List<McDeviceContent> bitContents) {
         this.series = series;
         this.command = EMcCommand.DEVICE_ACCESS_RANDOM_WRITE_IN_UNITS;
-        this.subcommand = series == EMcSeries.Q_L ? 0x0001 : 0x0003;
+        this.subcommand = series != EMcSeries.IQ_R ? 0x0001 : 0x0003;
         this.bitContents = bitContents;
     }
 
     @Override
     public int byteArrayLength() {
-        return 4 + 1 + this.bitContents.stream().mapToInt(x -> x.byteArrayLengthWithoutPointsCount(this.series)).sum();
+        return (this.series.getFrameType() == EMcFrameType.FRAME_1E ? 2 : 5)
+                + this.bitContents.stream().mapToInt(x -> x.byteArrayLengthWithoutPointsCount(this.series)).sum();
     }
 
     @Override
     public byte[] toByteArray() {
-        ByteWriteBuff buff = ByteWriteBuff.newInstance(this.byteArrayLength(), true)
-                .putShort(this.command.getCode())
-                .putShort(this.subcommand)
-                .putByte(this.bitContents.size());
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(this.byteArrayLength(), true);
+        if (this.series.getFrameType() == EMcFrameType.FRAME_1E) {
+            buff.putShort(this.bitContents.size());
+        } else {
+            buff.putShort(this.command.getCode())
+                    .putShort(this.subcommand)
+                    .putByte(this.bitContents.size());
+        }
         this.bitContents.forEach(x -> buff.putBytes(x.toByteArrayWithoutPointsCount(this.series)));
         return buff.getData();
     }

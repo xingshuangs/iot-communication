@@ -25,79 +25,73 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
-import com.github.xingshuangs.iot.common.IObjectByteArray;
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import lombok.Data;
 
 /**
- * 响应消息
+ * 响应头
  *
  * @author xingshuang
  */
 @Data
-public class McMessageAck implements IObjectByteArray {
-    /**
-     * 响应头
-     */
-    private McHeaderAck header;
+public class McHeader3EAck extends McHeaderAck {
 
     /**
-     * 响应数据
+     * 访问路径，存在多种访问路径
      */
-    private McData data;
+    protected McAccessRoute accessRoute;
+
+    /**
+     * 数据长度，2字节，响应数据长，存储从结束代码到响应数据(正常结束时)或出错信息(异常结束时)为止的数据长。
+     */
+    protected int dataLength = 0;
+
+    public McHeader3EAck() {
+        this.frameType = EMcFrameType.FRAME_3E;
+    }
 
     @Override
     public int byteArrayLength() {
-        return this.header.byteArrayLength() + this.data.byteArrayLength();
+        return 2 + this.accessRoute.byteArrayLength() + 2 + 2;
     }
 
     @Override
     public byte[] toByteArray() {
-        return ByteWriteBuff.newInstance(this.byteArrayLength(), true)
-                .putBytes(this.header.toByteArray())
-                .putBytes(this.data.toByteArray())
+        int length = 2 + this.accessRoute.byteArrayLength() + 2 + 2;
+        return ByteWriteBuff.newInstance(length, true)
+                .putShort(this.subHeader)
+                .putBytes(this.accessRoute.toByteArray())
+                .putShort(this.dataLength)
+                .putShort(this.endCode)
                 .getData();
     }
 
     /**
-     * 自我校验，主要核对数据长度
+     * 解析字节数组数据
+     *
+     * @param data 字节数组数据
+     * @return McHeaderAck
      */
-    public void selfCheck() {
-        if(this.header.getFrameType()== EMcFrameType.FRAME_1E){
-            return;
-        }
-        McHeader3EAck header3EAck = (McHeader3EAck)this.header;
-        header3EAck.dataLength = 2 + this.data.byteArrayLength();
+    public static McHeader3EAck fromBytes(final byte[] data) {
+        return fromBytes(data, 0);
     }
 
     /**
      * 解析字节数组数据
      *
-     * @param data      字节数组数据
-     * @param frameType 帧类型
-     * @return McMessageAck
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return McHeaderAck
      */
-    public static McMessageAck fromBytes(final byte[] data, EMcFrameType frameType) {
-        return fromBytes(data, 0, frameType);
-    }
-
-    /**
-     * 解析字节数组数据
-     *
-     * @param data      字节数组数据
-     * @param offset    偏移量
-     * @param frameType 帧类型
-     * @return McMessageAck
-     */
-    public static McMessageAck fromBytes(final byte[] data, final int offset, EMcFrameType frameType) {
+    public static McHeader3EAck fromBytes(final byte[] data, final int offset) {
         ByteReadBuff buff = new ByteReadBuff(data, offset, true);
-        McMessageAck res = new McMessageAck();
-        byte[] headerBytes = frameType == EMcFrameType.FRAME_4E ? buff.getBytes(15) : buff.getBytes(11);
-        res.header = McHeaderAck.fromBytes(headerBytes, frameType);
-        res.data = res.header.getEndCode() == 0 ? McAckData.fromBytes(buff.getBytes())
-                : McErrorInformationData.fromBytes(buff.getBytes());
+        McHeader3EAck res = new McHeader3EAck();
+        res.subHeader = buff.getUInt16();
+        res.accessRoute = McFrame4E3EAccessRoute.fromBytes(buff.getBytes(5));
+        res.dataLength = buff.getUInt16();
+        res.endCode = buff.getUInt16();
         return res;
     }
 }

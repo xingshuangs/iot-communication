@@ -34,20 +34,55 @@ import java.util.Map;
  * @author xingshuang
  */
 public enum EMcCommand {
+
+    //region 1E帧
+    /**
+     * 软元件访问，批量读取，位单位，适用于1E帧
+     */
+    DEVICE_ACCESS_BATCH_READ_IN_BIT(0x00),
+
+    /**
+     * 软元件访问，批量读取，字单位，适用于1E帧
+     */
+    DEVICE_ACCESS_BATCH_READ_IN_WORD(0x01),
+
+    /**
+     * 软元件访问，批量写入，位单位，适用于1E帧
+     */
+    DEVICE_ACCESS_BATCH_WRITE_IN_BIT(0x02),
+
+    /**
+     * 软元件访问，批量写入，字单位，适用于1E帧
+     */
+    DEVICE_ACCESS_BATCH_WRITE_IN_WORD(0x03),
+
+    /**
+     * 软元件访问，随机写入，位单位，适用于1E帧
+     */
+    DEVICE_ACCESS_RANDOM_WRITE_IN_BIT(0X04),
+
+    /**
+     * 软元件访问，随机写入，字单位，适用于1E帧
+     */
+    DEVICE_ACCESS_RANDOM_WRITE_IN_WORD(0X05),
+    //endregion
+
+    //region 3E帧和4E帧
+
     /**
      * 软元件访问，批量读取
      */
-    DEVICE_ACCESS_BATCH_READ_IN_UNITS( 0x0401),
+    DEVICE_ACCESS_BATCH_READ_IN_UNITS(0x0401),
 
     /**
      * 软元件访问，批量写入
      */
-    DEVICE_ACCESS_BATCH_WRITE_IN_UNITS( 0x1401),
+    DEVICE_ACCESS_BATCH_WRITE_IN_UNITS(0x1401),
 
     /**
      * 软元件访问，随机读取
      */
-    DEVICE_ACCESS_RANDOM_READ_IN_UNITS( 0x0403),
+    DEVICE_ACCESS_RANDOM_READ_IN_UNITS(0x0403),
 
     /**
      * 软元件访问，随机写入
@@ -163,6 +198,7 @@ public enum EMcCommand {
      * 模块控制，出错信息的清除
      */
     MODULE_CONTROL_CLEAR_ERROR_INFORMATION(0x1617),
+    //endregion
     ;
 
     private static Map<Integer, EMcCommand> map;

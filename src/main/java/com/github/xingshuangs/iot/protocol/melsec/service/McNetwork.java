@@ -86,7 +86,7 @@ public class McNetwork extends TcpClientBasic {
     /**
      * PLC的类型系列
      */
-    protected EMcSeries series = EMcSeries.Q_L;
+    protected EMcSeries series = EMcSeries.QnA;
 
     public McNetwork() {
         super();
@@ -116,30 +116,15 @@ public class McNetwork extends TcpClientBasic {
      * @return McMessageAck响应
      */
     protected McMessageAck readFromServer(McMessageReq req) {
+        byte[] reqBytes = req.toByteArray();
         if (this.comCallback != null) {
-            this.comCallback.accept(req.toByteArray());
+            this.comCallback.accept(reqBytes);
         }
-        McHeader header;
-        int len;
         byte[] total;
-        synchronized (this.objLock) {
-            this.write(req.toByteArray());
-
-            int headerLength = this.frameType == EMcFrameType.FRAME_4E ? 13 : 9;
-            byte[] data = new byte[headerLength];
-            len = this.read(data);
-            if (len < headerLength) {
-                // McHeader 无效，读取长度不一致
-                throw new McCommException(" McHeader is invalid, read length is inconsistent");
-            }
-            header = McHeader.fromBytes(data, this.frameType);
-            total = new byte[headerLength + header.getDataLength()];
-            System.arraycopy(data, 0, total, 0, data.length);
-            len = this.read(total, data.length, header.getDataLength(), true);
-        }
-        if (len < header.getDataLength()) {
-            // McHeader后面的数据长度，长度不一致
-            throw new McCommException("The length of the data behind the McHeader is inconsistent");
+        if (this.frameType == EMcFrameType.FRAME_4E || this.frameType == EMcFrameType.FRAME_3E) {
+            total = this.readFromServer4E3E(reqBytes);
+        } else {
+            total = this.readFromServer1E(reqBytes);
         }
         if (this.comCallback != null) {
             this.comCallback.accept(total);
@@ -147,6 +132,61 @@ public class McNetwork extends TcpClientBasic {
         McMessageAck ack = McMessageAck.fromBytes(total, this.frameType);
         this.checkResult(req, ack);
         return ack;
+    }
+
+    /**
+     * 1E帧的通信交互
+     *
+     * @param req 请求报文
+     * @return 响应报文
+     */
+    protected byte[] readFromServer1E(byte[] req) {
+        int len;
+        byte[] data = new byte[1024];
+        synchronized (this.objLock) {
+            this.write(req);
+            len = this.read(data);
+        }
+        if (len < 0) {
+            // McHeader 无效，读取长度不一致
+            throw new McCommException(" McHeader is invalid, read length is inconsistent");
+        }
+        byte[] total = new byte[len];
+        System.arraycopy(data, 0, total, 0, len);
+        return total;
+    }
+
+    /**
+     * 3E帧和4E帧的通信交互
+     *
+     * @param req 请求报文
+     * @return 响应报文
+     */
+    protected byte[] readFromServer4E3E(byte[] req) {
+        int remainLength;
+        int len;
+        byte[] total;
+        synchronized (this.objLock) {
+            this.write(req);
+
+            int headerLength = this.frameType == EMcFrameType.FRAME_4E ? 15 : 11;
+            byte[] data = new byte[headerLength];
+            len = this.read(data);
+            if (len < headerLength) {
+                // McHeader 无效，读取长度不一致
+                throw new McCommException(" McHeader is invalid, read length is inconsistent");
+            }
+            McHeader3EAck header = (McHeader3EAck) McHeaderAck.fromBytes(data, this.frameType);
+            remainLength = header.getDataLength() - 2;
+            total = new byte[headerLength + remainLength];
+            System.arraycopy(data, 0, total, 0, data.length);
+            len = this.read(total, data.length, remainLength, true);
+        }
+        if (len < remainLength) {
+            // McHeader后面的数据长度，长度不一致
+            throw new McCommException("The length of the data behind the McHeader is inconsistent");
+        }
+        return total;
     }
 
     /**
@@ -223,7 +263,7 @@ public class McNetwork extends TcpClientBasic {
                 return "Specifies data that cannot be processed in the CPU module";
             default:
                 // 请查询三菱用户手册进行错误解析
-                return "Please consult the Mitsubishi user manual for error resolution, " + errorCode;
+                return "Please consult the Mitsubishi user manual for error resolution: " + errorCode;
         }
     }
 
@@ -232,7 +272,7 @@ public class McNetwork extends TcpClientBasic {
     //region 软元件批量读取和写入
 
     /**
-     * 软元件最原始的批量读取
+     * 软元件最原始的批量读取，不支持A系列
      *
      * @param command           指令
      * @param subCommand        子指令
@@ -244,7 +284,7 @@ public class McNetwork extends TcpClientBasic {
     public byte[] readDeviceBatchRaw(EMcCommand command, int subCommand, EMcDeviceCode deviceCode,
                                      int headDeviceNumber, int devicePointsCount) {
         try {
-            McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+            McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
             McDeviceAddress deviceAddress = new McDeviceAddress(deviceCode, headDeviceNumber, devicePointsCount);
             McReadDeviceBatchReqData data = new McReadDeviceBatchReqData();
             data.setSeries(this.series);
@@ -264,7 +304,7 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 软元件最原始的批量写入
+     * 软元件最原始的批量写入，不支持A系列
      *
      * @param command           指令
      * @param subCommand        子指令
@@ -276,7 +316,7 @@ public class McNetwork extends TcpClientBasic {
     public void writeDeviceBatchRaw(EMcCommand command, int subCommand, EMcDeviceCode deviceCode,
                                     int headDeviceNumber, int devicePointsCount, byte[] dataBytes) {
         try {
-            McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+            McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
             McDeviceContent deviceContent = new McDeviceContent(deviceCode, headDeviceNumber, devicePointsCount, dataBytes);
             McWriteDeviceBatchReqData data = new McWriteDeviceBatchReqData();
             data.setSeries(this.series);
@@ -328,7 +368,7 @@ public class McNetwork extends TcpClientBasic {
             McGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
                 McDeviceAddress newAddress = new McDeviceAddress(deviceAddress.getDeviceCode(),
                         deviceAddress.getHeadDeviceNumber() + off, len);
-                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createReadDeviceBatchInWordReq(this.series, header, newAddress);
                 McMessageAck ack = this.readFromServer(req);
                 buff.putBytes(((McAckData) ack.getData()).getData());
@@ -379,7 +419,7 @@ public class McNetwork extends TcpClientBasic {
                 McDeviceContent newContent = new McDeviceContent(deviceContent.getDeviceCode(),
                         deviceContent.getHeadDeviceNumber() + off, len,
                         buff.getBytes(off * 2, len * 2));
-                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createWriteDeviceBatchInWordReq(this.series, header, newContent);
                 this.readFromServer(req);
             });
@@ -432,7 +472,7 @@ public class McNetwork extends TcpClientBasic {
             McGroupAlg.loopExecute(deviceAddress.getDevicePointsCount(), maxLength, (off, len) -> {
                 McDeviceAddress newAddress = new McDeviceAddress(deviceAddress.getDeviceCode(),
                         deviceAddress.getHeadDeviceNumber() + off, len);
-                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createReadDeviceBatchInBitReq(this.series, header, newAddress);
                 McMessageAck ack = this.readFromServer(req);
                 buff.putBytes(((McAckData) ack.getData()).getData());
@@ -491,7 +531,7 @@ public class McNetwork extends TcpClientBasic {
                 McDeviceContent newContent = new McDeviceContent(deviceContent.getDeviceCode(),
                         deviceContent.getHeadDeviceNumber() + off, len,
                         buff.getBytes(off / 2, length));
-                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createWriteDeviceBatchInBitReq(this.series, header, newContent);
                 this.readFromServer(req);
             });
@@ -525,6 +565,9 @@ public class McNetwork extends TcpClientBasic {
         if (wordAddresses.isEmpty() && dwordAddresses.isEmpty()) {
             throw new IllegalArgumentException("wordAddresses and dwordAddresses is empty");
         }
+        if (this.series.getFrameType() == EMcFrameType.FRAME_1E) {
+            throw new McCommException("Frame 1E not supported in read device random in word");
+        }
         boolean wordAllMatch = this.checkDeviceRandomCode(wordAddresses);
         boolean dwordAllMatch = this.checkDeviceRandomCode(dwordAddresses);
         if (!wordAllMatch || !dwordAllMatch) {
@@ -542,7 +585,7 @@ public class McNetwork extends TcpClientBasic {
             McGroupAlg.biLoopExecute(wordItem, dwordItem, biPredicate, (i1, i2) -> {
                 List<McDeviceAddress> newWords = wordAddresses.subList(i1.getOff(), i1.getOff() + i1.getLen());
                 List<McDeviceAddress> newDWords = dwordAddresses.subList(i2.getOff(), i2.getOff() + i2.getLen());
-                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createReadDeviceRandomInWordReq(this.series, header, newWords, newDWords);
                 McMessageAck ack = this.readFromServer(req);
 
@@ -607,7 +650,7 @@ public class McNetwork extends TcpClientBasic {
             McGroupAlg.biLoopExecute(wordItem, dwordItem, biPredicate, (i1, i2) -> {
                 List<McDeviceContent> newWord = wordContents.subList(i1.getOff(), i1.getOff() + i1.getLen());
                 List<McDeviceContent> newDWord = dwordContents.subList(i2.getOff(), i2.getOff() + i2.getLen());
-                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createWriteDeviceRandomInWordReq(this.series, header, newWord, newDWord);
                 this.readFromServer(req);
             });
@@ -638,7 +681,7 @@ public class McNetwork extends TcpClientBasic {
             int maxLength = this.series.getDeviceRandomWriteInBitPointsCount();
 //            int maxLength = this.series == EMcSeries.Q_L ? 188 : 94;
             McGroupAlg.loopExecute(bitAddresses.size(), maxLength, (off, len) -> {
-                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createWriteDeviceRandomInBitReq(this.series, header, bitAddresses.subList(off, off + len));
                 this.readFromServer(req);
             });
@@ -670,6 +713,9 @@ public class McNetwork extends TcpClientBasic {
     public List<McDeviceContent> readDeviceBatchMultiBlocks(List<McDeviceAddress> wordAddresses, List<McDeviceAddress> bitAddresses) {
         this.checkDeviceBatchMultiBlocksCondition(wordAddresses, bitAddresses);
 
+        if (this.series.getFrameType() == EMcFrameType.FRAME_1E) {
+            throw new McCommException("Frame 1E not supported in reading device batch multi blocks");
+        }
         try {
             List<McDeviceContent> result = new ArrayList<>();
             int maxLength = this.series.getDeviceBlocksBlocksCount();
@@ -682,7 +728,7 @@ public class McNetwork extends TcpClientBasic {
             McGroupAlg.biLoopExecute(wordItem, bitItem, biPredicate, (i1, i2) -> {
                 List<McDeviceAddress> newWords = wordAddresses.subList(i1.getOff(), i1.getOff() + i1.getLen());
                 List<McDeviceAddress> newBits = bitAddresses.subList(i2.getOff(), i2.getOff() + i2.getLen());
-                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createReadDeviceBatchMultiBlocksReq(this.series, header, newWords, newBits);
                 McMessageAck ack = this.readFromServer(req);
 
@@ -715,6 +761,9 @@ public class McNetwork extends TcpClientBasic {
         }
         if (words.isEmpty() && bits.isEmpty()) {
             throw new IllegalArgumentException("the number of wordAddresses and bitAddresses is empty");
+        }
+        if (this.series.getFrameType() == EMcFrameType.FRAME_1E) {
+            throw new McCommException("Frame 1E not supported in writing device batch multi blocks");
         }
         // TODO: 待确认
         if (this.frameType == EMcFrameType.FRAME_3E) {
@@ -786,7 +835,7 @@ public class McNetwork extends TcpClientBasic {
             McGroupAlg.biLoopExecute(wordItem, bitItem, biPredicate, (i1, i2) -> {
                 List<McDeviceContent> newWords = wordContents.subList(i1.getOff(), i1.getOff() + i1.getLen());
                 List<McDeviceContent> newBits = bitContents.subList(i2.getOff(), i2.getOff() + i2.getLen());
-                McHeaderReq header = new McHeaderReq(this.frameType.getReqSubHeader(), this.accessRoute, this.monitoringTimer);
+                McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createWriteDeviceBatchMultiBlocksReq(this.series, header, newWords, newBits);
                 this.readFromServer(req);
             });

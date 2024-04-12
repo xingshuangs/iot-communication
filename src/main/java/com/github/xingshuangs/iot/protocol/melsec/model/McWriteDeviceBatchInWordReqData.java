@@ -48,7 +48,7 @@ public class McWriteDeviceBatchInWordReqData extends McWriteDeviceBatchReqData {
     public McWriteDeviceBatchInWordReqData(EMcSeries series, McDeviceContent deviceContent) {
         this.series = series;
         this.command = EMcCommand.DEVICE_ACCESS_BATCH_WRITE_IN_UNITS;
-        this.subcommand = series == EMcSeries.Q_L ? 0x0000 : 0x0002;
+        this.subcommand = series != EMcSeries.IQ_R ? 0x0000 : 0x0002;
         this.deviceContent = deviceContent;
     }
 }

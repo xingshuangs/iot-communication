@@ -25,67 +25,48 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
-import com.github.xingshuangs.iot.common.IObjectByteArray;
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import lombok.Data;
 
 /**
- * 协议头
+ * 响应头
  *
  * @author xingshuang
  */
 @Data
-public class McHeader implements IObjectByteArray {
+public class McHeader4EAck extends McHeader3EAck {
 
     /**
-     * 帧类型
-     */
-    protected EMcFrameType frameType = EMcFrameType.FRAME_3E;
-
-    /**
-     * 副帧头，2字节，根据报文的类型定义设置的值。
-     */
-    protected int subHeader = 0;
-
-    /**
-     * 序列号
+     * 序列号，2字节
      */
     protected int serialNumber = 0;
 
     /**
-     * 固定值编号
+     * 固定值编号，2字节
      */
     protected int fixedNumber = 0;
 
-    /**
-     * 访问路径，存在多种访问路径
-     */
-    protected McAccessRoute accessRoute;
-
-    /**
-     * 数据长度，2字节，请求数据长，指定从监视定时器到请求数据为止的数据长；响应数据长，
-     * 存储从结束代码到响应数据(正常结束时)或出错信息(异常结束时)为止的数据长。
-     */
-    protected int dataLength = 0;
+    public McHeader4EAck() {
+        this.frameType = EMcFrameType.FRAME_4E;
+    }
 
     @Override
     public int byteArrayLength() {
-        return (frameType == EMcFrameType.FRAME_4E ? 6 : 2) + this.accessRoute.byteArrayLength() + 2;
+        return 6 + this.accessRoute.byteArrayLength() + 2 + 2;
     }
 
     @Override
     public byte[] toByteArray() {
-        int length = (frameType == EMcFrameType.FRAME_4E ? 6 : 2) + this.accessRoute.byteArrayLength() + 2;
-        ByteWriteBuff buff = ByteWriteBuff.newInstance(length, true)
-                .putShort(this.subHeader);
-        if (frameType == EMcFrameType.FRAME_4E) {
-            buff.putShort(this.serialNumber);
-            buff.putShort(this.fixedNumber);
-        }
-        return buff.putBytes(this.accessRoute.toByteArray())
+        int length = 6 + this.accessRoute.byteArrayLength() + 2 + 2;
+        return ByteWriteBuff.newInstance(length, true)
+                .putShort(this.subHeader)
+                .putShort(this.serialNumber)
+                .putShort(this.fixedNumber)
+                .putBytes(this.accessRoute.toByteArray())
                 .putShort(this.dataLength)
+                .putShort(this.endCode)
                 .getData();
     }
 
@@ -93,11 +74,10 @@ public class McHeader implements IObjectByteArray {
      * 解析字节数组数据
      *
      * @param data      字节数组数据
-     * @param frameType 帧类型
-     * @return McHeader
+     * @return McHeaderAck
      */
-    public static McHeader fromBytes(final byte[] data, EMcFrameType frameType) {
-        return fromBytes(data, 0, frameType);
+    public static McHeader4EAck fromBytes(final byte[] data) {
+        return fromBytes(data, 0);
     }
 
     /**
@@ -105,20 +85,17 @@ public class McHeader implements IObjectByteArray {
      *
      * @param data      字节数组数据
      * @param offset    偏移量
-     * @param frameType 帧类型
      * @return McHeaderAck
      */
-    public static McHeader fromBytes(final byte[] data, final int offset, EMcFrameType frameType) {
+    public static McHeader4EAck fromBytes(final byte[] data, final int offset) {
         ByteReadBuff buff = new ByteReadBuff(data, offset, true);
-        McHeader res = new McHeader();
-        res.frameType = frameType;
+        McHeader4EAck res = new McHeader4EAck();
         res.subHeader = buff.getUInt16();
-        if (frameType == EMcFrameType.FRAME_4E) {
-            res.serialNumber = buff.getUInt16();
-            res.fixedNumber = buff.getUInt16();
-        }
+        res.serialNumber = buff.getUInt16();
+        res.fixedNumber = buff.getUInt16();
         res.accessRoute = McFrame4E3EAccessRoute.fromBytes(buff.getBytes(5));
         res.dataLength = buff.getUInt16();
+        res.endCode = buff.getUInt16();
         return res;
     }
 }

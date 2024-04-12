@@ -25,30 +25,58 @@
 package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
+import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import lombok.Data;
 
 /**
- * 软元件访问批量读请求数据，位单位
+ * 响应头
  *
  * @author xingshuang
  */
 @Data
-public class McReadDeviceBatchInBitReqData extends McReadDeviceBatchReqData {
+public class McHeader1EAck extends McHeaderAck {
 
-    public McReadDeviceBatchInBitReqData() {
-        this(EMcSeries.Q_L, new McDeviceAddress());
+    public McHeader1EAck() {
+        this.frameType = EMcFrameType.FRAME_1E;
     }
 
-    public McReadDeviceBatchInBitReqData(EMcSeries series) {
-        this(series, new McDeviceAddress());
+    @Override
+    public int byteArrayLength() {
+        return 2;
     }
 
-    public McReadDeviceBatchInBitReqData(EMcSeries series, McDeviceAddress deviceAddress) {
-        this.series = series;
-        this.command = EMcCommand.DEVICE_ACCESS_BATCH_READ_IN_UNITS;
-        this.subcommand = series != EMcSeries.IQ_R ? 0x0001 : 0x0003;
-        this.deviceAddress = deviceAddress;
+    @Override
+    public byte[] toByteArray() {
+        return ByteWriteBuff.newInstance(2, true)
+                .putByte(this.subHeader)
+                .putByte(this.endCode)
+                .getData();
+    }
+
+    /**
+     * 解析字节数组数据
+     *
+     * @param data      字节数组数据
+     * @return McHeaderAck
+     */
+    public static McHeader1EAck fromBytes(final byte[] data) {
+        return fromBytes(data, 0);
+    }
+
+    /**
+     * 解析字节数组数据
+     *
+     * @param data      字节数组数据
+     * @param offset    偏移量
+     * @return McHeaderAck
+     */
+    public static McHeader1EAck fromBytes(final byte[] data, final int offset) {
+        ByteReadBuff buff = new ByteReadBuff(data, offset, true);
+        McHeader1EAck res = new McHeader1EAck();
+        res.subHeader = buff.getByteToInt();
+        res.endCode = buff.getByteToInt();
+        return res;
     }
 }
