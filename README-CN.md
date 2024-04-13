@@ -14,10 +14,12 @@
 
 目前它只是一个物联网通信的工具，主要用于相关协议的学习和开发，包含
 
-- 西门子S7通信协议，支持西门子S1500，S1200，S400，S300，S200Smart，西门子数控机床828D，[S7Client DEMO](https://github.com/xingshuangs/SiemensWindowProgram)
+- 西门子S7通信协议，支持西门子S1500，S1200，S400，S300，S200Smart，西门子数控机床828D，
+  [S7Client DEMO](https://github.com/xingshuangs/SiemensWindowProgram)
 - Modbus通信协议，支持ModbusTcp，ModbusRtuOverTcp，ModbusAsciiOverTcp
 - 三菱Melsec（MC）通信协议，支持PLC iQ-R系列, Q/L系列, QnA系列, 目前只测试了L系列和FX5U
-- RTSP, RTCP, RTP, H264, MP4 (FMP4)协议，RTSP + H264 + FMP4 + WebSocket + MSE + WEB，[WEB Monitor DEMO](https://github.com/xingshuangs/rtsp-websocket-server)
+- RTSP, RTCP, RTP, H264, MP4 (FMP4)协议，RTSP + H264 + FMP4 + WebSocket + MSE +
+  WEB，[WEB Monitor DEMO](https://github.com/xingshuangs/rtsp-websocket-server)
 - 基础字节数组解析转换工具
 
 ## 使用指南
@@ -44,7 +46,8 @@
 
 ## 联系方式
 
-如果有任何问题，可以通过以下方式联系作者，作者在空余时间会做解答。
+如果有任何问题，可以通过以下方式联系作者，作者在空余时间会做解答。<br>
+[更新日志](./tips/changeLog.md)
 
 - QQ群：**759101350**
 - QQ私人：**837820457**
@@ -55,7 +58,7 @@
 根据MIT许可证发布，更多信息请参见[`LICENSE`](./LICENSE)。<br>
 @2019 - 2099 Oscura (xingshuang) 版权所有。<br>
 
-❗❗❗ **请各位使用者严格遵守MIT协议，使用时添加作者的版权许可声明。** 
+❗❗❗ **请各位使用者严格遵守MIT协议，使用时添加作者的版权许可声明。**
 
 ## 免责声明
 

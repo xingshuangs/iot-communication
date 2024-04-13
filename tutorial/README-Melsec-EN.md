@@ -8,11 +8,23 @@
 
 - Device is divided into bit device and word device.
 - **1** device address = **2** bytes.
-- The small-end mode is adopted, the encoding format of **4 bytes** data = **AB_CD**. (big-endian mode = **DC_BA**，little-endian mode = **AB_CD**)
+- The small-end mode is adopted, the encoding format of **4 bytes** data = **AB_CD**. (big-endian mode = **DC_BA**
+  ，little-endian mode = **AB_CD**)
 - Only read and write in binary is supported. Read and write in ASCII is not supported
 - Support TCP mode, serial ports are not supported
-- Support PLC: iQ-R series, Q/L series, QnA series, the L Series(L02CPU) and FX Series(FX5U-32M) has been tested
+- Support PLC: iQ-R series, Q/L series, QnA series, A series, the L Series(L02CPU) and FX Series(FX5U-32M) has been
+  tested
 - Support automatic reconnection.
+
+> PLC series
+
+| Series | Frame Type | Connect  | Model |
+|:------:|:----------:|----------|:-----:|
+|   A    |     1E     | Ethernet | FX3U  |
+|  QnA   |     3E     | Ethernet | FX5U  |
+|  Q/L   |     3E     | Ethernet |  Q/L  |
+|  IQ-R  |     -      | Ethernet |   -   |
+|  IQ-L  |     -      | Ethernet |   -   |
 
 > Address format, case compatible.
 

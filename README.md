@@ -14,11 +14,13 @@
 
 Now, it is a tool for iot communication, used for the learning and development of protocols, it includes
 
-- Siemens S7 protocol, support PLC S1500, S1200, S400, S300, S200Smart, Siemens SINUMERIK 828D. [S7Client DEMO](https://github.com/xingshuangs/SiemensWindowProgram).
+- Siemens S7 protocol, support PLC S1500, S1200, S400, S300, S200Smart, Siemens SINUMERIK
+  828D. [S7Client DEMO](https://github.com/xingshuangs/SiemensWindowProgram).
 - Modbus protocol, support ModbusTcp, ModbusRtuOverTcp, ModbusAsciiOverTcp.
-- Mitsubishi Melsec(MC) Protocol, support PLC iQ-R series, Q/L series, QnA series, Only the L Series and FX5U has been tested so
-  far.
-- RTSP, RTCP, RTP, H264, MP4 (FMP4) protocol, RTSP + H264 + FMP4 + WebSocket + MSE + WEB. [WEB Monitor DEMO](https://github.com/xingshuangs/rtsp-websocket-server).
+- Mitsubishi Melsec(MC) Protocol, support PLC iQ-R series, Q/L series, QnA series, Only the L Series and FX5U has been
+  tested so far.
+- RTSP, RTCP, RTP, H264, MP4 (FMP4) protocol, RTSP + H264 + FMP4 + WebSocket + MSE +
+  WEB. [WEB Monitor DEMO](https://github.com/xingshuangs/rtsp-websocket-server).
 - Parse byte array data.
 
 ## Getting Started
@@ -46,7 +48,8 @@ Add the dependency to pom.xml in the JAVA project.
 ## Contact
 
 If you have any questions, please contact the author in the following ways, and the author will give answers in his
-spare time.
+spare time. <br>
+[UPDATE LOG](./tips/changeLog.md)
 
 - QQ Group: **759101350**
 - QQ Private: **837820457**
