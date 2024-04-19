@@ -68,7 +68,7 @@ public class S7SerializerTest {
         bean.setFloat32Data(3.14f);
         bean.setFloat64Data(4.15);
         bean.setByteData(byteData);
-        bean.setStringData("1234567890");
+        bean.setStringData("123456789");
         bean.setTimeData(12L);
         bean.setDateData(LocalDate.of(2023, 5, 15));
         bean.setTimeOfDayData(LocalTime.of(20, 22, 13));
@@ -83,7 +83,7 @@ public class S7SerializerTest {
         assertEquals(3.14f, actual.getFloat32Data(), 0.001);
         assertEquals(4.15, actual.getFloat64Data(), 0.001);
         assertArrayEquals(byteData, actual.getByteData());
-        assertEquals("1234567890", actual.getStringData());
+        assertEquals("123456789", actual.getStringData());
         assertEquals(12, actual.getTimeData().longValue());
         assertEquals(LocalDate.of(2023, 5, 15), actual.getDateData());
         assertEquals(LocalTime.of(20, 22, 13), actual.getTimeOfDayData());

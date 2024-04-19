@@ -458,10 +458,13 @@ public class S7Serializer implements IPLCSerializable {
                 break;
             case STRING:
                 byte[] bytes = ((String) data).getBytes(Charset.forName("GB2312"));
-                byte[] targetBytes = new byte[1 + item.getCount()];
-                targetBytes[0] = (byte) item.getCount();
-                System.arraycopy(bytes, 0, targetBytes, 1, Math.min(bytes.length, item.getCount()));
+                int actualLength = Math.min(bytes.length, item.getCount());
+                byte[] targetBytes = new byte[1 + actualLength];
+                targetBytes[0] = (byte) actualLength;
+                System.arraycopy(bytes, 0, targetBytes, 1, actualLength);
                 item.setDataItem(DataItem.createReqByByte(targetBytes));
+                // 根据实际情况获取最小字符串长度+1，重新更新待写入的数据长度
+                item.getRequestItem().setCount(targetBytes.length);
                 break;
             case DATE:
                 // TODO: 后面时间采用工具类
