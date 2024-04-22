@@ -47,8 +47,8 @@ public class S7SerializerTest {
 
     @Test
     public void read() {
-        s7PLC.setComCallback(x -> System.out.printf("[%d] %s%n", x.length, HexUtil.toHexString(x)));
-//        s7PLC.setComCallback(x -> log.debug("[{}] {}", x.length, HexUtil.toHexString(x)));
+        s7PLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
+//        s7PLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
         DemoBean bean = s7Serializer.read(DemoBean.class);
         log.info(bean.toString());
@@ -56,7 +56,7 @@ public class S7SerializerTest {
 
     @Test
     public void write() {
-        s7PLC.setComCallback(x -> log.debug("[{}] {}", x.length, HexUtil.toHexString(x)));
+        s7PLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
         byte[] byteData = new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03};
         DemoBean bean = new DemoBean();
@@ -92,7 +92,7 @@ public class S7SerializerTest {
 
     @Test
     public void writeLargeData() {
-        s7PLC.setComCallback(x -> log.debug("[{}] {}", x.length, HexUtil.toHexString(x)));
+        s7PLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
         DemoLargeBean bean = s7Serializer.read(DemoLargeBean.class);
         System.out.println("-------------------------------");
@@ -114,7 +114,7 @@ public class S7SerializerTest {
 
     @Test
     public void dbData() {
-        s7PLC.setComCallback(x -> log.debug("[{}] {}", x.length, HexUtil.toHexString(x)));
+        s7PLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
         S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
         DB80 bean = s7Serializer.read(DB80.class);
         System.out.println(bean);

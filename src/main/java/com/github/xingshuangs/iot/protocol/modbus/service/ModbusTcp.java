@@ -77,7 +77,7 @@ public class ModbusTcp extends ModbusSkeletonAbstract<MbTcpRequest, MbTcpRespons
     @Override
     protected MbTcpResponse readFromServer(MbTcpRequest req) {
         if (this.comCallback != null) {
-            this.comCallback.accept(req.toByteArray());
+            this.comCallback.accept(GeneralConst.PACKAGE_REQ, req.toByteArray());
         }
         MbapHeader header;
         int len;
@@ -101,7 +101,7 @@ public class ModbusTcp extends ModbusSkeletonAbstract<MbTcpRequest, MbTcpRespons
             throw new ModbusCommException("The length of the data after MbapHeader is inconsistent");
         }
         if (this.comCallback != null) {
-            this.comCallback.accept(total);
+            this.comCallback.accept(GeneralConst.PACKAGE_ACK, total);
         }
         MbTcpResponse ack = MbTcpResponse.fromBytes(total);
         this.checkResult(req, ack);

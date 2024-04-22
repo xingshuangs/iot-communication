@@ -25,26 +25,28 @@
 package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
-import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.common.buff.EByteBuffFormat;
+import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.protocol.modbus.model.*;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
 import com.github.xingshuangs.iot.utils.ByteUtil;
 import com.github.xingshuangs.iot.utils.ShortUtil;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 /**
  * Modbus网络通信的基础结构，抽象类
  *
  * @author xingshuang
  */
+@Data
 @Slf4j
 public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
 
@@ -59,34 +61,14 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     protected final Object objLock = new Object();
 
     /**
-     * 通信回调
+     * 通信回调，第一个参数是tag标签，指示该报文含义；第二个参数是具体报文内容
      */
-    protected Consumer<byte[]> comCallback;
+    protected BiConsumer<String, byte[]> comCallback;
 
     /**
      * 是否持久化，默认是持久化，对应长连接，true：长连接，false：短连接
      */
     protected boolean persistence = true;
-
-    public void setComCallback(Consumer<byte[]> comCallback) {
-        this.comCallback = comCallback;
-    }
-
-    public boolean isPersistence() {
-        return persistence;
-    }
-
-    public void setPersistence(boolean persistence) {
-        this.persistence = persistence;
-    }
-
-    public int getUnitId() {
-        return unitId;
-    }
-
-    public void setUnitId(int unitId) {
-        this.unitId = unitId;
-    }
 
     public ModbusSkeletonAbstract() {
         super();

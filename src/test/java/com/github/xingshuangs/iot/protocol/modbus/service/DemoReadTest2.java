@@ -37,7 +37,7 @@ public class DemoReadTest2 {
     public static void main(String[] args) {
         ModbusTcp plc = new ModbusTcp("127.0.0.1");
         // optional
-        plc.setComCallback(x -> System.out.printf("[%d] %s%n", x.length, HexUtil.toHexString(x)));
+        plc.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
 
         // read coil
         List<Boolean> readCoil = plc.readCoil(2, 0, 2);

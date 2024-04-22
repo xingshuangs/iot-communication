@@ -40,7 +40,7 @@ public class McDemoReadTest {
         McPLC mcPLC = new McPLC(EMcSeries.Q_L, "127.0.0.1", 6000);
 
         // optional
-        mcPLC.setComCallback(x -> System.out.printf("[%d] %s%n", x.length, HexUtil.toHexString(x)));
+        mcPLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
 
         // read boolean
         boolean booleanData = mcPLC.readBoolean("M100");

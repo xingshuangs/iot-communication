@@ -25,10 +25,11 @@
 package com.github.xingshuangs.iot.protocol.melsec.service;
 
 
-import com.github.xingshuangs.iot.exceptions.McCommException;
-import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.common.constant.GeneralConst;
+import com.github.xingshuangs.iot.exceptions.McCommException;
+import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.protocol.melsec.algorithm.McGroupAlg;
 import com.github.xingshuangs.iot.protocol.melsec.algorithm.McGroupItem;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
@@ -41,8 +42,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
-import java.util.function.Consumer;
 
 /**
  * plc的网络通信
@@ -59,9 +60,9 @@ public class McNetwork extends TcpClientBasic {
     private final Object objLock = new Object();
 
     /**
-     * 通信回调
+     * 通信回调，第一个参数是tag标签，指示该报文含义；第二个参数是具体报文内容
      */
-    private Consumer<byte[]> comCallback;
+    private BiConsumer<String, byte[]> comCallback;
 
     /**
      * 是否持久化，默认是持久化，对应长连接，true：长连接，false：短连接
@@ -118,7 +119,7 @@ public class McNetwork extends TcpClientBasic {
     protected McMessageAck readFromServer(McMessageReq req) {
         byte[] reqBytes = req.toByteArray();
         if (this.comCallback != null) {
-            this.comCallback.accept(reqBytes);
+            this.comCallback.accept(GeneralConst.PACKAGE_REQ, reqBytes);
         }
         byte[] total;
         if (this.frameType == EMcFrameType.FRAME_4E || this.frameType == EMcFrameType.FRAME_3E) {
@@ -127,7 +128,7 @@ public class McNetwork extends TcpClientBasic {
             total = this.readFromServer1E(reqBytes);
         }
         if (this.comCallback != null) {
-            this.comCallback.accept(total);
+            this.comCallback.accept(GeneralConst.PACKAGE_ACK, total);
         }
         McMessageAck ack = McMessageAck.fromBytes(total, this.frameType);
         this.checkResult(req, ack);

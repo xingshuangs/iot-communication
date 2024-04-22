@@ -50,7 +50,7 @@ public class S7PLCTest {
 
     @Before
     public void before() {
-        this.s7PLC.setComCallback(x -> log.debug("[{}] {}", x.length, HexUtil.toHexString(x)));
+        this.s7PLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
     }
 
     @Test
@@ -258,7 +258,7 @@ public class S7PLCTest {
 
     @Test
     public void writeMultiData1() {
-//        s7PLC.setComCallback(x -> System.out.println("长度：" + x.length));
+//        s7PLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
         MultiAddressRead addressRead = new MultiAddressRead();
         addressRead.addData("DB2.0", 1)
                 .addData("DB2.1", 1)
@@ -356,7 +356,7 @@ public class S7PLCTest {
 
     @Test
     public void readByteData() {
-        s7PLC.setComCallback(x -> System.out.println("长度：" + x.length));
+        s7PLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
         byte[] bytes = s7PLC.readByte("DB2.12", 1000);
         long start = System.currentTimeMillis();
         s7PLC.writeByte("DB2.12", bytes);

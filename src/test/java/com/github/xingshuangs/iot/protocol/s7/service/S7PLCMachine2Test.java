@@ -51,7 +51,7 @@ public class S7PLCMachine2Test {
 
     @Before
     public void before() {
-        this.s7PLC.setComCallback(x -> log.debug("[{}]：{}", x.length, HexUtil.toHexString(x)));
+        this.s7PLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
     }
 
     @Test

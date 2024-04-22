@@ -71,4 +71,14 @@ public class GeneralConst {
      */
     public static final int TYPE_DWORD = 2;
 
+    /**
+     * 请求
+     */
+    public static final String PACKAGE_REQ = "REQ";
+
+    /**
+     * 响应
+     */
+    public static final String PACKAGE_ACK = "ACK";
+
 }

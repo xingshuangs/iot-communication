@@ -25,6 +25,7 @@
 package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
+import com.github.xingshuangs.iot.common.constant.GeneralConst;
 import com.github.xingshuangs.iot.exceptions.ModbusCommException;
 import com.github.xingshuangs.iot.protocol.modbus.model.MbAsciiRequest;
 import com.github.xingshuangs.iot.protocol.modbus.model.MbAsciiResponse;
@@ -34,7 +35,7 @@ import com.github.xingshuangs.iot.utils.HexUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import static com.github.xingshuangs.iot.common.constant.GeneralConst.LOCALHOST;
 import static com.github.xingshuangs.iot.common.constant.GeneralConst.MODBUS_PORT;
@@ -50,9 +51,9 @@ public class ModbusAsciiOverTcp extends ModbusSkeletonAbstract<MbAsciiRequest, M
     /**
      * 通信回调
      */
-    private Consumer<String> comStringCallback;
+    private BiConsumer<String, String> comStringCallback;
 
-    public void setComStringCallback(Consumer<String> comStringCallback) {
+    public void setComStringCallback(BiConsumer<String, String> comStringCallback) {
         this.comStringCallback = comStringCallback;
     }
 
@@ -87,10 +88,10 @@ public class ModbusAsciiOverTcp extends ModbusSkeletonAbstract<MbAsciiRequest, M
         byte[] reqBytes = reqStr.getBytes(StandardCharsets.US_ASCII);
 
         if (this.comCallback != null) {
-            this.comCallback.accept(reqBytes);
+            this.comCallback.accept(GeneralConst.PACKAGE_REQ, reqBytes);
         }
         if (this.comStringCallback != null) {
-            this.comStringCallback.accept(reqStr);
+            this.comStringCallback.accept(GeneralConst.PACKAGE_REQ, reqStr);
         }
         int len;
         byte[] data = new byte[1024];
@@ -106,10 +107,10 @@ public class ModbusAsciiOverTcp extends ModbusSkeletonAbstract<MbAsciiRequest, M
         System.arraycopy(data, 0, total, 0, len);
         String ackStr = new String(total, StandardCharsets.UTF_8);
         if (this.comCallback != null) {
-            this.comCallback.accept(total);
+            this.comCallback.accept(GeneralConst.PACKAGE_ACK, total);
         }
         if (this.comStringCallback != null) {
-            this.comStringCallback.accept(ackStr);
+            this.comStringCallback.accept(GeneralConst.PACKAGE_ACK, ackStr);
         }
         ackStr = ackStr.replace(":", "").replace("\r\n", "");
         byte[] ackBytes = HexUtil.toHexArray(ackStr);

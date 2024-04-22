@@ -42,7 +42,7 @@ public class McDemoCustomReadAndWriteTest {
         McPLC mcPLC = new McPLC(EMcSeries.Q_L, "127.0.0.1", 6000);
 
         // optional
-        mcPLC.setComCallback(x -> System.out.printf("[%d] %s%n", x.length, HexUtil.toHexString(x)));
+        mcPLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
 
         // ------------------ read and write device batch in word ------------------------
         byte[] expect = new byte[]{0x34, 0x12, 0x02, 0x00};

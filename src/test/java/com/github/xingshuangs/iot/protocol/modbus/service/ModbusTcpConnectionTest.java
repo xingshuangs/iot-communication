@@ -44,7 +44,7 @@ public class ModbusTcpConnectionTest {
 
     @Before
     public void before() {
-        this.plc.setComCallback(x -> log.debug("[{}] {}", x.length, HexUtil.toHexString(x)));
+        this.plc.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
         this.plc.setPersistence(false);
     }
 

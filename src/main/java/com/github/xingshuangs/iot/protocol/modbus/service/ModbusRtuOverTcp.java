@@ -25,6 +25,7 @@
 package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
+import com.github.xingshuangs.iot.common.constant.GeneralConst;
 import com.github.xingshuangs.iot.exceptions.ModbusCommException;
 import com.github.xingshuangs.iot.protocol.modbus.model.MbErrorResponse;
 import com.github.xingshuangs.iot.protocol.modbus.model.MbPdu;
@@ -72,7 +73,7 @@ public class ModbusRtuOverTcp extends ModbusSkeletonAbstract<MbRtuRequest, MbRtu
     protected MbRtuResponse readFromServer(MbRtuRequest req) {
         byte[] reqBytes = req.toByteArray();
         if (this.comCallback != null) {
-            this.comCallback.accept(reqBytes);
+            this.comCallback.accept(GeneralConst.PACKAGE_REQ, reqBytes);
         }
         int len;
         byte[] data = new byte[1024];
@@ -87,7 +88,7 @@ public class ModbusRtuOverTcp extends ModbusSkeletonAbstract<MbRtuRequest, MbRtu
         byte[] total = new byte[len];
         System.arraycopy(data, 0, total, 0, len);
         if (this.comCallback != null) {
-            this.comCallback.accept(total);
+            this.comCallback.accept(GeneralConst.PACKAGE_ACK, total);
         }
         MbRtuResponse ack = MbRtuResponse.fromBytes(total);
         this.checkResult(req, ack);

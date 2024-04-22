@@ -53,7 +53,7 @@ public class McPLCTest {
     public void before() {
         this.mcPLC.setSeries(EMcSeries.Q_L);
         this.mcPLC.setFrameType(EMcFrameType.FRAME_3E);
-        this.mcPLC.setComCallback(x -> log.debug("[{}] {}", x.length, HexUtil.toHexString(x)));
+        this.mcPLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
     }
 
     @Test
