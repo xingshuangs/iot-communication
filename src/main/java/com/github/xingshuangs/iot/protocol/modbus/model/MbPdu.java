@@ -76,7 +76,11 @@ public class MbPdu implements IObjectByteArray {
      */
     public static MbPdu fromBytes(final byte[] data, final int offset) {
         ByteReadBuff buff = new ByteReadBuff(data, offset);
-        EMbFunctionCode functionCode = EMbFunctionCode.from(buff.getByte());
+        byte aByte = buff.getByte();
+        EMbFunctionCode functionCode = EMbFunctionCode.from(aByte);
+        if (functionCode == null) {
+            throw new ModbusCommException("Function code not recognized, " + aByte);
+        }
 
         switch (functionCode) {
             case READ_COIL:

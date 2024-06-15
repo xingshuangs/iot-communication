@@ -38,42 +38,42 @@ public enum EErrorClass {
     /**
      * 没有错误
      */
-    NO_ERROR((byte) 0x00, "没有错误"),
+    NO_ERROR((byte) 0x00, "no error"),
 
     /**
      * 应用关系
      */
-    APPLICATION_RELATIONSHIP((byte) 0x81, "应用关系"),
+    APPLICATION_RELATIONSHIP((byte) 0x81, "application relationship"),
 
     /**
      * 对象定义
      */
-    OBJECT_DEFINITION((byte) 0x82, "对象定义"),
+    OBJECT_DEFINITION((byte) 0x82, "object definition"),
 
     /**
      * 没有可用资源
      */
-    NO_RESOURCES_AVAILABLE((byte) 0x83, "没有可用资源"),
+    NO_RESOURCES_AVAILABLE((byte) 0x83, "no resources available"),
 
     /**
      * 服务处理中错误
      */
-    ERROR_ON_SERVICE_PROCESSING((byte) 0x84, "服务处理中错误"),
+    ERROR_ON_SERVICE_PROCESSING((byte) 0x84, "error on service processing"),
 
     /**
      * 请求错误
      */
-    ERROR_ON_SUPPLIES((byte) 0x85, "请求错误"),
+    ERROR_ON_SUPPLIES((byte) 0x85, "error on supplies"),
 
     /**
      * 访问错误
      */
-    ACCESS_ERROR((byte) 0x87, "访问错误"),
+    ACCESS_ERROR((byte) 0x87, "access error"),
 
     /**
      * 下载错误
      */
-    DOWNLOAD_ERROR((byte) 0xD2, "下载错误"),
+    DOWNLOAD_ERROR((byte) 0xD2, "download error"),
     ;
 
     private static Map<Byte, EErrorClass> map;

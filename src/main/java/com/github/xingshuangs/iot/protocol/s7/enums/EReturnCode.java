@@ -38,42 +38,42 @@ public enum EReturnCode {
     /**
      * 未定义，预留
      */
-    RESERVED((byte) 0x00, "未定义，预留"),
+    RESERVED((byte) 0x00, "reserved"),
 
     /**
      * 硬件错误
      */
-    HARDWARE_ERROR((byte) 0x01, "硬件错误"),
+    HARDWARE_ERROR((byte) 0x01, "hardware error"),
 
     /**
      * 对象不允许访问
      */
-    ACCESSING_THE_OBJECT_NOT_ALLOWED((byte) 0x03, "对象不允许访问"),
+    ACCESSING_THE_OBJECT_NOT_ALLOWED((byte) 0x03, "accessing the object not allowed"),
 
     /**
      * 无效地址，所需的地址超出此PLC的极限
      */
-    INVALID_ADDRESS((byte) 0x05, "无效地址，所需的地址超出此PLC的极限"),
+    INVALID_ADDRESS((byte) 0x05, "invalid address"),
 
     /**
      * 数据类型不支持
      */
-    DATA_TYPE_NOT_SUPPORTED((byte) 0x06, "数据类型不支持"),
+    DATA_TYPE_NOT_SUPPORTED((byte) 0x06, "data type not supported"),
 
     /**
      * 数据类型不一致
      */
-    DATA_TYPE_INCONSISTENT((byte) 0x07, "数据类型不一致"),
+    DATA_TYPE_INCONSISTENT((byte) 0x07, "data type inconsistent"),
 
     /**
      * 对象不存在
      */
-    OBJECT_DOES_NOT_EXIST((byte) 0x0A, "对象不存在"),
+    OBJECT_DOES_NOT_EXIST((byte) 0x0A, "object does not exist"),
 
     /**
      * 成功
      */
-    SUCCESS((byte) 0xFF, "成功"),
+    SUCCESS((byte) 0xFF, "success"),
 
     ;
 
