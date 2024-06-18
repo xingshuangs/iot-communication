@@ -53,10 +53,13 @@ public class ModbusTcpTest {
     public void readCoil() {
         List<Boolean> booleans = plc.readCoil(0, 1);
         assertEquals(1, booleans.size());
-        assertArrayEquals(new Boolean[]{true}, booleans.toArray(new Boolean[0]));
+        assertArrayEquals(new Boolean[]{false}, booleans.toArray(new Boolean[0]));
 
         booleans = plc.readCoil(0, 4);
-        assertArrayEquals(new Boolean[]{true, false, true, false}, booleans.toArray(new Boolean[0]));
+        assertArrayEquals(new Boolean[]{false, false, false, false}, booleans.toArray(new Boolean[0]));
+
+        booleans = plc.readCoil(0, 2500);
+        assertEquals(2500, booleans.size());
     }
 
     @Test

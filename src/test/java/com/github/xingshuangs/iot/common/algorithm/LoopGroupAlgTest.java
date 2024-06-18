@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.github.xingshuangs.iot.protocol.melsec.algorithm;
+package com.github.xingshuangs.iot.common.algorithm;
 
 import org.junit.Test;
 
@@ -32,13 +32,13 @@ import java.util.function.BiPredicate;
 import static org.junit.Assert.assertEquals;
 
 
-public class McGroupAlgTest {
+public class LoopGroupAlgTest {
 
     @Test
     public void loopExecute() {
         AtomicInteger length = new AtomicInteger();
         AtomicInteger count = new AtomicInteger();
-        McGroupAlg.loopExecute(100, 9, (off, len) -> {
+        LoopGroupAlg.loopExecute(100, 9, (off, len) -> {
             count.getAndIncrement();
             length.addAndGet(len);
         });
@@ -47,7 +47,7 @@ public class McGroupAlgTest {
 
         length.set(0);
         count.set(0);
-        McGroupAlg.loopExecute(120, 7, (off, len) -> {
+        LoopGroupAlg.loopExecute(120, 7, (off, len) -> {
             count.getAndIncrement();
             length.addAndGet(len);
         });
@@ -57,13 +57,13 @@ public class McGroupAlgTest {
 
     @Test
     public void biLoopExecute() {
-        McGroupItem item1 = new McGroupItem(20);
-        McGroupItem item2 = new McGroupItem(23);
+        LoopGroupItem item1 = new LoopGroupItem(20);
+        LoopGroupItem item2 = new LoopGroupItem(23);
 
         AtomicInteger length = new AtomicInteger();
         AtomicInteger count = new AtomicInteger();
-        BiPredicate<McGroupItem, McGroupItem> biPredicate = (i1, i2) -> i1.getLen() + i2.getLen() >= 13;
-        McGroupAlg.biLoopExecute(item1, item2, biPredicate, (i1, i2) -> {
+        BiPredicate<LoopGroupItem, LoopGroupItem> biPredicate = (i1, i2) -> i1.getLen() + i2.getLen() >= 13;
+        LoopGroupAlg.biLoopExecute(item1, item2, biPredicate, (i1, i2) -> {
             length.addAndGet(i1.getLen());
             length.addAndGet(i2.getLen());
             count.getAndIncrement();
@@ -74,13 +74,13 @@ public class McGroupAlgTest {
 
     @Test
     public void biLoopExecute1() {
-        McGroupItem item1 = new McGroupItem(20);
-        McGroupItem item2 = new McGroupItem(23);
+        LoopGroupItem item1 = new LoopGroupItem(20);
+        LoopGroupItem item2 = new LoopGroupItem(23);
 
         AtomicInteger length = new AtomicInteger();
         AtomicInteger count = new AtomicInteger();
-        BiPredicate<McGroupItem, McGroupItem> biPredicate = (i1, i2) -> i1.getLen() * 2 + i2.getLen() >= 14;
-        McGroupAlg.biLoopExecute(item1, item2, biPredicate, (i1, i2) -> {
+        BiPredicate<LoopGroupItem, LoopGroupItem> biPredicate = (i1, i2) -> i1.getLen() * 2 + i2.getLen() >= 14;
+        LoopGroupAlg.biLoopExecute(item1, item2, biPredicate, (i1, i2) -> {
             length.addAndGet(i1.getLen());
             length.addAndGet(i2.getLen());
             count.getAndIncrement();

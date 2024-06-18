@@ -25,6 +25,7 @@
 package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
+import com.github.xingshuangs.iot.common.algorithm.LoopGroupAlg;
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.common.buff.EByteBuffFormat;
@@ -38,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -145,12 +147,17 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
         if (address < 0) {
             throw new IllegalArgumentException("address<0");
         }
-        if (quantity < 1 || quantity > 2000) {
-            throw new IllegalArgumentException("quantity<1||quantity>2000");
+        if (quantity < 1) {
+            throw new IllegalArgumentException("quantity<1");
         }
-        MbReadCoilRequest reqPdu = new MbReadCoilRequest(address, quantity);
-        MbReadCoilResponse resPdu = (MbReadCoilResponse) this.readModbusData(unitId, reqPdu);
-        return BooleanUtil.byteArrayToList(quantity, resPdu.getCoilStatus());
+        List<Boolean> res = new ArrayList<>();
+        LoopGroupAlg.loopExecute(quantity, 10, (off, len) -> {
+            MbReadCoilRequest reqPdu = new MbReadCoilRequest(address + off, len);
+            MbReadCoilResponse resPdu = (MbReadCoilResponse) this.readModbusData(unitId, reqPdu);
+            List<Boolean> booleans = BooleanUtil.byteArrayToList(len, resPdu.getCoilStatus());
+            res.addAll(booleans);
+        });
+        return res;
     }
 
     /**

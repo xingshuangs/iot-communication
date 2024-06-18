@@ -30,8 +30,8 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.common.constant.GeneralConst;
 import com.github.xingshuangs.iot.exceptions.McCommException;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
-import com.github.xingshuangs.iot.protocol.melsec.algorithm.McGroupAlg;
-import com.github.xingshuangs.iot.protocol.melsec.algorithm.McGroupItem;
+import com.github.xingshuangs.iot.common.algorithm.LoopGroupAlg;
+import com.github.xingshuangs.iot.common.algorithm.LoopGroupItem;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcDeviceCode;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
@@ -371,7 +371,7 @@ public class McNetwork extends TcpClientBasic {
 //            int maxLength = 960;
             ByteWriteBuff buff = new ByteWriteBuff(deviceAddress.getDevicePointsCount() * 2);
 
-            McGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
+            LoopGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
                 McDeviceAddress newAddress = new McDeviceAddress(deviceAddress.getDeviceCode(),
                         deviceAddress.getHeadDeviceNumber() + off, len);
                 McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
@@ -421,7 +421,7 @@ public class McNetwork extends TcpClientBasic {
 //            int maxLength = 960;
             ByteReadBuff buff = new ByteReadBuff(deviceContent.getData());
 
-            McGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
+            LoopGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
                 McDeviceContent newContent = new McDeviceContent(deviceContent.getDeviceCode(),
                         deviceContent.getHeadDeviceNumber() + off, len,
                         buff.getBytes(off * 2, len * 2));
@@ -475,7 +475,7 @@ public class McNetwork extends TcpClientBasic {
                     ((deviceAddress.getDevicePointsCount() + 1) / 2);
             ByteWriteBuff buff = new ByteWriteBuff(length);
 
-            McGroupAlg.loopExecute(deviceAddress.getDevicePointsCount(), maxLength, (off, len) -> {
+            LoopGroupAlg.loopExecute(deviceAddress.getDevicePointsCount(), maxLength, (off, len) -> {
                 McDeviceAddress newAddress = new McDeviceAddress(deviceAddress.getDeviceCode(),
                         deviceAddress.getHeadDeviceNumber() + off, len);
                 McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
@@ -532,7 +532,7 @@ public class McNetwork extends TcpClientBasic {
 //            int maxLength = 7168;
             ByteReadBuff buff = new ByteReadBuff(deviceContent.getData());
 
-            McGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
+            LoopGroupAlg.loopExecute(actualLength, maxLength, (off, len) -> {
                 int length = len % 2 == 0 ? (len / 2) : ((len + 1) / 2);
                 McDeviceContent newContent = new McDeviceContent(deviceContent.getDeviceCode(),
                         deviceContent.getHeadDeviceNumber() + off, len,
@@ -584,11 +584,11 @@ public class McNetwork extends TcpClientBasic {
             int maxLength = this.series.getDeviceRandomReadInWordPointsCount();
 //            int maxLength = this.series == EMcSeries.Q_L ? 192 : 96;
 
-            BiPredicate<McGroupItem, McGroupItem> biPredicate = (i1, i2) -> i1.getLen() + i2.getLen() >= maxLength;
-            McGroupItem wordItem = new McGroupItem(wordAddresses.size());
-            McGroupItem dwordItem = new McGroupItem(dwordAddresses.size());
+            BiPredicate<LoopGroupItem, LoopGroupItem> biPredicate = (i1, i2) -> i1.getLen() + i2.getLen() >= maxLength;
+            LoopGroupItem wordItem = new LoopGroupItem(wordAddresses.size());
+            LoopGroupItem dwordItem = new LoopGroupItem(dwordAddresses.size());
 
-            McGroupAlg.biLoopExecute(wordItem, dwordItem, biPredicate, (i1, i2) -> {
+            LoopGroupAlg.biLoopExecute(wordItem, dwordItem, biPredicate, (i1, i2) -> {
                 List<McDeviceAddress> newWords = wordAddresses.subList(i1.getOff(), i1.getOff() + i1.getLen());
                 List<McDeviceAddress> newDWords = dwordAddresses.subList(i2.getOff(), i2.getOff() + i2.getLen());
                 McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
@@ -649,11 +649,11 @@ public class McNetwork extends TcpClientBasic {
         try {
             int maxLength = this.series.getDeviceRandomWriteInWordPointsCount();
 //            int maxLength = this.series == EMcSeries.Q_L ? 1920 : 960;
-            BiPredicate<McGroupItem, McGroupItem> biPredicate = (i1, i2) -> i1.getLen() * 12 + i2.getLen() * 14 >= maxLength;
-            McGroupItem wordItem = new McGroupItem(wordContents.size());
-            McGroupItem dwordItem = new McGroupItem(dwordContents.size());
+            BiPredicate<LoopGroupItem, LoopGroupItem> biPredicate = (i1, i2) -> i1.getLen() * 12 + i2.getLen() * 14 >= maxLength;
+            LoopGroupItem wordItem = new LoopGroupItem(wordContents.size());
+            LoopGroupItem dwordItem = new LoopGroupItem(dwordContents.size());
 
-            McGroupAlg.biLoopExecute(wordItem, dwordItem, biPredicate, (i1, i2) -> {
+            LoopGroupAlg.biLoopExecute(wordItem, dwordItem, biPredicate, (i1, i2) -> {
                 List<McDeviceContent> newWord = wordContents.subList(i1.getOff(), i1.getOff() + i1.getLen());
                 List<McDeviceContent> newDWord = dwordContents.subList(i2.getOff(), i2.getOff() + i2.getLen());
                 McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
@@ -686,7 +686,7 @@ public class McNetwork extends TcpClientBasic {
         try {
             int maxLength = this.series.getDeviceRandomWriteInBitPointsCount();
 //            int maxLength = this.series == EMcSeries.Q_L ? 188 : 94;
-            McGroupAlg.loopExecute(bitAddresses.size(), maxLength, (off, len) -> {
+            LoopGroupAlg.loopExecute(bitAddresses.size(), maxLength, (off, len) -> {
                 McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
                 McMessageReq req = McReqBuilder.createWriteDeviceRandomInBitReq(this.series, header, bitAddresses.subList(off, off + len));
                 this.readFromServer(req);
@@ -727,11 +727,11 @@ public class McNetwork extends TcpClientBasic {
             int maxLength = this.series.getDeviceBlocksBlocksCount();
 //            int maxLength = this.series == EMcSeries.Q_L ? 120 : 60;
 
-            BiPredicate<McGroupItem, McGroupItem> biPredicate = (i1, i2) -> i1.getLen() + i2.getLen() >= maxLength;
-            McGroupItem wordItem = new McGroupItem(wordAddresses.size());
-            McGroupItem bitItem = new McGroupItem(bitAddresses.size());
+            BiPredicate<LoopGroupItem, LoopGroupItem> biPredicate = (i1, i2) -> i1.getLen() + i2.getLen() >= maxLength;
+            LoopGroupItem wordItem = new LoopGroupItem(wordAddresses.size());
+            LoopGroupItem bitItem = new LoopGroupItem(bitAddresses.size());
 
-            McGroupAlg.biLoopExecute(wordItem, bitItem, biPredicate, (i1, i2) -> {
+            LoopGroupAlg.biLoopExecute(wordItem, bitItem, biPredicate, (i1, i2) -> {
                 List<McDeviceAddress> newWords = wordAddresses.subList(i1.getOff(), i1.getOff() + i1.getLen());
                 List<McDeviceAddress> newBits = bitAddresses.subList(i2.getOff(), i2.getOff() + i2.getLen());
                 McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);
@@ -824,7 +824,7 @@ public class McNetwork extends TcpClientBasic {
         this.checkDeviceBatchMultiBlocksCondition(wordContents, bitContents);
 
         try {
-            BiPredicate<McGroupItem, McGroupItem> biPredicate = (i1, i2) -> {
+            BiPredicate<LoopGroupItem, LoopGroupItem> biPredicate = (i1, i2) -> {
                 List<McDeviceContent> newWord = wordContents.subList(i1.getOff(), i1.getOff() + i1.getLen());
                 List<McDeviceContent> newBit = bitContents.subList(i2.getOff(), i2.getOff() + i2.getLen());
                 int blockNum = newWord.size() + newBit.size();
@@ -835,10 +835,10 @@ public class McNetwork extends TcpClientBasic {
                 return (blockNum >= this.series.getDeviceBlocksBlocksCount()) || count >= this.series.getDeviceBlocksWritePointsCount();
 //                return (blockNum >= (this.series == EMcSeries.Q_L ? 120 : 60)) || count >= 960;
             };
-            McGroupItem wordItem = new McGroupItem(wordContents.size());
-            McGroupItem bitItem = new McGroupItem(bitContents.size());
+            LoopGroupItem wordItem = new LoopGroupItem(wordContents.size());
+            LoopGroupItem bitItem = new LoopGroupItem(bitContents.size());
 
-            McGroupAlg.biLoopExecute(wordItem, bitItem, biPredicate, (i1, i2) -> {
+            LoopGroupAlg.biLoopExecute(wordItem, bitItem, biPredicate, (i1, i2) -> {
                 List<McDeviceContent> newWords = wordContents.subList(i1.getOff(), i1.getOff() + i1.getLen());
                 List<McDeviceContent> newBits = bitContents.subList(i2.getOff(), i2.getOff() + i2.getLen());
                 McHeaderReq header = McHeaderReq.createByFrameType(this.frameType, this.accessRoute, this.monitoringTimer);

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.github.xingshuangs.iot.protocol.melsec.algorithm;
+package com.github.xingshuangs.iot.common.algorithm;
 
 
 import java.util.function.BiConsumer;
@@ -33,9 +33,9 @@ import java.util.function.BiPredicate;
  *
  * @author xingshuang
  */
-public class McGroupAlg {
+public class LoopGroupAlg {
 
-    private McGroupAlg() {
+    private LoopGroupAlg() {
         // NOOP
     }
 
@@ -64,9 +64,9 @@ public class McGroupAlg {
      * @param biPredicate 判定条件
      * @param biConsumer  消费执行
      */
-    public static void biLoopExecute(McGroupItem item1, McGroupItem item2,
-                                     BiPredicate<McGroupItem, McGroupItem> biPredicate,
-                                     BiConsumer<McGroupItem, McGroupItem> biConsumer) {
+    public static void biLoopExecute(LoopGroupItem item1, LoopGroupItem item2,
+                                     BiPredicate<LoopGroupItem, LoopGroupItem> biPredicate,
+                                     BiConsumer<LoopGroupItem, LoopGroupItem> biConsumer) {
 
         while (item1.inRange() || item2.inRange()) {
             if (item1.getOff() < item1.getActualLength() && item1.inRange()) {

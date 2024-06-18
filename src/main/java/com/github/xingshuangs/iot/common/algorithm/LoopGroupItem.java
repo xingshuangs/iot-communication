@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.github.xingshuangs.iot.protocol.melsec.algorithm;
+package com.github.xingshuangs.iot.common.algorithm;
 
 
 import lombok.Data;
@@ -33,7 +33,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
-public class McGroupItem {
+public class LoopGroupItem {
 
     /**
      * 实际长度
@@ -50,10 +50,10 @@ public class McGroupItem {
      */
     private int len = 0;
 
-    public McGroupItem() {
+    public LoopGroupItem() {
     }
 
-    public McGroupItem(int actualLength) {
+    public LoopGroupItem(int actualLength) {
         this.actualLength = actualLength;
     }
 
