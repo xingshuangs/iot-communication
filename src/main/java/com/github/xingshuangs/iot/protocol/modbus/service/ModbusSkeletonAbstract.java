@@ -151,7 +151,7 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
             throw new IllegalArgumentException("quantity<1");
         }
         List<Boolean> res = new ArrayList<>();
-        LoopGroupAlg.loopExecute(quantity, 10, (off, len) -> {
+        LoopGroupAlg.loopExecute(quantity, 2000, (off, len) -> {
             MbReadCoilRequest reqPdu = new MbReadCoilRequest(address + off, len);
             MbReadCoilResponse resPdu = (MbReadCoilResponse) this.readModbusData(unitId, reqPdu);
             List<Boolean> booleans = BooleanUtil.byteArrayToList(len, resPdu.getCoilStatus());
