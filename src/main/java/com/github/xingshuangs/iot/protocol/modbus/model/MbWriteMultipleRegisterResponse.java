@@ -52,6 +52,10 @@ public final class MbWriteMultipleRegisterResponse extends MbPdu {
      */
     private int quantity;
 
+    public MbWriteMultipleRegisterResponse() {
+        this.functionCode = EMbFunctionCode.WRITE_MULTIPLE_REGISTER;
+    }
+
     @Override
     public int byteArrayLength() {
         return super.byteArrayLength() + 4;

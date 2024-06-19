@@ -52,6 +52,10 @@ public final class MbReadHoldRegisterResponse extends MbPdu {
      */
     private byte[] register;
 
+    public MbReadHoldRegisterResponse() {
+        this.functionCode = EMbFunctionCode.READ_HOLD_REGISTER;
+    }
+
     @Override
     public int byteArrayLength() {
         return super.byteArrayLength() + 1 + this.register.length;

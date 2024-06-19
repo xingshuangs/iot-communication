@@ -112,4 +112,51 @@ public class MbPdu implements IObjectByteArray {
                 throw new ModbusCommException("Function code not recognized：" + functionCode.getDescription());
         }
     }
+
+    /**
+     * 解析字节数组数据，转换为请求对象
+     *
+     * @param data 字节数组数据
+     * @return MbPdu
+     */
+    public static MbPdu fromBytesToRequest(final byte[] data) {
+        return fromBytesToRequest(data, 0);
+    }
+
+    /**
+     * 字节数组数据解析，转换为请求对象
+     *
+     * @param data   字节数组数据
+     * @param offset 偏移量
+     * @return mbpdu对象
+     */
+    public static MbPdu fromBytesToRequest(final byte[] data, final int offset) {
+        ByteReadBuff buff = new ByteReadBuff(data, offset);
+        byte aByte = buff.getByte();
+        EMbFunctionCode functionCode = EMbFunctionCode.from(aByte);
+        if (functionCode == null) {
+            throw new ModbusCommException("Function code not recognized, " + aByte);
+        }
+
+        switch (functionCode) {
+            case READ_COIL:
+                return MbReadCoilRequest.fromBytes(data, offset);
+            case READ_DISCRETE_INPUT:
+                return MbReadDiscreteInputRequest.fromBytes(data, offset);
+            case READ_HOLD_REGISTER:
+                return MbReadHoldRegisterRequest.fromBytes(data, offset);
+            case READ_INPUT_REGISTER:
+                return MbReadInputRegisterRequest.fromBytes(data, offset);
+            case WRITE_SINGLE_COIL:
+                return MbWriteSingleCoilRequest.fromBytes(data, offset);
+            case WRITE_SINGLE_REGISTER:
+                return MbWriteSingleRegisterRequest.fromBytes(data, offset);
+            case WRITE_MULTIPLE_COIL:
+                return MbWriteMultipleCoilRequest.fromBytes(data, offset);
+            case WRITE_MULTIPLE_REGISTER:
+                return MbWriteMultipleRegisterRequest.fromBytes(data, offset);
+            default:
+                throw new ModbusCommException("Function code not recognized：" + functionCode.getDescription());
+        }
+    }
 }

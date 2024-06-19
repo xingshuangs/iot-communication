@@ -52,6 +52,10 @@ public final class MbWriteSingleRegisterResponse extends MbPdu {
      */
     private byte[] value;
 
+    public MbWriteSingleRegisterResponse() {
+        this.functionCode = EMbFunctionCode.WRITE_SINGLE_REGISTER;
+    }
+
     @Override
     public int byteArrayLength() {
         return super.byteArrayLength() + 4;

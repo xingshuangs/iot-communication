@@ -52,6 +52,10 @@ public final class MbReadDiscreteInputResponse extends MbPdu {
      */
     private byte[] inputStatus;
 
+    public MbReadDiscreteInputResponse() {
+        this.functionCode = EMbFunctionCode.READ_DISCRETE_INPUT;
+    }
+
     @Override
     public int byteArrayLength() {
         return super.byteArrayLength() + 1 + this.inputStatus.length;

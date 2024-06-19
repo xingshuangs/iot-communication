@@ -279,7 +279,7 @@ public class S7PLCServer extends TcpServerBasic {
             int firstByte = in.read();
             if (firstByte == -1) {
                 SocketUtils.close(socket);
-                throw new SocketRuntimeException("The client is actively disconnected");
+                throw new SocketRuntimeException("The client is disconnected.");
             }
             // 先获取TPKT
             byte[] tpktData = new byte[4];

@@ -46,6 +46,12 @@ public class MbErrorResponse extends MbPdu {
      */
     private EMbExceptionCode errorCode;
 
+    public MbErrorResponse() {
+    }
+
+    public MbErrorResponse(EMbExceptionCode errorCode) {
+        this.errorCode = errorCode;
+    }
 
     @Override
     public int byteArrayLength() {

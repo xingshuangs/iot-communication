@@ -52,6 +52,10 @@ public final class MbReadCoilResponse extends MbPdu {
      */
     private byte[] coilStatus;
 
+    public MbReadCoilResponse() {
+        this.functionCode = EMbFunctionCode.READ_COIL;
+    }
+
     @Override
     public int byteArrayLength() {
         return super.byteArrayLength() + 1 + this.coilStatus.length;

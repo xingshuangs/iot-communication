@@ -48,6 +48,14 @@ public class MbTcpRequest implements IObjectByteArray {
      */
     private MbPdu pdu;
 
+    public MbTcpRequest() {
+    }
+
+    public MbTcpRequest(MbapHeader header, MbPdu pdu) {
+        this.header = header;
+        this.pdu = pdu;
+    }
+
     @Override
     public int byteArrayLength() {
         return this.header.byteArrayLength() + this.pdu.byteArrayLength();
@@ -82,6 +90,33 @@ public class MbTcpRequest implements IObjectByteArray {
     public static MbTcpRequest createDefault() {
         MbTcpRequest request = new MbTcpRequest();
         request.header = new MbapHeader(MbapHeader.getNewNumber());
+        return request;
+    }
+
+    /**
+     * 解析字节数组数据
+     *
+     * @param data 字节数组数据
+     * @return MbTcpRequest
+     */
+    public static MbTcpRequest fromBytes(byte[] data) {
+        MbTcpRequest request = new MbTcpRequest();
+        request.header = MbapHeader.fromBytes(data);
+        request.pdu = MbPdu.fromBytesToRequest(data, request.header.byteArrayLength());
+        return request;
+    }
+
+    /**
+     * 解析字节数组数据
+     *
+     * @param header   报文头
+     * @param pduBytes pdu字节数组数据
+     * @return MbTcpRequest
+     */
+    public static MbTcpRequest fromBytes(MbapHeader header, byte[] pduBytes) {
+        MbTcpRequest request = new MbTcpRequest();
+        request.header = header;
+        request.pdu = MbPdu.fromBytesToRequest(pduBytes);
         return request;
     }
 }

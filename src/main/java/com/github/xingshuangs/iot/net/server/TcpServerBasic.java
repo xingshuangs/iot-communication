@@ -27,6 +27,7 @@ package com.github.xingshuangs.iot.net.server;
 
 import com.github.xingshuangs.iot.exceptions.SocketRuntimeException;
 import com.github.xingshuangs.iot.net.SocketUtils;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -41,6 +42,7 @@ import java.util.concurrent.*;
  *
  * @author xingshuang
  */
+@Data
 @Slf4j
 public class TcpServerBasic {
 
@@ -53,6 +55,15 @@ public class TcpServerBasic {
      * 端口号
      */
     protected int port = 8088;
+
+    /**
+     * 线程池
+     */
+    protected ExecutorService executorService;
+
+    public TcpServerBasic() {
+        this.executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    }
 
     //region 服务端
 
@@ -69,6 +80,7 @@ public class TcpServerBasic {
      * @param port 端口号
      */
     public void start(int port) {
+
         try {
             this.port = port;
             this.stop();
@@ -117,9 +129,7 @@ public class TcpServerBasic {
                 if (!this.checkClientValid(client)) {
                     SocketUtils.close(client);
                 }
-                Thread thread = new Thread(() -> this.doClientConnected(client));
-                thread.setDaemon(true);
-                thread.start();
+                this.executorService.execute(() -> this.doClientConnected(client));
             } catch (IOException e) {
                 if (this.isAlive()) {
                     log.error(e.getMessage());
@@ -137,9 +147,8 @@ public class TcpServerBasic {
      *
      * @param client 客户端
      * @return true:验证成功，false：验证失败
-     * @throws IOException IO异常
      */
-    protected boolean checkClientValid(Socket client) throws IOException {
+    protected boolean checkClientValid(Socket client) {
         return true;
     }
 
@@ -153,7 +162,7 @@ public class TcpServerBasic {
         log.debug("The client [{}] is connected", client.getRemoteSocketAddress());
         this.clientConnected(client);
         try {
-            if (this.checkHandshake(client)) {
+            if (this.checkHandshake(client) && this.isAlive()) {
                 while (SocketUtils.isConnected(client)) {
                     this.doClientHandle(client);
                 }

@@ -27,6 +27,7 @@ package com.github.xingshuangs.iot.protocol.modbus.model;
 
 import com.github.xingshuangs.iot.common.IObjectByteArray;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.exceptions.ModbusCommException;
 import lombok.Data;
 
 /**
@@ -47,6 +48,15 @@ public class MbTcpResponse implements IObjectByteArray {
      */
     private MbPdu pdu;
 
+    public MbTcpResponse() {
+    }
+
+    public MbTcpResponse(MbapHeader header, MbPdu pdu) {
+        this.header = header;
+        this.pdu = pdu;
+        this.selfCheck();
+    }
+
     @Override
     public int byteArrayLength() {
         return this.header.byteArrayLength() + this.pdu.byteArrayLength();
@@ -58,6 +68,19 @@ public class MbTcpResponse implements IObjectByteArray {
                 .putBytes(this.header.toByteArray())
                 .putBytes(this.pdu.toByteArray())
                 .getData();
+    }
+
+    /**
+     * 自我数据校验
+     */
+    public void selfCheck() {
+        if (this.header == null) {
+            throw new ModbusCommException("header is null");
+        }
+        if (this.pdu == null) {
+            throw new ModbusCommException("pdu is null");
+        }
+        this.header.setLength(this.pdu.byteArrayLength() + 1);
     }
 
     /**

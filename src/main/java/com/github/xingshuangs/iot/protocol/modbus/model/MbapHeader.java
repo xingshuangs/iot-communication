@@ -59,7 +59,7 @@ public class MbapHeader implements IObjectByteArray {
     private int protocolId = 0;
 
     /**
-     * 长度，长度域是下一个域的字节数，包括单元标识符和数据域。<br>
+     * 长度，长度域是下一个域的字节数，包括单元标识符和数据域。length后面的所有字节长度，不包含前面和length<br>
      * 字节大小：2个字节
      * 字节序数：4-5
      */

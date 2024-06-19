@@ -52,6 +52,10 @@ public final class MbWriteMultipleCoilResponse extends MbPdu {
      */
     private int quantity;
 
+    public MbWriteMultipleCoilResponse() {
+        this.functionCode = EMbFunctionCode.WRITE_MULTIPLE_COIL;
+    }
+
     @Override
     public int byteArrayLength() {
         return super.byteArrayLength() + 4;

@@ -52,6 +52,10 @@ public final class MbWriteSingleCoilResponse extends MbPdu {
      */
     private byte[] value;
 
+    public MbWriteSingleCoilResponse() {
+        this.functionCode = EMbFunctionCode.WRITE_SINGLE_COIL;
+    }
+
     @Override
     public int byteArrayLength() {
         return super.byteArrayLength() + 4;
