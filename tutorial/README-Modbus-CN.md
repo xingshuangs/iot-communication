@@ -69,7 +69,7 @@
 ```java
 class Demo {
     public static void main(String[] args) {
-        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        ModbusTcp plc = new ModbusTcp("127.0.0.1");
         // 报文输出设置
         plc.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
         plc.writeInt16(2, (short) 10);
@@ -89,7 +89,7 @@ class Demo {
 class Demo {
     public static void main(String[] args) {
         // 长连接方式，即持久化为true
-        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        ModbusTcp plc = new ModbusTcp("127.0.0.1");
         plc.writeInt16(2, (short) 10);
         short data = plc.readInt16(2);
         // 需要手动关闭
@@ -104,7 +104,7 @@ class Demo {
 class Demo {
     public static void main(String[] args) {
         // 短连接
-        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        ModbusTcp plc = new ModbusTcp("127.0.0.1");
         // 设置短连接模式，即持久化为false
         plc.setPersistence(false);
         plc.writeInt16(2, (short) 10);
@@ -120,7 +120,7 @@ class Demo {
 ```java
 class Demo {
     public static void main(String[] args) {
-        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        ModbusTcp plc = new ModbusTcp("127.0.0.1");
 
         // read coil
         List<Boolean> readCoil = plc.readCoil(0, 2);
@@ -168,7 +168,7 @@ class Demo {
 ```java
 class Demo {
     public static void main(String[] args) {
-        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        ModbusTcp plc = new ModbusTcp("127.0.0.1");
 
         // single write coil
         plc.writeCoil(0, true);

@@ -126,7 +126,7 @@ public class ModbusTcp extends ModbusSkeletonAbstract<MbTcpRequest, MbTcpRespons
         if (ack.getPdu().getFunctionCode().getCode() == (req.getPdu().getFunctionCode().getCode() | (byte) 0x80)) {
             MbErrorResponse response = (MbErrorResponse) ack.getPdu();
             // 响应返回异常，异常码:
-            throw new ModbusCommException("The response returns an exception, the exception code:" + response.getErrorCode().getDescription());
+            throw new ModbusCommException("The response returns an exception, the exception code: " + response.getErrorCode().getDescription());
         }
         if (ack.getPdu().getFunctionCode().getCode() != req.getPdu().getFunctionCode().getCode()) {
             MbErrorResponse response = (MbErrorResponse) ack.getPdu();

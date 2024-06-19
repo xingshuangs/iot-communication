@@ -36,7 +36,7 @@ import java.util.List;
 public class DemoWriteTest {
 
     public static void main(String[] args) {
-        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        ModbusTcp plc = new ModbusTcp("127.0.0.1");
         // optional
         plc.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
 

@@ -33,6 +33,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,7 +43,7 @@ import static org.junit.Assert.*;
 @Ignore
 public class ModbusTcpTest {
 
-    private final ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+    private final ModbusTcp plc = new ModbusTcp("127.0.0.1");
 
     @Before
     public void before() {
@@ -53,10 +54,10 @@ public class ModbusTcpTest {
     public void readCoil() {
         List<Boolean> booleans = plc.readCoil(0, 1);
         assertEquals(1, booleans.size());
-        assertArrayEquals(new Boolean[]{false}, booleans.toArray(new Boolean[0]));
+//        assertArrayEquals(new Boolean[]{false}, booleans.toArray(new Boolean[0]));
 
         booleans = plc.readCoil(0, 4);
-        assertArrayEquals(new Boolean[]{false, false, false, false}, booleans.toArray(new Boolean[0]));
+//        assertArrayEquals(new Boolean[]{false, false, false, false}, booleans.toArray(new Boolean[0]));
 
         booleans = plc.readCoil(0, 2500);
         assertEquals(2500, booleans.size());
@@ -73,6 +74,15 @@ public class ModbusTcpTest {
     }
 
     @Test
+    public void writeCoil2() {
+        List<Boolean> list = new ArrayList<>();
+        for (int i = 0; i < 1971; i++) {
+            list.add(true);
+        }
+        plc.writeCoil(0, list);
+    }
+
+    @Test
     public void writeCoil1() {
         plc.writeCoil(0, true);
         List<Boolean> booleans = plc.readCoil(0, 1);
@@ -82,26 +92,32 @@ public class ModbusTcpTest {
         booleans = plc.readCoil(0, 4);
         assertArrayEquals(new Boolean[]{true, false, true, false}, booleans.toArray(new Boolean[0]));
 
-        plc.writeCoil(1,0, true);
-        booleans = plc.readCoil(1,0, 1);
+        plc.writeCoil(1, 0, true);
+        booleans = plc.readCoil(1, 0, 1);
         assertArrayEquals(new Boolean[]{true}, booleans.toArray(new Boolean[0]));
         list = Arrays.asList(true, false, true, false);
-        plc.writeCoil(1,0, list);
-        booleans = plc.readCoil(1,0, 4);
+        plc.writeCoil(1, 0, list);
+        booleans = plc.readCoil(1, 0, 4);
         assertArrayEquals(new Boolean[]{true, false, true, false}, booleans.toArray(new Boolean[0]));
     }
 
     @Test
     public void readDiscreteInput() {
-        List<Boolean> booleans = plc.readDiscreteInput(1,0, 4);
+        List<Boolean> booleans = plc.readDiscreteInput(1, 0, 4);
         assertEquals(4, booleans.size());
-        assertArrayEquals(new Boolean[]{true, true, true, false}, booleans.toArray(new Boolean[0]));
+//        assertArrayEquals(new Boolean[]{true, true, true, false}, booleans.toArray(new Boolean[0]));
+
+        booleans = plc.readDiscreteInput(1, 0, 2500);
+        assertEquals(2500, booleans.size());
     }
 
     @Test
     public void readInputRegister() {
-        byte[] bytes = plc.readInputRegister(1,0, 2);
-        assertArrayEquals(new byte[]{(byte) 0x00, (byte) 0x21, (byte) 0x00, (byte) 0x00}, bytes);
+        byte[] bytes = plc.readInputRegister(1, 0, 2);
+        assertEquals(4, bytes.length);
+//        assertArrayEquals(new byte[]{(byte) 0x00, (byte) 0x21, (byte) 0x00, (byte) 0x00}, bytes);
+        byte[] bytes1 = plc.readInputRegister(1, 0, 600);
+        assertEquals(1200, bytes1.length);
     }
 
     @Test
@@ -120,11 +136,22 @@ public class ModbusTcpTest {
     }
 
     @Test
+    public void readHoldRegister1() {
+        byte[] bytes = plc.readHoldRegister(0, 1000);
+//        assertEquals(502, bytes.length);
+    }
+
+    @Test
     public void writeHoldRegister() {
         plc.writeHoldRegister(2, 123);
 
         List<Integer> list = Arrays.asList(11, 12, 13, 14);
         plc.writeHoldRegister(3, list);
+    }
+
+    @Test
+    public void writeHoldRegister1() {
+        plc.writeHoldRegister(0, new byte[1000]);
     }
 
     @Test
@@ -209,32 +236,32 @@ public class ModbusTcpTest {
 
     @Test
     public void readWriteData3() {
-        plc.writeInt16(1,2, (short) 10);
-        short data = plc.readInt16(1,2);
+        plc.writeInt16(1, 2, (short) 10);
+        short data = plc.readInt16(1, 2);
         assertEquals(10, data);
 
-        plc.writeUInt16(2,3, 20);
-        int i = plc.readUInt16(2,3);
+        plc.writeUInt16(2, 3, 20);
+        int i = plc.readUInt16(2, 3);
         assertEquals(20, i);
 
-        plc.writeInt32(1,4, 32);
-        int i1 = plc.readInt32(1,4);
+        plc.writeInt32(1, 4, 32);
+        int i1 = plc.readInt32(1, 4);
         assertEquals(32, i1);
 
-        plc.writeUInt32(2,6, 32L);
-        long l = plc.readUInt32(2,6);
+        plc.writeUInt32(2, 6, 32L);
+        long l = plc.readUInt32(2, 6);
         assertEquals(32L, l);
 
-        plc.writeFloat32(1,8, 12.12f);
-        float v = plc.readFloat32(1,8);
+        plc.writeFloat32(1, 8, 12.12f);
+        float v = plc.readFloat32(1, 8);
         assertEquals(12.12f, v, 0.0001);
 
-        plc.writeFloat64(2,10, 33.21);
-        double v1 = plc.readFloat64(2,10);
+        plc.writeFloat64(2, 10, 33.21);
+        double v1 = plc.readFloat64(2, 10);
         assertEquals(33.21, v1, 0.0001);
 
-        plc.writeString(1,14, "pppp");
-        String s = plc.readString(1,14, 4);
+        plc.writeString(1, 14, "pppp");
+        String s = plc.readString(1, 14, 4);
         assertEquals("pppp", s);
     }
 

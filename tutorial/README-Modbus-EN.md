@@ -70,7 +70,7 @@ yourself.
 ```java
 class Demo {
     public static void main(String[] args) {
-        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        ModbusTcp plc = new ModbusTcp("127.0.0.1");
         // print message
         plc.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
         plc.writeInt16(2, (short) 10);
@@ -90,7 +90,7 @@ class Demo {
 class Demo {
     public static void main(String[] args) {
         // long connection mode, persistence = true
-        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        ModbusTcp plc = new ModbusTcp("127.0.0.1");
         plc.writeInt16(2, (short) 10);
         short data = plc.readInt16(2);
         // close it manually
@@ -105,7 +105,7 @@ class Demo {
 class Demo {
     public static void main(String[] args) {
         // short connection mode
-        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        ModbusTcp plc = new ModbusTcp("127.0.0.1");
         // set short connection mode, persistence = false
         plc.setPersistence(false);
         plc.writeInt16(2, (short) 10);
@@ -121,7 +121,7 @@ class Demo {
 ```java
 class Demo {
     public static void main(String[] args) {
-        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        ModbusTcp plc = new ModbusTcp("127.0.0.1");
 
         // read coil
         List<Boolean> readCoil = plc.readCoil(0, 2);
@@ -169,7 +169,7 @@ class Demo {
 ```java
 class Demo {
     public static void main(String[] args) {
-        ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+        ModbusTcp plc = new ModbusTcp("127.0.0.1");
 
         // single write coil
         plc.writeCoil(0, true);

@@ -26,6 +26,9 @@ package com.github.xingshuangs.iot.utils;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 
@@ -69,5 +72,33 @@ public class BooleanUtilTest {
         assertTrue(b);
         b = BooleanUtil.getValue((byte) 0x80, 6);
         assertFalse(b);
+    }
+
+    @Test
+    public void byteArrayToListTest() {
+        byte[] data = new byte[]{(byte) 0xF5, 0x51};
+        List<Boolean> booleanList = BooleanUtil.byteArrayToList(11, data);
+        assertTrue(booleanList.get(0));
+        assertFalse(booleanList.get(1));
+        assertTrue(booleanList.get(2));
+        assertFalse(booleanList.get(3));
+        assertTrue(booleanList.get(4));
+        assertTrue(booleanList.get(5));
+        assertTrue(booleanList.get(6));
+        assertTrue(booleanList.get(7));
+        assertTrue(booleanList.get(8));
+        assertFalse(booleanList.get(9));
+        assertFalse(booleanList.get(10));
+    }
+
+    @Test
+    public void listToByteArrayTest() {
+        byte[] expect = new byte[]{(byte) 0x55, 0x05};
+        List<Boolean> booleans = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            booleans.add(i % 2 == 0);
+        }
+        byte[] bytes = BooleanUtil.listToByteArray(booleans);
+        assertArrayEquals(expect, bytes);
     }
 }

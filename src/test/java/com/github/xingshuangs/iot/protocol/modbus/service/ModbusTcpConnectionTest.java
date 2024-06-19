@@ -40,7 +40,7 @@ import static org.junit.Assert.assertEquals;
 @Slf4j
 public class ModbusTcpConnectionTest {
 
-    private final ModbusTcp plc = new ModbusTcp(1, "127.0.0.1");
+    private final ModbusTcp plc = new ModbusTcp("127.0.0.1");
 
     @Before
     public void before() {

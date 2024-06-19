@@ -33,7 +33,6 @@ import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.protocol.modbus.model.*;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
 import com.github.xingshuangs.iot.utils.ByteUtil;
-import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -144,12 +143,13 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
      * @return boolean列表
      */
     public List<Boolean> readCoil(int unitId, int address, int quantity) {
-        if (address < 0) {
-            throw new IllegalArgumentException("address<0");
+        if (address < 0 || address > 65535) {
+            throw new IllegalArgumentException("address < 0 || address > 65535");
         }
         if (quantity < 1) {
             throw new IllegalArgumentException("quantity<1");
         }
+
         List<Boolean> res = new ArrayList<>();
         LoopGroupAlg.loopExecute(quantity, 2000, (off, len) -> {
             MbReadCoilRequest reqPdu = new MbReadCoilRequest(address + off, len);
@@ -178,9 +178,10 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
      * @param coilStatus 线圈状态
      */
     public void writeCoil(int unitId, int address, boolean coilStatus) {
-        if (address < 0) {
-            throw new IllegalArgumentException("address<0");
+        if (address < 0 || address > 65535) {
+            throw new IllegalArgumentException("address < 0 || address > 65535");
         }
+
         MbWriteSingleCoilRequest reqPdu = new MbWriteSingleCoilRequest(address, coilStatus);
         this.readModbusData(unitId, reqPdu);
     }
@@ -203,15 +204,19 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
      * @param coilStatus 线圈状态列表
      */
     public void writeCoil(int unitId, int address, List<Boolean> coilStatus) {
-        if (address < 0) {
-            throw new IllegalArgumentException("address<0");
+        if (address < 0 || address > 65535) {
+            throw new IllegalArgumentException("address < 0 || address > 65535");
         }
         if (coilStatus.isEmpty()) {
             throw new IllegalArgumentException("coilStatus list is empty");
         }
-        byte[] values = BooleanUtil.listToByteArray(coilStatus);
-        MbWriteMultipleCoilRequest reqPdu = new MbWriteMultipleCoilRequest(address, coilStatus.size(), values);
-        this.readModbusData(unitId, reqPdu);
+
+        LoopGroupAlg.loopExecute(coilStatus.size(), 1968, (off, len) -> {
+            List<Boolean> booleanList = coilStatus.subList(off, off + len);
+            byte[] values = BooleanUtil.listToByteArray(booleanList);
+            MbWriteMultipleCoilRequest reqPdu = new MbWriteMultipleCoilRequest(address + off, len, values);
+            this.readModbusData(unitId, reqPdu);
+        });
     }
 
     /**
@@ -234,15 +239,21 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
      * @return boolean列表
      */
     public List<Boolean> readDiscreteInput(int unitId, int address, int quantity) {
-        if (address < 0) {
-            throw new IllegalArgumentException("address<0");
+        if (address < 0 || address > 65535) {
+            throw new IllegalArgumentException("address < 0 || address > 65535");
         }
-        if (quantity < 1 || quantity > 2000) {
-            throw new IllegalArgumentException("quantity<1||quantity>2000");
+        if (quantity < 1) {
+            throw new IllegalArgumentException("quantity<1");
         }
-        MbReadDiscreteInputRequest reqPdu = new MbReadDiscreteInputRequest(address, quantity);
-        MbReadDiscreteInputResponse resPdu = (MbReadDiscreteInputResponse) this.readModbusData(unitId, reqPdu);
-        return BooleanUtil.byteArrayToList(quantity, resPdu.getInputStatus());
+
+        List<Boolean> res = new ArrayList<>();
+        LoopGroupAlg.loopExecute(quantity, 2000, (off, len) -> {
+            MbReadDiscreteInputRequest reqPdu = new MbReadDiscreteInputRequest(address + off, len);
+            MbReadDiscreteInputResponse resPdu = (MbReadDiscreteInputResponse) this.readModbusData(unitId, reqPdu);
+            List<Boolean> booleans = BooleanUtil.byteArrayToList(len, resPdu.getInputStatus());
+            res.addAll(booleans);
+        });
+        return res;
     }
 
     /**
@@ -265,20 +276,30 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
      * @return 字节数组
      */
     public byte[] readHoldRegister(int unitId, int address, int quantity) {
-        if (address < 0) {
-            throw new IllegalArgumentException("address<0");
+        if (address < 0 || address > 65535) {
+            throw new IllegalArgumentException("address < 0 || address > 65535");
         }
-        if (quantity <= 0 || quantity > 125) {
-            throw new IllegalArgumentException("quantity<=0||quantity>125");
+        if (quantity < 1) {
+            throw new IllegalArgumentException("quantity < 1");
         }
-        MbReadHoldRegisterRequest reqPdu = new MbReadHoldRegisterRequest(address, quantity);
-        MbReadHoldRegisterResponse resPdu = (MbReadHoldRegisterResponse) this.readModbusData(unitId, reqPdu);
-        return resPdu.getRegister();
+
+        // TODO: 实际在slave中测试，没有125的约束，暂时先这么写着
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(quantity * 2);
+        LoopGroupAlg.loopExecute(quantity, 125, (off, len) -> {
+            MbReadHoldRegisterRequest reqPdu = new MbReadHoldRegisterRequest(address + off, len);
+            MbReadHoldRegisterResponse resPdu = (MbReadHoldRegisterResponse) this.readModbusData(unitId, reqPdu);
+            buff.putBytes(resPdu.getRegister());
+        });
+        return buff.getData();
+
+//        MbReadHoldRegisterRequest reqPdu = new MbReadHoldRegisterRequest(address, quantity);
+//        MbReadHoldRegisterResponse resPdu = (MbReadHoldRegisterResponse) this.readModbusData(unitId, reqPdu);
+//        return resPdu.getRegister();
     }
 
 
     /**
-     * 以数值形式写入保持寄存器， modbus 1个寄存器占2个字节
+     * 以数值形式写入单个保持寄存器， modbus 1个寄存器占2个字节
      *
      * @param address 地址
      * @param value   数值，占2个字节
@@ -288,19 +309,20 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 以数值形式写入保持寄存器， modbus 1个寄存器占2个字节
+     * 以数值形式写入单个保持寄存器， modbus 1个寄存器占2个字节
      *
      * @param unitId  从站编号
      * @param address 地址
      * @param value   数值，占2个字节
      */
     public void writeHoldRegister(int unitId, int address, int value) {
-        if (address < 0) {
-            throw new IllegalArgumentException("address<0");
+        if (address < 0 || address > 65535) {
+            throw new IllegalArgumentException("address < 0 || address > 65535");
         }
         if (value < 0 || value > 65535) {
-            throw new IllegalArgumentException("value<0||value>65535");
+            throw new IllegalArgumentException("value < 0 || value > 65535");
         }
+
         MbWriteSingleRegisterRequest reqPdu = new MbWriteSingleRegisterRequest(address, value);
         this.readModbusData(unitId, reqPdu);
     }
@@ -323,18 +345,23 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
      * @param values  数据值列表
      */
     public void writeHoldRegister(int unitId, int address, byte[] values) {
-        if (address < 0) {
-            throw new IllegalArgumentException("address<0");
+        if (address < 0 || address > 65535) {
+            throw new IllegalArgumentException("address < 0 || address > 65535");
         }
         if (values.length % 2 != 0) {
             throw new IllegalArgumentException("values must have an even length");
         }
-        MbWriteMultipleRegisterRequest reqPdu = new MbWriteMultipleRegisterRequest(address, values.length / 2, values);
-        this.readModbusData(unitId, reqPdu);
+
+        ByteReadBuff buff = ByteReadBuff.newInstance(values);
+        LoopGroupAlg.loopExecute(values.length / 2, 123, (off, len) -> {
+            byte[] bytes = buff.getBytes(off * 2, len * 2);
+            MbWriteMultipleRegisterRequest reqPdu = new MbWriteMultipleRegisterRequest(address + off, len, bytes);
+            this.readModbusData(unitId, reqPdu);
+        });
     }
 
     /**
-     * 以数值数组形式写入保持寄存器， modbus 1个寄存器占2个字节
+     * 以数值数组形式写入多个保持寄存器， modbus 1个寄存器占2个字节
      *
      * @param address 地址
      * @param values  数据值列表
@@ -344,24 +371,20 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 以数值数组形式写入保持寄存器， modbus 1个寄存器占2个字节
+     * 以数值数组形式写入多个保持寄存器， modbus 1个寄存器占2个字节
      *
      * @param unitId  从站编号
      * @param address 地址
      * @param values  数据值列表
      */
     public void writeHoldRegister(int unitId, int address, List<Integer> values) {
-        if (address < 0) {
-            throw new IllegalArgumentException("address<0");
+        if (values.isEmpty()) {
+            throw new IllegalArgumentException("values is empty");
         }
-        byte[] data = new byte[values.size() * 2];
-        for (int i = 0; i < values.size(); i++) {
-            byte[] bytes = ShortUtil.toByteArray(values.get(i));
-            data[i * 2] = bytes[0];
-            data[i * 2 + 1] = bytes[1];
-        }
-        MbWriteMultipleRegisterRequest reqPdu = new MbWriteMultipleRegisterRequest(address, values.size(), data);
-        this.readModbusData(unitId, reqPdu);
+
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(values.size() * 2);
+        values.forEach(buff::putShort);
+        this.writeHoldRegister(unitId, address, buff.getData());
     }
 
     /**
@@ -384,15 +407,20 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
      * @return 字节数组
      */
     public byte[] readInputRegister(int unitId, int address, int quantity) {
-        if (address < 0) {
-            throw new IllegalArgumentException("address<0");
+        if (address < 0 || address > 65535) {
+            throw new IllegalArgumentException("address < 0 || address > 65535");
         }
-        if (quantity <= 0 || quantity > 125) {
-            throw new IllegalArgumentException("quantity<=0||quantity>125");
+        if (quantity < 1) {
+            throw new IllegalArgumentException("quantity < 1");
         }
-        MbReadInputRegisterRequest reqPdu = new MbReadInputRegisterRequest(address, quantity);
-        MbReadInputRegisterResponse resPdu = (MbReadInputRegisterResponse) this.readModbusData(unitId, reqPdu);
-        return resPdu.getRegister();
+
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(quantity * 2);
+        LoopGroupAlg.loopExecute(quantity, 125, (off, len) -> {
+            MbReadInputRegisterRequest reqPdu = new MbReadInputRegisterRequest(address + off, len);
+            MbReadInputRegisterResponse resPdu = (MbReadInputRegisterResponse) this.readModbusData(unitId, reqPdu);
+            buff.putBytes(resPdu.getRegister());
+        });
+        return buff.getData();
     }
     //endregion
 
@@ -421,6 +449,7 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
         if (bitIndex < 0 || bitIndex > 15) {
             throw new IllegalArgumentException("bitIndex < 0 || bitIndex > 15");
         }
+
         byte[] res = this.readHoldRegister(unitId, address, 1);
         int byteOffset = bitIndex / 8;
         int bitOffset = bitIndex % 8;

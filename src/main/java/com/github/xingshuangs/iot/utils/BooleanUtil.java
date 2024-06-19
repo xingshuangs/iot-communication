@@ -134,7 +134,7 @@ public class BooleanUtil {
             throw new IllegalArgumentException("list is null or empty");
         }
         int index = 0;
-        byte[] values = new byte[list.size() / 8 + list.size() % 8 == 0 ? 0 : 1];
+        byte[] values = new byte[(list.size() / 8) + (list.size() % 8 == 0 ? 0 : 1)];
         for (int i = 0; i < values.length; i++) {
             for (int j = 0; j < 8; j++) {
                 if (index < list.size()) {
