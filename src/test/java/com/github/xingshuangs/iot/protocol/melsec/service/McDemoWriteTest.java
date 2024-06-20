@@ -34,7 +34,7 @@ import com.github.xingshuangs.iot.utils.HexUtil;
 public class McDemoWriteTest {
 
     public static void main(String[] args) {
-        McPLC mcPLC = new McPLC(EMcSeries.Q_L, "127.0.0.1", 6000);
+        McPLC mcPLC = new McPLC(EMcSeries.QnA, "127.0.0.1", 6000);
 
         // optional
         mcPLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));

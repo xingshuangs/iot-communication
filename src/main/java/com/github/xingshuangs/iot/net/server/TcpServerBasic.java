@@ -62,7 +62,6 @@ public class TcpServerBasic {
     protected ExecutorService executorService;
 
     public TcpServerBasic() {
-        this.executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
 
     //region 服务端
@@ -84,6 +83,7 @@ public class TcpServerBasic {
         try {
             this.port = port;
             this.stop();
+            this.executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
             this.serverSocket = new ServerSocket(port);
             Thread thread = new Thread(this::waitForClients);
             thread.setDaemon(true);
@@ -100,6 +100,7 @@ public class TcpServerBasic {
         try {
             if (this.isAlive()) {
                 this.serverSocket.close();
+                this.executorService.shutdown();
                 // 关闭服务端，端口号[{}]
                 log.debug("Close the server, port number [{}]", this.port);
             }

@@ -211,6 +211,7 @@ class Demo {
     }
 }
 ```
+
 ## Any unitId mode (1 to many)
 
 ### 1. Read data
@@ -309,6 +310,27 @@ class Demo {
         plc.writeString(5, 2, "1234");
 
         plc.close();
+    }
+}
+```
+
+## ModbusTcp Server(Slave)
+
+```java
+class Demo {
+    public static void main(String[] args) {
+        ModbusTcpServer server = new ModbusTcpServer();
+        server.start();
+
+        ModbusTcp modbusTcp = new ModbusTcp("127.0.0.1");
+        // optional
+        modbusTcp.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
+
+        modbusTcp.writeInt16(2, (short) 10);
+        short data = modbusTcp.readInt16(2);
+
+        modbusTcp.close();
+        server.stop();
     }
 }
 ```

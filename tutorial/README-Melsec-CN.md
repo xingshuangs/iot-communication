@@ -70,7 +70,7 @@
 ```java
 class Demo {
     public static void main(String[] args) {
-        McPLC mcPLC = new McPLC(EMcSeries.Q_L, "127.0.0.1", 6000);
+        McPLC mcPLC = new McPLC(EMcSeries.QnA, "127.0.0.1", 6000);
         // optional
         mcPLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
         // read boolean
@@ -91,7 +91,7 @@ class Demo {
 class Demo {
     public static void main(String[] args) {
         // 长连接方式，即持久化为true
-        McPLC mcPLC = new McPLC(EMcSeries.Q_L, "127.0.0.1", 6000);
+        McPLC mcPLC = new McPLC(EMcSeries.QnA, "127.0.0.1", 6000);
         boolean booleanData = mcPLC.readBoolean("M100");
         // 需要手动关闭
         plc.close();
@@ -105,7 +105,7 @@ class Demo {
 class Demo {
     public static void main(String[] args) {
         // 短连接
-        McPLC mcPLC = new McPLC(EMcSeries.Q_L, "127.0.0.1", 6000);
+        McPLC mcPLC = new McPLC(EMcSeries.QnA, "127.0.0.1", 6000);
         // 设置短连接模式，即持久化为false
         mcPLC.setPersistence(false);
         boolean booleanData = mcPLC.readBoolean("M100");
@@ -120,7 +120,7 @@ class Demo {
 ```java
 class Demo {
     public static void main(String[] args) {
-        McPLC mcPLC = new McPLC(EMcSeries.Q_L, "127.0.0.1", 6000);
+        McPLC mcPLC = new McPLC(EMcSeries.QnA, "127.0.0.1", 6000);
 
         // optional
         mcPLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
@@ -194,7 +194,7 @@ class Demo {
 ```java
 class Demo {
     public static void main(String[] args) {
-        McPLC mcPLC = new McPLC(EMcSeries.Q_L, "127.0.0.1", 6000);
+        McPLC mcPLC = new McPLC(EMcSeries.QnA, "127.0.0.1", 6000);
 
         // optional
         mcPLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
@@ -269,7 +269,7 @@ class Demo {
 ```java
 class Demo {
     public static void main(String[] args) {
-        McPLC mcPLC = new McPLC(EMcSeries.Q_L, "127.0.0.1", 6000);
+        McPLC mcPLC = new McPLC(EMcSeries.QnA, "127.0.0.1", 6000);
 
         // optional
         mcPLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
