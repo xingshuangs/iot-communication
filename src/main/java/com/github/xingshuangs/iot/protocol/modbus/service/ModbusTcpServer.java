@@ -26,13 +26,14 @@ package com.github.xingshuangs.iot.protocol.modbus.service;
 
 
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
-import com.github.xingshuangs.iot.common.buff.EByteBuffFormat;
 import com.github.xingshuangs.iot.exceptions.SocketRuntimeException;
 import com.github.xingshuangs.iot.net.SocketUtils;
 import com.github.xingshuangs.iot.net.server.TcpServerBasic;
 import com.github.xingshuangs.iot.protocol.modbus.enums.EMbExceptionCode;
+import com.github.xingshuangs.iot.protocol.modbus.enums.EMbFunctionCode;
 import com.github.xingshuangs.iot.protocol.modbus.model.*;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
+import com.github.xingshuangs.iot.utils.HexUtil;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -41,13 +42,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * ModbusTcp服务端
+ * ModbusTcp服务端，目前忽略unitId
  *
  * @author xingshuang
  */
@@ -80,11 +82,6 @@ public class ModbusTcpServer extends TcpServerBasic {
      * 保持寄存器
      */
     private byte[] holdRegisters;
-
-    /**
-     * 编码方式
-     */
-    private EByteBuffFormat buffFormat = EByteBuffFormat.BA_DC;
 
     /**
      * 客户端当前的连接数量
@@ -171,20 +168,20 @@ public class ModbusTcpServer extends TcpServerBasic {
                     response = this.writeSingleRegister(request);
                     break;
                 case WRITE_MULTIPLE_COIL:
-                    // TODO: 待修改
-                    response = this.writeSingleRegister(request);
+                    response = this.writeMultipleCoil(request);
                     break;
                 case WRITE_MULTIPLE_REGISTER:
-                    // TODO: 待修改
-                    response = this.writeSingleRegister(request);
+                    response = this.writeMultipleRegister(request);
                     break;
                 default:
-                    response = new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbExceptionCode.ILLEGAL_FUNCTION));
+                    EMbFunctionCode errorFunctionCode = EMbFunctionCode.from((byte) (request.getPdu().getFunctionCode().getCode() | ((byte) 0x80)));
+                    response = new MbTcpResponse(request.getHeader(), new MbErrorResponse(errorFunctionCode, EMbExceptionCode.ILLEGAL_FUNCTION));
                     break;
             }
             this.write(socket, response.toByteArray());
         } catch (Exception e) {
-            response = new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbExceptionCode.SLAVE_DEVICE_FAILURE));
+            EMbFunctionCode errorFunctionCode = EMbFunctionCode.from((byte) (request.getPdu().getFunctionCode().getCode() | ((byte) 0x80)));
+            response = new MbTcpResponse(request.getHeader(), new MbErrorResponse(errorFunctionCode, EMbExceptionCode.SLAVE_DEVICE_FAILURE));
             this.write(socket, response.toByteArray());
         }
     }
@@ -216,76 +213,275 @@ public class ModbusTcpServer extends TcpServerBasic {
                 throw new SocketRuntimeException("The client is disconnected.");
             }
 
-            byte[] data = new byte[MbapHeader.BYTE_LENGTH];
-            data[0] = (byte) firstByte;
-            this.read(socket, data, 1, MbapHeader.BYTE_LENGTH, 1024, 0, true);
-            MbapHeader header = MbapHeader.fromBytes(data);
-            byte[] total = new byte[data.length + header.getLength() - 1];
-            System.arraycopy(data, 0, total, 0, data.length);
-            this.read(socket, total, data.length, header.getLength() - 1, 1024, 0, true);
-            return data;
+            byte[] headerBytes = new byte[MbapHeader.BYTE_LENGTH];
+            headerBytes[0] = (byte) firstByte;
+            this.read(socket, headerBytes, 1, MbapHeader.BYTE_LENGTH - 1, 1024, 0, true);
+            MbapHeader header = MbapHeader.fromBytes(headerBytes);
+            byte[] total = new byte[headerBytes.length + header.getLength() - 1];
+            System.arraycopy(headerBytes, 0, total, 0, headerBytes.length);
+            this.read(socket, total, headerBytes.length, header.getLength() - 1, 1024, 0, true);
+            return total;
         } catch (IOException e) {
             throw new SocketRuntimeException(e);
         }
     }
 
+    /**
+     * 读取线圈数据
+     *
+     * @param request 请求
+     * @return 响应
+     */
     private MbTcpResponse readCoil(MbTcpRequest request) {
         MbReadCoilRequest reqPdu = (MbReadCoilRequest) request.getPdu();
-        List<Boolean> booleans = this.coils.subList(reqPdu.getAddress(), reqPdu.getAddress() + reqPdu.getQuantity());
-        byte[] bytes = BooleanUtil.listToByteArray(booleans);
+        log.debug("[READ_COIL] address[{}], quantity[{}]", reqPdu.getAddress(), reqPdu.getQuantity());
+        if (reqPdu.getQuantity() < 1 || reqPdu.getQuantity() > this.coils.size()) {
+            return new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbFunctionCode.ERROR_READ_COIL, EMbExceptionCode.ILLEGAL_DATA_VALUE));
+        }
+        if (reqPdu.getAddress() < 0
+                || reqPdu.getAddress() > this.coils.size() - 1
+                || reqPdu.getAddress() + reqPdu.getQuantity() > this.coils.size() - 1) {
+            return new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbFunctionCode.ERROR_READ_COIL, EMbExceptionCode.ILLEGAL_DATA_ADDRESS));
+        }
+
+        byte[] bytes;
+        try {
+            this.rwLock.readLock().lock();
+            List<Boolean> booleans = this.coils.subList(reqPdu.getAddress(), reqPdu.getAddress() + reqPdu.getQuantity());
+            bytes = BooleanUtil.listToByteArray(booleans);
+        } finally {
+            this.rwLock.readLock().unlock();
+        }
+
         MbReadCoilResponse ackPdu = new MbReadCoilResponse();
         ackPdu.setCount(bytes.length);
         ackPdu.setCoilStatus(bytes);
         return new MbTcpResponse(request.getHeader(), ackPdu);
     }
 
+    /**
+     * 读取读取离散输入的数据
+     *
+     * @param request 请求
+     * @return 响应
+     */
     private MbTcpResponse readDiscreteInput(MbTcpRequest request) {
         MbReadDiscreteInputRequest reqPdu = (MbReadDiscreteInputRequest) request.getPdu();
-        List<Boolean> booleans = this.discreteInputs.subList(reqPdu.getAddress(), reqPdu.getAddress() + reqPdu.getQuantity());
-        byte[] bytes = BooleanUtil.listToByteArray(booleans);
+        log.debug("[READ_DISCRETE_INPUT] address[{}], quantity[{}]", reqPdu.getAddress(), reqPdu.getQuantity());
+        if (reqPdu.getQuantity() < 1 || reqPdu.getQuantity() > this.discreteInputs.size()) {
+            return new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbFunctionCode.ERROR_READ_DISCRETE_INPUT, EMbExceptionCode.ILLEGAL_DATA_VALUE));
+        }
+        if (reqPdu.getAddress() < 0
+                || reqPdu.getAddress() > this.discreteInputs.size() - 1
+                || reqPdu.getAddress() + reqPdu.getQuantity() > this.discreteInputs.size() - 1) {
+            return new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbFunctionCode.ERROR_READ_DISCRETE_INPUT, EMbExceptionCode.ILLEGAL_DATA_ADDRESS));
+        }
+
+        byte[] bytes;
+        try {
+            this.rwLock.readLock().lock();
+            List<Boolean> booleans = this.discreteInputs.subList(reqPdu.getAddress(), reqPdu.getAddress() + reqPdu.getQuantity());
+            bytes = BooleanUtil.listToByteArray(booleans);
+        } finally {
+            this.rwLock.readLock().unlock();
+        }
+
         MbReadDiscreteInputResponse ackPdu = new MbReadDiscreteInputResponse();
         ackPdu.setCount(bytes.length);
         ackPdu.setInputStatus(bytes);
         return new MbTcpResponse(request.getHeader(), ackPdu);
     }
 
+    /**
+     * 读取保持寄存器的数据
+     *
+     * @param request 请求
+     * @return 响应
+     */
     private MbTcpResponse readHoldRegister(MbTcpRequest request) {
         MbReadHoldRegisterRequest reqPdu = (MbReadHoldRegisterRequest) request.getPdu();
-        ByteReadBuff buff = ByteReadBuff.newInstance(this.holdRegisters);
-        byte[] bytes = buff.getBytes(reqPdu.getAddress() * 2, reqPdu.getQuantity() * 2);
+        log.debug("[READ_HOLD_REGISTER] address[{}], quantity[{}]", reqPdu.getAddress(), reqPdu.getQuantity());
+        if (reqPdu.getQuantity() < 1 || reqPdu.getQuantity() > (this.holdRegisters.length / 2)) {
+            return new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbFunctionCode.ERROR_READ_HOLD_REGISTER, EMbExceptionCode.ILLEGAL_DATA_VALUE));
+        }
+        if (reqPdu.getAddress() < 0
+                || reqPdu.getAddress() > (this.holdRegisters.length / 2) - 1
+                || reqPdu.getAddress() + reqPdu.getQuantity() > (this.holdRegisters.length / 2) - 1) {
+            return new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbFunctionCode.ERROR_READ_HOLD_REGISTER, EMbExceptionCode.ILLEGAL_DATA_ADDRESS));
+        }
+
+        byte[] bytes;
+        try {
+            this.rwLock.readLock().lock();
+            ByteReadBuff buff = ByteReadBuff.newInstance(this.holdRegisters);
+            bytes = buff.getBytes(reqPdu.getAddress() * 2, reqPdu.getQuantity() * 2);
+        } finally {
+            this.rwLock.readLock().unlock();
+        }
+
         MbReadHoldRegisterResponse ackPdu = new MbReadHoldRegisterResponse();
         ackPdu.setCount(bytes.length);
         ackPdu.setRegister(bytes);
         return new MbTcpResponse(request.getHeader(), ackPdu);
     }
 
+    /**
+     * 读取输入寄存器的数据
+     *
+     * @param request 请求
+     * @return 响应
+     */
     private MbTcpResponse readInputRegister(MbTcpRequest request) {
         MbReadInputRegisterRequest reqPdu = (MbReadInputRegisterRequest) request.getPdu();
-        ByteReadBuff buff = ByteReadBuff.newInstance(this.inputRegisters);
-        byte[] bytes = buff.getBytes(reqPdu.getAddress() * 2, reqPdu.getQuantity() * 2);
+        log.debug("[READ_INPUT_REGISTER] address[{}], quantity[{}]", reqPdu.getAddress(), reqPdu.getQuantity());
+        if (reqPdu.getQuantity() < 1 || reqPdu.getQuantity() > (this.inputRegisters.length / 2)) {
+            return new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbFunctionCode.ERROR_READ_INPUT_REGISTER, EMbExceptionCode.ILLEGAL_DATA_VALUE));
+        }
+        if (reqPdu.getAddress() < 0
+                || reqPdu.getAddress() > (this.inputRegisters.length / 2) - 1
+                || reqPdu.getAddress() + reqPdu.getQuantity() > (this.inputRegisters.length / 2) - 1) {
+            return new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbFunctionCode.ERROR_READ_INPUT_REGISTER, EMbExceptionCode.ILLEGAL_DATA_ADDRESS));
+        }
+
+        byte[] bytes;
+        try {
+            this.rwLock.readLock().lock();
+            ByteReadBuff buff = ByteReadBuff.newInstance(this.inputRegisters);
+            bytes = buff.getBytes(reqPdu.getAddress() * 2, reqPdu.getQuantity() * 2);
+        } finally {
+            this.rwLock.readLock().unlock();
+        }
+
         MbReadInputRegisterResponse ackPdu = new MbReadInputRegisterResponse();
         ackPdu.setCount(bytes.length);
         ackPdu.setRegister(bytes);
         return new MbTcpResponse(request.getHeader(), ackPdu);
     }
 
+    /**
+     * 写入单线圈数据
+     *
+     * @param request 请求
+     * @return 响应
+     */
     private MbTcpResponse writeSingleCoil(MbTcpRequest request) {
         MbWriteSingleCoilRequest reqPdu = (MbWriteSingleCoilRequest) request.getPdu();
-        this.coils.set(reqPdu.getAddress(), reqPdu.isValue());
+        log.debug("[WRITE_SINGLE_COIL] address[{}], value[{}]", reqPdu.getAddress(), reqPdu.isValue());
+
+        if (reqPdu.getAddress() < 0 || reqPdu.getAddress() > this.coils.size() - 1) {
+            return new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbFunctionCode.ERROR_WRITE_SINGLE_COIL, EMbExceptionCode.ILLEGAL_DATA_ADDRESS));
+        }
+
+        try {
+            this.rwLock.writeLock().lock();
+            this.coils.set(reqPdu.getAddress(), reqPdu.isValue());
+        } finally {
+            this.rwLock.writeLock().unlock();
+        }
+
         MbWriteSingleCoilResponse ackPdu = new MbWriteSingleCoilResponse();
         ackPdu.setAddress(reqPdu.getAddress());
         ackPdu.setValue(new byte[]{(byte) 0xFF, 0x00});
         return new MbTcpResponse(request.getHeader(), ackPdu);
     }
 
+    /**
+     * 写入单寄存器数据
+     *
+     * @param request 请求
+     * @return 响应
+     */
     private MbTcpResponse writeSingleRegister(MbTcpRequest request) {
         MbWriteSingleRegisterRequest reqPdu = (MbWriteSingleRegisterRequest) request.getPdu();
-        byte[] bytes = ShortUtil.toByteArray(reqPdu.getValue());
-        this.holdRegisters[reqPdu.getAddress() * 2] = bytes[0];
-        this.holdRegisters[reqPdu.getAddress() * 2 + 1] = bytes[1];
+        log.debug("[WRITE_SINGLE_REGISTER] address[{}], value[{}]", reqPdu.getAddress(), reqPdu.getValue());
+        if (reqPdu.getValue() < 0 || reqPdu.getValue() > 65535) {
+            return new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbFunctionCode.ERROR_WRITE_SINGLE_REGISTER, EMbExceptionCode.ILLEGAL_DATA_VALUE));
+        }
+        if (reqPdu.getAddress() < 0 || reqPdu.getAddress() > (this.holdRegisters.length / 2) - 1) {
+            return new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbFunctionCode.ERROR_WRITE_SINGLE_REGISTER, EMbExceptionCode.ILLEGAL_DATA_ADDRESS));
+        }
+
+        try {
+            this.rwLock.writeLock().lock();
+            byte[] bytes = ShortUtil.toByteArray(reqPdu.getValue());
+            System.arraycopy(bytes, 0, this.holdRegisters, reqPdu.getAddress() * 2, bytes.length);
+        } finally {
+            this.rwLock.writeLock().unlock();
+        }
+
         MbWriteSingleRegisterResponse ackPdu = new MbWriteSingleRegisterResponse();
         ackPdu.setAddress(reqPdu.getAddress());
         ackPdu.setValue(new byte[]{(byte) 0xFF, 0x00});
+        return new MbTcpResponse(request.getHeader(), ackPdu);
+    }
+
+    /**
+     * 写入多线圈数据
+     *
+     * @param request 请求
+     * @return 响应
+     */
+    private MbTcpResponse writeMultipleCoil(MbTcpRequest request) {
+        MbWriteMultipleCoilRequest reqPdu = (MbWriteMultipleCoilRequest) request.getPdu();
+        List<Boolean> booleans = BooleanUtil.byteArrayToList(reqPdu.getQuantity(), reqPdu.getValue());
+        log.debug("[WRITE_MULTIPLE_COIL] address[{}], quantity[{}], value[{}]", reqPdu.getAddress(), reqPdu.getQuantity(), Arrays.toString(booleans.toArray()));
+
+        if (reqPdu.getQuantity() < 1
+                || reqPdu.getQuantity() > this.coils.size()
+                || reqPdu.getCount() != reqPdu.getValue().length) {
+            return new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbFunctionCode.ERROR_WRITE_MULTIPLE_COIL, EMbExceptionCode.ILLEGAL_DATA_VALUE));
+        }
+        if (reqPdu.getAddress() < 0
+                || reqPdu.getAddress() > this.coils.size() - 1
+                || reqPdu.getAddress() + reqPdu.getQuantity() > this.coils.size() - 1) {
+            return new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbFunctionCode.ERROR_WRITE_MULTIPLE_COIL, EMbExceptionCode.ILLEGAL_DATA_ADDRESS));
+        }
+
+        try {
+            this.rwLock.writeLock().lock();
+            for (int i = 0; i < booleans.size(); i++) {
+                this.coils.set(reqPdu.getAddress() + i, booleans.get(i));
+            }
+        } finally {
+            this.rwLock.writeLock().unlock();
+        }
+
+        MbWriteMultipleCoilResponse ackPdu = new MbWriteMultipleCoilResponse();
+        ackPdu.setAddress(reqPdu.getAddress());
+        ackPdu.setQuantity(reqPdu.getQuantity());
+        return new MbTcpResponse(request.getHeader(), ackPdu);
+    }
+
+    /**
+     * 写入多寄存器数据
+     *
+     * @param request 请求
+     * @return 响应
+     */
+    private MbTcpResponse writeMultipleRegister(MbTcpRequest request) {
+        MbWriteMultipleRegisterRequest reqPdu = (MbWriteMultipleRegisterRequest) request.getPdu();
+        log.debug("[WRITE_MULTIPLE_REGISTER] address[{}], quantity[{}], value[{}]", reqPdu.getAddress(), reqPdu.getQuantity(), HexUtil.toHexString(reqPdu.getValue()));
+        if (reqPdu.getQuantity() < 1
+                || reqPdu.getQuantity() > (this.holdRegisters.length / 2)
+                || reqPdu.getCount() != reqPdu.getQuantity() * 2) {
+            return new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbFunctionCode.ERROR_WRITE_MULTIPLE_REGISTER, EMbExceptionCode.ILLEGAL_DATA_VALUE));
+        }
+        if (reqPdu.getAddress() < 0
+                || reqPdu.getAddress() > (this.holdRegisters.length / 2) - 1
+                || reqPdu.getAddress() + reqPdu.getQuantity() > (this.holdRegisters.length / 2) - 1) {
+            return new MbTcpResponse(request.getHeader(), new MbErrorResponse(EMbFunctionCode.ERROR_WRITE_MULTIPLE_REGISTER, EMbExceptionCode.ILLEGAL_DATA_ADDRESS));
+        }
+
+        try {
+            this.rwLock.writeLock().lock();
+            System.arraycopy(reqPdu.getValue(), 0, this.holdRegisters, reqPdu.getAddress() * 2, reqPdu.getCount());
+        } finally {
+            this.rwLock.writeLock().unlock();
+        }
+
+        MbWriteMultipleRegisterResponse ackPdu = new MbWriteMultipleRegisterResponse();
+        ackPdu.setAddress(reqPdu.getAddress());
+        ackPdu.setQuantity(reqPdu.getQuantity());
         return new MbTcpResponse(request.getHeader(), ackPdu);
     }
 }

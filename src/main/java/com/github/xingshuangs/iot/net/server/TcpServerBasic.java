@@ -122,7 +122,7 @@ public class TcpServerBasic {
      */
     protected void waitForClients() {
         // 开启等待客户端线程，端口号[{}]
-        log.debug("Open waiting client thread, port number [{}]", this.port);
+        log.debug("Open accept thread and waiting for clients, port number [{}]", this.port);
         while (this.isAlive()) {
             try {
                 Socket client = this.serverSocket.accept();

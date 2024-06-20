@@ -49,7 +49,8 @@ public class MbErrorResponse extends MbPdu {
     public MbErrorResponse() {
     }
 
-    public MbErrorResponse(EMbExceptionCode errorCode) {
+    public MbErrorResponse(EMbFunctionCode functionCode, EMbExceptionCode errorCode) {
+        this.functionCode = functionCode;
         this.errorCode = errorCode;
     }
 
