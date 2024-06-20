@@ -14,11 +14,11 @@
 
 > protocol type
 
-| Modbus Protocol | Class              | Remark             |
-|:---------------:|:-------------------|:-------------------|
-|       Tcp       | ModbusTcp          | Ethernet           |
-|       Rtu       | ModbusRtuOverTcp   | Serial to Ethernet |
-|      Ascii      | ModbusAsciiOverTcp | Serial to Ethernet |
+| Modbus Protocol | Class                      | Remark             |
+|:---------------:|:---------------------------|:-------------------|
+|       Tcp       | ModbusTcp, ModbusTcpServer | Ethernet           |
+|       Rtu       | ModbusRtuOverTcp           | Serial to Ethernet |
+|      Ascii      | ModbusAsciiOverTcp         | Serial to Ethernet |
 
 > Area
 

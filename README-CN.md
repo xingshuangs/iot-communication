@@ -1,6 +1,6 @@
 # IOT-COMMUNICATION
 
-[![Maven-v1.5.1](https://img.shields.io/badge/Maven-v1.5.1-brightgreen)](https://mvnrepository.com/artifact/com.github.xingshuangs/iot-communication)
+[![Maven-v1.5.2](https://img.shields.io/badge/Maven-v1.5.2-brightgreen)](https://mvnrepository.com/artifact/com.github.xingshuangs/iot-communication)
 ![Language-java8](https://img.shields.io/badge/Language-java8-blue)
 ![Idea-2022.02.03](https://img.shields.io/badge/Idea-2022.02.03-lightgrey)
 ![CopyRight-Oscura](https://img.shields.io/badge/CopyRight-Oscura-yellow)
@@ -16,8 +16,8 @@
 
 - 西门子S7通信协议，支持西门子S1500，S1200，S400，S300，S200Smart，西门子数控机床828D，
   [S7Client DEMO](https://github.com/xingshuangs/SiemensWindowProgram)
-- Modbus通信协议，支持ModbusTcp，ModbusRtuOverTcp，ModbusAsciiOverTcp
-- 三菱Melsec（MC）通信协议，支持PLC iQ-R系列, Q/L系列, QnA系列, 目前只测试了L系列和FX5U
+- Modbus通信协议，支持ModbusTcp, ModbusRtuOverTcp, ModbusAsciiOverTcp, ModbusTcpServer
+- 三菱Melsec（MC）通信协议，支持PLC iQ-R系列, Q/L系列, QnA系列, A系列,  目前只测试了L系列和FX5U
 - RTSP, RTCP, RTP, H264, MP4 (FMP4)协议，RTSP + H264 + FMP4 + WebSocket + MSE +
   WEB，[WEB Monitor DEMO](https://github.com/xingshuangs/rtsp-websocket-server)
 - 基础字节数组解析转换工具
@@ -31,7 +31,7 @@
 <dependency>
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.2</version>
 </dependency>
 ```
 

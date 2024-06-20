@@ -6,15 +6,15 @@
 
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.2</version>
     <packaging>jar</packaging>
 
     <name>iot-communication</name>
     <description>
         目前它只是一个物联网通信的工具，包含
         1、西门子S7通信协议，支持西门子S1500，S1200，S400，S300，S200Smart，西门子机床828D;
-        2、Modbus通信协议，支持ModbusTcp，ModbusRtuOverTcp，ModbusAsciiOverTcp;
-        3、三菱MELSEC（MC）通信协议，支持PLC iQ-R系列, Q/L系列, QnA系列, 目前只测试了L系列;
+        2、Modbus通信协议，支持ModbusTcp, ModbusRtuOverTcp, ModbusAsciiOverTcp, ModbusTcpServer;
+        3、三菱Melsec（MC）通信协议，支持PLC iQ-R系列, Q/L系列, QnA系列, A系列,  目前只测试了L系列和FX5U;
         4、RTSP, RTCP, RTP, H264, MP4 (FMP4)协议，RTSP + H264 + FMP4 + WebSocket + MSE + WEB;
         5、基础字节数组解析转换工具;
     </description>

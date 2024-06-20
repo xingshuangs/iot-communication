@@ -1,6 +1,6 @@
 # IOT-COMMUNICATION
 
-[![Maven-v1.5.1](https://img.shields.io/badge/Maven-v1.5.1-brightgreen)](https://mvnrepository.com/artifact/com.github.xingshuangs/iot-communication)
+[![Maven-v1.5.2](https://img.shields.io/badge/Maven-v1.5.2-brightgreen)](https://mvnrepository.com/artifact/com.github.xingshuangs/iot-communication)
 ![Language-java8](https://img.shields.io/badge/Language-java8-blue)
 ![Idea-2022.02.03](https://img.shields.io/badge/Idea-2022.02.03-lightgrey)
 ![CopyRight-Oscura](https://img.shields.io/badge/CopyRight-Oscura-yellow)
@@ -16,8 +16,8 @@ Now, it is a tool for iot communication, used for the learning and development o
 
 - Siemens S7 protocol, support PLC S1500, S1200, S400, S300, S200Smart, Siemens SINUMERIK
   828D. [S7Client DEMO](https://github.com/xingshuangs/SiemensWindowProgram).
-- Modbus protocol, support ModbusTcp, ModbusRtuOverTcp, ModbusAsciiOverTcp.
-- Mitsubishi Melsec(MC) Protocol, support PLC iQ-R series, Q/L series, QnA series, Only the L Series and FX5U has been
+- Modbus protocol, support ModbusTcp, ModbusRtuOverTcp, ModbusAsciiOverTcp, ModbusTcpServer.
+- Mitsubishi Melsec(MC) Protocol, support PLC iQ-R series, Q/L series, QnA series, A series, Only the L Series and FX5U has been
   tested so far.
 - RTSP, RTCP, RTP, H264, MP4 (FMP4) protocol, RTSP + H264 + FMP4 + WebSocket + MSE +
   WEB. [WEB Monitor DEMO](https://github.com/xingshuangs/rtsp-websocket-server).
@@ -32,7 +32,7 @@ Add the dependency to pom.xml in the JAVA project.
 <dependency>
     <groupId>com.github.xingshuangs</groupId>
     <artifactId>iot-communication</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.2</version>
 </dependency>
 ```
 

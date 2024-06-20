@@ -14,11 +14,11 @@
 
 > 协议类
 
-| Modbus协议 | 对应的类               | 备注      |
-|:--------:|:-------------------|:--------|
-|   Tcp    | ModbusTcp          | 网口      |
-|   Rtu    | ModbusRtuOverTcp   | 需要串口转网口 |
-|  Ascii   | ModbusAsciiOverTcp | 需要串口转网口 |
+| Modbus协议 | 对应的类                       | 备注      |
+|:--------:|:---------------------------|:--------|
+|   Tcp    | ModbusTcp, ModbusTcpServer | 网口      |
+|   Rtu    | ModbusRtuOverTcp           | 需要串口转网口 |
+|  Ascii   | ModbusAsciiOverTcp         | 需要串口转网口 |
 
 > 存储区
 
