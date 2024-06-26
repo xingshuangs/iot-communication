@@ -78,7 +78,7 @@ class Demo {
     public static void main(String[] args) {
         S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
         // print message
-       this.s7PLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
+        s7PLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
         s7PLC.readByte("DB2.1");
         s7PLC.close();
     }

@@ -30,19 +30,19 @@
 
 | Abbr  | Device Name           | Symbol | Address | Type | Notation |
 |:-----:|:----------------------|:------:|:-------:|:----:|:---------|
-| SM10  | Special relay         |   SM   |   10    | BIT  | 10进制     |
-| SD12  | Special register      |   SD   |   12    | WORD | 10进制     |
-|  X2F  | Input                 |   X    |  0x2F   | BIT  | **16进制** |
-| Y12F  | Output                |   Y    |  0x12F  | BIT  | **16进制** |
-| M100  | Internal relay        |   M    |   100   | BIT  | 10进制     |
-|  L10  | Latch relay           |   L    |   10    | BIT  | 10进制     |
-|  F10  | Annunciator           |   F    |   10    | BIT  | 10进制     |
-|  V9   | Edge relay            |   V    |    9    | BIT  | 10进制     |
-|  B2F  | Link relay            |   B    |  0x2F   | BIT  | **16进制** |
-| D100  | Data register         |   D    |   100   | WORD | 10进制     |
-|  W1F  | Link register         |   W    |  0x1F   | WORD | **16进制** |
-| TN100 | Timer Current value   |   TN   |   100   | WORD | 10进制     |
-| CN100 | Counter Current value |   CN   |   100   | WORD | 10进制     |
+| SM10  | Special relay         |   SM   |   10    | BIT  | 10       |
+| SD12  | Special register      |   SD   |   12    | WORD | 10       |
+|  X2F  | Input                 |   X    |  0x2F   | BIT  | **16**   |
+| Y12F  | Output                |   Y    |  0x12F  | BIT  | **16**   |
+| M100  | Internal relay        |   M    |   100   | BIT  | 10       |
+|  L10  | Latch relay           |   L    |   10    | BIT  | 10       |
+|  F10  | Annunciator           |   F    |   10    | BIT  | 10       |
+|  V9   | Edge relay            |   V    |    9    | BIT  | 10       |
+|  B2F  | Link relay            |   B    |  0x2F   | BIT  | **16**   |
+| D100  | Data register         |   D    |   100   | WORD | 10       |
+|  W1F  | Link register         |   W    |  0x1F   | WORD | **16**   |
+| TN100 | Timer Current value   |   TN   |   100   | WORD | 10       |
+| CN100 | Counter Current value |   CN   |   100   | WORD | 10       |
 
 > Shortcut access interface
 
