@@ -32,6 +32,8 @@ import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceAddress;
 import com.github.xingshuangs.iot.protocol.melsec.model.McDeviceContent;
+import com.github.xingshuangs.iot.protocol.melsec.model.McFrame1EAccessRoute;
+import com.github.xingshuangs.iot.protocol.melsec.model.McFrame4E3EAccessRoute;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,6 +88,7 @@ public class McPLC extends McNetwork {
         this.tag = "Melsec";
         this.series = series;
         this.frameType = frameType;
+        this.accessRoute = frameType == EMcFrameType.FRAME_1E ? McFrame1EAccessRoute.createDefault() : McFrame4E3EAccessRoute.createDefault();
     }
 
     //region 软元件读取
