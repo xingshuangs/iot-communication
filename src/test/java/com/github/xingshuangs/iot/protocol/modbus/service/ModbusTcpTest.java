@@ -276,8 +276,8 @@ public class ModbusTcpTest {
 //        assertEquals(32L, l);
 
 //        ModbusTcp plc2 = new ModbusTcp(2, "192.168.3.98");
-        plc.writeString(2, "1234");
-        String s = plc.readString(2, 4);
+        plc.writeString(6000, "1234");
+        String s = plc.readString(6000, 4);
         assertEquals("1234", s);
 
 //        ModbusTcp plc3 = new ModbusTcp(2, "192.168.3.98");

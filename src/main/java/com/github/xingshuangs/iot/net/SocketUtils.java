@@ -156,7 +156,7 @@ public class SocketUtils {
             int num = in.read(data, off, len);
             if (num < 0) {
                 // 读取数据异常，未读取到数据，连接断开
-                throw new SocketRuntimeException("The data is not read, and the connection is disconnected");
+                throw new SocketRuntimeException("The end of the stream has been reached, and disconnected");
             }
             count += num;
             off += num;
