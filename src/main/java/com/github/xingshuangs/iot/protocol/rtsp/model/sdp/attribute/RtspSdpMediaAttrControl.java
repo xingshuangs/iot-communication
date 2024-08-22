@@ -42,12 +42,12 @@ public class RtspSdpMediaAttrControl {
     /**
      * 地址
      */
-    private String uri;
+    private String uri = "";
 
     /**
      * 轨道ID
      */
-    private Integer trackID;
+    private Integer trackID = 0;
 
     public static RtspSdpMediaAttrControl fromString(String src) {
         if (src == null || src.equals("")) {
@@ -60,7 +60,8 @@ public class RtspSdpMediaAttrControl {
         }
         int trackIDIndex = src.indexOf("trackID");
         if (trackIDIndex < 0) {
-            throw new RtspCommException("RtspSdpMediaAttrControl data error, trackID is not exist");
+            return control;
+//            throw new RtspCommException("RtspSdpMediaAttrControl data error, trackID is not exist");
         }
         control.uri = src.substring(trackIDIndex);
 

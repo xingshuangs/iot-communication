@@ -57,12 +57,12 @@ public class RtspSdp {
         // v= 字符串的索引，到第一个 m= 为session部分的内容
         int startSession = src.indexOf("v=");
         // m= 字符串的索引，每个 m= 之间为 media部分的内容
-        List<Integer> flagAllIndexes = StringSpUtil.findFlagAllIndexes(src, "m=");
+        List<Integer> flagAllIndexes = StringSpUtil.findFlagAllIndexes(src, "\nm=");
 
         RtspSdp sdp = new RtspSdp();
         // session数据解析
         if (startSession >= 0) {
-            String sessionStr = src.substring(startSession, flagAllIndexes.get(0));
+            String sessionStr = src.substring(startSession, flagAllIndexes.get(0) + 1);
             sdp.session = RtspSdpSession.fromString(sessionStr);
         }
 
@@ -72,9 +72,9 @@ public class RtspSdp {
         }
         List<String> mediaStrList = new ArrayList<>();
         for (int i = 0; i < flagAllIndexes.size() - 1; i++) {
-            mediaStrList.add(src.substring(flagAllIndexes.get(i), flagAllIndexes.get(i + 1)));
+            mediaStrList.add(src.substring(flagAllIndexes.get(i) + 1, flagAllIndexes.get(i + 1) + 1));
         }
-        mediaStrList.add(src.substring(flagAllIndexes.get(flagAllIndexes.size() - 1)));
+        mediaStrList.add(src.substring(flagAllIndexes.get(flagAllIndexes.size() - 1) + 1));
         sdp.medias = mediaStrList.stream().map(RtspSdpMedia::fromString).collect(Collectors.toList());
 
         return sdp;

@@ -85,7 +85,7 @@ public final class RtcpSdesReport extends RtcpBasePackage {
         for (RtcpSdesChunk chunk : this.sdesChunks) {
             length += chunk.byteArrayLength();
         }
-        return length;
+        return (int) Math.ceil(length / 4.0) * 4;
     }
 
     @Override

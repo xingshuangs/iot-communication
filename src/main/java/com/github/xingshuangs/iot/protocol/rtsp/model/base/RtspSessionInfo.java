@@ -44,7 +44,7 @@ public class RtspSessionInfo {
     /**
      * 毫秒级的超时时间，实际是秒级，最终转换成毫秒级
      */
-    private int timeout;
+    private int timeout = 6000;
 
     public static RtspSessionInfo fromString(String src) {
         if (src == null || src.equals("")) {

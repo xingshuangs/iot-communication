@@ -56,11 +56,11 @@ public class RtspClient extends RtspNetwork {
     }
 
     public RtspClient(URI uri, ERtspTransportProtocol transportProtocol) {
-        super(uri, transportProtocol);
+        this(uri, null, transportProtocol);
     }
 
     public RtspClient(URI uri, DigestAuthenticator authenticator) {
-        super(uri, authenticator);
+        this(uri, authenticator, ERtspTransportProtocol.TCP);
     }
 
     public RtspClient(URI uri, DigestAuthenticator authenticator, ERtspTransportProtocol transportProtocol) {

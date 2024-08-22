@@ -41,7 +41,7 @@ public class RtspFMp4ProxyTest {
 
     @Test
     public void runTcpSync1() {
-        URI uri = URI.create("rtsp://127.0.0.1:8554/11");
+        URI uri = URI.create("rtsp://192.168.3.36:8554/back");
         RtspClient client = new RtspClient(uri, ERtspTransportProtocol.UDP);
         RtspFMp4Proxy proxy = new RtspFMp4Proxy(client);
         proxy.onFmp4DataHandle(x -> {
@@ -51,7 +51,7 @@ public class RtspFMp4ProxyTest {
         proxy.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(5);
+                TimeUnit.SECONDS.sleep(30);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

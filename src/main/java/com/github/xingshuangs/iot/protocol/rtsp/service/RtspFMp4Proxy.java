@@ -222,6 +222,10 @@ public class RtspFMp4Proxy {
         if (this.mp4Header != null) {
             return;
         }
+        if (this.trackInfo == null) {
+            // 处理trackInfo
+            this.trackInfo = this.client.getTrackInfo();
+        }
         this.mp4TrackInfo = this.toMp4TrackInfo(this.client.getTrackInfo());
         log.debug(this.mp4TrackInfo.toString());
         this.mp4Header = new Mp4Header(mp4TrackInfo);

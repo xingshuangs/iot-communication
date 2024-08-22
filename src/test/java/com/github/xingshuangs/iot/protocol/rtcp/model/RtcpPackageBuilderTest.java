@@ -242,4 +242,30 @@ public class RtcpPackageBuilderTest {
         assertEquals(1, bye.getHeader().getLength());
         assertEquals(0L, bye.getSourceId());
     }
+
+    @Test
+    public void receiveAndByeFromBytes2() {
+        byte[] expect = new byte[]{(byte) 0x80, (byte) 0xC8, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, (byte) 0xE8, 0x1F,
+                0x1F, (byte) 0x6B, (byte) 0xD8, 0x32, (byte) 0x87, 0x3B, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)0x81, (byte) 0xCA, 0x00, 0x0c,
+                (byte)0xbb, 0x68, (byte)0xa6, 0x62, 0x01, 0x1c, 0x75, 0x73, 0x65, 0x72, 0x34, 0x32,
+                0x32, 0x38, 0x36, 0x39, 0x33, 0x39, 0x36, 0x39, 0x40, 0x68, 0x6f, 0x73, 0x74, 0x2d, 0x66, 0x33,
+                0x33, 0x65, 0x36, 0x32, 0x34, 0x36, 0x06, 0x09, 0x47, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x65,
+                0x72, 0x00, 0x00, 0x00};
+        List<RtcpBasePackage> basePackages = RtcpPackageBuilder.fromBytes(expect);
+        RtcpSenderReport senderReport = (RtcpSenderReport) basePackages.get(0);
+        assertEquals(2, senderReport.getHeader().getVersion());
+        assertFalse(senderReport.getHeader().isPadding());
+        assertEquals(0, senderReport.getHeader().getReceptionCount());
+        assertEquals(ERtcpPackageType.SR, senderReport.getHeader().getPackageType());
+        assertEquals(6, senderReport.getHeader().getLength());
+        assertEquals(0L, senderReport.getSourceId());
+        RtcpSdesReport sdesReport = (RtcpSdesReport) basePackages.get(1);
+        assertEquals(2, sdesReport.getHeader().getVersion());
+        assertFalse(sdesReport.getHeader().isPadding());
+        assertEquals(1, sdesReport.getHeader().getReceptionCount());
+        assertEquals(ERtcpPackageType.SDES, sdesReport.getHeader().getPackageType());
+        assertEquals(12, sdesReport.getHeader().getLength());
+
+    }
 }
