@@ -36,6 +36,7 @@ import com.github.xingshuangs.iot.utils.BooleanUtil;
 import com.github.xingshuangs.iot.utils.HexUtil;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -54,6 +55,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Slf4j
 public class ModbusTcpServer extends TcpServerBasic {
 

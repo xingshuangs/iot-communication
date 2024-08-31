@@ -38,6 +38,7 @@ import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import com.github.xingshuangs.iot.protocol.melsec.model.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ import java.util.function.BiPredicate;
  */
 @Slf4j
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class McNetwork extends TcpClientBasic {
 
     /**

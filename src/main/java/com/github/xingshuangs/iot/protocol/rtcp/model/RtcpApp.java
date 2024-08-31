@@ -28,6 +28,7 @@ package com.github.xingshuangs.iot.protocol.rtcp.model;
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.nio.charset.StandardCharsets;
 
@@ -48,6 +49,7 @@ import java.nio.charset.StandardCharsets;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public final class RtcpApp extends RtcpBasePackage {
 
     /**

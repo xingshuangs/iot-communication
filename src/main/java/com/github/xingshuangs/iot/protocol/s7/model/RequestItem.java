@@ -32,6 +32,7 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EParamVariableType;
 import com.github.xingshuangs.iot.protocol.s7.enums.ESyntaxID;
 import com.github.xingshuangs.iot.utils.IntegerUtil;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 标准数据读取请求项
@@ -39,6 +40,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class RequestItem extends RequestBaseItem {
 
     public static final int BYTE_LENGTH = 12;

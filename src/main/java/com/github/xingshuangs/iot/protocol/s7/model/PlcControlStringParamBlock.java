@@ -27,6 +27,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * PLC控制参数块，字符串格式
@@ -34,6 +35,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class PlcControlStringParamBlock extends PlcControlParamBlock {
 
     private String paramBlock = "";

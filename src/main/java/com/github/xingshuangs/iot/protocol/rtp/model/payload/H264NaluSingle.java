@@ -28,6 +28,7 @@ package com.github.xingshuangs.iot.protocol.rtp.model.payload;
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 单一Nalu模式
@@ -46,6 +47,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class H264NaluSingle extends H264NaluBase {
 
     /**

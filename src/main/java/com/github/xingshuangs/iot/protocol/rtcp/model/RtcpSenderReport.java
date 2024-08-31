@@ -28,6 +28,7 @@ package com.github.xingshuangs.iot.protocol.rtcp.model;
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +74,7 @@ import java.util.List;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public final class RtcpSenderReport extends RtcpBasePackage {
 
     /**

@@ -27,6 +27,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ import java.util.List;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class PlcControlInsertParamBlock extends PlcControlParamBlock {
 
     private byte unknowByte = 0x00;

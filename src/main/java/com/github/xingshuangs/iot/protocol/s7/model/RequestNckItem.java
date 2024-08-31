@@ -31,6 +31,7 @@ import com.github.xingshuangs.iot.protocol.s7.enums.ENckArea;
 import com.github.xingshuangs.iot.protocol.s7.enums.ENckModule;
 import com.github.xingshuangs.iot.protocol.s7.enums.ESyntaxID;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * NCK请求项
@@ -38,6 +39,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class RequestNckItem extends RequestBaseItem {
 
     public static final int BYTE_LENGTH = 10;

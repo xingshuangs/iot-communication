@@ -30,6 +30,7 @@ import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 上传下载数据
@@ -37,6 +38,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class UpDownloadDatum extends Datum {
 
     /**

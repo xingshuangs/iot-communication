@@ -31,6 +31,7 @@ import com.github.xingshuangs.iot.protocol.rtp.enums.EH264NaluType;
 import com.github.xingshuangs.iot.protocol.rtp.model.payload.H264NaluBuilder;
 import com.github.xingshuangs.iot.protocol.rtp.model.payload.H264NaluSingle;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 普通帧
@@ -38,6 +39,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class H264VideoFrame extends RawFrame {
 
     /**

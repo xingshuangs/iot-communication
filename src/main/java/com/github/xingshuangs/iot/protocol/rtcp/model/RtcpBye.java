@@ -29,6 +29,7 @@ import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.rtcp.enums.ERtcpPackageType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * bye
@@ -47,6 +48,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public final class RtcpBye extends RtcpBasePackage {
 
     /**

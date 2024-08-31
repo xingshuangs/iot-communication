@@ -29,6 +29,7 @@ import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.utils.ShortUtil;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Nalu的FuB
@@ -47,6 +48,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class H264NaluFuB extends H264NaluBase {
 
     /**

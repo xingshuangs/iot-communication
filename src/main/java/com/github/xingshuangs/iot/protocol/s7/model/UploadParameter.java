@@ -30,6 +30,7 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 上传参数
@@ -37,6 +38,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class UploadParameter extends UploadAckParameter {
 
     /**

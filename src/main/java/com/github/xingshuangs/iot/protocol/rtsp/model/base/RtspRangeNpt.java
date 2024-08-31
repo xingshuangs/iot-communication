@@ -26,6 +26,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model.base;
 
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 范围
@@ -33,6 +34,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class RtspRangeNpt extends RtspRange {
 
     /**

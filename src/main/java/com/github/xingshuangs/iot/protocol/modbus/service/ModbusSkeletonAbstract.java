@@ -34,6 +34,7 @@ import com.github.xingshuangs.iot.protocol.modbus.model.*;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
 import com.github.xingshuangs.iot.utils.ByteUtil;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.Charset;
@@ -48,6 +49,7 @@ import java.util.function.BiConsumer;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Slf4j
 public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
 

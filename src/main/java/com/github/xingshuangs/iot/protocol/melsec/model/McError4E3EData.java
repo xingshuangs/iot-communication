@@ -29,6 +29,7 @@ import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 协议体数据：错误信息
@@ -36,6 +37,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class McError4E3EData extends McData {
 
     /**

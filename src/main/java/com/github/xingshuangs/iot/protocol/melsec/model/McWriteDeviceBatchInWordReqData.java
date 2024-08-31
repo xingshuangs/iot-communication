@@ -28,6 +28,7 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcCommand;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 软元件访问批量写请求数据，字单位
@@ -35,6 +36,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class McWriteDeviceBatchInWordReqData extends McWriteDeviceBatchReqData {
 
     public McWriteDeviceBatchInWordReqData() {

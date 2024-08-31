@@ -27,6 +27,7 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 协议体数据：响应数据
@@ -34,6 +35,7 @@ import lombok.Data;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class McAckData extends McData {
 
     /**

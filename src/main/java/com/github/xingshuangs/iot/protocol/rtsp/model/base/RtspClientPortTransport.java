@@ -27,6 +27,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model.base;
 
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SE
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class RtspClientPortTransport extends RtspTransport {
 
     /**

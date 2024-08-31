@@ -37,6 +37,7 @@ import com.github.xingshuangs.iot.protocol.s7.constant.ErrorCode;
 import com.github.xingshuangs.iot.protocol.s7.enums.*;
 import com.github.xingshuangs.iot.protocol.s7.model.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
@@ -57,6 +58,7 @@ import java.util.stream.Collectors;
  * @author xingshuang
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @SuppressWarnings("DuplicatedCode")
 @Slf4j
 public class PLCNetwork extends TcpClientBasic {
