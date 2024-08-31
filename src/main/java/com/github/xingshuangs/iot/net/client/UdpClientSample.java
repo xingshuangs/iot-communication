@@ -31,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 /**
- * 简单UDP示例
+ * Sample UDP Client
  *
  * @author xingshuang
  */
@@ -39,12 +39,14 @@ import java.util.function.Consumer;
 public class UdpClientSample extends UdpClientBasic {
 
     /**
-     * 是否终止线程
+     * flag, is thread terminal.
+     * (是否终止线程)
      */
     private boolean terminal = false;
 
     /**
-     * 数据收发前自定义处理接口
+     * Custom callback interface.
+     * (数据收发前自定义处理接口)
      */
     private Consumer<byte[]> commCallback;
 

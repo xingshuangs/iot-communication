@@ -34,8 +34,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketAddress;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * TCP socket服务端的基础类
@@ -47,36 +47,45 @@ import java.util.concurrent.*;
 public class TcpServerBasic {
 
     /**
-     * 服务器对象
+     * Server socket object.
+     * (服务器对象)
      */
     private ServerSocket serverSocket;
 
     /**
-     * 端口号
+     * Port Number.
+     * (端口号)
      */
     protected int port = 8088;
 
     /**
-     * 线程池
+     * Thread pool service.
+     * (线程池)
      */
     protected ExecutorService executorService;
 
     public TcpServerBasic() {
+        // NOOP
     }
 
     //region 服务端
 
     /**
-     * 启动
+     * start the server
+     * (启动)
+     *
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void start() {
         this.start(this.port);
     }
 
     /**
-     * 启动
+     * start the server
+     * (启动)
      *
-     * @param port 端口号
+     * @param port port number
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void start(int port) {
 
@@ -94,7 +103,9 @@ public class TcpServerBasic {
     }
 
     /**
-     * 停止
+     * Stop the server.
+     * (停止)
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void stop() {
         try {
@@ -110,16 +121,18 @@ public class TcpServerBasic {
     }
 
     /**
-     * 是否活跃着
+     * Is the server alive.
+     * (是否活跃着)
      *
-     * @return ture：活跃着，false：死了
+     * @return ture：alive，false：dead
      */
     public boolean isAlive() {
         return this.serverSocket != null && !this.serverSocket.isClosed();
     }
 
     /**
-     * 等待客户端连入
+     * Wait for client come in.
+     * (等待客户端连入)
      */
     protected void waitForClients() {
         // 开启等待客户端线程，端口号[{}]
@@ -144,19 +157,21 @@ public class TcpServerBasic {
     //region 客户端
 
     /**
-     * 校验客户端是否允许连入
+     * Valid if the client can come in.
+     * (校验客户端是否允许连入)
      *
-     * @param client 客户端
-     * @return true:验证成功，false：验证失败
+     * @param client client socket object
+     * @return true: valid success，false：valid fail
      */
     protected boolean checkClientValid(Socket client) {
         return true;
     }
 
     /**
-     * 客户端连入后要做的业务
+     * Do handler after client connected.
+     * (客户端连入后要做的业务)
      *
-     * @param client 客户端
+     * @param client client socket object
      */
     protected void doClientConnected(Socket client) {
         // 有客户端[{}]连入
@@ -186,37 +201,42 @@ public class TcpServerBasic {
     }
 
     /**
-     * 客户端连入
+     * client connected, can override
+     * (客户端连入)
      *
-     * @param socket 客户端
+     * @param socket client socket object
      */
     protected void clientConnected(Socket socket) {
         // NOOP
     }
 
     /**
-     * 客户端断开
+     * Client disconnected, can override.
+     * (客户端断开)
      *
-     * @param socket 客户端
+     * @param socket client socket object
      */
     protected void clientDisconnected(Socket socket) {
         // NOOP
     }
 
     /**
-     * 握手校验
+     * Check handshake, true: success, false: fail.
+     * (握手校验)
      *
-     * @param socket 客户端
-     * @return 校验结果，true：成功，false：失败
+     * @param socket client socket object
+     * @return check result, true: success, false: fail
      */
     protected boolean checkHandshake(Socket socket) {
         return true;
     }
 
     /**
-     * 执行客户端的业务，可重写
+     * Do client message handler, can override.
+     * (执行客户端的业务，可重写)
      *
-     * @param socket 客户端的socket对象
+     * @param socket client socket object
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     protected void doClientHandle(Socket socket) {
         byte[] data = this.readClientData(socket);
@@ -224,10 +244,12 @@ public class TcpServerBasic {
     }
 
     /**
-     * 读取客户端数据
+     * Read client data, can override.
+     * (读取客户端数据)
      *
-     * @param socket 客户端socket对象
-     * @return 读取的字节数据
+     * @param socket client socket object
+     * @return the bytes array read into
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     protected byte[] readClientData(Socket socket) {
         try {
@@ -247,10 +269,12 @@ public class TcpServerBasic {
     }
 
     /**
-     * 写数据
+     * Write data by byte array.
+     * （写入数据）
      *
-     * @param socket socket
-     * @param data   字节数组数据
+     * @param socket socket object
+     * @param data   byte array
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     protected void write(final Socket socket, final byte[] data) {
         try {
@@ -261,38 +285,44 @@ public class TcpServerBasic {
     }
 
     /**
-     * 读数据
+     * Read data and store it in the position of the specified byte array.
+     * （读取数据）
      *
-     * @param socket socket
-     * @param data   字节数组数据
-     * @return 读取个数
+     * @param socket      socket object
+     * @param data        byte array
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     protected int read(final Socket socket, final byte[] data) {
         return this.read(socket, data, 0, data.length, 1024);
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * （读取数据）
      *
-     * @param socket socket对象
-     * @param data   字节数组
-     * @param offset 偏移量
-     * @param length 写入长度
-     * @return 返回读取的数据长度
+     * @param socket      socket object
+     * @param data        byte array
+     * @param offset      the start offset in the data.
+     * @param length      the number of bytes to read.
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     protected int read(final Socket socket, final byte[] data, final int offset, final int length) {
         return this.read(socket, data, offset, length, 1024);
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * （读取数据）
      *
-     * @param socket    socket对象
-     * @param data      字节数组
-     * @param offset    偏移量
-     * @param length    写入长度
-     * @param maxLength 单次通信允许的对最大长度
-     * @return 返回读取的数据长度
+     * @param socket      socket object
+     * @param data        byte array
+     * @param offset      the start offset in the data.
+     * @param length      the number of bytes to read.
+     * @param maxLength   the maximum length allowed for a single communication,if litter than 0, then ignore. (单次通信允许的对最大长度，若小于等于0则不考虑)
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     protected int read(final Socket socket, final byte[] data, final int offset, final int length, final int maxLength) {
         try {
@@ -303,16 +333,18 @@ public class TcpServerBasic {
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * （读取数据）
      *
-     * @param socket      socket对象
-     * @param data        字节数组
-     * @param offset      偏移量
-     * @param length      读取长度
-     * @param maxLength   单次通信允许的对最大长度
-     * @param timeout     超时时间，0：没有超时时间，无限等
-     * @param waitForMore 若数据不够，是否等待，等待更多数据，大部分都是不等待的，等待都适用于分包粘包的情况
-     * @return 读取数据个数
+     * @param socket      socket object
+     * @param data        byte array
+     * @param offset      the start offset in the data.
+     * @param length      the number of bytes to read.
+     * @param maxLength   the maximum length allowed for a single communication,if litter than 0, then ignore. (单次通信允许的对最大长度，若小于等于0则不考虑)
+     * @param timeout     timeout with ms, 0: no timeout
+     * @param waitForMore If the data is not enough, whether to wait for more data, most of them are not waiting, waiting is suitable for subcontracting sticky packages(若数据不够，是否等待，等待更多数据，大部分都是不等待的，等待都适用于分包粘包的情况)
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     protected int read(final Socket socket, final byte[] data, final int offset, final int length,
                        final int maxLength, final int timeout, final boolean waitForMore) {

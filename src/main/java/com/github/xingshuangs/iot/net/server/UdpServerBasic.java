@@ -40,12 +40,14 @@ import java.net.SocketAddress;
 public class UdpServerBasic {
 
     /**
-     * 端口号
+     * Port Number.
+     * (端口号)
      */
     private final int port;
 
     /**
-     * socket对象
+     * Udp socket object.
+     * (socket对象)
      */
     private DatagramSocket socket;
 
@@ -62,7 +64,8 @@ public class UdpServerBasic {
     }
 
     /**
-     * 关闭
+     * Close UDP transport.
+     * (关闭)
      */
     public void close() {
         if (this.socket != null && !this.socket.isClosed()) {
@@ -71,9 +74,11 @@ public class UdpServerBasic {
     }
 
     /**
-     * 获取连接socket
+     * Get connected socket.
+     * (获取连接socket)
      *
      * @return socket
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public DatagramSocket getAvailableSocket() {
         // 已创建的直接返回socket
@@ -89,22 +94,26 @@ public class UdpServerBasic {
     }
 
     /**
-     * 写入数据
+     * Write data by byte array.
+     * (写入数据)
      *
-     * @param data    字节数组
-     * @param address 地址
+     * @param data    byte array
+     * @param address socket address.
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void write(final byte[] data, SocketAddress address) {
         this.write(data, 0, data.length, address);
     }
 
     /**
-     * 写入数据
+     * Write data by byte array.
+     * (写入数据)
      *
-     * @param data    字节数组
-     * @param offset  偏移量
-     * @param length  数据长度
-     * @param address socket地址
+     * @param data    byte array
+     * @param offset  the start offset in the data.
+     * @param length  the number of bytes to write.
+     * @param address socket address.
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void write(final byte[] data, final int offset, final int length, SocketAddress address) {
         DatagramPacket packet = new DatagramPacket(data, offset, length, address);
@@ -112,9 +121,11 @@ public class UdpServerBasic {
     }
 
     /**
-     * 写入数据
+     * Write data by datagram packet.
+     * (写入数据)
      *
-     * @param packet DatagramPacket对象
+     * @param packet DatagramPacket object
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void write(DatagramPacket packet) {
         try {
@@ -136,12 +147,14 @@ public class UdpServerBasic {
     }
 
     /**
-     * 读取数据
+     * Read data into DatagramPacket object
+     * (读取数据)
      *
-     * @param data   字节数组
-     * @param offset 偏移量
-     * @param length 数据长度
-     * @return DatagramPacket数据对象
+     * @param data    byte array
+     * @param offset  the start offset in the data.
+     * @param length  the number of bytes to read.
+     * @return DatagramPacket object
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public DatagramPacket read(final byte[] data, int offset, int length) {
         DatagramPacket packet = new DatagramPacket(data, offset, length);
@@ -149,10 +162,12 @@ public class UdpServerBasic {
     }
 
     /**
-     * 读取数据
+     * Read data into DatagramPacket object
+     * (读取数据)
      *
-     * @param packet DatagramPacket数据对象
-     * @return DatagramPacket数据对象
+     * @param packet DatagramPacket object
+     * @return DatagramPacket object
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public DatagramPacket read(DatagramPacket packet) {
         try {

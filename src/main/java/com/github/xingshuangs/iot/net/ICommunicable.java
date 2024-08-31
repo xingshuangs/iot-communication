@@ -26,46 +26,54 @@ package com.github.xingshuangs.iot.net;
 
 
 /**
- * 通信接口
+ * Communicate interface.
+ * (通信接口)
  *
  * @author xingshuang
  */
 public interface ICommunicable {
 
+    /**
+     * Close the communication.
+     * (关闭)
+     */
     void close();
 
     /**
-     * 写入数据
+     * Write data by byte array.
+     * (写入数据)
      *
-     * @param data 字节数组
+     * @param data byte array
      */
     void write(final byte[] data);
 
     /**
-     * 写入数据
+     * Write data by byte array.
+     * (写入数据)
      *
-     * @param data   字节数组
-     * @param offset 偏移量
-     * @param length 数据长度
+     * @param data   byte array
+     * @param offset the start offset in the data.
+     * @param length the number of bytes to write.
      */
     void write(final byte[] data, final int offset, final int length);
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * (读取数据)
      *
-     * @param data 字节数组
-     * @return 读取到的数据长度
+     * @param data byte array
+     * @return the total number of bytes read into the data
      */
     int read(final byte[] data);
 
-
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * (读取数据)
      *
-     * @param data   字节数组
-     * @param offset 偏移量
-     * @param length 数据长度
-     * @return 读取到的数据长度
+     * @param data   byte array
+     * @param offset the start offset in the data.
+     * @param length the number of bytes to read.
+     * @return the total number of bytes read into the data
      */
     int read(final byte[] data, final int offset, final int length);
 }

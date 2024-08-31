@@ -38,6 +38,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.github.xingshuangs.iot.common.constant.GeneralConst.LOCALHOST;
 
 /**
+ * TCP client basic class
+ *
  * @author xingshuang
  */
 @Slf4j
@@ -46,32 +48,38 @@ public class TcpClientBasic implements ICommunicable {
     // region 私有对象
 
     /**
-     * TAG名
+     * TAG name.
+     * (TAG名)
      */
     protected String tag = "";
 
     /**
-     * socket对象
+     * socket object.
+     * (socket对象)
      */
     protected Socket socket;
 
     /**
-     * 连接超时时间，默认是10s
+     * Connect timeout in millisecond, 10_000ms default.
+     * (连接超时时间，默认是10s)
      */
     protected int connectTimeout = 10_000;
 
     /**
-     * 接收数据超时时间，默认是10s
+     * Receive timeout in millisecond, 10_000ms default.
+     * (接收数据超时时间，默认是10s)
      */
     protected int receiveTimeout = 10_000;
 
     /**
-     * socket的地址
+     * Socket address.
+     * (socket的地址)
      */
     protected final InetSocketAddress socketAddress;
 
     /**
-     * socket是否发生错误
+     * Flag, is socket has error.
+     * (socket是否发生错误)
      */
     protected final AtomicBoolean socketError;
 
@@ -124,16 +132,20 @@ public class TcpClientBasic implements ICommunicable {
     //region 公共方法
 
     /**
-     * 校验连接状态，true为连接，false为断开
+     * Check connected state.
+     * (校验连接状态，true为连接，false为断开)
      *
-     * @return 连接状态，true为连接，false为断开
+     * @return connected state，true: connected，false: disconnected.
      */
     public boolean checkConnected() {
         return !this.socketError.get() && SocketUtils.isConnected(this.socket);
     }
 
     /**
-     * 连接
+     * Connect server.
+     * (连接)
+     *
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void connect() {
         this.close();
@@ -141,9 +153,11 @@ public class TcpClientBasic implements ICommunicable {
     }
 
     /**
-     * 获取有效的socket对象
+     * Get available socket object.
+     * (获取有效的socket对象)
      *
-     * @return socket对象
+     * @return socket object
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public Socket getAvailableSocket() {
         // socket连接过了，同时又不支持自动重连，直接返回
@@ -174,7 +188,10 @@ public class TcpClientBasic implements ICommunicable {
     }
 
     /**
-     * 关闭socket
+     * Close socket.
+     * (关闭socket)
+     *
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void close() {
         try {
@@ -187,7 +204,8 @@ public class TcpClientBasic implements ICommunicable {
     //endregion
 
     /**
-     * 连接成功之后要做的动作
+     * Do after connected.
+     * 连(接成功之后要做的动作)
      */
     protected void doAfterConnected() {
         // NOOP
@@ -196,32 +214,38 @@ public class TcpClientBasic implements ICommunicable {
     //region 读写方法
 
     /**
-     * 写入数据
+     * Write data by byte array.
+     * （写入数据）
      *
-     * @param data 字节数组
+     * @param data byte array
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void write(final byte[] data) {
         this.write(data, 0, data.length);
     }
 
     /**
-     * 写入数据
+     * Write data by byte array.
+     * （写入数据）
      *
-     * @param data   字节数组
-     * @param offset 偏移量
-     * @param length 数据长度
+     * @param data   byte array
+     * @param offset the start offset in the data.
+     * @param length the number of bytes to write.
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void write(final byte[] data, final int offset, final int length) {
         this.write(data, offset, length, -1);
     }
 
     /**
-     * 写入数据
+     * Write data by byte array.
+     * （写入数据）
      *
-     * @param data      字节数组
-     * @param offset    偏移量
-     * @param length    数据长度
-     * @param maxLength 单次通信允许的对最大长度
+     * @param data      byte array
+     * @param offset    the start offset in the data.
+     * @param length    the number of bytes to write.
+     * @param maxLength the maximum length allowed for a single communication,if litter than 0, then ignore. (单次通信允许的对最大长度，若小于等于0则不考虑)
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void write(final byte[] data, final int offset, final int length, final int maxLength) {
         try {
@@ -234,88 +258,102 @@ public class TcpClientBasic implements ICommunicable {
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * （读取数据）
      *
-     * @param data 字节数组
-     * @return 读取的数据长度
+     * @param data byte array
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public int read(final byte[] data) {
         return this.read(data, 0, data.length, this.receiveTimeout);
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * （读取数据）
      *
-     * @param data    字节数组
-     * @param timeout 超时时间，毫秒级别，0：没有超时时间，无限等
-     * @return 读取的数据长度
+     * @param data    byte array
+     * @param timeout timeout with ms, 0: no timeout
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public int read(final byte[] data, final int timeout) {
         return this.read(data, 0, data.length, timeout);
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * （读取数据）
      *
-     * @param data   字节数组
-     * @param offset 偏移量
-     * @param length 数据长度
-     * @return 读取的数据长度
+     * @param data   byte array
+     * @param offset the start offset in the data.
+     * @param length the number of bytes to read.
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public int read(final byte[] data, final int offset, final int length) {
         return this.read(data, offset, length, this.receiveTimeout);
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * （读取数据）
      *
-     * @param data        字节数组
-     * @param offset      偏移量
-     * @param length      数据长度
-     * @param waitForMore 一直等待数据
-     * @return 读取的数据长度
+     * @param data        byte array
+     * @param offset      the start offset in the data.
+     * @param length      the number of bytes to read.
+     * @param waitForMore If the data is not enough, whether to wait for more data, most of them are not waiting, waiting is suitable for subcontracting sticky packages(若数据不够，是否等待，等待更多数据，大部分都是不等待的，等待都适用于分包粘包的情况)
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public int read(final byte[] data, final int offset, final int length, final boolean waitForMore) {
         return this.read(data, offset, length, 1024, this.receiveTimeout, waitForMore);
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * （读取数据）
      *
-     * @param data    字节数组
-     * @param offset  偏移量
-     * @param length  数据长度
-     * @param timeout 超时时间，毫秒级别，0：没有超时时间，无限等
-     * @return 读取的数据长度
+     * @param data    byte array
+     * @param offset  the start offset in the data.
+     * @param length  the number of bytes to read.
+     * @param timeout timeout with ms, 0: no timeout
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public int read(final byte[] data, final int offset, final int length, final int timeout) {
         return this.read(data, offset, length, -1, timeout);
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * （读取数据）
      *
-     * @param data      字节数组
-     * @param offset    偏移量
-     * @param length    数据长度
-     * @param maxLength 单次通信允许的对最大长度
-     * @param timeout   超时时间，毫秒级别，0：没有超时时间，无限等
-     * @return 读取的数据长度
+     * @param data      byte array
+     * @param offset    the start offset in the data.
+     * @param length    the number of bytes to read.
+     * @param maxLength the maximum length allowed for a single communication,if litter than 0, then ignore. (单次通信允许的对最大长度，若小于等于0则不考虑)
+     * @param timeout   timeout with ms, 0: no timeout
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public int read(final byte[] data, final int offset, final int length, final int maxLength, final int timeout) {
         return this.read(data, offset, length, maxLength, timeout, false);
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * （读取数据）
      *
-     * @param data        字节数组
-     * @param offset      偏移量
-     * @param length      数据长度
-     * @param maxLength   单次通信允许的对最大长度
-     * @param timeout     超时时间，毫秒级别，0：没有超时时间，无限等
-     * @param waitForMore 若数据不够，是否等待，等待更多数据，大部分都是不等待的，等待都适用于分包粘包的情况
-     * @return 读取的数据长度
+     * @param data        byte array
+     * @param offset      the start offset in the data.
+     * @param length      the number of bytes to read.
+     * @param maxLength   the maximum length allowed for a single communication,if litter than 0, then ignore. (单次通信允许的对最大长度，若小于等于0则不考虑)
+     * @param timeout     timeout with ms, 0: no timeout
+     * @param waitForMore If the data is not enough, whether to wait for more data, most of them are not waiting, waiting is suitable for subcontracting sticky packages(若数据不够，是否等待，等待更多数据，大部分都是不等待的，等待都适用于分包粘包的情况)
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public int read(final byte[] data, final int offset, final int length, final int maxLength,
                     final int timeout, final boolean waitForMore) {

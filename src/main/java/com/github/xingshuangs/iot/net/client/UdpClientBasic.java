@@ -34,26 +34,29 @@ import java.net.*;
 import static com.github.xingshuangs.iot.common.constant.GeneralConst.LOCALHOST;
 
 /**
- * UDP客户端通信协议
+ * UDP client basic class.
  *
  * @author xingshuang
  */
 public class UdpClientBasic implements ICommunicable {
 
     /**
-     * 服务端地址
+     * Server address.
+     * (服务端地址)
      */
     protected InetSocketAddress serverAddress;
 
     /**
-     * socket对象
+     * UDP socket object.
+     * (socket对象)
      */
     protected DatagramSocket socket;
 
     /**
-     * 获取本地端口号
+     * Get local port number
+     * (获取本地端口号)
      *
-     * @return 本地端口号
+     * @return local port number
      */
     public int getLocalPort() {
         DatagramSocket availableSocket = this.getAvailableSocket();
@@ -65,10 +68,10 @@ public class UdpClientBasic implements ICommunicable {
     }
 
     /**
-     * 构造方法
+     * Construction.
      *
-     * @param ip   服务端的IP地址
-     * @param port 服务端的端口号
+     * @param ip   server ip address
+     * @param port Server port number
      */
     public UdpClientBasic(String ip, int port) {
         this.serverAddress = new InetSocketAddress(ip, port);
@@ -81,19 +84,22 @@ public class UdpClientBasic implements ICommunicable {
     }
 
     /**
-     * 绑定服务器
+     * Bind server.
+     * (绑定服务器)
      *
-     * @param ip   IP地址
-     * @param port 端口号
+     * @param ip   IP address
+     * @param port port number
      */
     public void bindServer(String ip, int port) {
         this.serverAddress = new InetSocketAddress(ip, port);
     }
 
     /**
-     * 获取连接socket
+     * Get connected socket.
+     * (获取连接socket)
      *
      * @return socket
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public DatagramSocket getAvailableSocket() {
         // 已连接的直接返回socket
@@ -112,9 +118,11 @@ public class UdpClientBasic implements ICommunicable {
     }
 
     /**
-     * 写入数据
+     * Write data by byte array.
+     * (写入数据)
      *
-     * @param data 字节数组
+     * @param data byte array
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void write(final byte[] data) {
         this.write(data, 0, data.length, this.serverAddress);
@@ -122,23 +130,27 @@ public class UdpClientBasic implements ICommunicable {
 
 
     /**
-     * 写入数据
+     * Write data by byte array.
+     * (写入数据)
      *
-     * @param data   字节数组
-     * @param offset 偏移量
-     * @param length 数据长度
+     * @param data   byte array
+     * @param offset the start offset in the data.
+     * @param length the number of bytes to write.
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void write(final byte[] data, final int offset, final int length) {
         this.write(data, offset, length, this.serverAddress);
     }
 
     /**
-     * 写入数据
+     * Write data by byte array.
+     * (写入数据)
      *
-     * @param data    字节数组
-     * @param offset  偏移量
-     * @param length  数据长度
-     * @param address socket地址
+     * @param data    byte array
+     * @param offset  the start offset in the data.
+     * @param length  the number of bytes to write.
+     * @param address socket address.
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void write(final byte[] data, final int offset, final int length, SocketAddress address) {
         DatagramPacket packet = new DatagramPacket(data, offset, length, address);
@@ -146,9 +158,11 @@ public class UdpClientBasic implements ICommunicable {
     }
 
     /**
-     * 写入数据
+     * Write data by datagram packet.
+     * (写入数据)
      *
-     * @param packet DatagramPacket对象
+     * @param packet DatagramPacket object
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void write(DatagramPacket packet) {
         try {
@@ -160,9 +174,11 @@ public class UdpClientBasic implements ICommunicable {
     }
 
     /**
-     * 读取数据，完全不知道待接收的数据长度
+     * Read data and store it in the position of the specified byte array.
+     * (读取数据)
      *
-     * @return 字节数组
+     * @return byte array
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public byte[] read() {
         byte[] buffer = new byte[4096];
@@ -177,21 +193,25 @@ public class UdpClientBasic implements ICommunicable {
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * (读取数据)
      *
-     * @param data 字节数组
-     * @return 读取到的数据长度
+     * @param data byte array
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public int read(final byte[] data) {
         return this.read(data, 0, data.length);
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * (读取数据)
      *
-     * @param data    字节数组
-     * @param timeout 超时时间，毫秒，0：一直阻塞，非0：超时时间
-     * @return 读取到的数据长度
+     * @param data    byte array
+     * @param timeout timeout in millisecond，0：blocked，big than 0：timeout time.
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public int read(final byte[] data, final int timeout) {
         return this.read(data, 0, data.length, timeout);
@@ -199,62 +219,72 @@ public class UdpClientBasic implements ICommunicable {
 
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * (读取数据)
      *
-     * @param data   字节数组
-     * @param offset 偏移量
-     * @param length 数据长度
-     * @return 读取到的数据长度
+     * @param data   byte array
+     * @param offset the start offset in the data.
+     * @param length the number of bytes to read.
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public int read(final byte[] data, final int offset, final int length) {
         return this.read(data, offset, length, this.serverAddress, 0);
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * (读取数据)
      *
-     * @param data    字节数组
-     * @param offset  偏移量
-     * @param length  数据长度
-     * @param timeout 超时时间，毫秒，0：一直阻塞，非0：超时时间
-     * @return 读取到的数据长度
+     * @param data    byte array
+     * @param offset  the start offset in the data.
+     * @param length  the number of bytes to read.
+     * @param timeout timeout in millisecond，0：blocked，big than 0：timeout time.
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public int read(final byte[] data, final int offset, final int length, final int timeout) {
         return this.read(data, offset, length, this.serverAddress, timeout);
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * (读取数据)
      *
-     * @param data    字节数组
-     * @param address socket地址
-     * @return 读取到的数据长度
+     * @param data    byte array
+     * @param address socket address.
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public int read(final byte[] data, final SocketAddress address) {
         return this.read(data, 0, data.length, address, 0);
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * (读取数据)
      *
-     * @param data    字节数组
-     * @param address socket地址
-     * @param timeout 超时时间，毫秒，0：一直阻塞，非0：超时时间
-     * @return 读取到的数据长度
+     * @param data    byte array
+     * @param address socket address.
+     * @param timeout timeout in millisecond，0：blocked，big than 0：timeout time.
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public int read(final byte[] data, final SocketAddress address, final int timeout) {
         return this.read(data, 0, data.length, address, timeout);
     }
 
     /**
-     * 读取数据
+     * Read data and store it in the position of the specified byte array.
+     * (读取数据)
      *
-     * @param data    字节数组
-     * @param offset  偏移量
-     * @param length  数据长度
-     * @param address socket地址
-     * @param timeout 超时时间，毫秒，0：一直阻塞，非0：超时时间
-     * @return 读取到的数据长度
+     * @param data    byte array
+     * @param offset  the start offset in the data.
+     * @param length  the number of bytes to read.
+     * @param address socket address.
+     * @param timeout timeout in millisecond，0：blocked，big than 0：timeout time.
+     * @return the total number of bytes read into the data
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public int read(final byte[] data, final int offset, final int length, final SocketAddress address, final int timeout) {
         DatagramPacket packet = new DatagramPacket(data, offset, length, address);
@@ -263,21 +293,25 @@ public class UdpClientBasic implements ICommunicable {
     }
 
     /**
-     * 读取数据
+     * Read data into DatagramPacket object
+     * (读取数据)
      *
-     * @param packet DatagramPacket数据对象
-     * @return DatagramPacket数据对象
+     * @param packet DatagramPacket object
+     * @return DatagramPacket object
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public DatagramPacket read(DatagramPacket packet) {
         return this.read(packet, 0);
     }
 
     /**
-     * 读取数据
+     * Read data into DatagramPacket object
+     * (读取数据)
      *
-     * @param packet  DatagramPacket数据对象
-     * @param timeout 超时时间，毫秒，0：一直阻塞，非0：超时时间
-     * @return DatagramPacket数据对象
+     * @param packet  DatagramPacket object
+     * @param timeout timeout in millisecond，0：blocked，big than 0：timeout time.
+     * @return DatagramPacket object
+     * @throws SocketRuntimeException Socket Runtime Exception
      */
     public DatagramPacket read(DatagramPacket packet, final int timeout) {
         try {

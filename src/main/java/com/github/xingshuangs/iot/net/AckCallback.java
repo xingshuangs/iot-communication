@@ -30,7 +30,8 @@ import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 响应的回调
+ * Response callback class.
+ * (响应的回调)
  *
  * @author xingshuang
  */
@@ -38,37 +39,44 @@ import java.util.concurrent.CompletableFuture;
 public class AckCallback<T> {
 
     /**
-     * 响应数据
+     * Response data.
+     * (响应数据)
      */
     protected T ackData;
 
     /**
-     * 数据响应监听器
+     * Data listener for callback.
+     * (数据响应监听器)
      */
     protected final IAckListener<T> listener;
 
     /**
-     * 是否完成
+     *  Flag, is completed.
+     * (是否完成)
      */
     protected boolean completed;
 
     /**
-     * 错误消息
+     * Error message for callback.
+     * (错误消息)
      */
     protected String errorMessage;
 
     /**
-     * 超时时间ms
+     * Timeout in millisecond.
+     * (超时时间ms)
      */
     protected final long timeoutMs;
 
     /**
-     * 锁对象
+     * Lock object.
+     * (锁对象)
      */
     protected final Object lock = new Object();
 
     /**
-     * 创建时间
+     * Object create time.
+     * (创建时间)
      */
     protected final LocalDateTime createTime = LocalDateTime.now();
 
@@ -85,9 +93,10 @@ public class AckCallback<T> {
     }
 
     /**
-     * 成功响应
+     * Response success.
+     * (成功响应)
      *
-     * @param ackPackage 响应数据包
+     * @param ackPackage response package data
      */
     public void responseOk(T ackPackage) {
         this.ackData = ackPackage;
@@ -102,9 +111,10 @@ public class AckCallback<T> {
     }
 
     /**
-     * 失败响应
+     * Response failed.
+     * (失败响应)
      *
-     * @param message 错误消息
+     * @param message error message
      */
     public void responseFail(String message) {
         this.ackData = null;
@@ -119,7 +129,8 @@ public class AckCallback<T> {
     }
 
     /**
-     * 等待数据
+     * Wait for more data.
+     * (等待数据)
      */
     public void waitData() {
         try {
@@ -132,9 +143,10 @@ public class AckCallback<T> {
     }
 
     /**
-     * 等待数据
+     * Wait for more data.
+     * (等待数据)
      *
-     * @param timeout 超时时间，毫秒级
+     * @param timeout timeout in millisecond
      */
     public void waitData(long timeout) {
         try {
