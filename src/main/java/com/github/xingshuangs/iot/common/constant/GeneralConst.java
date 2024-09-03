@@ -26,7 +26,8 @@ package com.github.xingshuangs.iot.common.constant;
 
 
 /**
- * 通用常量
+ * General const data.
+ * (通用常量)
  *
  * @author xingshuang
  */
@@ -37,47 +38,56 @@ public class GeneralConst {
     }
 
     /**
-     * 本地ip，127.0.0.1
+     * Localhost ip
+     * (本地ip，127.0.0.1)
      */
     public static final String LOCALHOST = "127.0.0.1";
 
     /**
-     * S7的端口号
+     * S7 protocol default port.
+     * (S7的端口号)
      */
     public static final int S7_PORT = 102;
 
     /**
-     * Modbus的端口号
+     * Modbus protocol default port.
+     * (Modbus的端口号)
      */
     public static final int MODBUS_PORT = 502;
 
     /**
-     * 三菱的端口号
+     * MELSEC protocol port, not default.
+     * (三菱的端口号)
      */
     public static final int MELSEC_PORT = 6000;
 
     /**
-     * bit类型
+     * The bit type.
+     * (bit类型)
      */
     public static final int TYPE_BIT = 0;
 
     /**
-     * word类型
+     * The word type.
+     * (word类型)
      */
     public static final int TYPE_WORD = 1;
 
     /**
-     * dword类型
+     * The dword type.
+     * (dword类型)
      */
     public static final int TYPE_DWORD = 2;
 
     /**
-     * 请求
+     * Request package tag name.
+     * (请求)
      */
     public static final String PACKAGE_REQ = "REQ";
 
     /**
-     * 响应
+     * Response package tag name.
+     * (响应)
      */
     public static final String PACKAGE_ACK = "ACK";
 

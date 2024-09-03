@@ -29,7 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 数据类型
+ * Basic data type.
+ * (数据类型)
  *
  * @author xingshuang
  */
@@ -54,22 +55,26 @@ public enum EDataType {
     STRING("string", 1),
 
     /**
-     * 目前只对S7协议使用，对应的JAVA类型long
+     *  It is used only for the S7 protocol currently, and the corresponding JAVA type is long.
+     * (目前只对S7协议使用，对应的JAVA类型long)
      */
     TIME("time", 4),
 
     /**
-     * 目前只对S7协议使用，对应的JAVA类型LocalDate
+     * It is used only for the S7 protocol currently, and the corresponding JAVA type is LocalDate.
+     * (目前只对S7协议使用，对应的JAVA类型LocalDate)
      */
     DATE("date", 2),
 
     /**
-     * 目前只对S7协议使用，对应的JAVA类型LocalTime
+     * It is used only for the S7 protocol currently, and the corresponding JAVA type is LocalTime.
+     * (目前只对S7协议使用，对应的JAVA类型LocalTime)
      */
     TIME_OF_DAY("timeOfDay", 4),
 
     /**
-     * 目前只对S7协议使用，对应的JAVA类型LocalDateTime
+     * It is used only for the S7 protocol currently, and the corresponding JAVA type is LocalDateTime.
+     * (目前只对S7协议使用，对应的JAVA类型LocalDateTime)
      */
     DTL("dtl", 12),
 
@@ -90,12 +95,14 @@ public enum EDataType {
     }
 
     /**
-     * 字节长度
+     * Data byte array length.
+     * (字节长度)
      */
     private final int byteLength;
 
     /**
-     * 名称
+     * Data name.
+     * (名称)
      */
     private final String name;
 

@@ -31,7 +31,8 @@ import com.github.xingshuangs.iot.common.enums.EDataType;
 import java.lang.annotation.*;
 
 /**
- * 字节数组变量参数
+ * Annotation of byte array variable.
+ * (字节数组变量参数)
  */
 @Target(value = {ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -39,44 +40,49 @@ import java.lang.annotation.*;
 public @interface ByteArrayVariable {
 
     /**
-     * 字节偏移量
+     * Byte offset.
+     * (字节偏移量)
      *
-     * @return 字节偏移量
+     * @return byte offset
      */
     int byteOffset() default 0;
 
     /**
-     * 位偏移量
+     * Bit offset.
+     * (位偏移量)
      *
-     * @return 位偏移量
+     * @return the bit offset
      */
     int bitOffset() default 0;
 
     /**
-     * 数量，数量大于1的时候对应的数据必须使用list
+     * Count, if count bigger than 1, then must use list type.
+     * (数量，数量大于1的时候对应的数据必须使用list)
      *
-     * @return 数量
+     * @return count
      */
     int count() default 1;
 
     /**
      * 类型
      *
-     * @return 类型
+     * @return type
      */
     EDataType type() default EDataType.BYTE;
 
     /**
-     * 是否小端模式
+     * Is little endian.
+     * (是否小端模式)
      *
-     * @return 是否小端模式
+     * @return is little endian
      */
     boolean littleEndian() default false;
 
     /**
-     * 数据格式
+     * 4 - or 8-byte encoding format.
+     * (数据格式)
      *
-     * @return 数据格式
+     * @return format
      */
     EByteBuffFormat format() default EByteBuffFormat.DC_BA;
 }

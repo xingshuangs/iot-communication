@@ -1,7 +1,8 @@
 package com.github.xingshuangs.iot.exceptions;
 
 /**
- * MC通信异常
+ * MC communication runtime exception class.
+ * (MC通信异常)
  *
  * @author xingshuang
  */

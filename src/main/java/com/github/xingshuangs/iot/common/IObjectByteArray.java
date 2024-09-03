@@ -26,23 +26,26 @@ package com.github.xingshuangs.iot.common;
 
 
 /**
- * 一个对象字节相关的接口
+ * Transform to byte array interface.
+ * (一个对象字节相关的接口)
  *
  * @author xingshuang
  */
 public interface IObjectByteArray {
 
     /**
-     * 获取字节数组长度
+     * Get current byte array length.
+     * (获取字节数组长度)
      *
-     * @return 长度结果
+     * @return byte array length.
      */
     int byteArrayLength();
 
     /**
-     * 转换为字节数组
+     * Transform current object to byte array.
+     * (转换为字节数组)
      *
-     * @return 字节数组
+     * @return byte array.
      */
     byte[] toByteArray();
 }

@@ -29,7 +29,8 @@ import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 
 /**
- * 循环处理相关工具
+ * Loop execute by group algorithm utility class
+ * (循环处理相关工具)
  *
  * @author xingshuang
  */
@@ -40,11 +41,12 @@ public class LoopGroupAlg {
     }
 
     /**
-     * 循环执行
+     * Loop execute each item.
+     * (循环执行)
      *
-     * @param actualLength 实际长度
-     * @param maxLength    最大允许长度
-     * @param biConsumer   消费执行
+     * @param actualLength actual length
+     * @param maxLength    the maximum length allowed in each loop
+     * @param biConsumer   custom handler with two parameters, first is current offset, second is current length.
      */
     public static void loopExecute(int actualLength, int maxLength, BiConsumer<Integer, Integer> biConsumer) {
         // 索引偏移
@@ -57,12 +59,13 @@ public class LoopGroupAlg {
     }
 
     /**
-     * 寻找满足条件的索引和长度
+     * Loop execute by condition and order, input two group items.
+     * 寻找满足条件的索引和长度，存在两个组
      *
-     * @param item1       选项1
-     * @param item2       选项2
-     * @param biPredicate 判定条件
-     * @param biConsumer  消费执行
+     * @param item1       group item1
+     * @param item2       group item2
+     * @param biPredicate custom condition
+     * @param biConsumer  custom handler with two items, include different offset and length.
      */
     public static void biLoopExecute(LoopGroupItem item1, LoopGroupItem item2,
                                      BiPredicate<LoopGroupItem, LoopGroupItem> biPredicate,

@@ -25,7 +25,8 @@
 package com.github.xingshuangs.iot.exceptions;
 
 /**
- * socket执行超时异常
+ * Socket communication timeout runtime exception class.
+ * (socket执行超时异常)
  *
  * @author xingshuang
  */

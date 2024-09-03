@@ -28,28 +28,33 @@ package com.github.xingshuangs.iot.common.buff;
 import com.github.xingshuangs.iot.exceptions.HexParseException;
 
 /**
- * 字节缓存格式
+ * 4 - or 8-byte encoding format.
+ * (字节缓存格式)
  *
  * @author xingshuang
  */
 public enum EByteBuffFormat {
     /**
-     * 按照原始顺序排列
+     * In the original order.
+     * (按照原始顺序排列)
      */
     AB_CD("AB_CD"),
 
     /**
-     * 按照单字节反转
+     * Invert as a single byte.
+     * (按照单字节反转)
      */
     BA_DC("BA_DC"),
 
     /**
-     * 按照双字节反转
+     * Reverse by double byte.
+     * (按照双字节反转)
      */
     CD_AB("CD_AB"),
 
     /**
-     * 按照倒序排列
+     * In reverse order.
+     * (按照倒序排列)
      */
     DC_BA("DC_BA");
 
@@ -60,21 +65,23 @@ public enum EByteBuffFormat {
     }
 
     /**
-     * 4字节数据按EByteBuffFormat重新格式化
+     * The 4-byte data is reformatted in EByteBuffFormat.
+     * (4字节数据按EByteBuffFormat重新格式化)
      *
-     * @param data 数据源
-     * @return 对应新的4字节数据
+     * @param data byte array
+     * @return new 4-byte array.
      */
     public byte[] formatIn4Bytes(byte[] data) {
         return this.formatIn4Bytes(data, 0);
     }
 
     /**
-     * 4字节数据按EByteBuffFormat重新格式化
+     * The 4-byte data is reformatted in EByteBuffFormat.
+     * (4字节数据按EByteBuffFormat重新格式化)
      *
-     * @param data  数据源
-     * @param index 索引
-     * @return 对应新的4字节数据
+     * @param data  byte array
+     * @param index index
+     * @return new 4-byte array.
      */
     public byte[] formatIn4Bytes(byte[] data, int index) {
         byte[] res = new byte[4];
@@ -111,21 +118,23 @@ public enum EByteBuffFormat {
     }
 
     /**
-     * 8字节数据按EByteBuffFormat重新格式化
+     * The 8-byte data is reformatted in EByteBuffFormat.
+     * (8字节数据按EByteBuffFormat重新格式化)
      *
      * @param data 数据源
-     * @return 对应新的8字节数据
+     * @return new 8-byte array.
      */
     public byte[] formatIn8Bytes(byte[] data) {
         return this.formatIn8Bytes(data, 0);
     }
 
     /**
-     * 8字节数据按EByteBuffFormat重新格式化
+     * The 4-byte data is reformatted in EByteBuffFormat.
+     * (8字节数据按EByteBuffFormat重新格式化)
      *
-     * @param data  数据源
-     * @param index 索引
-     * @return 对应新的8字节数据
+     * @param data  byte array
+     * @param index index
+     * @return new 8-byte array.
      */
     public byte[] formatIn8Bytes(byte[] data, int index) {
         byte[] res = new byte[8];

@@ -25,7 +25,8 @@
 package com.github.xingshuangs.iot.exceptions;
 
 /**
- * socket的运行异常
+ * Socket communication runtime exception class.
+ * (socket的运行异常)
  *
  * @author xingshuang
  */

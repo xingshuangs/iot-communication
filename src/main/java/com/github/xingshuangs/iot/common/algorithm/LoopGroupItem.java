@@ -28,7 +28,8 @@ package com.github.xingshuangs.iot.common.algorithm;
 import lombok.Data;
 
 /**
- * 基础数据参数
+ * Loop group item, include basic parameter.
+ * (基础数据参数)
  *
  * @author xingshuang
  */
@@ -36,17 +37,20 @@ import lombok.Data;
 public class LoopGroupItem {
 
     /**
-     * 实际长度
+     * Actual length.
+     * (实际长度)
      */
     private int actualLength = 0;
 
     /**
-     * 当前偏移量
+     * Current offset.
+     * (当前偏移量)
      */
     private int off = 0;
 
     /**
-     * 当前长度
+     * Current length.
+     * (当前长度)
      */
     private int len = 0;
 
@@ -58,9 +62,10 @@ public class LoopGroupItem {
     }
 
     /**
-     * 判定是否在有效范围内
+     * If current data is in valid range.
+     * (判定是否在有效范围内)
      *
-     * @return true：是，false：否
+     * @return true：in range，false：out range.
      */
     public boolean inRange() {
         return this.off + this.len < this.actualLength;
