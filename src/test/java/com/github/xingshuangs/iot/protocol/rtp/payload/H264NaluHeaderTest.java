@@ -49,5 +49,10 @@ public class H264NaluHeaderTest {
         assertEquals(3, header.getNri());
         assertEquals(EH264NaluType.FU_A, header.getType());
         assertArrayEquals(expect, header.toByteArray());
+
+        expect = new byte[]{(byte) 0x81};
+        header = H264NaluHeader.fromBytes(expect);
+        byte[] actual = header.toByteArray();
+        assertArrayEquals(expect, actual);
     }
 }

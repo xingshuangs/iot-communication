@@ -108,28 +108,19 @@ public class RtspClientTest {
     @Test
     public void connectUdpWithoutAuthenticator() {
         List<H264VideoFrame> list = new ArrayList<>();
-        URI uri = URI.create("rtsp://192.168.3.36:8554/back");
-        RtspClient client = new RtspClient(uri, ERtspTransportProtocol.TCP);
-        client.onCommCallback(log::info);
+        URI uri = URI.create("rtsp://127.0.0.1:8554/11");
+        RtspClient client = new RtspClient(uri, ERtspTransportProtocol.UDP);
+//        client.onCommCallback(log::info);
         client.onFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
-            list.add(f);
-            H264VideoFrame tmp = null;
-            if (list.size() >= 5) {
-                list.sort((a, b) -> (int) (a.getTimestamp() - b.getTimestamp()));
-                tmp = list.remove(0);
-//                log.debug(f.getTimestamp() + ", " + HexUtil.toHexString(new byte[]{f.getFrameSegment()[0]}) + tmp.getTimestamp() + ", " + HexUtil.toHexString(new byte[]{tmp.getFrameSegment()[0]}));
-            }
-            if (tmp == null) {
-                log.debug(f.getTimestamp() + ", " + HexUtil.toHexString(new byte[]{f.getFrameSegment()[0]}));
-            } else {
-                log.debug(f.getTimestamp() + ", " + HexUtil.toHexString(new byte[]{f.getFrameSegment()[0]}) + ", " + tmp.getTimestamp() + ", " + HexUtil.toHexString(new byte[]{tmp.getFrameSegment()[0]}));
+            if (f.getSliceType() != null) {
+                log.debug(f.getSliceType() + ", 时间戳：" + f.getTimestamp() + ", 第二个字节：" + HexUtil.toHexString(new byte[]{f.getFrameSegment()[1]}) + ", 字节长度" + f.getFrameSegment().length);
             }
         });
         client.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(10);
+                TimeUnit.SECONDS.sleep(60);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

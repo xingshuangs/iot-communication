@@ -22,43 +22,65 @@
  * SOFTWARE.
  */
 
-package com.github.xingshuangs.iot.protocol.rtp.model.frame;
+package com.github.xingshuangs.iot.protocol.rtp.enums;
 
 
-import com.github.xingshuangs.iot.common.IObjectByteArray;
-import com.github.xingshuangs.iot.protocol.rtp.enums.EFrameType;
-import lombok.Getter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 帧的基础类
+ * H264的Slice类型
  *
  * @author xingshuang
  */
-@Getter
-public class RawFrame implements IObjectByteArray {
+public enum EH264SliceType {
 
     /**
-     * 帧类别
+     * P帧
      */
-    protected EFrameType frameType;
+    P(5),
 
     /**
-     * 时间戳
+     * B帧
      */
-    protected long timestamp;
+    B(6),
 
     /**
-     * 帧内容
+     * I帧
      */
-    protected byte[] frameSegment = new byte[0];
+    I(7),
 
-    @Override
-    public int byteArrayLength() {
-        return 0;
+    /**
+     * SP帧
+     */
+    SP(8),
+
+    /**
+     * SI帧
+     */
+    SI(9),
+
+    ;
+
+    private static Map<Integer, EH264SliceType> map;
+
+    public static EH264SliceType from(int data) {
+        if (map == null) {
+            map = new HashMap<>();
+            for (EH264SliceType item : EH264SliceType.values()) {
+                map.put(item.code, item);
+            }
+        }
+        return map.get(data);
     }
 
-    @Override
-    public byte[] toByteArray() {
-        return new byte[0];
+    private final int code;
+
+    EH264SliceType(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
     }
 }

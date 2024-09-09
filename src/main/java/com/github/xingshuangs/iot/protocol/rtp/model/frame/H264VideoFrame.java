@@ -25,9 +25,12 @@
 package com.github.xingshuangs.iot.protocol.rtp.model.frame;
 
 
+import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EFrameType;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264NaluType;
+import com.github.xingshuangs.iot.protocol.rtp.enums.EH264SliceType;
+import com.github.xingshuangs.iot.protocol.rtp.model.payload.ExpGolomb;
 import com.github.xingshuangs.iot.protocol.rtp.model.payload.H264NaluBuilder;
 import com.github.xingshuangs.iot.protocol.rtp.model.payload.H264NaluSingle;
 import lombok.Data;
@@ -49,11 +52,21 @@ public class H264VideoFrame extends RawFrame {
 
     private final EH264NaluType naluType;
 
+    private EH264SliceType sliceType;
+
     public H264VideoFrame(EH264NaluType naluType, long timestamp, byte[] frameSegment) {
         this.frameType = EFrameType.VIDEO;
         this.naluType = naluType;
         this.timestamp = timestamp;
         this.frameSegment = frameSegment;
+        if (naluType == EH264NaluType.IDR_SLICE || naluType == EH264NaluType.NON_IDR_SLICE) {
+            ByteReadBuff buff = ByteReadBuff.newInstance(frameSegment);
+            buff.getByte();
+            // 从第二个字节开始，取2个字节
+            ExpGolomb expGolomb = new ExpGolomb(buff.getBytes(2));
+            expGolomb.readUE();
+            this.sliceType = EH264SliceType.from(expGolomb.readUE());
+        }
     }
 
     @Override
