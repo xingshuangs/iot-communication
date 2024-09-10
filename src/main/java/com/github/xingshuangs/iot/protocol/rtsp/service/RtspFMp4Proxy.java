@@ -31,6 +31,7 @@ import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import com.github.xingshuangs.iot.protocol.mp4.model.*;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EFrameType;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264NaluType;
+import com.github.xingshuangs.iot.protocol.rtp.enums.EH264SliceType;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
 import com.github.xingshuangs.iot.protocol.rtp.model.payload.SeqParameterSet;
 import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspTrackInfo;
@@ -253,7 +254,9 @@ public class RtspFMp4Proxy {
         }
         // 处理map4的header，只处理1次
         this.handleMp4Header();
-
+        if (frame.getTimestamp() < 0) {
+            return;
+        }
         // 这里的作用是缓存10个帧数据，重新排序，因为可能收到的帧时间戳不是按时间顺序排列
         this.gop.add(frame);
         if (this.gop.size() < 10) {
@@ -271,6 +274,15 @@ public class RtspFMp4Proxy {
         }
         this.lastFrame = videoFrame;
 
+        this.doVideoFrameHandle(videoFrame);
+    }
+
+    /**
+     * 执行处理
+     *
+     * @param videoFrame 视频帧
+     */
+    private void doVideoFrameHandle(H264VideoFrame videoFrame) {
         Mp4SampleData sampleData = new Mp4SampleData();
         sampleData.setData(videoFrame.getFrameSegment());
         sampleData.setTimestamp(videoFrame.getTimestamp());
@@ -287,7 +299,7 @@ public class RtspFMp4Proxy {
         } else {
             // 当前不是IDR帧，等数据量足够的时候再发送
             this.mp4TrackInfo.getSampleData().add(sampleData);
-            if (this.mp4TrackInfo.getSampleData().size() >= 5) {
+            if (this.mp4TrackInfo.getSampleData().size() >= 5 && videoFrame.getSliceType() == EH264SliceType.P) {
                 this.addSampleData();
             }
         }
@@ -295,6 +307,11 @@ public class RtspFMp4Proxy {
 
     private void addSampleData() {
         Mp4SampleData first = this.mp4TrackInfo.getSampleData().get(0);
+        // chrome workaround, mark first sample as being a Random Access Point to avoid sourcebuffer append issue
+        // https://code.google.com/p/chromium/issues/detail?id=229412
+        first.getFlags().setDependedOn(2);
+        first.getFlags().setIsNonSync(0);
+
         this.addFMp4Data(new Mp4MoofBox(this.sequenceNumber, first.getTimestamp(), this.mp4TrackInfo));
         this.addFMp4Data(new Mp4MdatBox(this.mp4TrackInfo.totalSampleData()));
         // 更新mp4TrackInfo，用新的数据副本

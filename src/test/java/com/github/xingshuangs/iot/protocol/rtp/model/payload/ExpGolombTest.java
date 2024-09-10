@@ -65,7 +65,7 @@ public class ExpGolombTest {
         byte[] data = new byte[]{0x0F, 0x00};
         ExpGolomb expGolomb = new ExpGolomb(data);
         expGolomb.skipUE();
-        assertEquals(2, expGolomb.getBitIndex());
+        assertEquals(1, expGolomb.getBitIndex());
     }
 
     @Test
@@ -73,7 +73,7 @@ public class ExpGolombTest {
         byte[] data = new byte[]{0x0F, 0x00};
         ExpGolomb expGolomb = new ExpGolomb(data);
         expGolomb.skipSE();
-        assertEquals(2, expGolomb.getBitIndex());
+        assertEquals(1, expGolomb.getBitIndex());
     }
 
     @Test

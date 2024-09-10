@@ -26,6 +26,8 @@ package com.github.xingshuangs.iot.protocol.rtp.model.payload;
 
 import org.junit.Test;
 
+import java.util.Base64;
+
 import static org.junit.Assert.*;
 
 
@@ -61,5 +63,15 @@ public class SeqParameterSetTest {
         assertFalse(sps.isAspectRatioInfoPresentFlag());
         assertEquals(1280, sps.getWidth());
         assertEquals(720, sps.getHeight());
+    }
+
+    @Test
+    public void demoTest(){
+        String data = "Z2QAKKzZQHgCJ+XARAAAD6QAAu4CPGDGWA==";
+        Base64.Decoder decoder = Base64.getDecoder();
+        byte[] decode = decoder.decode(data);
+        SeqParameterSet sps = SeqParameterSet.createSPS(decode);
+        assertEquals(1920, sps.getWidth());
+        assertEquals(1080, sps.getHeight());
     }
 }

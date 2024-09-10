@@ -126,16 +126,14 @@ public class ExpGolomb {
      * 跳过一个无符号指数哥伦布编码数值
      */
     public void skipUE() {
-        int count = this.skipLZ();
-        this.readNBit(1 + count);
+        this.readUE();
     }
 
     /**
      * 跳过一个有符号指数哥伦布编码数值
      */
     public void skipSE() {
-        int count = this.skipLZ();
-        this.readNBit(1 + count);
+        this.readSE();
     }
 
     /**

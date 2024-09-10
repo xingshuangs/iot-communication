@@ -114,7 +114,7 @@ public class RtspClientTest {
         client.onFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
             if (f.getSliceType() != null) {
-                log.debug(f.getSliceType() + ", 时间戳：" + f.getTimestamp() + ", 第二个字节：" + HexUtil.toHexString(new byte[]{f.getFrameSegment()[1]}) + ", 字节长度" + f.getFrameSegment().length);
+                log.debug(f.getSliceType() + ", 时间戳：" + f.getTimestamp() + ", 第二个字节：" + HexUtil.toHexString(new byte[]{f.getFrameSegment()[0], f.getFrameSegment()[1]}) + ", 字节长度:" + f.getFrameSegment().length);
             }
         });
         client.onDestroyHandle(() -> log.debug("close"));
