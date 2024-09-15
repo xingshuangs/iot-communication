@@ -114,13 +114,17 @@ public class RtspClientTest {
         client.onFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
             if (f.getSliceType() != null) {
-                log.debug(f.getSliceType() + ", 时间戳：" + f.getTimestamp() + ", 第二个字节：" + HexUtil.toHexString(new byte[]{f.getFrameSegment()[0], f.getFrameSegment()[1]}) + ", 字节长度:" + f.getFrameSegment().length);
+//                log.debug(f.getSliceType() + ", 时间戳：" + f.getTimestamp() + ", 第二个字节：" + HexUtil.toHexString(new byte[]{f.getFrameSegment()[0], f.getFrameSegment()[1]}) + ", 字节长度:" + f.getFrameSegment().length);
+                log.debug(f.getSliceType() + ", PTS：" + f.getPts() + ", DTS：" + f.getDts() + ", duration:" + f.getDuration()+", "+(f.getPts()-f.getDts()));
+            }
+            if (f.getDuration() <= 0) {
+                log.warn("存在一帧数据，duration <= 0");
             }
         });
         client.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(60);
+                TimeUnit.SECONDS.sleep(10);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

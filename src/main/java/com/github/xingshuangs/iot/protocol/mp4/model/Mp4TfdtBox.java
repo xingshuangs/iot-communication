@@ -37,7 +37,8 @@ import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 public class Mp4TfdtBox extends Mp4Box {
 
     /**
-     * 1字节，版本
+     * 1 byte, version, if version = 0, baseMediaDecodeTime length = 4 bytes, if version = 1, baseMediaDecodeTime length = 8 bytes.
+     * 1字节，版本，若version=0，baseMediaDecodeTime长度=4字节，若version=1，baseMediaDecodeTime长度=8字节
      */
     private final int version;
 
@@ -47,9 +48,10 @@ public class Mp4TfdtBox extends Mp4Box {
     private final byte[] flags;
 
     /**
-     * 4字节Base media decode time，基准解码时间，从0开始，主要计算每个分片的时间偏移，所以其等于前一个基准时间+前一个分片所有sample
+     * 4或8字节Base media decode time，基准解码时间，从0开始，主要计算每个分片的时间偏移，所以其等于前一个基准时间+前一个分片所有sample
      * 持续时间的总和，第一个分片的基准时间为0，例如每个分片包含一个sample，每个sample持续时间为3600，那么第一个分片的基准解码时间为0.
      * 第二个分片为0+3600=3600，第三个分片等于3600+3600=7200，如此类推
+     * 当baseMediaDecodeTime长度=4字节，最大可播放时间是13小时多一点，当baseMediaDecodeTime长度=8字节，没有限制了，但是得看MSE是否支持
      */
     private final long baseMediaDecodeTime;
 

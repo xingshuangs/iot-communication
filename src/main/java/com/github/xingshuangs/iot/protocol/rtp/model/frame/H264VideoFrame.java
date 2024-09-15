@@ -58,6 +58,8 @@ public class H264VideoFrame extends RawFrame {
         this.frameType = EFrameType.VIDEO;
         this.naluType = naluType;
         this.timestamp = timestamp;
+        this.pts = timestamp;
+        this.dts = timestamp;
         this.frameSegment = frameSegment;
         if (naluType == EH264NaluType.IDR_SLICE || naluType == EH264NaluType.NON_IDR_SLICE) {
             ByteReadBuff buff = ByteReadBuff.newInstance(frameSegment);

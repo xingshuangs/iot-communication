@@ -36,7 +36,7 @@ public class DemoFMp4 {
     public static void main(String[] args) {
         List<Mp4SampleData> samples= new ArrayList<>();
         Mp4SampleData data = new Mp4SampleData();
-        data.setTimestamp(System.currentTimeMillis());
+        data.setDts(System.currentTimeMillis());
         data.setData(new byte[5459]);
         data.setDuration(3600);
         data.setCts(0);
@@ -58,7 +58,7 @@ public class DemoFMp4 {
 
         Mp4Header mp4FtypMoov = new Mp4Header(trackInfo);
         Mp4SampleData first = trackInfo.getSampleData().get(0);
-        Mp4MoofBox mp4MoofBox = new Mp4MoofBox(1, first.getTimestamp(), trackInfo);
+        Mp4MoofBox mp4MoofBox = new Mp4MoofBox(1, first.getDts(), trackInfo);
         Mp4MdatBox mp4MdatBox = new Mp4MdatBox(trackInfo.totalSampleData());
     }
 }

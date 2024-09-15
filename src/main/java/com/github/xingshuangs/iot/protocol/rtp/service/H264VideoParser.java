@@ -28,6 +28,7 @@ package com.github.xingshuangs.iot.protocol.rtp.service;
 import com.github.xingshuangs.iot.exceptions.RtpCommException;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264NaluType;
+import com.github.xingshuangs.iot.protocol.rtp.enums.EH264SliceType;
 import com.github.xingshuangs.iot.protocol.rtp.model.RtpPackage;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.RawFrame;
@@ -59,8 +60,28 @@ public class H264VideoParser implements IPayloadParser {
      */
     private long baseTimestamp = 0;
 
+    /**
+     * Last Decoding Time Stamp
+     * (上一次解码时间戳)
+     */
+    private H264VideoFrame lastFrame;
+
+    /**
+     * Cache list of H264 video frame.
+     * 缓存帧列表
+     */
+    private final List<H264VideoFrame> cacheFrameList = new ArrayList<>();
+
+    /**
+     * Frame handle.
+     * （帧处理事件）
+     */
     private Consumer<RawFrame> frameHandle;
 
+    /**
+     * Cache list of H264 Nalu FuA.
+     * H264的FuA单元的列表
+     */
     private final List<H264NaluFuA> buffers = new ArrayList<>();
 
     public H264VideoParser(Integer payloadNumber) {
@@ -134,23 +155,65 @@ public class H264VideoParser implements IPayloadParser {
                 log.error("RTP parsing unknown data type [{}], timestamp [{}]", naluType, rtp.getHeader().getTimestamp());
                 break;
         }
-        if (this.frameHandle == null || frame == null) {
+        if (this.frameHandle == null || frame == null || frame.getPts() < 0) {
             return;
         }
 
-        if (frame.getFrameSegment().length > 0) {
-            try {
-                this.frameHandle.accept(frame);
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-            }
-        } else {
-            log.warn("There is a frame of data, the load is empty, [{}], [{}]", frame.getTimestamp(), frame.getNaluType());
+        H264VideoFrame h264VideoFrame = this.dtsHandle(frame);
+        this.addLastFrame(frame);
+        if (h264VideoFrame == null) {
+            return;
+        }
+
+        try {
+            this.frameHandle.accept(h264VideoFrame);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
     }
 
     @Override
     public void onFrameHandle(Consumer<RawFrame> frameHandle) {
         this.frameHandle = frameHandle;
+    }
+
+    /**
+     * Handle DTS of frame.
+     *
+     * @param frame video frame
+     * @return last frame
+     */
+    private H264VideoFrame dtsHandle(H264VideoFrame frame) {
+        if (this.lastFrame == null) {
+            return null;
+        }
+        if (frame.getSliceType() != EH264SliceType.I && this.cacheFrameList.size() >= 4) {
+            long delta = this.cacheFrameList.get(1).getPts() - this.cacheFrameList.get(0).getPts();
+            frame.setDts(this.lastFrame.getDts() + delta);
+        }
+        this.lastFrame.setDuration((int) (frame.getDts() - this.lastFrame.getDts()));
+        if (this.lastFrame.getDuration() <= 0) {
+            this.lastFrame.setDuration(0);
+            if (frame.getSliceType() != EH264SliceType.I) {
+                frame.setDts(this.lastFrame.getDts());
+            } else {
+                this.lastFrame.setDts(frame.getDts());
+            }
+        }
+        return this.lastFrame;
+    }
+
+    /**
+     * Add last frame for cache
+     *
+     * @param frame h264 video frame
+     */
+    private void addLastFrame(H264VideoFrame frame) {
+        this.lastFrame = frame;
+        this.cacheFrameList.add(frame);
+        this.cacheFrameList.sort((a, b) -> (int) (a.getTimestamp() - b.getTimestamp()));
+        if (this.cacheFrameList.size() > 10) {
+            this.cacheFrameList.remove(0);
+        }
     }
 }

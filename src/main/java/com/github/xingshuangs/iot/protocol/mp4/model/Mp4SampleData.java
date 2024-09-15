@@ -26,16 +26,18 @@ package com.github.xingshuangs.iot.protocol.mp4.model;
 
 
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import lombok.Data;
 
 /**
  * @author xingshuang
  */
+@Data
 public class Mp4SampleData {
 
     /**
      * 时间
      */
-    private long timestamp = 0;
+    private long dts = 0;
 
     /**
      * 数据，帧数据+长度
@@ -72,45 +74,5 @@ public class Mp4SampleData {
         buff.putInteger(data.length)
                 .putBytes(data);
         this.data = buff.getData();
-    }
-
-    public byte[] getData() {
-        return data;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public void setFlags(Mp4SampleFlag flags) {
-        this.flags = flags;
-    }
-
-    public Mp4SampleFlag getFlags() {
-        return flags;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public int getCts() {
-        return cts;
-    }
-
-    public void setCts(int cts) {
-        this.cts = cts;
     }
 }
