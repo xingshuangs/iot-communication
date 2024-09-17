@@ -50,7 +50,8 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * ModbusTcp服务端，目前忽略unitId
+ * Modbus tcp server, ignore unitId.
+ * (ModbusTcp服务端，目前忽略unitId)
  *
  * @author xingshuang
  */
@@ -60,38 +61,45 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class ModbusTcpServer extends TcpServerBasic {
 
     /**
-     * 读写锁
+     * Read and write lock.
+     * (读写锁)
      */
     private ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
     /**
-     * 线圈
+     * Coil data.
+     * (线圈)
      */
     private List<Boolean> coils = new ArrayList<>();
 
     /**
-     * 离散量输入
+     * Discrete input data.
+     * (离散量输入)
      */
     private List<Boolean> discreteInputs = new ArrayList<>();
 
 
     /**
-     * 输入寄存器
+     * Input register data.
+     * (输入寄存器)
      */
     private byte[] inputRegisters;
 
     /**
-     * 保持寄存器
+     * Hold register data.
+     * (保持寄存器)
      */
     private byte[] holdRegisters;
 
     /**
-     * 客户端当前的连接数量
+     * current connected client number.
+     * (客户端当前的连接数量)
      */
     private AtomicInteger connectedNumber = new AtomicInteger();
 
     /**
-     * 客户端连接的最大允许数量
+     * Max available number of client.
+     * (客户端连接的最大允许数量)
      */
     private Integer maxAvailableNumber;
 
@@ -115,10 +123,11 @@ public class ModbusTcpServer extends TcpServerBasic {
     }
 
     /**
-     * 校验客户端是否允许连入
+     * Is the client valid.
+     * (校验客户端是否允许连入)
      *
-     * @param client 客户端
-     * @return true:验证成功，false：验证失败
+     * @param client client socket.
+     * @return true: check success，false：check failed.
      */
     @Override
     protected boolean checkClientValid(Socket client) {
@@ -126,9 +135,10 @@ public class ModbusTcpServer extends TcpServerBasic {
     }
 
     /**
-     * 客户端连入
+     * Client connected.
+     * (客户端连入)
      *
-     * @param socket 客户端
+     * @param socket client socket.
      */
     @Override
     protected void clientConnected(Socket socket) {
@@ -136,9 +146,10 @@ public class ModbusTcpServer extends TcpServerBasic {
     }
 
     /**
-     * 客户端断开
+     * Client disconnected.
+     * (客户端断开)
      *
-     * @param socket 客户端
+     * @param socket client socket.
      */
     @Override
     protected void clientDisconnected(Socket socket) {
@@ -147,7 +158,7 @@ public class ModbusTcpServer extends TcpServerBasic {
 
     @Override
     protected void doClientHandle(Socket socket) {
-        MbTcpRequest request = this.readS7DataFromClient(socket);
+        MbTcpRequest request = this.readModbusDataFromClient(socket);
         MbTcpResponse response;
         try {
             switch (request.getPdu().getFunctionCode()) {
@@ -189,21 +200,23 @@ public class ModbusTcpServer extends TcpServerBasic {
     }
 
     /**
-     * 读取S7协议的数据
+     * Read modbus data from client.
+     * (读取Modbus协议的数据)
      *
-     * @param socket socket对象
-     * @return S7Data
+     * @param socket client socket
+     * @return MbTcpRequest
      */
-    private MbTcpRequest readS7DataFromClient(Socket socket) {
+    private MbTcpRequest readModbusDataFromClient(Socket socket) {
         byte[] data = this.readClientData(socket);
         return MbTcpRequest.fromBytes(data);
     }
 
     /**
-     * 重写读取客户端数据，针对粘包粘包的数据处理
+     * Override read client data function.
+     * (重写读取客户端数据，针对粘包粘包的数据处理)
      *
-     * @param socket 客户端socket对象
-     * @return 字节数据
+     * @param socket client socket.
+     * @return byte array
      */
     @Override
     protected byte[] readClientData(Socket socket) {
@@ -229,10 +242,11 @@ public class ModbusTcpServer extends TcpServerBasic {
     }
 
     /**
-     * 读取线圈数据
+     * Read coil handler.
+     * (读取线圈数据)
      *
-     * @param request 请求
-     * @return 响应
+     * @param request request
+     * @return response
      */
     private MbTcpResponse readCoil(MbTcpRequest request) {
         MbReadCoilRequest reqPdu = (MbReadCoilRequest) request.getPdu();
@@ -262,10 +276,11 @@ public class ModbusTcpServer extends TcpServerBasic {
     }
 
     /**
-     * 读取读取离散输入的数据
+     * Read discrete input handler.
+     * (读取读取离散输入的数据)
      *
-     * @param request 请求
-     * @return 响应
+     * @param request request
+     * @return response
      */
     private MbTcpResponse readDiscreteInput(MbTcpRequest request) {
         MbReadDiscreteInputRequest reqPdu = (MbReadDiscreteInputRequest) request.getPdu();
@@ -295,10 +310,11 @@ public class ModbusTcpServer extends TcpServerBasic {
     }
 
     /**
-     * 读取保持寄存器的数据
+     * Read hold register handler.
+     * (读取保持寄存器的数据)
      *
-     * @param request 请求
-     * @return 响应
+     * @param request request
+     * @return response
      */
     private MbTcpResponse readHoldRegister(MbTcpRequest request) {
         MbReadHoldRegisterRequest reqPdu = (MbReadHoldRegisterRequest) request.getPdu();
@@ -328,10 +344,11 @@ public class ModbusTcpServer extends TcpServerBasic {
     }
 
     /**
-     * 读取输入寄存器的数据
+     * Read input register handler.
+     * (读取输入寄存器的数据)
      *
-     * @param request 请求
-     * @return 响应
+     * @param request request
+     * @return response
      */
     private MbTcpResponse readInputRegister(MbTcpRequest request) {
         MbReadInputRegisterRequest reqPdu = (MbReadInputRegisterRequest) request.getPdu();
@@ -361,10 +378,11 @@ public class ModbusTcpServer extends TcpServerBasic {
     }
 
     /**
-     * 写入单线圈数据
+     * Write single coil handler.
+     * (写入单线圈数据)
      *
-     * @param request 请求
-     * @return 响应
+     * @param request request
+     * @return response
      */
     private MbTcpResponse writeSingleCoil(MbTcpRequest request) {
         MbWriteSingleCoilRequest reqPdu = (MbWriteSingleCoilRequest) request.getPdu();
@@ -388,10 +406,11 @@ public class ModbusTcpServer extends TcpServerBasic {
     }
 
     /**
-     * 写入单寄存器数据
+     * Write single register handler.
+     * (写入单寄存器数据)
      *
-     * @param request 请求
-     * @return 响应
+     * @param request request
+     * @return response
      */
     private MbTcpResponse writeSingleRegister(MbTcpRequest request) {
         MbWriteSingleRegisterRequest reqPdu = (MbWriteSingleRegisterRequest) request.getPdu();
@@ -418,10 +437,11 @@ public class ModbusTcpServer extends TcpServerBasic {
     }
 
     /**
-     * 写入多线圈数据
+     * Write multiple coil handler.
+     * (写入多线圈数据)
      *
-     * @param request 请求
-     * @return 响应
+     * @param request request
+     * @return response
      */
     private MbTcpResponse writeMultipleCoil(MbTcpRequest request) {
         MbWriteMultipleCoilRequest reqPdu = (MbWriteMultipleCoilRequest) request.getPdu();
@@ -455,10 +475,11 @@ public class ModbusTcpServer extends TcpServerBasic {
     }
 
     /**
-     * 写入多寄存器数据
+     * Write multiple register handler.
+     * (写入多寄存器数据)
      *
-     * @param request 请求
-     * @return 响应
+     * @param request request
+     * @return response
      */
     private MbTcpResponse writeMultipleRegister(MbTcpRequest request) {
         MbWriteMultipleRegisterRequest reqPdu = (MbWriteMultipleRegisterRequest) request.getPdu();

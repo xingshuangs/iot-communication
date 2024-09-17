@@ -32,7 +32,8 @@ import com.github.xingshuangs.iot.utils.CRCUtil;
 import lombok.Data;
 
 /**
- * RTU的modbus请求
+ * Modbus rtu request.
+ * (RTU的modbus请求)
  *
  * @author xingshuang
  */
@@ -40,6 +41,7 @@ import lombok.Data;
 public class MbRtuRequest implements IObjectByteArray {
 
     /**
+     * Unit id or slave id.
      * 单元标识符<br>
      * 字节大小：1个字节
      * 字节序数：0
@@ -47,12 +49,14 @@ public class MbRtuRequest implements IObjectByteArray {
     private int unitId = 1;
 
     /**
-     * 协议数据单元
+     * PDU
+     * (协议数据单元)
      */
     private MbPdu pdu;
 
     /**
-     * 循环冗余校验，最后两个字节
+     * CRC
+     * (循环冗余校验，最后两个字节)
      */
     private byte[] crc;
 
@@ -80,7 +84,8 @@ public class MbRtuRequest implements IObjectByteArray {
     }
 
     /**
-     * 自我数据校验
+     * Check self.
+     * (自我数据校验)
      */
     public void selfCheck() {
         if (this.pdu == null) {

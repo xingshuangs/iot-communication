@@ -67,7 +67,7 @@ public class PlcControlAckParameter extends Parameter implements IObjectByteArra
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return PlcControlAckParameter
      */
     public static PlcControlAckParameter fromBytes(final byte[] data) {

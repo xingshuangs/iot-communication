@@ -73,7 +73,7 @@ public class UploadParameter extends UploadAckParameter {
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return UploadParameter
      */
     public static UploadParameter fromBytes(final byte[] data) {
@@ -83,8 +83,8 @@ public class UploadParameter extends UploadAckParameter {
     /**
      * 字节数组数据解析
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return UploadParameter
      */
     public static UploadParameter fromBytes(final byte[] data, final int offset) {

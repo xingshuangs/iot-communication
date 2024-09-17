@@ -112,7 +112,7 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return PlcStopParameter
      */
     public static PlcControlParameter fromBytes(final byte[] data) {

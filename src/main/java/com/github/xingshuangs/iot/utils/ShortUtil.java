@@ -88,7 +88,7 @@ public class ShortUtil {
      * 将字节数组转换为int16
      *
      * @param data   字节数组
-     * @param offset 偏移量
+     * @param offset index offset
      * @return int数据
      */
     public static short toInt16(byte[] data, int offset) {
@@ -130,7 +130,7 @@ public class ShortUtil {
      * 将字节数组转换为uint16
      *
      * @param data   字节数组
-     * @param offset 偏移量
+     * @param offset index offset
      * @return int数据
      */
     public static int toUInt16(byte[] data, int offset) {

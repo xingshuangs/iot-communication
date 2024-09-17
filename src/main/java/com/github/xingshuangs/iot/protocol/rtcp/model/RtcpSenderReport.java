@@ -123,7 +123,7 @@ public final class RtcpSenderReport extends RtcpBasePackage {
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return RtcpHeader
      */
     public static RtcpSenderReport fromBytes(final byte[] data) {
@@ -133,8 +133,8 @@ public final class RtcpSenderReport extends RtcpBasePackage {
     /**
      * 字节数组数据解析
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return RtcpHeader
      */
     public static RtcpSenderReport fromBytes(final byte[] data, final int offset) {

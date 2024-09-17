@@ -29,33 +29,39 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 功能码枚举
+ * Function code enum.
+ * (功能码枚举)
  *
  * @author xingshuang
  */
 public enum EMbFunctionCode {
 
     /**
+     * Read coil.
      * 读线圈
      */
     READ_COIL((byte) 0x01, "read coil"),
 
     /**
+     * Read discrete input.
      * 读离散量输入
      */
     READ_DISCRETE_INPUT((byte) 0x02, "read discrete input"),
 
     /**
+     * Read hold register.
      * 读保持寄存器
      */
     READ_HOLD_REGISTER((byte) 0x03, "read hold register"),
 
     /**
+     * Read input register.
      * 读输入寄存器
      */
     READ_INPUT_REGISTER((byte) 0x04, "read input register"),
 
     /**
+     * Write single coil.
      * 写单个线圈
      */
     WRITE_SINGLE_COIL((byte) 0x05, "write single coil"),
@@ -66,87 +72,104 @@ public enum EMbFunctionCode {
     WRITE_SINGLE_REGISTER((byte) 0x06, "write single register"),
 
     /**
+     * Write multiple coil.
      * 写多个线圈
      */
     WRITE_MULTIPLE_COIL((byte) 0x0F, "write multiple coil"),
 
     /**
+     * Write multiple register.
      * 写多个寄存器
      */
     WRITE_MULTIPLE_REGISTER((byte) 0x10, "write multiple register"),
 
     /**
+     * Read document record.
      * 读文件记录
      */
     READ_DOCUMENT_RECORD((byte) 0x14, "read document record"),
 
     /**
+     * Shield write register.
      * 屏蔽写寄存器
      */
     SHIELD_WRITE_REGISTER((byte) 0x16, "shield write register"),
 
     /**
+     * Read write multiple register.
      * 读/写多个寄存器
      */
     READ_WRITE_MULTIPLE_REGISTER((byte) 0x17, "read write multiple register"),
 
     /**
+     * Read device identification code.
      * 读设备识别码
      */
     READ_DEVICE_IDENTIFICATION_CODE((byte) 0x2B, "read device identification code"),
 
     /**
-     * 读线圈
+     * Error read coil.
+     * 读线圈错误
      */
     ERROR_READ_COIL((byte) 0x81, "error read coil"),
 
     /**
-     * 读离散量输入
+     * Error read discrete input.
+     * 读离散量输入错误
      */
     ERROR_READ_DISCRETE_INPUT((byte) 0x82, "error read discrete input"),
 
     /**
-     * 读保持寄存器
+     * Error read hold register.
+     * 读保持寄存器错误
      */
     ERROR_READ_HOLD_REGISTER((byte) 0x83, "error read hold register"),
 
     /**
-     * 读输入寄存器
+     * Error read input register.
+     * 读输入寄存器错误
      */
     ERROR_READ_INPUT_REGISTER((byte) 0x84, "error read input register"),
 
     /**
-     * 写单个线圈
+     * Error write single coil.
+     * 写单个线圈错误
      */
     ERROR_WRITE_SINGLE_COIL((byte) 0x85, "error write single coil"),
 
     /**
-     * 写单个寄存器
+     * Error write single register.
+     * 写单个寄存器错误
      */
     ERROR_WRITE_SINGLE_REGISTER((byte) 0x86, "error write single register"),
 
     /**
-     * 写多个线圈
+     * Error write multiple coil.
+     * 写多个线圈错误
      */
     ERROR_WRITE_MULTIPLE_COIL((byte) 0x8F, "error write multiple coil"),
 
     /**
-     * 写多个寄存器
+     * Error write multiple register.
+     * 写多个寄存器错误
      */
     ERROR_WRITE_MULTIPLE_REGISTER((byte) 0x90, "error write multiple register"),
 
     /**
-     * 读文件记录
+     * Error read document record.
+     * 读文件记录错误
      */
     ERROR_READ_DOCUMENT_RECORD((byte) 0x94, "error read document record"),
 
     /**
-     * 屏蔽写寄存器
+     * Error shield write register.
+     * 屏蔽写寄存器错误
      */
     ERROR_SHIELD_WRITE_REGISTER((byte) 0x96, "error shield write register"),
 
     /**
-     * 读/写多个寄存器
+     * Error read write multiple register.
+     * 读/写多个寄存器错误
      */
     ERROR_READ_WRITE_MULTIPLE_REGISTER((byte) 0x97, "error read write multiple register"),
     ;

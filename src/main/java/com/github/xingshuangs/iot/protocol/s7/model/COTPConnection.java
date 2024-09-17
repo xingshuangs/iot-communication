@@ -207,7 +207,7 @@ public class COTPConnection extends COTP implements IObjectByteArray {
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return COTPConnection
      */
     public static COTPConnection fromBytes(final byte[] data) {

@@ -32,7 +32,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 请求写多个寄存器
+ * Write multiple register request.
+ * (请求写多个寄存器)
  *
  * @author xingshuang
  */
@@ -41,24 +42,28 @@ import lombok.EqualsAndHashCode;
 public final class MbWriteMultipleRegisterRequest extends MbPdu {
 
     /**
+     * Address.
      * 输出地址 说是从0x0000 至 0xFFFF，但对应实际却只是0001-9999，对应0x0000-0x270F <br>
      * 字节大小：2个字节
      */
     private int address;
 
     /**
+     * Quantity.
      * 寄存器数量 0x0001 至 0x0078 <br>
      * 字节大小：2个字节
      */
     private int quantity;
 
     /**
+     * Byte count.
      * 字节数 2×N* <br>
      * 字节大小：1个字节
      */
     private int count;
 
     /**
+     * Register data.
      * 寄存器值
      * 字节大小：N*×2 个字节 个字节
      */
@@ -93,9 +98,10 @@ public final class MbWriteMultipleRegisterRequest extends MbPdu {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return MbWriteMultipleRegisterRequest
      */
     public static MbWriteMultipleRegisterRequest fromBytes(final byte[] data) {
@@ -103,10 +109,11 @@ public final class MbWriteMultipleRegisterRequest extends MbPdu {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return MbWriteMultipleRegisterRequest
      */
     public static MbWriteMultipleRegisterRequest fromBytes(final byte[] data, final int offset) {

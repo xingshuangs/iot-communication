@@ -31,7 +31,8 @@ import com.github.xingshuangs.iot.exceptions.ModbusCommException;
 import lombok.Data;
 
 /**
- * TCP的modbus响应
+ * Modbus tcp response.
+ * (TCP的modbus响应)
  *
  * @author xingshuang
  */
@@ -39,12 +40,14 @@ import lombok.Data;
 public class MbTcpResponse implements IObjectByteArray {
 
     /**
+     * Package header.
      * 报文头， 报文头为 7 个字节长
      */
     private MbapHeader header;
 
     /**
-     * 协议数据单元
+     * PDU
+     * (协议数据单元)
      */
     private MbPdu pdu;
 
@@ -71,7 +74,8 @@ public class MbTcpResponse implements IObjectByteArray {
     }
 
     /**
-     * 自我数据校验
+     * Check self.
+     * (自我数据校验)
      */
     public void selfCheck() {
         if (this.header == null) {
@@ -84,9 +88,10 @@ public class MbTcpResponse implements IObjectByteArray {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return MbTcpResponse
      */
     public static MbTcpResponse fromBytes(byte[] data) {
@@ -97,10 +102,11 @@ public class MbTcpResponse implements IObjectByteArray {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param header   报文头
-     * @param pduBytes pdu字节数组数据
+     * @param header   package header.
+     * @param pduBytes pdu byte array.
      * @return MbTcpResponse
      */
     public static MbTcpResponse fromBytes(MbapHeader header, byte[] pduBytes) {

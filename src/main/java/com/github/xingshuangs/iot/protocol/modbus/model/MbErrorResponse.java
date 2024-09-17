@@ -33,7 +33,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 响应错误
+ * Modbus error response.
+ * (响应错误)
  *
  * @author xingshuang
  */
@@ -42,7 +43,8 @@ import lombok.EqualsAndHashCode;
 public class MbErrorResponse extends MbPdu {
 
     /**
-     * 错误码
+     * Error code.
+     * (错误码)
      */
     private EMbExceptionCode errorCode;
 
@@ -68,9 +70,10 @@ public class MbErrorResponse extends MbPdu {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return MbErrorResponse
      */
     public static MbErrorResponse fromBytes(final byte[] data) {
@@ -78,10 +81,11 @@ public class MbErrorResponse extends MbPdu {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return MbErrorResponse
      */
     public static MbErrorResponse fromBytes(final byte[] data, final int offset) {

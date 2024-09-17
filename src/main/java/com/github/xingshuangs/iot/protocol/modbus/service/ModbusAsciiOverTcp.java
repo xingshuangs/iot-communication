@@ -41,7 +41,8 @@ import static com.github.xingshuangs.iot.common.constant.GeneralConst.LOCALHOST;
 import static com.github.xingshuangs.iot.common.constant.GeneralConst.MODBUS_PORT;
 
 /**
- * modbus 1个寄存器占2个字节
+ * Modbus ascii over tcp.
+ * (modbus 1个寄存器占2个字节)
  *
  * @author xingshuang
  */
@@ -49,7 +50,8 @@ import static com.github.xingshuangs.iot.common.constant.GeneralConst.MODBUS_POR
 public class ModbusAsciiOverTcp extends ModbusSkeletonAbstract<MbAsciiRequest, MbAsciiResponse> {
 
     /**
-     * 通信回调
+     * Communication callback.
+     * (通信回调)
      */
     private BiConsumer<String, String> comStringCallback;
 

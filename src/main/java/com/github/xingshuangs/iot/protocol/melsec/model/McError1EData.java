@@ -57,9 +57,9 @@ public class McError1EData extends McData {
     }
 
     /**
+     * Parses byte array and converts it to object.
      * 解析字节数组数据
-     *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return McErrorInformationData
      */
     public static McError1EData fromBytes(final byte[] data) {
@@ -67,10 +67,10 @@ public class McError1EData extends McData {
     }
 
     /**
+     * Parses byte array and converts it to object.
      * 解析字节数组数据
-     *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return McErrorInformationData
      */
     public static McError1EData fromBytes(final byte[] data, final int offset) {

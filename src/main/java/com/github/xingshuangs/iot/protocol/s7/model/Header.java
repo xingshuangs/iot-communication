@@ -120,7 +120,7 @@ public class Header implements IObjectByteArray {
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return Header
      */
     public static Header fromBytes(final byte[] data) {

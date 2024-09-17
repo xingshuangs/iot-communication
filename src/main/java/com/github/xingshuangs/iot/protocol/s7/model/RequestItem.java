@@ -133,7 +133,7 @@ public class RequestItem extends RequestBaseItem {
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return RequestItem
      */
     public static RequestItem fromBytes(final byte[] data) {
@@ -143,8 +143,8 @@ public class RequestItem extends RequestBaseItem {
     /**
      * 字节数组数据解析
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return RequestItem
      */
     public static RequestItem fromBytes(final byte[] data, final int offset) {

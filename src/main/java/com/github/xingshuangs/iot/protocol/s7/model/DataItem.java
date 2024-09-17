@@ -111,7 +111,7 @@ public class DataItem extends ReturnItem implements IObjectByteArray {
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return DataItem
      */
     public static DataItem fromBytes(final byte[] data) {

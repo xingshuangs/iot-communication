@@ -82,7 +82,7 @@ public class IntegerUtil {
      * 将long转换为字节数组，并自定义获取字节数，默认采用大端模式
      *
      * @param data   long数据
-     * @param offset 偏移量
+     * @param offset index offset
      * @param length 读取长度
      * @return 字节数组
      */
@@ -123,7 +123,7 @@ public class IntegerUtil {
      * 将字节数组转换为int32
      *
      * @param data   字节数组
-     * @param offset 偏移量
+     * @param offset index offset
      * @return int32数据
      */
     public static int toInt32(byte[] data, int offset) {
@@ -157,7 +157,7 @@ public class IntegerUtil {
      * 将字节数组转换为int32
      *
      * @param data   字节数组
-     * @param offset 偏移量
+     * @param offset index offset
      * @return int32数据
      */
     public static int toInt32In3Bytes(byte[] data, int offset) {
@@ -200,7 +200,7 @@ public class IntegerUtil {
      * 将字节数组转换为uint32
      *
      * @param data   字节数组
-     * @param offset 偏移量
+     * @param offset index offset
      * @return uint32数据
      */
     public static long toUInt32(byte[] data, int offset) {

@@ -32,7 +32,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 请求读取保持寄存器
+ * Read hold register request.
+ * (请求读取保持寄存器)
  *
  * @author xingshuang
  */
@@ -41,12 +42,14 @@ import lombok.EqualsAndHashCode;
 public final class MbReadHoldRegisterRequest extends MbPdu {
 
     /**
+     * Address.
      * 地址 说是从0x0000 至 0xFFFF，但对应实际却只是0001-9999，对应0x0000-0x270F <br>
      * 字节大小：2个字节
      */
     private int address = 0;
 
     /**
+     * Register count.
      * 寄存器数量，1 至 125（0x7D）
      * 字节大小：2个字节
      */
@@ -77,9 +80,10 @@ public final class MbReadHoldRegisterRequest extends MbPdu {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return MbReadHoldRegisterRequest
      */
     public static MbReadHoldRegisterRequest fromBytes(final byte[] data) {
@@ -87,10 +91,11 @@ public final class MbReadHoldRegisterRequest extends MbPdu {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return MbReadHoldRegisterRequest
      */
     public static MbReadHoldRegisterRequest fromBytes(final byte[] data, final int offset) {

@@ -33,7 +33,8 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import lombok.Data;
 
 /**
- * modbus的协议数据单元
+ * Modbus PDU.
+ * (modbus的协议数据单元)
  *
  * @author xingshuang
  */
@@ -41,7 +42,8 @@ import lombok.Data;
 public class MbPdu implements IObjectByteArray {
 
     /**
-     * 功能码
+     * Function code.
+     * (功能码)
      */
     protected EMbFunctionCode functionCode;
 
@@ -58,9 +60,10 @@ public class MbPdu implements IObjectByteArray {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return MbPdu
      */
     public static MbPdu fromBytes(final byte[] data) {
@@ -70,8 +73,8 @@ public class MbPdu implements IObjectByteArray {
     /**
      * 字节数组数据解析
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return mbpdu对象
      */
     public static MbPdu fromBytes(final byte[] data, final int offset) {
@@ -116,7 +119,7 @@ public class MbPdu implements IObjectByteArray {
     /**
      * 解析字节数组数据，转换为请求对象
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return MbPdu
      */
     public static MbPdu fromBytesToRequest(final byte[] data) {
@@ -126,8 +129,8 @@ public class MbPdu implements IObjectByteArray {
     /**
      * 字节数组数据解析，转换为请求对象
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return mbpdu对象
      */
     public static MbPdu fromBytesToRequest(final byte[] data, final int offset) {

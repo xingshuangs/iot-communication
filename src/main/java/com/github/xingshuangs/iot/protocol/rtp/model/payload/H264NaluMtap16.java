@@ -90,7 +90,7 @@ public class H264NaluMtap16 extends H264NaluBase{
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return RtcpHeader
      */
     public static H264NaluMtap16 fromBytes(final byte[] data) {
@@ -100,8 +100,8 @@ public class H264NaluMtap16 extends H264NaluBase{
     /**
      * 字节数组数据解析
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return RtcpHeader
      */
     public static H264NaluMtap16 fromBytes(final byte[] data, final int offset) {

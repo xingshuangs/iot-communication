@@ -37,7 +37,8 @@ import static com.github.xingshuangs.iot.common.constant.GeneralConst.LOCALHOST;
 import static com.github.xingshuangs.iot.common.constant.GeneralConst.MODBUS_PORT;
 
 /**
- * modbus 1个寄存器占2个字节
+ * Modbus rtu over tcp.
+ * (modbus 1个寄存器占2个字节)
  *
  * @author xingshuang
  */

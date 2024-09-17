@@ -34,7 +34,8 @@ import static com.github.xingshuangs.iot.common.constant.GeneralConst.LOCALHOST;
 import static com.github.xingshuangs.iot.common.constant.GeneralConst.MODBUS_PORT;
 
 /**
- * modbus 1个寄存器占2个字节
+ * Modbus tcp.
+ * (modbus 1个寄存器占2个字节)
  *
  * @author xingshuang
  */
@@ -69,10 +70,11 @@ public class ModbusTcp extends ModbusSkeletonAbstract<MbTcpRequest, MbTcpRespons
     //region 底层数据通信部分
 
     /**
-     * 从服务器读取数据
+     * Read data from server.
+     * (从服务器读取数据)
      *
-     * @param req modbus协议数据
-     * @return modbus协议数据
+     * @param req request data
+     * @return response data
      */
     @Override
     protected MbTcpResponse readFromServer(MbTcpRequest req) {
@@ -109,10 +111,11 @@ public class ModbusTcp extends ModbusSkeletonAbstract<MbTcpRequest, MbTcpRespons
     }
 
     /**
-     * 校验请求数据和响应数据
+     * Check result.
+     * (校验请求数据和响应数据)
      *
-     * @param req 请求数据
-     * @param ack 响应数据
+     * @param req request data
+     * @param ack response data
      */
     @Override
     protected void checkResult(MbTcpRequest req, MbTcpResponse ack) {

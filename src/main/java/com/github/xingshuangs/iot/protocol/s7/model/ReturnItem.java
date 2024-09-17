@@ -60,7 +60,7 @@ public class ReturnItem implements IObjectByteArray {
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return ReturnItem
      */
     public static ReturnItem fromBytes(final byte[] data) {

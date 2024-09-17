@@ -96,7 +96,7 @@ public class StartDownloadParameter extends DownloadParameter implements IObject
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return StartDownloadParameter
      */
     public static StartDownloadParameter fromBytes(final byte[] data) {
@@ -106,8 +106,8 @@ public class StartDownloadParameter extends DownloadParameter implements IObject
     /**
      * 字节数组数据解析
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return StartDownloadParameter
      */
     public static StartDownloadParameter fromBytes(final byte[] data, final int offset) {

@@ -94,9 +94,10 @@ public class McFrame4E3EAccessRoute extends McAccessRoute {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return Mc4E3EFrameAccessRoute
      */
     public static McFrame4E3EAccessRoute fromBytes(final byte[] data) {
@@ -104,10 +105,11 @@ public class McFrame4E3EAccessRoute extends McAccessRoute {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return Mc4E3EFrameAccessRoute
      */
     public static McFrame4E3EAccessRoute fromBytes(final byte[] data, final int offset) {

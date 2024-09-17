@@ -71,7 +71,7 @@ public class ByteUtil {
      * 将字节数组转换为int32
      *
      * @param data   字节数组
-     * @param offset 偏移量
+     * @param offset index offset
      * @return int32数据
      */
     public static int toUInt8(byte[] data, int offset) {
@@ -116,7 +116,7 @@ public class ByteUtil {
      * 将字节转换为字符串
      *
      * @param data   字节数组
-     * @param offset 偏移量
+     * @param offset index offset
      * @return 字符串
      */
     public static String toStr(byte[] data, int offset) {
@@ -127,7 +127,7 @@ public class ByteUtil {
      * 将字节转换为字符串
      *
      * @param data   字节数组
-     * @param offset 偏移量
+     * @param offset index offset
      * @param length 长度
      * @return 字符串
      */

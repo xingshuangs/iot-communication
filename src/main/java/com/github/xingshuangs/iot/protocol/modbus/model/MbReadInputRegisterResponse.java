@@ -32,7 +32,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 响应读输入寄存器
+ * Read input register response
+ * (响应读输入寄存器)
  *
  * @author xingshuang
  */
@@ -41,12 +42,14 @@ import lombok.EqualsAndHashCode;
 public final class MbReadInputRegisterResponse extends MbPdu {
 
     /**
+     * Byte count.
      * 字节数<br>
      * 字节大小：1个字节
      */
     private int count;
 
     /**
+     * Register count.
      * 输入寄存器值，N＝寄存器的数量，N*×2 个字节
      * 字节大小：N*×2 个字节
      */
@@ -71,9 +74,10 @@ public final class MbReadInputRegisterResponse extends MbPdu {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return MbReadInputRegisterResponse
      */
     public static MbReadInputRegisterResponse fromBytes(final byte[] data) {
@@ -81,10 +85,11 @@ public final class MbReadInputRegisterResponse extends MbPdu {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return MbReadInputRegisterResponse
      */
     public static MbReadInputRegisterResponse fromBytes(final byte[] data, final int offset) {

@@ -31,7 +31,8 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import lombok.Data;
 
 /**
- * TCP的modbus请求
+ * Modbus tcp request.
+ * (TCP的modbus请求)
  *
  * @author xingshuang
  */
@@ -39,12 +40,14 @@ import lombok.Data;
 public class MbTcpRequest implements IObjectByteArray {
 
     /**
-     * 报文头， 报文头为 7 个字节长
+     * Package header.
+     * (报文头， 报文头为 7 个字节长)
      */
     private MbapHeader header;
 
     /**
-     * 协议数据单元
+     * PDU.
+     * (协议数据单元)
      */
     private MbPdu pdu;
 
@@ -70,7 +73,8 @@ public class MbTcpRequest implements IObjectByteArray {
     }
 
     /**
-     * 自我数据校验
+     * Check self.
+     * (自我数据校验)
      */
     public void selfCheck() {
         if (this.header == null) {
@@ -83,7 +87,8 @@ public class MbTcpRequest implements IObjectByteArray {
     }
 
     /**
-     * 创建默认请求对象
+     * Create default request.
+     * (创建默认请求对象)
      *
      * @return MbTcpRequest
      */
@@ -94,9 +99,10 @@ public class MbTcpRequest implements IObjectByteArray {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return MbTcpRequest
      */
     public static MbTcpRequest fromBytes(byte[] data) {
@@ -107,10 +113,11 @@ public class MbTcpRequest implements IObjectByteArray {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param header   报文头
-     * @param pduBytes pdu字节数组数据
+     * @param header   package header.
+     * @param pduBytes pdu byte array.
      * @return MbTcpRequest
      */
     public static MbTcpRequest fromBytes(MbapHeader header, byte[] pduBytes) {

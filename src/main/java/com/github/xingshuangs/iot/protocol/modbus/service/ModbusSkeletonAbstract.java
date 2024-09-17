@@ -44,7 +44,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 /**
- * Modbus网络通信的基础结构，抽象类
+ * Modbus communication basic skeleton, abstract class.
+ * (Modbus网络通信的基础结构，抽象类)
  *
  * @author xingshuang
  */
@@ -54,22 +55,26 @@ import java.util.function.BiConsumer;
 public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
 
     /**
-     * 从站编号
+     * Unit id, slave id also.
+     * (unit id or slave id)
      */
     protected int unitId = 1;
 
     /**
-     * 锁
+     * Lock.
+     * (锁)
      */
     protected final Object objLock = new Object();
 
     /**
-     * 通信回调，第一个参数是tag标签，指示该报文含义；第二个参数是具体报文内容
+     * Communication callback, first parameter is tag, second is package content.
+     * (通信回调，第一个参数是tag标签，指示该报文含义；第二个参数是具体报文内容)
      */
     protected BiConsumer<String, byte[]> comCallback;
 
     /**
-     * 是否持久化，默认是持久化，对应长连接，true：长连接，false：短连接
+     * Persistence, true: long connection, false: short connection.
+     * (是否持久化，默认是持久化，对应长连接，true：长连接，false：短连接)
      */
     protected boolean persistence = true;
 
@@ -96,28 +101,31 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     //region 底层数据通信部分
 
     /**
-     * 从服务器读取数据
+     * Read data from server.
+     * (从服务器读取数据)
      *
-     * @param req modbus协议数据
-     * @return modbus协议数据
+     * @param req modbus request
+     * @return modbus response.
      */
     protected abstract R readFromServer(T req);
 
     /**
-     * 校验请求数据和响应数据
+     * Check result by req and ack.
+     * (校验请求数据和响应数据)
      *
-     * @param req 请求数据
-     * @param ack 响应数据
+     * @param req req data.
+     * @param ack ack data.
      */
     protected abstract void checkResult(T req, R ack);
 
 
     /**
-     * 读取modbus数据
+     * Read modbus data.
+     * (读取modbus数据)
      *
-     * @param unitId 从站编号
-     * @param reqPdu 请求对象
-     * @return 响应结果
+     * @param unitId unit id or slave id
+     * @param reqPdu request pdu.
+     * @return ack result
      */
     protected abstract MbPdu readModbusData(int unitId, MbPdu reqPdu);
 
@@ -126,23 +134,25 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     //region 线圈和寄存器的读取
 
     /**
-     * 读取线圈， modbus 1个寄存器占2个字节
+     * Read coil.
+     * (读取线圈)
      *
-     * @param address  地址
-     * @param quantity 线圈数量
-     * @return boolean列表
+     * @param address  modbus address
+     * @param quantity coil quantity
+     * @return boolean list
      */
     public List<Boolean> readCoil(int address, int quantity) {
         return this.readCoil(this.unitId, address, quantity);
     }
 
     /**
-     * 读取线圈， modbus 1个寄存器占2个字节
+     * Read coil.
+     * (读取线圈)
      *
-     * @param unitId   从站编号
-     * @param address  地址
-     * @param quantity 线圈数量
-     * @return boolean列表
+     * @param unitId   unit id or slave id
+     * @param address  modbus address
+     * @param quantity coil quantity
+     * @return boolean list
      */
     public List<Boolean> readCoil(int unitId, int address, int quantity) {
         if (address < 0 || address > 65535) {
@@ -163,21 +173,23 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 写单线圈， modbus 1个寄存器占2个字节
+     * Write coil.
+     * (写单线圈)
      *
-     * @param address    地址
-     * @param coilStatus 线圈状态
+     * @param address    modbus address
+     * @param coilStatus coil status
      */
     public void writeCoil(int address, boolean coilStatus) {
         this.writeCoil(this.unitId, address, coilStatus);
     }
 
     /**
-     * 写单线圈， modbus 1个寄存器占2个字节
+     * Write single coil.
+     * (写单线圈)
      *
-     * @param unitId     从站编号
-     * @param address    地址
-     * @param coilStatus 线圈状态
+     * @param unitId     unit id or slave id
+     * @param address    modbus address
+     * @param coilStatus coil status
      */
     public void writeCoil(int unitId, int address, boolean coilStatus) {
         if (address < 0 || address > 65535) {
@@ -189,21 +201,23 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 写多线圈， modbus 1个寄存器占2个字节
+     * Write multiple coils.
+     * (写多线圈)
      *
-     * @param address    地址
-     * @param coilStatus 线圈状态列表
+     * @param address    modbus address
+     * @param coilStatus coil status list
      */
     public void writeCoil(int address, List<Boolean> coilStatus) {
         this.writeCoil(this.unitId, address, coilStatus);
     }
 
     /**
-     * 写多线圈， modbus 1个寄存器占2个字节
+     * Write multiple coil.
+     * (写多线圈)
      *
-     * @param unitId     从站编号
-     * @param address    地址
-     * @param coilStatus 线圈状态列表
+     * @param unitId     unit id or slave id
+     * @param address    modbus address
+     * @param coilStatus coil status list
      */
     public void writeCoil(int unitId, int address, List<Boolean> coilStatus) {
         if (address < 0 || address > 65535) {
@@ -222,23 +236,25 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 读取离散输入， modbus 1个寄存器占2个字节
+     * Read discrete input.
+     * (读取离散输入)
      *
-     * @param address  地址
-     * @param quantity 线圈数量
-     * @return boolean列表
+     * @param address  modbus address
+     * @param quantity quantity
+     * @return boolean list
      */
     public List<Boolean> readDiscreteInput(int address, int quantity) {
         return this.readDiscreteInput(this.unitId, address, quantity);
     }
 
     /**
-     * 读取离散输入， modbus 1个寄存器占2个字节
+     * Read discrete input,
+     * (读取离散输入)
      *
-     * @param unitId   从站编号
-     * @param address  地址
-     * @param quantity 线圈数量
-     * @return boolean列表
+     * @param unitId   unit id or slave id
+     * @param address  modbus address
+     * @param quantity quantity
+     * @return boolean list
      */
     public List<Boolean> readDiscreteInput(int unitId, int address, int quantity) {
         if (address < 0 || address > 65535) {
@@ -259,23 +275,25 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 读取保持寄存器， modbus 1个寄存器占2个字节
+     * Read multiple hold register.
+     * (读取保持寄存器， modbus 1个寄存器占2个字节)
      *
-     * @param address  地址
-     * @param quantity 寄存器数量
-     * @return 字节数组
+     * @param address  modbus address
+     * @param quantity quantity of register
+     * @return byte array
      */
     public byte[] readHoldRegister(int address, int quantity) {
         return this.readHoldRegister(this.unitId, address, quantity);
     }
 
     /**
-     * 读取保持寄存器， modbus 1个寄存器占2个字节
+     * Read multiple hold register.
+     * (读取保持寄存器， modbus 1个寄存器占2个字节)
      *
-     * @param unitId   从站编号
-     * @param address  地址
-     * @param quantity 寄存器数量
-     * @return 字节数组
+     * @param unitId   unit id or slave id
+     * @param address  modbus address
+     * @param quantity quantity of register
+     * @return byte array
      */
     public byte[] readHoldRegister(int unitId, int address, int quantity) {
         if (address < 0 || address > 65535) {
@@ -301,21 +319,23 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
 
 
     /**
-     * 以数值形式写入单个保持寄存器， modbus 1个寄存器占2个字节
+     * Write single hold register.
+     * (以数值形式写入单个保持寄存器， modbus 1个寄存器占2个字节)
      *
-     * @param address 地址
-     * @param value   数值，占2个字节
+     * @param address modbus address
+     * @param value   value, 2 bytes
      */
     public void writeHoldRegister(int address, int value) {
         this.writeHoldRegister(this.unitId, address, value);
     }
 
     /**
-     * 以数值形式写入单个保持寄存器， modbus 1个寄存器占2个字节
+     * Write single hold register.
+     * (以数值形式写入单个保持寄存器， modbus 1个寄存器占2个字节)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param value   数值，占2个字节
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param value   value, 2 bytes
      */
     public void writeHoldRegister(int unitId, int address, int value) {
         if (address < 0 || address > 65535) {
@@ -330,21 +350,23 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 以字节数组形式写入保持寄存器， modbus 1个寄存器占2个字节
+     * Write multiple hold register.
+     * (以byte array形式写入保持寄存器， modbus 1个寄存器占2个字节)
      *
-     * @param address 地址
-     * @param values  数据值列表
+     * @param address modbus address
+     * @param values  value list
      */
     public void writeHoldRegister(int address, byte[] values) {
         this.writeHoldRegister(this.unitId, address, values);
     }
 
     /**
-     * 以字节数组形式写入保持寄存器， modbus 1个寄存器占2个字节
+     * Write multiple hold register.
+     * (以byte array形式写入保持寄存器， modbus 1个寄存器占2个字节)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param values  数据值列表
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param values  value list
      */
     public void writeHoldRegister(int unitId, int address, byte[] values) {
         if (address < 0 || address > 65535) {
@@ -363,21 +385,23 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 以数值数组形式写入多个保持寄存器， modbus 1个寄存器占2个字节
+     * Write multiple hold register.
+     * (以数值数组形式写入多个保持寄存器， modbus 1个寄存器占2个字节)
      *
-     * @param address 地址
-     * @param values  数据值列表
+     * @param address modbus address
+     * @param values  value list
      */
     public void writeHoldRegister(int address, List<Integer> values) {
         this.writeHoldRegister(this.unitId, address, values);
     }
 
     /**
-     * 以数值数组形式写入多个保持寄存器， modbus 1个寄存器占2个字节
+     * Write multiple hold register.
+     * (以数值数组形式写入多个保持寄存器， modbus 1个寄存器占2个字节)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param values  数据值列表
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param values  value list
      */
     public void writeHoldRegister(int unitId, int address, List<Integer> values) {
         if (values.isEmpty()) {
@@ -390,23 +414,25 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 读取输入寄存器， modbus 1个寄存器占2个字节
+     * Write multiple input register.
+     * (读取输入寄存器， modbus 1个寄存器占2个字节)
      *
-     * @param address  地址
-     * @param quantity 寄存器数量
-     * @return 字节数组
+     * @param address  modbus address
+     * @param quantity register quantity
+     * @return byte array
      */
     public byte[] readInputRegister(int address, int quantity) {
         return this.readInputRegister(this.unitId, address, quantity);
     }
 
     /**
-     * 读取输入寄存器， modbus 1个寄存器占2个字节
+     * Write multiple input register.
+     * (读取输入寄存器， modbus 1个寄存器占2个字节)
      *
-     * @param unitId   从站编号
-     * @param address  地址
-     * @param quantity 寄存器数量
-     * @return 字节数组
+     * @param unitId   unit id or slave id
+     * @param address  modbus address
+     * @param quantity register quantity
+     * @return byte array
      */
     public byte[] readInputRegister(int unitId, int address, int quantity) {
         if (address < 0 || address > 65535) {
@@ -429,10 +455,11 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     //region 通用保持寄存器 读取数据
 
     /**
-     * 读取一个boolean类型数据，只有一个地址的数据，位索引[0,15]
+     * Read boolean.
+     * (读取一个boolean类型数据，只有一个address的数据，位索引[0,15])
      *
-     * @param address  地址
-     * @param bitIndex 位索引[0,15]
+     * @param address  modbus address
+     * @param bitIndex bit index [0,15]
      * @return true, false
      */
     public boolean readBoolean(int address, int bitIndex) {
@@ -440,11 +467,12 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 读取一个boolean类型数据，只有一个地址的数据，位索引[0,15]
+     * Read boolean from hold register.
+     * (读取一个boolean类型数据，只有一个address的数据，位索引[0,15])
      *
-     * @param unitId   从站编号
-     * @param address  地址
-     * @param bitIndex 位索引[0,15]
+     * @param unitId   unit id or slave id
+     * @param address  modbus address
+     * @param bitIndex bit index[0,15]
      * @return true, false
      */
     public boolean readBoolean(int unitId, int address, int bitIndex) {
@@ -459,44 +487,48 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 读取一个Int16 2字节数据，默认大端模式
+     * Read Int16 from hold register.
+     * (读取一个Int16 2字节数据，默认大端模式)
      *
-     * @param address 地址
-     * @return 一个Int16 2字节数据
+     * @param address modbus address
+     * @return int16 data, 2 bytes
      */
     public short readInt16(int address) {
         return this.readInt16(this.unitId, address, false);
     }
 
     /**
-     * 读取一个Int16 2字节数据
+     * Read Int16 from hold register.
+     * (读取一个Int16 2字节数据)
      *
-     * @param address      地址
-     * @param littleEndian 是否小端模式，true：小端，false：大端
-     * @return 一个Int16 2字节数据
+     * @param address      address
+     * @param littleEndian is little endian, true: yes, false: no.
+     * @return int16 data, 2 bytes
      */
     public short readInt16(int address, boolean littleEndian) {
         return this.readInt16(this.unitId, address, littleEndian);
     }
 
     /**
-     * 读取一个Int16 2字节数据
+     * Read Int16 from hold register.
+     * (读取一个Int16 2字节数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @return 一个Int16 2字节数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @return int16 data, 2 bytes
      */
     public short readInt16(int unitId, int address) {
         return this.readInt16(unitId, address, false);
     }
 
     /**
-     * 读取一个Int16 2字节数据
+     * Read Int16 from hold register.
+     * (读取一个Int16 2字节数据)
      *
-     * @param unitId       从站编号
-     * @param address      地址
-     * @param littleEndian 是否小端模式，true：小端，false：大端
-     * @return 一个Int16 2字节数据
+     * @param unitId       unit id or slave id
+     * @param address      modbus address
+     * @param littleEndian is little endian, true: yes, false: no.
+     * @return int16 data, 2 bytes
      */
     public short readInt16(int unitId, int address, boolean littleEndian) {
         byte[] res = this.readHoldRegister(unitId, address, 1);
@@ -504,44 +536,48 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 读取一个UInt16 2字节数据，默认大端模式
+     * Read UInt16 from hold register.
+     * (读取一个UInt16 2字节数据，默认大端模式)
      *
-     * @param address 地址
-     * @return 一个UInt16 2字节数据
+     * @param address modbus address
+     * @return UInt16 data, 2 bytes
      */
     public int readUInt16(int address) {
         return this.readUInt16(this.unitId, address, false);
     }
 
     /**
-     * 读取一个UInt16 2字节数据
+     * Read UInt16 from hold register.
+     * (读取一个UInt16 2字节数据)
      *
-     * @param address      地址
-     * @param littleEndian 是否小端模式，true：小端，false：大端
-     * @return 一个UInt16 2字节数据
+     * @param address      address
+     * @param littleEndian is little endian, true: yes, false: no.
+     * @return UInt16 data, 2 bytes
      */
     public int readUInt16(int address, boolean littleEndian) {
         return this.readUInt16(this.unitId, address, littleEndian);
     }
 
     /**
-     * 读取一个UInt16 2字节数据
+     * Read UInt16 from hold register.
+     * (读取一个UInt16 2字节数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @return 一个UInt16 2字节数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @return UInt16 data, 2 bytes
      */
     public int readUInt16(int unitId, int address) {
         return this.readUInt16(unitId, address, false);
     }
 
     /**
-     * 读取一个UInt16 2字节数据
+     * Read UInt16 from hold register.
+     * (读取一个UInt16 2字节数据)
      *
-     * @param unitId       从站编号
-     * @param address      地址
-     * @param littleEndian 是否小端模式，true：小端，false：大端
-     * @return 一个UInt16 2字节数据
+     * @param unitId       unit id or slave id
+     * @param address      modbus address
+     * @param littleEndian is little endian, true: yes, false: no.
+     * @return UInt16 data, 2 bytes
      */
     public int readUInt16(int unitId, int address, boolean littleEndian) {
         byte[] res = this.readHoldRegister(unitId, address, 1);
@@ -549,44 +585,48 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 读取一个Int32 4字节数据，默认BA_DC格式
+     * Read Int32 from hold register. BA_DC default.
+     * (读取一个Int32 4字节数据，默认BA_DC格式)
      *
-     * @param address 地址
-     * @return 一个Int32 4字节数据
+     * @param address modbus address
+     * @return Int32 data, 4 bytes
      */
     public int readInt32(int address) {
         return this.readInt32(this.unitId, address, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 读取一个Int32 4字节数据
+     * Read Int32 from hold register.
+     * (读取一个Int32 4字节数据)
      *
-     * @param address 地址
-     * @param format  4字节数据转换格式
-     * @return 一个Int32 4字节数据
+     * @param address modbus address
+     * @param format  format of 4 bytes
+     * @return Int32 data, 4 bytes
      */
     public int readInt32(int address, EByteBuffFormat format) {
         return this.readInt32(this.unitId, address, format);
     }
 
     /**
-     * 读取一个Int32 4字节数据
+     * Read Int32 from hold register.
+     * (读取一个Int32 4字节数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @return 一个Int32 4字节数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @return Int32 data, 4 bytes
      */
     public int readInt32(int unitId, int address) {
         return this.readInt32(unitId, address, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 读取一个Int32 4字节数据
+     * Read Int32 from hold register.
+     * (读取一个Int32 4字节数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param format  4字节数据转换格式
-     * @return 一个Int32 4字节数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param format  format of 4 bytes
+     * @return Int32 data, 4 bytes
      */
     public int readInt32(int unitId, int address, EByteBuffFormat format) {
         byte[] res = this.readHoldRegister(unitId, address, 2);
@@ -594,44 +634,48 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 读取一个UInt32 4字节数据，默认BA_DC格式
+     * Read UInt32 from hold register. BA_DC default.
+     * (读取一个UInt32 4字节数据，默认BA_DC格式)
      *
-     * @param address 地址
-     * @return 一个UInt32 4字节数据
+     * @param address modbus address
+     * @return UInt32 data, 4 bytes
      */
     public long readUInt32(int address) {
         return this.readUInt32(this.unitId, address, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 读取一个UInt32 4字节数据
+     * Read UInt32 from hold register.
+     * (读取一个UInt32 4字节数据)
      *
-     * @param address 地址
-     * @param format  4字节数据转换格式
-     * @return 一个UInt32 4字节数据
+     * @param address modbus address
+     * @param format  format of 4 bytes
+     * @return UInt32 data, 4 bytes
      */
     public long readUInt32(int address, EByteBuffFormat format) {
         return this.readUInt32(this.unitId, address, format);
     }
 
     /**
-     * 读取一个UInt32 4字节数据
+     * Read UInt32 from hold register.
+     * (读取一个UInt32 4字节数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @return 一个UInt32 4字节数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @return UInt32 data, 4 bytes
      */
     public long readUInt32(int unitId, int address) {
         return this.readUInt32(unitId, address, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 读取一个UInt32 4字节数据
+     * Read UInt32 from hold register.
+     * (读取一个UInt32 4字节数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param format  4字节数据转换格式
-     * @return 一个UInt32 4字节数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param format  format of 4 bytes
+     * @return UInt32 data, 4 bytes
      */
     public long readUInt32(int unitId, int address, EByteBuffFormat format) {
         byte[] res = this.readHoldRegister(unitId, address, 2);
@@ -639,44 +683,48 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 读取一个Float32的数据，默认BA_DC格式
+     * Read Float32 from hold register. BA_DC default.
+     * (读取一个Float32的数据，默认BA_DC格式)
      *
-     * @param address 地址
-     * @return 一个Float32的数据
+     * @param address modbus address
+     * @return Float32 data, 4 bytes
      */
     public float readFloat32(int address) {
         return this.readFloat32(this.unitId, address, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 读取一个Float32的数据
+     * Read Float32 from hold register.
+     * (读取一个Float32的数据)
      *
-     * @param address 地址
-     * @param format  4字节数据转换格式
-     * @return 一个Float32的数据
+     * @param address modbus address
+     * @param format  format of 4 bytes
+     * @return Float32 data, 4 bytes
      */
     public float readFloat32(int address, EByteBuffFormat format) {
         return this.readFloat32(this.unitId, address, format);
     }
 
     /**
-     * 读取一个Float32的数据
+     * Read Float32 from hold register.
+     * (读取一个Float32的数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @return 一个Float32的数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @return Float32 data, 4 bytes
      */
     public float readFloat32(int unitId, int address) {
         return this.readFloat32(unitId, address, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 读取一个Float32的数据
+     * Read Float32 from hold register.
+     * (读取一个Float32的数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param format  4字节数据转换格式
-     * @return 一个Float32的数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param format  format of 4 bytes
+     * @return Float32 data, 4 bytes
      */
     public float readFloat32(int unitId, int address, EByteBuffFormat format) {
         byte[] res = this.readHoldRegister(unitId, address, 2);
@@ -684,44 +732,48 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 读取一个Float64的数据，默认BA_DC格式
+     * Read Float64 from hold register.
+     * (读取一个Float64的数据)
      *
-     * @param address 地址
-     * @return 一个Float64的数据
+     * @param address modbus address
+     * @return Float64 data, 8 bytes
      */
     public double readFloat64(int address) {
         return this.readFloat64(this.unitId, address, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 读取一个Float64的数据
+     * Read Float64 from hold register.
+     * (读取一个Float64的数据)
      *
-     * @param address 地址
-     * @param format  8字节数据转换格式
-     * @return 一个Float64的数据
+     * @param address modbus address
+     * @param format  format of 8 bytes
+     * @return Float64 data, 8 bytes
      */
     public double readFloat64(int address, EByteBuffFormat format) {
         return this.readFloat64(this.unitId, address, format);
     }
 
     /**
-     * 读取一个Float64的数据
+     * Read Float64 from hold register.
+     * (读取一个Float64的数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @return 一个Float64的数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @return Float64 data, 8 bytes
      */
     public double readFloat64(int unitId, int address) {
         return this.readFloat64(unitId, address, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 读取一个Float64的数据
+     * Read Float64 from hold register.
+     * (读取一个Float64的数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param format  8字节数据转换格式
-     * @return 一个Float64的数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param format  format of 8 bytes
+     * @return Float64 data, 8 bytes
      */
     public double readFloat64(int unitId, int address, EByteBuffFormat format) {
         byte[] res = this.readHoldRegister(unitId, address, 4);
@@ -729,52 +781,52 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 读取字符串，默认ASCII编码
-     * String（字符串）数据类型存储一串单字节字符
+     * Read string from hold register. ASCII default.
+     * (String（字符串）数据类型存储一串单字节字符)
      *
-     * @param address 地址
-     * @param length  字符串长度
-     * @return 字符串
+     * @param address modbus address
+     * @param length  string length
+     * @return string
      */
     public String readString(int address, int length) {
         return this.readString(this.unitId, address, length, StandardCharsets.US_ASCII);
     }
 
     /**
-     * 读取字符串
-     * String（字符串）数据类型存储一串单字节字符
+     * Read string from hold register.
+     * (String（字符串）数据类型存储一串单字节字符)
      *
-     * @param address 地址
-     * @param length  字符串长度
-     * @param charset 字符编码
-     * @return 字符串
+     * @param address modbus address
+     * @param length  string length
+     * @param charset charset
+     * @return string
      */
     public String readString(int address, int length, Charset charset) {
         return this.readString(this.unitId, address, length, charset);
     }
 
     /**
-     * 读取字符串
-     * String（字符串）数据类型存储一串单字节字符
+     * Read string from hold register.
+     * (String（字符串）数据类型存储一串单字节字符)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param length  字符串长度
-     * @return 字符串
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param length  string length
+     * @return string
      */
     public String readString(int unitId, int address, int length) {
         return this.readString(unitId, address, length, StandardCharsets.US_ASCII);
     }
 
     /**
-     * 读取字符串
-     * String（字符串）数据类型存储一串单字节字符
+     * Read string from hold register.
+     * (String（字符串）数据类型存储一串单字节字符)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param length  字符串长度
-     * @param charset 字符编码
-     * @return 字符串
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param length  string length
+     * @param charset charset
+     * @return string
      */
     public String readString(int unitId, int address, int length, Charset charset) {
         byte[] res = this.readHoldRegister(unitId, address, length / 2);
@@ -785,44 +837,48 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     //region 通用保持寄存器 写入数据
 
     /**
-     * 写入一个Int16 2字节数据，默认大端模式
+     * Write Int16 to hold register. Big endian default.
+     * (写入一个Int16 2字节数据)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address modbus address
+     * @param data    data
      */
     public void writeInt16(int address, short data) {
         this.writeInt16(this.unitId, address, data, false);
     }
 
     /**
-     * 写入一个Int16 2字节数据
+     * Write Int16 to hold register.
+     * (写入一个Int16 2字节数据)
      *
-     * @param address      地址
-     * @param data         数据
-     * @param littleEndian 是否小端模式，true：小端，false：大端
+     * @param address      modbus address
+     * @param data         data
+     * @param littleEndian is little endian，true：Yes，false：No
      */
     public void writeInt16(int address, short data, boolean littleEndian) {
         this.writeInt16(this.unitId, address, data, littleEndian);
     }
 
     /**
-     * 写入一个Int16 2字节数据
+     * Write Int16 to hold register.
+     * (写入一个Int16 2字节数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param data    数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param data    data
      */
     public void writeInt16(int unitId, int address, short data) {
         this.writeInt16(unitId, address, data, false);
     }
 
     /**
-     * 写入一个Int16 2字节数据
+     * Write Int16 to hold register.
+     * (写入一个Int16 2字节数据)
      *
-     * @param unitId       从站编号
-     * @param address      地址
-     * @param data         数据
-     * @param littleEndian 是否小端模式，true：小端，false：大端
+     * @param unitId       unit id or slave id
+     * @param address      modbus address
+     * @param data         data
+     * @param littleEndian is little endian，true：Yes，false：No
      */
     public void writeInt16(int unitId, int address, short data, boolean littleEndian) {
         byte[] bytes = ByteWriteBuff.newInstance(2, littleEndian)
@@ -832,44 +888,48 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 写入一个UInt16 2字节数据，默认大端模式
+     * Write UInt16 to hold register. Big endian default.
+     * (写入一个UInt16 2字节数据，默认大端模式)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address modbus address
+     * @param data    data
      */
     public void writeUInt16(int address, int data) {
         this.writeUInt16(this.unitId, address, data, false);
     }
 
     /**
-     * 写入一个UInt16 2字节数据，默认大端模式
+     * Write UInt16 to hold register. Big endian default.
+     * (写入一个UInt16 2字节数据，默认大端模式)
      *
-     * @param address      地址
-     * @param data         数据
-     * @param littleEndian 是否小端模式，true：小端，false：大端
+     * @param address      modbus address
+     * @param data         data
+     * @param littleEndian is little endian, true: yes, false: no.
      */
     public void writeUInt16(int address, int data, boolean littleEndian) {
         this.writeUInt16(this.unitId, address, data, littleEndian);
     }
 
     /**
-     * 写入一个UInt16 2字节数据，默认大端模式
+     * Write UInt16 to hold register. Big endian default.
+     * (写入一个UInt16 2字节数据，默认大端模式)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param data    数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param data    data
      */
     public void writeUInt16(int unitId, int address, int data) {
         this.writeUInt16(unitId, address, data, false);
     }
 
     /**
-     * 写入一个UInt16 2字节数据，默认大端模式
+     * Write UInt16 to hold register. Big endian default.
+     * (写入一个UInt16 2字节数据，默认大端模式)
      *
-     * @param unitId       从站编号
-     * @param address      地址
-     * @param data         数据
-     * @param littleEndian 是否小端模式，true：小端，false：大端
+     * @param unitId       unit id or slave id
+     * @param address      address
+     * @param data         data
+     * @param littleEndian is little endian, true: yes, false: no.
      */
     public void writeUInt16(int unitId, int address, int data, boolean littleEndian) {
         byte[] bytes = ByteWriteBuff.newInstance(2, littleEndian)
@@ -879,44 +939,48 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 写入一个Int32 4字节数据，默认BA_DC格式
+     * Write Int32 to hold register. BA_DC format default.
+     * (写入一个Int32 4字节数据，默认BA_DC格式)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address modbus address
+     * @param data    data
      */
     public void writeInt32(int address, int data) {
         this.writeInt32(this.unitId, address, data, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 写入一个Int32 4字节数据，默认BA_DC格式
+     * Write Int32 to hold register. BA_DC format default.
+     * (写入一个Int32 4字节数据，默认BA_DC格式)
      *
-     * @param address 地址
-     * @param data    数据
-     * @param format  4字节数据转换格式
+     * @param address modbus address
+     * @param data    data
+     * @param format  format of 4 bytes
      */
     public void writeInt32(int address, int data, EByteBuffFormat format) {
         this.writeInt32(this.unitId, address, data, format);
     }
 
     /**
-     * 写入一个Int32 4字节数据，默认BA_DC格式
+     * Write Int32 to hold register. BA_DC format default.
+     * (写入一个Int32 4字节数据，默认BA_DC格式)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param data    数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param data    data
      */
     public void writeInt32(int unitId, int address, int data) {
         this.writeInt32(unitId, address, data, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 写入一个Int32 4字节数据，默认BA_DC格式
+     * Write Int32 to hold register. BA_DC format default.
+     * (写入一个Int32 4字节数据，默认BA_DC格式)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param data    数据
-     * @param format  4字节数据转换格式
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param data    data
+     * @param format  format of 4 bytes
      */
     public void writeInt32(int unitId, int address, int data, EByteBuffFormat format) {
         byte[] bytes = ByteWriteBuff.newInstance(4, format)
@@ -926,44 +990,48 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 写入一个UInt32 4字节数据，默认BA_DC格式
+     * Write UInt32 to hold register. BA_DC format default.
+     * (写入一个UInt32 4字节数据，默认BA_DC格式)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address modbus address
+     * @param data    data
      */
     public void writeUInt32(int address, long data) {
         this.writeUInt32(this.unitId, address, data, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 写入一个UInt32 4字节数据，默认BA_DC格式
+     * Write UInt32 to hold register. BA_DC format default.
+     * (写入一个UInt32 4字节数据，默认BA_DC格式)
      *
-     * @param address 地址
-     * @param data    数据
-     * @param format  4字节数据转换格式
+     * @param address modbus address
+     * @param data    data
+     * @param format  format of 4 bytes
      */
     public void writeUInt32(int address, long data, EByteBuffFormat format) {
         this.writeUInt32(this.unitId, address, data, format);
     }
 
     /**
-     * 写入一个UInt32 4字节数据，默认BA_DC格式
+     * Write UInt32 to hold register. BA_DC format default.
+     * (写入一个UInt32 4字节数据，默认BA_DC格式)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param data    数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param data    data
      */
     public void writeUInt32(int unitId, int address, long data) {
         this.writeUInt32(unitId, address, data, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 写入一个UInt32 4字节数据，默认BA_DC格式
+     * Write UInt32 to hold register. BA_DC format default.
+     * (写入一个UInt32 4字节数据，默认BA_DC格式)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param data    数据
-     * @param format  4字节数据转换格式
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param data    data
+     * @param format  format of 4 bytes
      */
     public void writeUInt32(int unitId, int address, long data, EByteBuffFormat format) {
         byte[] bytes = ByteWriteBuff.newInstance(4, format)
@@ -973,44 +1041,48 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 写入一个Float32 4字节数据
+     * Write float32 to hold register.
+     * (写入一个Float32 4字节数据)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address modbus address
+     * @param data    data
      */
     public void writeFloat32(int address, float data) {
         this.writeFloat32(this.unitId, address, data, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 写入一个Float32 4字节数据
+     * Write float32 to hold register.
+     * (写入一个Float32 4字节数据)
      *
-     * @param address 地址
-     * @param data    数据
-     * @param format  4字节数据转换格式
+     * @param address modbus address
+     * @param data    data
+     * @param format  format of 4 bytes
      */
     public void writeFloat32(int address, float data, EByteBuffFormat format) {
         this.writeFloat32(this.unitId, address, data, format);
     }
 
     /**
-     * 写入一个Float32 4字节数据
+     * Write float32 to hold register.
+     * (写入一个Float32 4字节数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param data    数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param data    data
      */
     public void writeFloat32(int unitId, int address, float data) {
         this.writeFloat32(unitId, address, data, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 写入一个Float32 4字节数据
+     * Write float32 to hold register.
+     * (写入一个Float32 4字节数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param data    数据
-     * @param format  4字节数据转换格式
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param data    data
+     * @param format  format of 4 bytes
      */
     public void writeFloat32(int unitId, int address, float data, EByteBuffFormat format) {
         byte[] bytes = ByteWriteBuff.newInstance(4, format)
@@ -1020,44 +1092,48 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 写入一个Float64 8字节数据，默认BA_DC格式
+     * Write float64 to hold register. BA_DC format.
+     * (写入一个Float64 8字节数据，默认BA_DC格式)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address modbus address
+     * @param data    data
      */
     public void writeFloat64(int address, double data) {
         this.writeFloat64(this.unitId, address, data, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 写入一个Float64 8字节数据
+     * Write float64 to hold register.
+     * (写入一个Float64 8字节数据)
      *
-     * @param address 地址
-     * @param data    数据
-     * @param format  8字节数据转换格式
+     * @param address modbus address
+     * @param data    data
+     * @param format  format of 8 bytes
      */
     public void writeFloat64(int address, double data, EByteBuffFormat format) {
         this.writeFloat64(this.unitId, address, data, format);
     }
 
     /**
-     * 写入一个Float64 8字节数据
+     * Write float64 to hold register.
+     * (写入一个Float64 8字节数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param data    数据
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param data    data
      */
     public void writeFloat64(int unitId, int address, double data) {
         this.writeFloat64(unitId, address, data, EByteBuffFormat.BA_DC);
     }
 
     /**
-     * 写入一个Float64 8字节数据
+     * Write float64 to hold register.
+     * (写入一个Float64 8字节数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param data    数据
-     * @param format  8字节数据转换格式
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param data    data
+     * @param format  format of 8 bytes
      */
     public void writeFloat64(int unitId, int address, double data, EByteBuffFormat format) {
         byte[] bytes = ByteWriteBuff.newInstance(8, format)
@@ -1067,44 +1143,48 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
     }
 
     /**
-     * 写入一个String数据，默认ASCII编码
+     * Write string to hold register. ASCII default.
+     * (写入一个String数据，默认ASCII编码)
      *
-     * @param address 地址
-     * @param data    数据字符串
+     * @param address modbus address
+     * @param data    data string
      */
     public void writeString(int address, String data) {
         this.writeString(this.unitId, address, data, StandardCharsets.US_ASCII);
     }
 
     /**
-     * 写入一个String数据
+     * Write string to hold register.
+     * (写入一个String数据)
      *
-     * @param address 地址
-     * @param data    数据字符串
-     * @param charset 字符集
+     * @param address modbus address
+     * @param data    data string
+     * @param charset charset
      */
     public void writeString(int address, String data, Charset charset) {
         this.writeString(this.unitId, address, data, charset);
     }
 
     /**
-     * 写入一个String数据
+     * Write string to hold register.
+     * (写入一个String数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param data    数据字符串
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param data    data string
      */
     public void writeString(int unitId, int address, String data) {
         this.writeString(unitId, address, data, StandardCharsets.US_ASCII);
     }
 
     /**
-     * 写入一个String数据
+     * Write string to hold register.
+     * (写入一个String数据)
      *
-     * @param unitId  从站编号
-     * @param address 地址
-     * @param data    数据字符串
-     * @param charset 字符集
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param data    data string
+     * @param charset charset
      */
     public void writeString(int unitId, int address, String data, Charset charset) {
         byte[] bytes = data.getBytes(charset);

@@ -74,7 +74,7 @@ public class AckHeader extends Header {
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return AckHeader
      */
     public static AckHeader fromBytes(final byte[] data) {

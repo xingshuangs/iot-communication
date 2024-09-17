@@ -33,7 +33,8 @@ import com.github.xingshuangs.iot.utils.LRCUtil;
 import lombok.Data;
 
 /**
- * ASCII的modbus响应
+ * Response of ASCII modbus.
+ * (ASCII的modbus响应)
  *
  * @author xingshuang
  */
@@ -41,6 +42,7 @@ import lombok.Data;
 public class MbAsciiResponse implements IObjectByteArray {
 
     /**
+     * Unit id, or slave id.
      * 单元标识符<br>
      * 字节大小：1个字节
      * 字节序数：0
@@ -48,12 +50,14 @@ public class MbAsciiResponse implements IObjectByteArray {
     private int unitId = 1;
 
     /**
-     * 协议数据单元
+     * PDU
+     * (协议数据单元)
      */
     private MbPdu pdu;
 
     /**
-     * 纵向冗余校验，最后1个字节
+     * LRC
+     * (纵向冗余校验，最后1个字节)
      */
     private byte lrc;
 
@@ -86,9 +90,10 @@ public class MbAsciiResponse implements IObjectByteArray {
     }
 
     /**
-     * 校验CRC
+     * Check LRC
+     * (校验lrc)
      *
-     * @return true：校验成功，false：校验失败
+     * @return true：check success，false：check failed.
      */
     public boolean checkLrc() {
         if (this.pdu == null) {
@@ -103,9 +108,10 @@ public class MbAsciiResponse implements IObjectByteArray {
 
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return MbRtuResponse
      */
     public static MbAsciiResponse fromBytes(byte[] data) {
@@ -113,10 +119,11 @@ public class MbAsciiResponse implements IObjectByteArray {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return MbRtuResponse
      */
     public static MbAsciiResponse fromBytes(byte[] data, int offset) {

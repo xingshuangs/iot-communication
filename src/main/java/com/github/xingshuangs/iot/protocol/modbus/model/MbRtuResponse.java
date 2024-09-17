@@ -35,7 +35,8 @@ import lombok.Data;
 import java.util.Arrays;
 
 /**
- * RTU的modbus响应
+ * Modbus rtu response.
+ * (RTU的modbus响应)
  *
  * @author xingshuang
  */
@@ -43,6 +44,7 @@ import java.util.Arrays;
 public class MbRtuResponse implements IObjectByteArray {
 
     /**
+     * Unit id or slave id.
      * 单元标识符<br>
      * 字节大小：1个字节
      * 字节序数：0
@@ -50,12 +52,14 @@ public class MbRtuResponse implements IObjectByteArray {
     private int unitId = 1;
 
     /**
-     * 协议数据单元
+     * PDU
+     * (协议数据单元)
      */
     private MbPdu pdu;
 
     /**
-     * 循环冗余校验，最后两个字节
+     * CRC.
+     * (循环冗余校验，最后两个字节)
      */
     private byte[] crc;
 
@@ -74,7 +78,8 @@ public class MbRtuResponse implements IObjectByteArray {
     }
 
     /**
-     * 自我数据校验
+     * Check self.
+     * (自我数据校验)
      */
     public void selfCheck() {
         if (this.pdu == null) {
@@ -88,9 +93,10 @@ public class MbRtuResponse implements IObjectByteArray {
     }
 
     /**
-     * 校验CRC
+     * Check crc.
+     * (校验CRC)
      *
-     * @return true：校验成功，false：校验失败
+     * @return true：check success，false：check failed.
      */
     public boolean checkCrc() {
         if (this.pdu == null) {
@@ -105,9 +111,10 @@ public class MbRtuResponse implements IObjectByteArray {
 
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return MbRtuResponse
      */
     public static MbRtuResponse fromBytes(byte[] data) {
@@ -115,10 +122,11 @@ public class MbRtuResponse implements IObjectByteArray {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return MbRtuResponse
      */
     public static MbRtuResponse fromBytes(byte[] data, int offset) {

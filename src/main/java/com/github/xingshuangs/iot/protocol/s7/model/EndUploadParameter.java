@@ -49,7 +49,7 @@ public class EndUploadParameter extends UploadParameter {
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return UploadParameter
      */
     public static EndUploadParameter fromBytes(final byte[] data) {
@@ -59,8 +59,8 @@ public class EndUploadParameter extends UploadParameter {
     /**
      * 字节数组数据解析
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return UploadParameter
      */
     public static EndUploadParameter fromBytes(final byte[] data, final int offset) {

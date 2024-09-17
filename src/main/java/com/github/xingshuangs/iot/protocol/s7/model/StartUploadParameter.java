@@ -60,7 +60,7 @@ public class StartUploadParameter extends DownloadParameter {
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return StartUploadParameter
      */
     public static StartUploadParameter fromBytes(final byte[] data) {
@@ -70,8 +70,8 @@ public class StartUploadParameter extends DownloadParameter {
     /**
      * 字节数组数据解析
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return StartUploadParameter
      */
     public static StartUploadParameter fromBytes(final byte[] data, final int offset) {

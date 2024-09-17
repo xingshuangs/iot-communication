@@ -90,7 +90,7 @@ public class SetupComParameter extends Parameter implements IObjectByteArray {
     /**
      * 字节数组数据解析
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return SetupComParameter
      */
     public static SetupComParameter fromBytes(final byte[] data) {

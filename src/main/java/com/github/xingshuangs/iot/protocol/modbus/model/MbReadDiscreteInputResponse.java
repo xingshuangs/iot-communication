@@ -32,7 +32,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 响应读离散量输入
+ * Read discrete input response.
+ * (响应读离散量输入)
  *
  * @author xingshuang
  */
@@ -41,12 +42,14 @@ import lombok.EqualsAndHashCode;
 public final class MbReadDiscreteInputResponse extends MbPdu {
 
     /**
+     * Byte count.
      * 字节数<br>
      * 字节大小：1个字节
      */
     private int count;
 
     /**
+     * Input status.
      * 线圈状态N 或 N+1，N＝输出数量/8，如果余数不等于 0，那么N = N+1
      * 字节大小：N个字节
      */
@@ -71,9 +74,10 @@ public final class MbReadDiscreteInputResponse extends MbPdu {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return MbReadDiscreteInputResponse
      */
     public static MbReadDiscreteInputResponse fromBytes(final byte[] data) {
@@ -81,10 +85,11 @@ public final class MbReadDiscreteInputResponse extends MbPdu {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return MbReadDiscreteInputResponse
      */
     public static MbReadDiscreteInputResponse fromBytes(final byte[] data, final int offset) {

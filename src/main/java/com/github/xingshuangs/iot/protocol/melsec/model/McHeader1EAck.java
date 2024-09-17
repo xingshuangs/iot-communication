@@ -58,7 +58,8 @@ public class McHeader1EAck extends McHeaderAck {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
      * @param data      字节数组数据
      * @return McHeaderAck
@@ -68,7 +69,8 @@ public class McHeader1EAck extends McHeaderAck {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
      * @param data      字节数组数据
      * @param offset    偏移量

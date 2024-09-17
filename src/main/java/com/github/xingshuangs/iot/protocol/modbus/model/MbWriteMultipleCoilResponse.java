@@ -32,7 +32,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 响应写多个线圈
+ * Write multiple coil response.
+ * (响应写多个线圈)
  *
  * @author xingshuang
  */
@@ -41,12 +42,14 @@ import lombok.EqualsAndHashCode;
 public final class MbWriteMultipleCoilResponse extends MbPdu {
 
     /**
+     * Address.
      * 输出地址 说是从0x0000 至 0xFFFF，但对应实际却只是0001-9999，对应0x0000-0x270F <br>
      * 字节大小：2个字节
      */
     private int address;
 
     /**
+     * Quantity.
      * 输出数量 0x0001 至 0x07B0 <br>
      * 字节大小：2个字节
      */
@@ -71,9 +74,10 @@ public final class MbWriteMultipleCoilResponse extends MbPdu {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return MbWriteMultipleCoilResponse
      */
     public static MbWriteMultipleCoilResponse fromBytes(final byte[] data) {
@@ -81,10 +85,11 @@ public final class MbWriteMultipleCoilResponse extends MbPdu {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return MbWriteMultipleCoilResponse
      */
     public static MbWriteMultipleCoilResponse fromBytes(final byte[] data, final int offset) {

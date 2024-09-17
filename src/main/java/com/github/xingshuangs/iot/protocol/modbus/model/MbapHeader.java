@@ -33,7 +33,8 @@ import lombok.Data;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 报文头
+ * Package header.
+ * (报文头)
  *
  * @author xingshuang
  */
@@ -45,6 +46,7 @@ public class MbapHeader implements IObjectByteArray {
     public static final int BYTE_LENGTH = 7;
 
     /**
+     * Transaction id.
      * 事务元标识符<br>
      * 字节大小：2个字节
      * 字节序数：0-1
@@ -52,6 +54,7 @@ public class MbapHeader implements IObjectByteArray {
     private int transactionId;
 
     /**
+     * Protocol Id.
      * 协议标识符<br>
      * 字节大小：2个字节
      * 字节序数：2-3
@@ -59,6 +62,7 @@ public class MbapHeader implements IObjectByteArray {
     private int protocolId = 0;
 
     /**
+     * Package length, include unitId and data, exclude length.
      * 长度，长度域是下一个域的字节数，包括单元标识符和数据域。length后面的所有字节长度，不包含前面和length<br>
      * 字节大小：2个字节
      * 字节序数：4-5
@@ -66,6 +70,7 @@ public class MbapHeader implements IObjectByteArray {
     private int length = 0;
 
     /**
+     * Unit id, or slave id.
      * 单元标识符<br>
      * 字节大小：1个字节
      * 字节序数：6
@@ -95,9 +100,10 @@ public class MbapHeader implements IObjectByteArray {
     }
 
     /**
+     * Get new number, range in [0,65536]
      * 获取新的pduNumber
      *
-     * @return 编号
+     * @return number
      */
     public static int getNewNumber() {
         int res = index.getAndIncrement();
@@ -109,9 +115,10 @@ public class MbapHeader implements IObjectByteArray {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return MbapHeader
      */
     public static MbapHeader fromBytes(final byte[] data) {
@@ -119,10 +126,11 @@ public class MbapHeader implements IObjectByteArray {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return MbapHeader
      */
     public static MbapHeader fromBytes(final byte[] data, final int offset) {

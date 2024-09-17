@@ -90,7 +90,7 @@ public class FloatUtil {
      * 将字节数组转换为float32
      *
      * @param data   字节数组
-     * @param offset 偏移量
+     * @param offset index offset
      * @return float32数据
      */
     public static float toFloat32(byte[] data, int offset) {
@@ -135,7 +135,7 @@ public class FloatUtil {
      * 将字节数组转换为float64
      *
      * @param data   字节数组
-     * @param offset 偏移量
+     * @param offset index offset
      * @return float64数据
      */
     public static double toFloat64(byte[] data, int offset) {

@@ -71,9 +71,10 @@ public class McHeader3EAck extends McHeaderAck {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data 字节数组数据
+     * @param data byte array
      * @return McHeaderAck
      */
     public static McHeader3EAck fromBytes(final byte[] data) {
@@ -81,10 +82,11 @@ public class McHeader3EAck extends McHeaderAck {
     }
 
     /**
-     * 解析字节数组数据
+     * Parses byte array and converts it to object.
+     * (解析字节数组数据)
      *
-     * @param data   字节数组数据
-     * @param offset 偏移量
+     * @param data   byte array
+     * @param offset index offset
      * @return McHeaderAck
      */
     public static McHeader3EAck fromBytes(final byte[] data, final int offset) {
