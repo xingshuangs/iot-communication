@@ -65,7 +65,7 @@ public class H264VideoFrame extends RawFrame {
             ByteReadBuff buff = ByteReadBuff.newInstance(frameSegment);
             buff.getByte();
             // 从第二个字节开始，取2个字节
-            ExpGolomb expGolomb = new ExpGolomb(buff.getBytes(2));
+            ExpGolomb expGolomb = new ExpGolomb(buff.getBytes());
             expGolomb.readUE();
             int type = expGolomb.readUE();
             this.sliceType = EH264SliceType.from(type % 5);

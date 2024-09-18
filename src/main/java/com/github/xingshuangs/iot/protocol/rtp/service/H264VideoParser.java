@@ -25,17 +25,14 @@
 package com.github.xingshuangs.iot.protocol.rtp.service;
 
 
-import com.github.xingshuangs.iot.exceptions.RtpCommException;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.exceptions.RtpCommException;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264NaluType;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264SliceType;
 import com.github.xingshuangs.iot.protocol.rtp.model.RtpPackage;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.RawFrame;
-import com.github.xingshuangs.iot.protocol.rtp.model.payload.H264NaluBase;
-import com.github.xingshuangs.iot.protocol.rtp.model.payload.H264NaluBuilder;
-import com.github.xingshuangs.iot.protocol.rtp.model.payload.H264NaluFuA;
-import com.github.xingshuangs.iot.protocol.rtp.model.payload.H264NaluSingle;
+import com.github.xingshuangs.iot.protocol.rtp.model.payload.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -84,6 +81,13 @@ public class H264VideoParser implements IPayloadParser {
      */
     private final List<H264NaluFuA> buffers = new ArrayList<>();
 
+    private final List<byte[]> naluSingleBuffers = new ArrayList<>();
+
+    /**
+     * 是否有B帧
+     */
+    private boolean hasBFrame;
+
     public H264VideoParser(Integer payloadNumber) {
         this.payloadNumber = payloadNumber;
     }
@@ -92,9 +96,38 @@ public class H264VideoParser implements IPayloadParser {
         this.buffers.clear();
     }
 
-    private H264VideoFrame doBuffers(long timestamp) {
-        if (this.buffers.isEmpty()) {
+    private void getFirstMbInSlice(EH264NaluType naluType, byte[] data, boolean mark) {
+//        ByteReadBuff buff = ByteReadBuff.newInstance(data);
+//        buff.getByte();
+        // 从第二个字节开始，取2个字节
+        ExpGolomb expGolomb = new ExpGolomb(data);
+        int number = expGolomb.readUE();
+        int type = expGolomb.readUE() % 5;
+        log.debug("naluType:{}, number:{}, type:{}, mark:{}", naluType, number, EH264SliceType.from(type), mark);
+    }
+
+    private H264VideoFrame doSingleBuffers(long timestamp, boolean forbiddenZeroBit, int nri, EH264NaluType type) {
+        if (this.naluSingleBuffers.isEmpty()) {
             throw new RtpCommException("the number of buffers is 0");
+        }
+
+        int sum = this.naluSingleBuffers.stream().mapToInt(x -> x.length).sum();
+        ByteWriteBuff buff = new ByteWriteBuff(sum);
+        naluSingleBuffers.forEach(buff::putBytes);
+        naluSingleBuffers.clear();
+
+        H264NaluSingle single = new H264NaluSingle();
+        single.getHeader().setForbiddenZeroBit(forbiddenZeroBit);
+        single.getHeader().setNri(nri);
+        single.getHeader().setType(type);
+        single.setPayload(buff.getData());
+
+        return new H264VideoFrame(single.getHeader().getType(), timestamp - this.baseTimestamp, single.toByteArray());
+    }
+
+    private H264NaluSingle doFuABuffers() {
+        if (this.buffers.isEmpty()) {
+            throw new RtpCommException("FuA the number of buffers is 0");
         }
 
         H264NaluFuA naluFuA = this.buffers.get(0);
@@ -108,8 +141,8 @@ public class H264VideoParser implements IPayloadParser {
         single.getHeader().setNri(naluFuA.getHeader().getNri());
         single.getHeader().setType(naluFuA.getFuHeader().getType());
         single.setPayload(buff.getData());
-
-        return new H264VideoFrame(single.getHeader().getType(), timestamp - this.baseTimestamp, single.toByteArray());
+        return single;
+//        return new H264VideoFrame(single.getHeader().getType(), timestamp - this.baseTimestamp, single.toByteArray());
     }
 
     /**
@@ -132,37 +165,76 @@ public class H264VideoParser implements IPayloadParser {
         EH264NaluType naluType = h264Nalu.getHeader().getType();
         H264VideoFrame frame = null;
         switch (naluType) {
+            case AUD:
+//                this.resetBuffers();
+                this.naluSingleBuffers.clear();
+                break;
             case SEI:
             case PPS:
             case SPS:
-            case AUD:
             case NON_IDR_SLICE:
             case IDR_SLICE:
                 H264NaluSingle naluSingle = (H264NaluSingle) h264Nalu;
-                frame = new H264VideoFrame(naluType, rtp.getHeader().getTimestamp() - this.baseTimestamp, naluSingle.toByteArray());
+                this.getFirstMbInSlice(naluType, naluSingle.getPayload(), rtp.getHeader().isMarker());
+                this.naluSingleBuffers.add(naluSingle.getPayload());
+                if (rtp.getHeader().isMarker()) {
+                    H264NaluHeader header = naluSingle.getHeader();
+                    frame = this.doSingleBuffers(rtp.getHeader().getTimestamp(), header.isForbiddenZeroBit(), header.getNri(), header.getType());
+                    this.videoFrameHandle(frame);
+                }
                 break;
             case FU_A:
                 H264NaluFuA naluFuA = (H264NaluFuA) h264Nalu;
-                if (naluFuA.getFuHeader().isStart()) {
-                    this.resetBuffers();
-                }
+//                if (naluFuA.getFuHeader().isStart()) {
+//                    this.resetBuffers();
+//                }
                 this.buffers.add(naluFuA);
                 if (naluFuA.getFuHeader().isEnd()) {
-                    frame = this.doBuffers(rtp.getHeader().getTimestamp());
+                    H264NaluSingle naluSingle1 = this.doFuABuffers();
+                    this.naluSingleBuffers.add(naluSingle1.getPayload());
+                    this.getFirstMbInSlice(naluType, naluSingle1.getPayload(), rtp.getHeader().isMarker());
+                    if (rtp.getHeader().isMarker()) {
+                        H264NaluHeader header = naluSingle1.getHeader();
+                        frame = this.doSingleBuffers(rtp.getHeader().getTimestamp(), header.isForbiddenZeroBit(), header.getNri(), header.getType());
+                        this.videoFrameHandle(frame);
+                    }
                 }
+                break;
+            case STAP_A:
+//                H264NaluStapA naluStapA = (H264NaluStapA) h264Nalu;
+//                List<H264VideoFrame> collect = naluStapA.getNaluSingles().stream()
+//                        .filter(x -> x.getHeader().getType() == EH264NaluType.NON_IDR_SLICE)
+//                        .map(x -> new H264VideoFrame(x.getHeader().getType(), rtp.getHeader().getTimestamp() - this.baseTimestamp, x.toByteArray()))
+//                        .filter(x -> x.getSliceType() == EH264SliceType.I || x.getSliceType() == EH264SliceType.P || x.getSliceType() == EH264SliceType.B)
+//                        .collect(Collectors.toList());
+//                collect.forEach(this::videoFrameHandle);
                 break;
             default:
                 log.error("RTP parsing unknown data type [{}], timestamp [{}]", naluType, rtp.getHeader().getTimestamp());
                 break;
         }
+    }
+
+    @Override
+    public void onFrameHandle(Consumer<RawFrame> frameHandle) {
+        this.frameHandle = frameHandle;
+    }
+
+    private void videoFrameHandle(H264VideoFrame frame) {
         if (this.frameHandle == null || frame == null || frame.getPts() < 0) {
             return;
         }
-
-        H264VideoFrame h264VideoFrame = this.dtsHandle(frame);
-        this.addLastFrame(frame);
-        if (h264VideoFrame == null) {
-            return;
+        H264VideoFrame h264VideoFrame;
+        if (frame.getNaluType() == EH264NaluType.IDR_SLICE || frame.getNaluType() == EH264NaluType.NON_IDR_SLICE) {
+            // 只处理I帧，P帧，B帧的数据
+            h264VideoFrame = this.dtsHandle(frame);
+            this.addLastFrame(frame);
+            if (h264VideoFrame == null) {
+                return;
+            }
+        } else {
+            // 处理SPS, PPS等其他
+            h264VideoFrame = frame;
         }
 
         try {
@@ -172,11 +244,6 @@ public class H264VideoParser implements IPayloadParser {
         }
     }
 
-    @Override
-    public void onFrameHandle(Consumer<RawFrame> frameHandle) {
-        this.frameHandle = frameHandle;
-    }
-
     /**
      * Handle DTS of frame.
      *
@@ -184,11 +251,14 @@ public class H264VideoParser implements IPayloadParser {
      * @return last frame
      */
     private H264VideoFrame dtsHandle(H264VideoFrame frame) {
+        if (frame.getSliceType() == EH264SliceType.B && !this.hasBFrame) {
+            this.hasBFrame = true;
+        }
         if (this.lastFrame == null) {
             return null;
         }
-        if (frame.getSliceType() != EH264SliceType.I && this.cacheFrameList.size() >= 4) {
-            long delta = this.cacheFrameList.get(1).getPts() - this.cacheFrameList.get(0).getPts();
+        if (this.hasBFrame && frame.getSliceType() != EH264SliceType.I && this.cacheFrameList.size() >= 5) {
+            long delta = (this.cacheFrameList.get(4).getPts() - this.cacheFrameList.get(0).getPts()) / 4;
             frame.setDts(this.lastFrame.getDts() + delta);
         }
         this.lastFrame.setDuration((int) (frame.getDts() - this.lastFrame.getDts()));

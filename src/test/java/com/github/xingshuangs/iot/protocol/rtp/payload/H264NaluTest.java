@@ -27,6 +27,7 @@ package com.github.xingshuangs.iot.protocol.rtp.payload;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264NaluType;
 import com.github.xingshuangs.iot.protocol.rtp.model.payload.H264NaluFuA;
 import com.github.xingshuangs.iot.protocol.rtp.model.payload.H264NaluSingle;
+import com.github.xingshuangs.iot.protocol.rtp.model.payload.H264NaluStapA;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -91,5 +92,14 @@ public class H264NaluTest {
         assertEquals(3, nalu.getHeader().getNri());
         assertEquals(EH264NaluType.NON_IDR_SLICE, nalu.getHeader().getType());
         assertArrayEquals(payload, nalu.getPayload());
+    }
+
+    @Test
+    public void h264NaluStapA() {
+        byte[] expect = new byte[]{(byte) 0x18, (byte) 0x00, (byte) 0x02, (byte) 0x09, (byte) 0x30, (byte) 0x00, (byte) 0x05, (byte) 0x61, (byte) 0xe2, (byte) 0x22, (byte) 0x1d, (byte) 0xff};
+        byte[] payload = new byte[]{(byte) 0x00, (byte) 0x01, (byte) 0x02, (byte) 0x03};
+        H264NaluStapA nalu = H264NaluStapA.fromBytes(expect);
+        assertFalse(nalu.getHeader().isForbiddenZeroBit());
+        assertEquals(2, nalu.getNaluSingles().size());
     }
 }

@@ -78,7 +78,7 @@ public class H264NaluStapSingle extends H264NaluSingle {
         res.header = H264NaluHeader.fromBytes(data, index);
         index += res.header.byteArrayLength();
 
-        res.payload =  ByteReadBuff.newInstance(data, index).getBytes(res.size);
+        res.payload = ByteReadBuff.newInstance(data, index).getBytes(res.size - 1);
         return res;
     }
 }

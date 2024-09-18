@@ -44,6 +44,43 @@ import java.util.concurrent.TimeUnit;
 public class RtspClientTest {
 
     @Test
+    public void connectUdp1() {
+        List<H264VideoFrame> list = new ArrayList<>();
+        URI uri = URI.create("rtsp://192.168.3.250:554/h264/ch1/main/av_stream");
+        UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "hb123456");
+        DigestAuthenticator authenticator = new DigestAuthenticator(credential);
+        RtspClient client = new RtspClient(uri, authenticator, ERtspTransportProtocol.UDP);
+//        client.onCommCallback(log::info);
+        client.onFrameHandle(x -> {
+            H264VideoFrame f = (H264VideoFrame) x;
+            if (f.getSliceType() != null) {
+//                log.debug(f.getSliceType() + ", 时间戳：" + f.getTimestamp() + ", 第二个字节：" + HexUtil.toHexString(new byte[]{f.getFrameSegment()[0], f.getFrameSegment()[1]}) + ", 字节长度:" + f.getFrameSegment().length);
+                log.debug(f.getSliceType() + ", PTS：" + f.getPts() + ", DTS：" + f.getDts() + ", duration:" + f.getDuration()+", "+(f.getPts()-f.getDts()));
+            }
+            if (f.getDuration() <= 0) {
+                log.warn("存在一帧数据，duration <= 0");
+            }
+        });
+        client.onDestroyHandle(() -> log.debug("close"));
+        CompletableFuture.runAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            client.stop();
+        });
+        CompletableFuture<Void> future = client.start();
+        while (!future.isDone()) {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @Test
     public void connectUdp() {
         URI uri = URI.create("rtsp://192.168.3.142:554/h264/ch1/main/av_stream");
         UsernamePasswordCredential credential = new UsernamePasswordCredential("admin", "kilox1234");
@@ -83,7 +120,7 @@ public class RtspClientTest {
         client.onCommCallback(System.out::println);
         client.onFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
-            log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
+//            log.debug(f.getFrameType() + ", " + f.getNaluType() + ", " + f.getTimestamp() + ", " + f.getFrameSegment().length);
         });
         client.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
@@ -108,14 +145,14 @@ public class RtspClientTest {
     @Test
     public void connectUdpWithoutAuthenticator() {
         List<H264VideoFrame> list = new ArrayList<>();
-        URI uri = URI.create("rtsp://127.0.0.1:8554/11");
+        URI uri = URI.create("rtsp://192.168.3.15:8554/back");
         RtspClient client = new RtspClient(uri, ERtspTransportProtocol.UDP);
 //        client.onCommCallback(log::info);
         client.onFrameHandle(x -> {
             H264VideoFrame f = (H264VideoFrame) x;
             if (f.getSliceType() != null) {
 //                log.debug(f.getSliceType() + ", 时间戳：" + f.getTimestamp() + ", 第二个字节：" + HexUtil.toHexString(new byte[]{f.getFrameSegment()[0], f.getFrameSegment()[1]}) + ", 字节长度:" + f.getFrameSegment().length);
-                log.debug(f.getSliceType() + ", PTS：" + f.getPts() + ", DTS：" + f.getDts() + ", duration:" + f.getDuration()+", "+(f.getPts()-f.getDts()));
+//                log.debug(f.getSliceType() + ", PTS：" + f.getPts() + ", DTS：" + f.getDts() + ", duration:" + f.getDuration()+", "+(f.getPts()-f.getDts()));
             }
             if (f.getDuration() <= 0) {
                 log.warn("存在一帧数据，duration <= 0");
@@ -124,7 +161,7 @@ public class RtspClientTest {
         client.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(10);
+                TimeUnit.SECONDS.sleep(20);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

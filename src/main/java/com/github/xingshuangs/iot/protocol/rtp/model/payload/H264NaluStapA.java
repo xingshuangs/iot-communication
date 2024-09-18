@@ -26,6 +26,8 @@ package com.github.xingshuangs.iot.protocol.rtp.model.payload;
 
 
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,8 @@ import java.util.List;
  *
  * @author xingshuang
  */
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class H264NaluStapA extends H264NaluBase {
 
     private final List<H264NaluStapSingle> naluSingles = new ArrayList<>();

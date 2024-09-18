@@ -265,7 +265,7 @@ public class RtspFMp4Proxy {
         if (videoFrame.getNaluType() == EH264NaluType.IDR_SLICE
                 && !this.mp4TrackInfo.getSampleData().isEmpty()) {
             this.addSampleData();
-        } else if (this.mp4TrackInfo.getSampleData().size() >= 4 && videoFrame.getSliceType() == EH264SliceType.P) {
+        } else if (this.mp4TrackInfo.getSampleData().size() >= 5 && videoFrame.getSliceType() == EH264SliceType.P) {
             this.addSampleData();
         }
 
