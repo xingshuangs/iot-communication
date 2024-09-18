@@ -79,9 +79,12 @@ public class H264VideoParser implements IPayloadParser {
      * Cache list of H264 Nalu FuA.
      * H264的FuA单元的列表
      */
-    private final List<H264NaluFuA> buffers = new ArrayList<>();
+    private final List<H264NaluFuA> naluFuADataBuffers = new ArrayList<>();
 
-    private final List<byte[]> naluSingleBuffers = new ArrayList<>();
+    /**
+     * 单Nalu的缓存
+     */
+    private final List<H264NaluSingle> naluBuffers = new ArrayList<>();
 
     /**
      * 是否有B帧
@@ -93,48 +96,44 @@ public class H264VideoParser implements IPayloadParser {
     }
 
     private void resetBuffers() {
-        this.buffers.clear();
+        this.naluFuADataBuffers.clear();
+        this.naluBuffers.clear();
     }
 
-    private void getFirstMbInSlice(EH264NaluType naluType, byte[] data, boolean mark) {
-//        ByteReadBuff buff = ByteReadBuff.newInstance(data);
-//        buff.getByte();
-        // 从第二个字节开始，取2个字节
-        ExpGolomb expGolomb = new ExpGolomb(data);
-        int number = expGolomb.readUE();
-        int type = expGolomb.readUE() % 5;
-        log.debug("naluType:{}, number:{}, type:{}, mark:{}", naluType, number, EH264SliceType.from(type), mark);
-    }
-
-    private H264VideoFrame doSingleBuffers(long timestamp, boolean forbiddenZeroBit, int nri, EH264NaluType type) {
-        if (this.naluSingleBuffers.isEmpty()) {
+    /**
+     * 执行Nalu的缓存，打包成一帧
+     *
+     * @param timestamp 时间戳
+     * @return H264VideoFrame
+     */
+    private H264VideoFrame doNaluBuffers(long timestamp) {
+        if (this.naluBuffers.isEmpty()) {
             throw new RtpCommException("the number of buffers is 0");
         }
-
-        int sum = this.naluSingleBuffers.stream().mapToInt(x -> x.length).sum();
+        H264NaluSingle single = this.naluBuffers.get(0);
+        int sum = this.naluBuffers.stream().mapToInt(H264NaluSingle::byteArrayLength).sum();
         ByteWriteBuff buff = new ByteWriteBuff(sum);
-        naluSingleBuffers.forEach(buff::putBytes);
-        naluSingleBuffers.clear();
+        naluBuffers.forEach(x -> buff.putBytes(x.toByteArray()));
+        naluBuffers.clear();
 
-        H264NaluSingle single = new H264NaluSingle();
-        single.getHeader().setForbiddenZeroBit(forbiddenZeroBit);
-        single.getHeader().setNri(nri);
-        single.getHeader().setType(type);
-        single.setPayload(buff.getData());
-
-        return new H264VideoFrame(single.getHeader().getType(), timestamp - this.baseTimestamp, single.toByteArray());
+        return new H264VideoFrame(single.getHeader().getType(), timestamp - this.baseTimestamp, buff.getData());
     }
 
+    /**
+     * 执行FuA的缓存，将FuA打包成一个单Nalu
+     *
+     * @return H264NaluSingle
+     */
     private H264NaluSingle doFuABuffers() {
-        if (this.buffers.isEmpty()) {
+        if (this.naluFuADataBuffers.isEmpty()) {
             throw new RtpCommException("FuA the number of buffers is 0");
         }
 
-        H264NaluFuA naluFuA = this.buffers.get(0);
-        int sum = this.buffers.stream().mapToInt(x -> x.getPayload().length).sum();
+        H264NaluFuA naluFuA = this.naluFuADataBuffers.get(0);
+        int sum = this.naluFuADataBuffers.stream().mapToInt(x -> x.getPayload().length).sum();
         ByteWriteBuff buff = new ByteWriteBuff(sum);
-        buffers.forEach(x -> buff.putBytes(x.getPayload()));
-        buffers.clear();
+        naluFuADataBuffers.forEach(x -> buff.putBytes(x.getPayload()));
+        naluFuADataBuffers.clear();
 
         H264NaluSingle single = new H264NaluSingle();
         single.getHeader().setForbiddenZeroBit(naluFuA.getHeader().isForbiddenZeroBit());
@@ -142,7 +141,6 @@ public class H264VideoParser implements IPayloadParser {
         single.getHeader().setType(naluFuA.getFuHeader().getType());
         single.setPayload(buff.getData());
         return single;
-//        return new H264VideoFrame(single.getHeader().getType(), timestamp - this.baseTimestamp, single.toByteArray());
     }
 
     /**
@@ -166,41 +164,41 @@ public class H264VideoParser implements IPayloadParser {
         H264VideoFrame frame = null;
         switch (naluType) {
             case AUD:
-//                this.resetBuffers();
-                this.naluSingleBuffers.clear();
+                this.resetBuffers();
                 break;
             case SEI:
             case PPS:
             case SPS:
+                H264NaluSingle single = (H264NaluSingle) h264Nalu;
+                frame = new H264VideoFrame(single.getHeader().getType(), rtp.getHeader().getTimestamp() - this.baseTimestamp, single.toByteArray());
+                this.videoFrameHandle(frame);
+                break;
             case NON_IDR_SLICE:
             case IDR_SLICE:
                 H264NaluSingle naluSingle = (H264NaluSingle) h264Nalu;
-                this.getFirstMbInSlice(naluType, naluSingle.getPayload(), rtp.getHeader().isMarker());
-                this.naluSingleBuffers.add(naluSingle.getPayload());
+                this.naluBuffers.add(naluSingle);
                 if (rtp.getHeader().isMarker()) {
-                    H264NaluHeader header = naluSingle.getHeader();
-                    frame = this.doSingleBuffers(rtp.getHeader().getTimestamp(), header.isForbiddenZeroBit(), header.getNri(), header.getType());
+                    frame = this.doNaluBuffers(rtp.getHeader().getTimestamp());
                     this.videoFrameHandle(frame);
                 }
                 break;
             case FU_A:
                 H264NaluFuA naluFuA = (H264NaluFuA) h264Nalu;
-//                if (naluFuA.getFuHeader().isStart()) {
-//                    this.resetBuffers();
-//                }
-                this.buffers.add(naluFuA);
+                if (naluFuA.getFuHeader().isStart()) {
+                    this.naluFuADataBuffers.clear();
+                }
+                this.naluFuADataBuffers.add(naluFuA);
                 if (naluFuA.getFuHeader().isEnd()) {
                     H264NaluSingle naluSingle1 = this.doFuABuffers();
-                    this.naluSingleBuffers.add(naluSingle1.getPayload());
-                    this.getFirstMbInSlice(naluType, naluSingle1.getPayload(), rtp.getHeader().isMarker());
-                    if (rtp.getHeader().isMarker()) {
-                        H264NaluHeader header = naluSingle1.getHeader();
-                        frame = this.doSingleBuffers(rtp.getHeader().getTimestamp(), header.isForbiddenZeroBit(), header.getNri(), header.getType());
-                        this.videoFrameHandle(frame);
-                    }
+                    this.naluBuffers.add(naluSingle1);
+                }
+                if (rtp.getHeader().isMarker()) {
+                    frame = this.doNaluBuffers(rtp.getHeader().getTimestamp());
+                    this.videoFrameHandle(frame);
                 }
                 break;
             case STAP_A:
+                // TODO: 待确认
 //                H264NaluStapA naluStapA = (H264NaluStapA) h264Nalu;
 //                List<H264VideoFrame> collect = naluStapA.getNaluSingles().stream()
 //                        .filter(x -> x.getHeader().getType() == EH264NaluType.NON_IDR_SLICE)
@@ -262,7 +260,7 @@ public class H264VideoParser implements IPayloadParser {
             frame.setDts(this.lastFrame.getDts() + delta);
         }
         this.lastFrame.setDuration((int) (frame.getDts() - this.lastFrame.getDts()));
-        if (this.lastFrame.getDuration() <= 0) {
+        if (this.lastFrame.getDuration() < 0) {
             this.lastFrame.setDuration(0);
             if (frame.getSliceType() != EH264SliceType.I) {
                 frame.setDts(this.lastFrame.getDts());
