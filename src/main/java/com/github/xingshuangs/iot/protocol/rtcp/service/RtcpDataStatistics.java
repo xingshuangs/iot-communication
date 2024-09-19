@@ -143,6 +143,8 @@ public class RtcpDataStatistics {
             byte[] receiverAndByteContent = this.createReceiverAndSdesContent();
             send.accept(receiverAndByteContent);
             this.lastLocalTimeReceiveRtp = System.currentTimeMillis();
+            int fractionLost = this.packetsLostSinceLastReset * 256 / this.packetsReceivedSinceLastReset;
+            log.debug("Data Statistics: package lost number[{}], fraction lost[{}%]", this.cumulativePacketLost, fractionLost);
         }
     }
 
@@ -161,7 +163,7 @@ public class RtcpDataStatistics {
      */
     public void processRtcpPackage(List<RtcpBasePackage> basePackages) {
         for (RtcpBasePackage rtcp : basePackages) {
-            log.debug("RTCP receives [{}] data，{}", rtcp.getHeader().getPackageType(), rtcp);
+//            log.debug("RTCP receives [{}] data，{}", rtcp.getHeader().getPackageType(), rtcp);
             if (rtcp instanceof RtcpSenderReport) {
                 this.lastNtpTimeSenderReportReceived = ((RtcpSenderReport) rtcp).getSenderInfo().getMswTimestamp();
                 this.lastTimeRtcpReportReceived = System.currentTimeMillis();
