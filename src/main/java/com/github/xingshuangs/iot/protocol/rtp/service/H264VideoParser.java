@@ -101,6 +101,7 @@ public class H264VideoParser implements IPayloadParser {
     }
 
     /**
+     * Execute the Nalu cache and pack it into a frame.
      * 执行Nalu的缓存，打包成一帧
      *
      * @return H264VideoFrame
@@ -111,13 +112,13 @@ public class H264VideoParser implements IPayloadParser {
         }
         try {
             this.naluBuffers.sort(Comparator.comparingInt(a -> a.getHeader().getSequenceNumber()));
-//            boolean match = this.checkMatchLostNumber();
-//            if (!match) {
-//                return null;
-//            }
+            boolean match = this.matchLostNumber();
+            if (!match) {
+                return null;
+            }
             RtpPackage rtp = this.naluBuffers.get(0);
             EH264NaluType currentNaluType = this.queryNaluType();
-            List<byte[]> naluSingleBytes = this.createNaluSingleBytes();
+            List<byte[]> naluSingleBytes = this.extractNaluSingleBytes();
             if (naluSingleBytes.isEmpty()) {
                 return null;
             }
@@ -137,6 +138,12 @@ public class H264VideoParser implements IPayloadParser {
         }
     }
 
+    /**
+     * Query nalu type.
+     * 查询Nalu类型
+     *
+     * @return EH264NaluType
+     */
     private EH264NaluType queryNaluType() {
         for (RtpPackage rtpPackage : this.naluBuffers) {
             H264NaluHeader h264NaluHeader = H264NaluHeader.fromBytes(rtpPackage.getPayload());
@@ -150,7 +157,13 @@ public class H264VideoParser implements IPayloadParser {
         return EH264NaluType.NON_IDR_SLICE;
     }
 
-    private List<byte[]> createNaluSingleBytes() {
+    /**
+     * Extract the byte data list of NALU.
+     * 提取NALU的字节数据列表
+     *
+     * @return byte array list
+     */
+    private List<byte[]> extractNaluSingleBytes() {
         List<byte[]> naluSingleBytes = new ArrayList<>();
         List<H264NaluFuA> naluFuAList = new ArrayList<>();
         for (RtpPackage rtpPackage : this.naluBuffers) {
@@ -179,34 +192,40 @@ public class H264VideoParser implements IPayloadParser {
         return naluSingleBytes;
     }
 
-    private boolean checkMatchLostNumber() {
+    /**
+     * Processing of data packet loss.
+     * 对数据丢包的处理
+     *
+     * @return true；match，false：not match
+     */
+    private boolean matchLostNumber() {
         int lostNumber = 0;
         for (int i = 1; i < this.naluBuffers.size(); i++) {
             if (this.naluBuffers.get(i).getHeader().getSequenceNumber() - this.naluBuffers.get(i - 1).getHeader().getSequenceNumber() != 1) {
                 lostNumber++;
             }
         }
-        int idrSliceMinNumber = 1;
-        int nonIdrSliceMinNumber = 3;
+        int idrSliceMinNumber = 2;
+        int nonIdrSliceMinNumber = 4;
         RtpPackage rtp = this.naluBuffers.get(0);
         H264NaluHeader naluHeader = H264NaluHeader.fromBytes(rtp.getPayload());
         if (naluHeader.getType() == EH264NaluType.IDR_SLICE && lostNumber > idrSliceMinNumber) {
-            log.debug("处理Single的NALU时发生数据序列号不连续，导致关键帧数据因丢包导致数据丢失，总数量[{}]，丢失数量[{}]超过[{}]，丢弃该帧数据", this.naluBuffers.size(), lostNumber, idrSliceMinNumber);
+            log.debug("When a Single NALU is processed, data sequence numbers are discontinuous, resulting in key frame data loss due to packet loss. The frame data is discarded. The total number of [{}] and the number of lost [{}] exceeds [{}].", this.naluBuffers.size(), lostNumber, idrSliceMinNumber);
             return false;
         } else if (naluHeader.getType() == EH264NaluType.NON_IDR_SLICE && lostNumber > nonIdrSliceMinNumber) {
-            log.debug("处理Single的NALU时发生数据序列号不连续，导致非关键帧数据因丢包导致数据丢失，总数量[{}]，丢失数量[{}]超过[{}]，丢弃该帧数据", this.naluBuffers.size(), lostNumber, nonIdrSliceMinNumber);
+            log.debug("When a Single NALU is processed, data sequence numbers are discontinuous, resulting in non-key frame data loss due to packet loss. The frame data is discarded. The total number of [{}] and the number of lost [{}] exceeds [{}].", this.naluBuffers.size(), lostNumber, nonIdrSliceMinNumber);
             return false;
         } else if (naluHeader.getType() == EH264NaluType.FU_A) {
             H264NaluFuHeader naluFuHeader = H264NaluFuHeader.fromBytes(rtp.getPayload(), 1);
             if (naluFuHeader.getType() == EH264NaluType.IDR_SLICE && lostNumber > idrSliceMinNumber) {
-                log.debug("处理FUA的NALU时发生数据序列号不连续，导致关键帧数据因丢包导致数据丢失，总数量[{}]，丢失数量[{}]超过[{}]，丢弃该帧数据", this.naluBuffers.size(), lostNumber, idrSliceMinNumber);
+                log.debug("When processing the NALU of FUA, the data sequence number is discontinuous, resulting in the data loss of key frame data due to packet loss. The frame data is discarded. The total number of [{}] and the number of lost [{}] exceed [{}].", this.naluBuffers.size(), lostNumber, idrSliceMinNumber);
                 return false;
             } else if (naluFuHeader.getType() == EH264NaluType.NON_IDR_SLICE && lostNumber > nonIdrSliceMinNumber) {
-                log.debug("处理FUA的NALU时发生数据序列号不连续，导致非关键帧帧数据因丢包导致数据丢失，总数量[{}]，丢失数量[{}]超过[{}]，丢弃该帧数据", this.naluBuffers.size(), lostNumber, nonIdrSliceMinNumber);
+                log.debug("When processing the NALU of FUA, the data sequence number is discontinuous, resulting in the data loss of non-key frame data due to packet loss. The frame data is discarded. The total number of [{}] and the number of lost [{}] exceed [{}].", this.naluBuffers.size(), lostNumber, nonIdrSliceMinNumber);
                 return false;
             }
         } else if (naluHeader.getType() != EH264NaluType.IDR_SLICE && naluHeader.getType() != EH264NaluType.NON_IDR_SLICE) {
-            log.error("无法识别RTP中NALU的数据类型，丢弃该帧数据，帧类型[{}]", naluHeader.getType());
+            log.error("The data type of NALU in RTP cannot be recognized, the frame data is discarded, frame type [{}]", naluHeader.getType());
             return false;
         }
         return true;
@@ -262,17 +281,24 @@ public class H264VideoParser implements IPayloadParser {
         }
     }
 
+    /**
+     * Caching RTP packets, mainly for cases where UDP is received out of order.
+     * 缓存RTP数据包，主要针对UDP接收不按顺序的情况
+     *
+     * @param rtp rtp package
+     * @return RtpPackage
+     */
     private RtpPackage addLastRtpPackage(RtpPackage rtp) {
         RtpPackage currentRtp = null;
         this.rtpPackageList.add(rtp);
         this.rtpPackageList.sort(Comparator.comparingInt(a -> a.getHeader().getSequenceNumber()));
-        if (this.rtpPackageList.size() > 60) {
+        if (this.rtpPackageList.size() > 5) {
             currentRtp = this.rtpPackageList.remove(0);
         }
         if (currentRtp != null
                 && this.lastRtpPackage != null
                 && this.lastRtpPackage.getHeader().getSequenceNumber() > currentRtp.getHeader().getSequenceNumber()) {
-            log.warn("The sequence number is not always ascending when receiving RTP data");
+            log.debug("The sequence number is not always ascending when receiving RTP data");
         }
         this.lastRtpPackage = currentRtp;
         return currentRtp;
