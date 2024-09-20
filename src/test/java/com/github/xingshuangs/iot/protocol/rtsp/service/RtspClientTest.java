@@ -63,7 +63,7 @@ public class RtspClientTest {
         client.onDestroyHandle(() -> log.debug("close"));
         CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(20);
+                TimeUnit.SECONDS.sleep(10);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -144,8 +144,8 @@ public class RtspClientTest {
     @Test
     public void connectUdpWithoutAuthenticator() {
         List<H264VideoFrame> list = new ArrayList<>();
-        URI uri = URI.create("rtsp://192.168.3.15:8554/back");
-//        URI uri = URI.create("rtsp://127.0.0.1:8554/11");
+//        URI uri = URI.create("rtsp://192.168.3.15:8554/back");
+        URI uri = URI.create("rtsp://127.0.0.1:8554/11");
         RtspClient client = new RtspClient(uri, ERtspTransportProtocol.UDP);
 //        client.onCommCallback(log::info);
         client.onFrameHandle(x -> {

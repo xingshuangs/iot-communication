@@ -143,8 +143,8 @@ public class RtcpDataStatistics {
             byte[] receiverAndByteContent = this.createReceiverAndSdesContent();
             send.accept(receiverAndByteContent);
             this.lastLocalTimeReceiveRtp = System.currentTimeMillis();
-            int fractionLost = this.packetsLostSinceLastReset * 256 / this.packetsReceivedSinceLastReset;
-            log.debug("Data Statistics: package lost number[{}], fraction lost[{}%]", this.cumulativePacketLost, fractionLost);
+            int fractionLost = this.packetsLostSinceLastReset * 100 / this.packetsReceivedSinceLastReset;
+            log.debug("Data Statistics: package lost number[{}], totoal number[{}], fraction lost[{}%]", this.cumulativePacketLost,this.packetsReceivedSinceLastReset, fractionLost);
         }
     }
 

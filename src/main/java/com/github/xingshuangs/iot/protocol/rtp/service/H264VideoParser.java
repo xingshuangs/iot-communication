@@ -26,7 +26,6 @@ package com.github.xingshuangs.iot.protocol.rtp.service;
 
 
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
-import com.github.xingshuangs.iot.exceptions.RtpCommException;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264NaluType;
 import com.github.xingshuangs.iot.protocol.rtp.enums.EH264SliceType;
 import com.github.xingshuangs.iot.protocol.rtp.model.RtpPackage;
@@ -39,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * H264的视频数据解析器
@@ -83,12 +81,6 @@ public class H264VideoParser implements IPayloadParser {
     private final List<RtpPackage> rtpPackageList = new ArrayList<>();
 
     /**
-     * Cache list of H264 Nalu FuA.
-     * H264的FuA单元的列表
-     */
-    private final List<RtpPackage> naluFuADataBuffers = new ArrayList<>();
-
-    /**
      * 单Nalu的缓存
      */
     private final List<RtpPackage> naluBuffers = new ArrayList<>();
@@ -105,7 +97,6 @@ public class H264VideoParser implements IPayloadParser {
     }
 
     private void resetBuffers() {
-        this.naluFuADataBuffers.clear();
         this.naluBuffers.clear();
     }
 
@@ -118,82 +109,107 @@ public class H264VideoParser implements IPayloadParser {
         if (this.naluBuffers.isEmpty()) {
             return null;
         }
-        this.naluBuffers.sort(Comparator.comparingInt(a -> a.getHeader().getSequenceNumber()));
+        try {
+            this.naluBuffers.sort(Comparator.comparingInt(a -> a.getHeader().getSequenceNumber()));
+//            boolean match = this.checkMatchLostNumber();
+//            if (!match) {
+//                return null;
+//            }
+            RtpPackage rtp = this.naluBuffers.get(0);
+            EH264NaluType currentNaluType = this.queryNaluType();
+            List<byte[]> naluSingleBytes = this.createNaluSingleBytes();
+            if (naluSingleBytes.isEmpty()) {
+                return null;
+            }
 
+            int sum = naluSingleBytes.stream().mapToInt(x -> x.length).sum() + (naluSingleBytes.size() - 1) * 4;
+            ByteWriteBuff buff = new ByteWriteBuff(sum);
+            for (int i = 0; i < naluSingleBytes.size() - 1; i++) {
+                buff.putBytes(naluSingleBytes.get(i));
+                // 多slice的NAL拼装需要添加分隔符
+                buff.putBytes(new byte[]{0x00, 0x00, 0x00, 0x01});
+            }
+            buff.putBytes(naluSingleBytes.get(naluSingleBytes.size() - 1));
+
+            return new H264VideoFrame(currentNaluType, rtp.getHeader().getTimestamp() - this.baseTimestamp, buff.getData());
+        } finally {
+            this.naluBuffers.clear();
+        }
+    }
+
+    private EH264NaluType queryNaluType() {
+        for (RtpPackage rtpPackage : this.naluBuffers) {
+            H264NaluHeader h264NaluHeader = H264NaluHeader.fromBytes(rtpPackage.getPayload());
+            if (h264NaluHeader.getType() == EH264NaluType.NON_IDR_SLICE || h264NaluHeader.getType() == EH264NaluType.IDR_SLICE) {
+                return h264NaluHeader.getType();
+            } else if (h264NaluHeader.getType() == EH264NaluType.FU_A) {
+                H264NaluFuA h264NaluFuA = (H264NaluFuA) H264NaluBuilder.parsePackage(rtpPackage.getPayload());
+                return h264NaluFuA.getFuHeader().getType();
+            }
+        }
+        return EH264NaluType.NON_IDR_SLICE;
+    }
+
+    private List<byte[]> createNaluSingleBytes() {
+        List<byte[]> naluSingleBytes = new ArrayList<>();
+        List<H264NaluFuA> naluFuAList = new ArrayList<>();
+        for (RtpPackage rtpPackage : this.naluBuffers) {
+            H264NaluHeader h264NaluHeader = H264NaluHeader.fromBytes(rtpPackage.getPayload());
+            if (h264NaluHeader.getType() == EH264NaluType.NON_IDR_SLICE || h264NaluHeader.getType() == EH264NaluType.IDR_SLICE) {
+                naluSingleBytes.add(rtpPackage.getPayload());
+            } else if (h264NaluHeader.getType() == EH264NaluType.FU_A) {
+                H264NaluFuA h264NaluFuA = (H264NaluFuA) H264NaluBuilder.parsePackage(rtpPackage.getPayload());
+                if (h264NaluFuA.getFuHeader().isStart()) {
+                    naluFuAList.clear();
+                }
+                naluFuAList.add(h264NaluFuA);
+                if (h264NaluFuA.getFuHeader().isEnd()) {
+                    int sum = naluFuAList.stream().mapToInt(x -> x.getPayload().length).sum();
+                    ByteWriteBuff buff = new ByteWriteBuff(sum);
+                    naluFuAList.forEach(x -> buff.putBytes(x.getPayload()));
+                    H264NaluSingle single = new H264NaluSingle();
+                    single.getHeader().setForbiddenZeroBit(h264NaluFuA.getHeader().isForbiddenZeroBit());
+                    single.getHeader().setNri(h264NaluFuA.getHeader().getNri());
+                    single.getHeader().setType(h264NaluFuA.getFuHeader().getType());
+                    single.setPayload(buff.getData());
+                    naluSingleBytes.add(single.toByteArray());
+                }
+            }
+        }
+        return naluSingleBytes;
+    }
+
+    private boolean checkMatchLostNumber() {
         int lostNumber = 0;
         for (int i = 1; i < this.naluBuffers.size(); i++) {
             if (this.naluBuffers.get(i).getHeader().getSequenceNumber() - this.naluBuffers.get(i - 1).getHeader().getSequenceNumber() != 1) {
                 lostNumber++;
             }
         }
-        int lostRate = lostNumber * 100 / this.naluBuffers.size();
-//        if (lostRate > 2) {
-//            log.warn("处理Single的NALU时发生数据序列号不连续，导致帧数据因丢包导致数据丢失，丢失率[{}%]超过[2%]，不做任何处理", lostRate);
-//        }
+        int idrSliceMinNumber = 1;
+        int nonIdrSliceMinNumber = 3;
         RtpPackage rtp = this.naluBuffers.get(0);
         H264NaluHeader naluHeader = H264NaluHeader.fromBytes(rtp.getPayload());
-        int sum = this.naluBuffers.stream().mapToInt(x -> x.getPayload().length).sum() + (this.naluBuffers.size() - 1) * 4;
-        ByteWriteBuff buff = new ByteWriteBuff(sum);
-        for (int i = 0; i < this.naluBuffers.size() - 1; i++) {
-            buff.putBytes(this.naluBuffers.get(i).getPayload());
-            // 多slice的NAL拼装需要添加分隔符
-            buff.putBytes(new byte[]{0x00, 0x00, 0x00, 0x01});
-        }
-        buff.putBytes(this.naluBuffers.get(this.naluBuffers.size() - 1).getPayload());
-        naluBuffers.clear();
-
-        return new H264VideoFrame(naluHeader.getType(), rtp.getHeader().getTimestamp() - this.baseTimestamp, buff.getData());
-    }
-
-    /**
-     * 执行FuA的缓存，将FuA打包成一个单Nalu
-     *
-     * @return H264NaluSingle
-     */
-    private RtpPackage doFuABuffers() {
-        if (this.naluFuADataBuffers.isEmpty()) {
-            return null;
-        }
-
-        this.naluFuADataBuffers.sort(Comparator.comparingInt(a -> a.getHeader().getSequenceNumber()));
-        int lostNumber = 0;
-        for (int i = 1; i < this.naluFuADataBuffers.size(); i++) {
-            if (this.naluFuADataBuffers.get(i).getHeader().getSequenceNumber() - this.naluFuADataBuffers.get(i - 1).getHeader().getSequenceNumber() != 1) {
-                lostNumber++;
+        if (naluHeader.getType() == EH264NaluType.IDR_SLICE && lostNumber > idrSliceMinNumber) {
+            log.debug("处理Single的NALU时发生数据序列号不连续，导致关键帧数据因丢包导致数据丢失，总数量[{}]，丢失数量[{}]超过[{}]，丢弃该帧数据", this.naluBuffers.size(), lostNumber, idrSliceMinNumber);
+            return false;
+        } else if (naluHeader.getType() == EH264NaluType.NON_IDR_SLICE && lostNumber > nonIdrSliceMinNumber) {
+            log.debug("处理Single的NALU时发生数据序列号不连续，导致非关键帧数据因丢包导致数据丢失，总数量[{}]，丢失数量[{}]超过[{}]，丢弃该帧数据", this.naluBuffers.size(), lostNumber, nonIdrSliceMinNumber);
+            return false;
+        } else if (naluHeader.getType() == EH264NaluType.FU_A) {
+            H264NaluFuHeader naluFuHeader = H264NaluFuHeader.fromBytes(rtp.getPayload(), 1);
+            if (naluFuHeader.getType() == EH264NaluType.IDR_SLICE && lostNumber > idrSliceMinNumber) {
+                log.debug("处理FUA的NALU时发生数据序列号不连续，导致关键帧数据因丢包导致数据丢失，总数量[{}]，丢失数量[{}]超过[{}]，丢弃该帧数据", this.naluBuffers.size(), lostNumber, idrSliceMinNumber);
+                return false;
+            } else if (naluFuHeader.getType() == EH264NaluType.NON_IDR_SLICE && lostNumber > nonIdrSliceMinNumber) {
+                log.debug("处理FUA的NALU时发生数据序列号不连续，导致非关键帧帧数据因丢包导致数据丢失，总数量[{}]，丢失数量[{}]超过[{}]，丢弃该帧数据", this.naluBuffers.size(), lostNumber, nonIdrSliceMinNumber);
+                return false;
             }
+        } else if (naluHeader.getType() != EH264NaluType.IDR_SLICE && naluHeader.getType() != EH264NaluType.NON_IDR_SLICE) {
+            log.error("无法识别RTP中NALU的数据类型，丢弃该帧数据，帧类型[{}]", naluHeader.getType());
+            return false;
         }
-        int lostRate = lostNumber * 100 / this.naluFuADataBuffers.size();
-
-        RtpPackage firstRtp = this.naluFuADataBuffers.get(0);
-        List<H264NaluFuA> naluFuAList = this.naluFuADataBuffers.stream()
-                .map(x -> (H264NaluFuA) H264NaluBuilder.parsePackage(x.getPayload()))
-                .collect(Collectors.toList());
-        if (naluFuAList.isEmpty()) {
-            throw new RtpCommException("FuA数据个数为0");
-        }
-        H264NaluFuA naluFuA = naluFuAList.get(0);
-        if (naluFuA.getFuHeader().getType() == EH264NaluType.IDR_SLICE && lostRate > 2) {
-            log.warn("处理FU-A的NALU时发生数据序列号不连续，导致关键帧数据因丢包导致数据丢失，丢失率[{}%]超过[2%]，因此舍弃该帧数据", lostRate);
-            return null;
-        }
-
-        int sum = naluFuAList.stream().mapToInt(x -> x.getPayload().length).sum();
-        ByteWriteBuff buff = new ByteWriteBuff(sum);
-        naluFuAList.forEach(x -> buff.putBytes(x.getPayload()));
-        // clear buffers after used.
-        this.naluFuADataBuffers.clear();
-
-        H264NaluSingle single = new H264NaluSingle();
-        single.getHeader().setForbiddenZeroBit(naluFuA.getHeader().isForbiddenZeroBit());
-        single.getHeader().setNri(naluFuA.getHeader().getNri());
-        single.getHeader().setType(naluFuA.getFuHeader().getType());
-        single.setPayload(buff.getData());
-
-        RtpPackage newRtpPackage = new RtpPackage();
-        newRtpPackage.setHeader(firstRtp.getHeader());
-        newRtpPackage.setPayload(single.toByteArray());
-        newRtpPackage.setIgnoreLength(firstRtp.getIgnoreLength());
-        return newRtpPackage;
+        return true;
     }
 
     /**
@@ -230,24 +246,8 @@ public class H264VideoParser implements IPayloadParser {
                 break;
             case NON_IDR_SLICE:
             case IDR_SLICE:
-                this.naluBuffers.add(rtp);
-                if (rtp.getHeader().isMarker()) {
-                    frame = this.doRtpNaluSingleBuffers();
-                    this.videoFrameHandle(frame);
-                }
-                break;
             case FU_A:
-                H264NaluFuHeader naluFuHeader = H264NaluFuHeader.fromBytes(rtp.getPayload(), 1);
-                if (naluFuHeader.isStart()) {
-                    this.naluFuADataBuffers.clear();
-                }
-                this.naluFuADataBuffers.add(rtp);
-                if (naluFuHeader.isEnd()) {
-                    RtpPackage newRtpPackage = this.doFuABuffers();
-                    if (newRtpPackage != null) {
-                        this.naluBuffers.add(newRtpPackage);
-                    }
-                }
+                this.naluBuffers.add(rtp);
                 if (rtp.getHeader().isMarker()) {
                     frame = this.doRtpNaluSingleBuffers();
                     this.videoFrameHandle(frame);
