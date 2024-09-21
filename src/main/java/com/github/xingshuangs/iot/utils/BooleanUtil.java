@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Boolean to byte tool.
+ *
  * @author xingshuang
  */
 public class BooleanUtil {
@@ -37,42 +39,51 @@ public class BooleanUtil {
         // NOOP
     }
 
+    /**
+     * Boolean to byte. True is 0x01, false is 0x00.
+     *
+     * @param data boolean data
+     * @return byte data.
+     */
     public static byte toByte(boolean data) {
         return setBit((byte) 0x00, 0, data);
     }
 
     /**
-     * 对字节的指定位设置1或0
+     * Sets 1 or 0 for the specified bit of the byte.
+     * (对字节的指定位设置1或0)
      *
-     * @param bit 位数
+     * @param bit bit index, [0,7]
      * @param res true：1，false：0
-     * @return 新的字节
+     * @return new byte
      */
     public static byte setBit(int bit, boolean res) {
         return setBit((byte) 0x00, bit, res);
     }
 
     /**
-     * 对字节的指定位设置1或0
+     * Sets 1 or 0 for the specified bit of the byte.
+     * (对字节的指定位设置1或0)
      *
-     * @param data 字节数据
-     * @param bit  位数
+     * @param data source byte data
+     * @param bit  bit index, [0,7]
      * @param res  true：1，false：0
-     * @return 新的字节
+     * @return new byte
      */
     public static byte setBit(byte data, int bit, boolean res) {
         if (bit > 7 || bit < 0) {
-            throw new IndexOutOfBoundsException("0 <= bit <= 7");
+            throw new IndexOutOfBoundsException("bit > 7 || bit < 0");
         }
         return res ? (byte) (((data & 0xFF) | (1 << bit)) & 0xFF) : (byte) ((data & 0xFF) & ~(1 << bit) & 0xFF);
     }
 
     /**
-     * 获取字节指定位的状态
+     * Gets the value of the byte specified bit. If bit is 1, return true, else false.
+     * (获取字节指定位的值)
      *
-     * @param data 字节数据
-     * @param bit  位数 0-7
-     * @return 结果状态，true，false
+     * @param data source byte data
+     * @param bit  bit index, [0,7]
+     * @return true or false
      */
     public static boolean getValue(byte data, int bit) {
         if (bit > 7 || bit < 0) {
@@ -82,11 +93,12 @@ public class BooleanUtil {
     }
 
     /**
-     * 获取字节指定位的状态
+     * Gets the value of the byte specified bit. If bit is 1, then return true, else false.
+     * (获取字节指定位的值)
      *
-     * @param data 字节数据
-     * @param bit  位数 0-7
-     * @return 结果状态，true，false
+     * @param data source byte data
+     * @param bit  bit index, [0,7]
+     * @return true or false
      */
     public static int getValueToInt(byte data, int bit) {
         if (bit > 7 || bit < 0) {
@@ -96,11 +108,12 @@ public class BooleanUtil {
     }
 
     /**
-     * 提取指定数量的boolean值
+     * Retrieves the specified number of boolean values from byte array. If the value of bit is 1, it is true, otherwise it is false.
+     * (提取指定数量的boolean值)
      *
-     * @param quantity 数量
-     * @param src      数据源
-     * @return boolean列表
+     * @param quantity boolean number
+     * @param src      byte array
+     * @return boolean list
      */
     public static List<Boolean> byteArrayToList(int quantity, byte[] src) {
         if (src == null) {
@@ -124,10 +137,11 @@ public class BooleanUtil {
     }
 
     /**
-     * 将boolean列表转换为字节数组
+     * Converts a boolean list to byte array.
+     * (将boolean列表转换为字节数组)
      *
-     * @param list boolean列表
-     * @return 字节数组
+     * @param list boolean list
+     * @return byte array.
      */
     public static byte[] listToByteArray(List<Boolean> list) {
         if (list == null || list.isEmpty()) {

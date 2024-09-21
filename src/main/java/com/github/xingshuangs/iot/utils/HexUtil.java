@@ -28,6 +28,8 @@ package com.github.xingshuangs.iot.utils;
 import com.github.xingshuangs.iot.exceptions.HexParseException;
 
 /**
+ * Hex tool.
+ *
  * @author xingshuang
  */
 public class HexUtil {
@@ -37,6 +39,7 @@ public class HexUtil {
     }
 
     /**
+     * Verify regular expressions for hexadecimal strings.
      * 验证16进制字符串的正则表达式
      * ^ = 开始
      * $ = 结束
@@ -46,10 +49,11 @@ public class HexUtil {
     private static final String REGEX = "^[a-f0-9A-F]+$";
 
     /**
-     * 将字符串转换为16进制的数组
+     * Converts a string to a hexadecimal array, string like 1a6BdE8c.
+     * (将字符串转换为16进制的数组)
      *
-     * @param src 字符串
-     * @return 字节数组
+     * @param src string
+     * @return byte array
      */
     public static byte[] toHexArray(String src) {
         if (src == null || src.length() == 0) {
@@ -76,7 +80,8 @@ public class HexUtil {
     }
 
     /**
-     * 将字节数组转换为16进制字符串，并且默认按空格隔开
+     * Converts a byte array to a hexadecimal string, separated by Spaces by default.
+     * (将字节数组转换为16进制字符串，并且默认按空格隔开)
      *
      * @param src 字节数组
      * @return 字符串
@@ -86,23 +91,25 @@ public class HexUtil {
     }
 
     /**
-     * 将字节数组转换为16进制字符串，并且默认按指定字符串隔开
+     * Converts a byte array to a hexadecimal string.
+     * (将字节数组转换为16进制字符串)
      *
-     * @param src      字节数组
-     * @param splitStr 分隔字符串
-     * @return 字符串
+     * @param src      byte array
+     * @param splitStr separator string
+     * @return string
      */
     public static String toHexString(byte[] src, String splitStr) {
         return toHexString(src, splitStr, true);
     }
 
     /**
-     * 将字节数组转换为16进制字符串，并且默认按指定字符串隔开
+     * Converts a byte array to a hexadecimal string.
+     * (将字节数组转换为16进制字符串)
      *
-     * @param src       字节数组
-     * @param splitStr  分隔字符串
-     * @param upperCase 大写
-     * @return 字符串
+     * @param src       byte array
+     * @param splitStr  separator string
+     * @param upperCase upper case
+     * @return string
      */
     public static String toHexString(byte[] src, String splitStr, boolean upperCase) {
         if (src == null || src.length == 0) {

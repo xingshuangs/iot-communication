@@ -38,41 +38,45 @@ public class ByteUtil {
     }
 
     /**
-     * 将int转换为byte
+     * Int to byte.
+     * (将int转换为byte)
      *
-     * @param data int数据
-     * @return byte数据
+     * @param data int data
+     * @return byte dta
      */
     public static byte toByte(int data) {
         return (byte) (data & 0xFF);
     }
 
     /**
-     * 将byte转换为 uint8
+     * Byte to uint8.
+     * (将byte转换为 uint8)
      *
-     * @param data byte数据
-     * @return uint8数据
+     * @param data byte data
+     * @return uint8 data
      */
     public static int toUInt8(byte data) {
         return data & 0xFF;
     }
 
     /**
-     * 将字节数组转换为int32
+     * Byte array to int32.
+     * (将字节数组转换为int32）
      *
-     * @param data 字节数组
-     * @return int32数据
+     * @param data byte array
+     * @return int32 data
      */
     public static int toUInt8(byte[] data) {
         return toUInt8(data, 0);
     }
 
     /**
-     * 将字节数组转换为int32
+     * Byte array to int32 by byte offset.
+     * (将字节数组转换为int32)
      *
-     * @param data   字节数组
+     * @param data   byte array
      * @param offset index offset
-     * @return int32数据
+     * @return int32 data
      */
     public static int toUInt8(byte[] data, int offset) {
         if (data.length < 1) {
@@ -85,12 +89,13 @@ public class ByteUtil {
     }
 
     /**
-     * 获取字节指定范围bit的数值
+     * Gets the value of the byte in the specified range bit.
+     * (获取字节指定范围bit的数值)
      *
-     * @param data          字节数据
-     * @param startBitIndex 位索引
-     * @param bitLength     位长度
-     * @return int值
+     * @param data          byte data
+     * @param startBitIndex start bit index
+     * @param bitLength     bit length
+     * @return int
      */
     public static int toUInt8(byte data, int startBitIndex, int bitLength) {
         if (startBitIndex < 0 || startBitIndex > 7) {
@@ -103,46 +108,50 @@ public class ByteUtil {
     }
 
     /**
-     * 将字节转换为字符串
+     * Byte array to String.
+     * (将字节转换为字符串)
      *
-     * @param data 字节数组
-     * @return 字符串
+     * @param data byte array
+     * @return String
      */
     public static String toStr(byte[] data) {
         return toStr(data, 0, data.length, StandardCharsets.US_ASCII);
     }
 
     /**
-     * 将字节转换为字符串
+     * Byte array to String by byte offset.
+     * (将字节转换为字符串)
      *
-     * @param data   字节数组
+     * @param data   byte array
      * @param offset index offset
-     * @return 字符串
+     * @return String
      */
     public static String toStr(byte[] data, int offset) {
         return toStr(data, offset, data.length - offset, StandardCharsets.US_ASCII);
     }
 
     /**
-     * 将字节转换为字符串
+     * Byte array to String.
+     * (将字节转换为字符串)
      *
-     * @param data   字节数组
+     * @param data   byte array
      * @param offset index offset
-     * @param length 长度
-     * @return 字符串
+     * @param length length
+     * @return String
      */
     public static String toStr(byte[] data, int offset, int length) {
         return toStr(data, offset, length, StandardCharsets.US_ASCII);
     }
 
     /**
-     * 将字节转换为字符串
+     * Byte array to String.
+     * (将字节转换为字符串)
      *
-     * @param data        字节数组
-     * @param offset      偏移量
-     * @param length      长度
-     * @param charsetName 字符编码名称
-     * @return 字符串
+     * @param data        byte array
+     * @param offset      index offset
+     * @param length      length
+     * @param charsetName charset name
+     * @return String
      */
     public static String toStr(byte[] data, int offset, int length, Charset charsetName) {
         if (offset < 0) {

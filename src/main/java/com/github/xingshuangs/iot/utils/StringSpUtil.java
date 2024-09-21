@@ -31,7 +31,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 字符串分割工具
+ * String splitting tool.
+ * (字符串分割工具)
  *
  * @author xingshuang
  */
@@ -42,15 +43,16 @@ public class StringSpUtil {
     }
 
     /**
-     * 两步分割，按行分割并转化为Map
+     * Two-step segmentation, divided by row and converted to Map.
+     * (两步分割，按行分割并转化为Map)
      *
-     * @param src      字符串
-     * @param lineChar 行字符串分割字符
-     * @param midChar  中间字符串分割字符
-     * @return 分割结果Map
+     * @param src     string
+     * @param rowChar row string split character
+     * @param midChar middle string split character
+     * @return map
      */
-    public static Map<String, String> splitTwoStepByLine(String src, String lineChar, String midChar) {
-        String[] data = src.split(lineChar);
+    public static Map<String, String> splitTwoStepByLine(String src, String rowChar, String midChar) {
+        String[] data = src.split(rowChar);
         Map<String, String> res = new LinkedHashMap<>();
         for (String item : data) {
             int index = item.indexOf(midChar);
@@ -62,14 +64,15 @@ public class StringSpUtil {
     }
 
     /**
-     * 一步分割，按行分割转化为List
+     * One-step split, split by row converted to List.
+     * (一步分割，按行分割转化为List)
      *
-     * @param src      字符串
-     * @param lineChar 行字符串分割符
-     * @return 分割结果List
+     * @param src     string
+     * @param rowChar row string split character
+     * @return list
      */
-    public static List<String> splitOneStepByLine(String src, String lineChar) {
-        String[] data = src.split(lineChar);
+    public static List<String> splitOneStepByLine(String src, String rowChar) {
+        String[] data = src.split(rowChar);
         List<String> res = new ArrayList<>();
         for (String item : data) {
             String tmp = item.trim();
@@ -81,18 +84,19 @@ public class StringSpUtil {
     }
 
     /**
-     * 获取字符串标记的所有索引
+     * Gets all indexes of string tags.
+     * (获取字符串标记的所有索引)
      *
-     * @param src  数据源字符串
-     * @param flag 标记字符串
-     * @return 索引列表
+     * @param src string
+     * @param tag tag string
+     * @return index list
      */
-    public static List<Integer> findFlagAllIndexes(String src, String flag) {
+    public static List<Integer> findFlagAllIndexes(String src, String tag) {
         List<Integer> res = new ArrayList<>();
-        int index = src.indexOf(flag, 0);
+        int index = src.indexOf(tag, 0);
         while (index >= 0) {
             res.add(index);
-            index = src.indexOf(flag, index + flag.length());
+            index = src.indexOf(tag, index + tag.length());
         }
         return res;
     }

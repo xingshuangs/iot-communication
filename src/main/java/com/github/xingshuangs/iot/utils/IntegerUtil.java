@@ -26,6 +26,8 @@ package com.github.xingshuangs.iot.utils;
 
 
 /**
+ * Integer tool.
+ *
  * @author xingshuang
  */
 public class IntegerUtil {
@@ -35,11 +37,12 @@ public class IntegerUtil {
     }
 
     /**
-     * 将short转换为字节数组
+     * Convert int to a 4-byte array.
+     * (将int转换为字节数组)
      *
-     * @param data         short数据
-     * @param littleEndian true:小端，false：大端
-     * @return 字节数组
+     * @param data         int data
+     * @param littleEndian true: little endian，false：big endian
+     * @return byte array
      */
     public static byte[] toByteArray(int data, boolean littleEndian) {
         byte[] bytes = new byte[4];
@@ -59,45 +62,49 @@ public class IntegerUtil {
     }
 
     /**
-     * 将int转换为字节数组，默认采用大端模式
+     * Converts int to a 4-byte array, using big-endian mode by default.
+     * (将int转换为字节数组，默认采用大端模式)
      *
-     * @param data int数据
-     * @return 字节数组
+     * @param data int data
+     * @return byte array
      */
     public static byte[] toByteArray(int data) {
         return toByteArray(data, false);
     }
 
     /**
-     * 将long转换为字节数组，默认采用大端模式
+     * Converts long to a 4-byte array, using big-endian mode by default
+     * (将long转换为字节数组，默认采用大端模式)
      *
-     * @param data long数据
-     * @return 字节数组
+     * @param data long data
+     * @return byte array
      */
     public static byte[] toByteArray(long data) {
         return toByteArray((int) data, false);
     }
 
     /**
-     * 将long转换为字节数组，并自定义获取字节数，默认采用大端模式
+     * Convert long to a 4-byte array and obtain a customized number of bytes. The default mode is big-endian.
+     * (将long转换为字节数组，并自定义获取字节数，默认采用大端模式)
      *
-     * @param data   long数据
-     * @param offset index offset
-     * @param length 读取长度
-     * @return 字节数组
+     * @param data   long data
+     * @param offset offset
+     * @param length length
+     * @return byte array
      */
     public static byte[] toCustomByteArray(long data, int offset, int length) {
         return toCustomByteArray(data, offset, length, false);
     }
 
     /**
-     * 将long转换为字节数组，并自定义获取字节数，默认采用大端模式
+     * Convert long to a 4-byte array and obtain a customized number of bytes.
+     * (将long转换为字节数组，并自定义获取字节数)
      *
-     * @param data         long数据
-     * @param offset       偏移量
-     * @param length       读取长度
-     * @param littleEndian 小端模式
-     * @return 字节数组
+     * @param data         long data
+     * @param offset       offset
+     * @param length       length
+     * @param littleEndian little endian
+     * @return byte array
      */
     public static byte[] toCustomByteArray(long data, int offset, int length, boolean littleEndian) {
         if (offset + length > 4) {
@@ -110,33 +117,36 @@ public class IntegerUtil {
     }
 
     /**
-     * 将字节数组转换为int32
+     * Converts the byte array to int32.
+     * (将字节数组转换为int32)
      *
-     * @param data 字节数组
-     * @return int32数据
+     * @param data byte array
+     * @return int32 data
      */
     public static int toInt32(byte[] data) {
         return toInt32(data, 0, false);
     }
 
     /**
-     * 将字节数组转换为int32
+     * Converts the byte array to int32.
+     * (将字节数组转换为int32)
      *
-     * @param data   字节数组
-     * @param offset index offset
-     * @return int32数据
+     * @param data   byte array
+     * @param offset offset
+     * @return int32 data
      */
     public static int toInt32(byte[] data, int offset) {
         return toInt32(data, offset, false);
     }
 
     /**
-     * 将字节数组转换为int32
+     * Converts the byte array to int32.
+     * (将字节数组转换为int32)
      *
-     * @param data         字节数组
-     * @param offset       偏移量
-     * @param littleEndian true：小端模式，false：大端模式
-     * @return int32数据
+     * @param data         byte array
+     * @param offset       offset
+     * @param littleEndian true：little endian，false：big endian
+     * @return int32 data
      */
     public static int toInt32(byte[] data, int offset, boolean littleEndian) {
         if (data.length < 4) {
@@ -154,23 +164,25 @@ public class IntegerUtil {
     }
 
     /**
-     * 将字节数组转换为int32
+     * Converts 3 bytes of the byte array to int32.
+     * (将字节数组中的3个字节转换为int32)
      *
-     * @param data   字节数组
-     * @param offset index offset
-     * @return int32数据
+     * @param data   byte array
+     * @param offset offset
+     * @return int32 data
      */
     public static int toInt32In3Bytes(byte[] data, int offset) {
         return toInt32In3Bytes(data, offset, false);
     }
 
     /**
-     * 将字节数组转换为int32
+     * Converts 3 bytes of the byte array to int32.
+     * (将字节数组中的3个字节转换为int32)
      *
-     * @param data         字节数组
-     * @param offset       偏移量
-     * @param littleEndian true：小端模式，false：大端模式
-     * @return int32数据
+     * @param data         byte array
+     * @param offset       offset
+     * @param littleEndian true：little endian，false：big endian
+     * @return int32 data
      */
     public static int toInt32In3Bytes(byte[] data, int offset, boolean littleEndian) {
         if (data.length < 3) {
@@ -187,46 +199,38 @@ public class IntegerUtil {
     }
 
     /**
-     * 将字节数组转换为uint32
+     * Convert byte array to uint32.
+     * (将字节数组转换为uint32)
      *
-     * @param data 字节数组
-     * @return uint32数据
+     * @param data byte array
+     * @return uint32 data
      */
     public static long toUInt32(byte[] data) {
         return toUInt32(data, 0, false);
     }
 
     /**
-     * 将字节数组转换为uint32
+     * Convert byte array to uint32.
+     * (将字节数组转换为uint32)
      *
-     * @param data   字节数组
-     * @param offset index offset
-     * @return uint32数据
+     * @param data   byte array
+     * @param offset offset
+     * @return uint32 data
      */
     public static long toUInt32(byte[] data, int offset) {
         return toUInt32(data, offset, false);
     }
 
     /**
-     * 将字节数组转换为uint32
+     * Convert byte array to uint32.
+     * (将字节数组转换为uint32)
      *
-     * @param data         字节数组
-     * @param offset       偏移量
-     * @param littleEndian true：小端模式，false：大端模式
-     * @return uint32数据
+     * @param data         byte array
+     * @param offset       offset
+     * @param littleEndian true：little endian，false：big endian
+     * @return uint32 data
      */
     public static long toUInt32(byte[] data, int offset, boolean littleEndian) {
-        if (data.length < 4) {
-            throw new IndexOutOfBoundsException("data length < 4");
-        }
-        if (offset + 4 > data.length) {
-            throw new IndexOutOfBoundsException("offset + 4 > data length");
-        }
-        int b = littleEndian ? 3 : 0;
-        int d = littleEndian ? 1 : -1;
-        return (((data[offset + b - d * 0] & 0xFF) << 24)
-                | ((data[offset + b - d * 1] & 0xFF) << 16)
-                | ((data[offset + b - d * 2] & 0xFF) << 8)
-                | ((data[offset + b - d * 3] & 0xFF) << 0)) & 0xFFFFFFFFL;
+        return toInt32(data, offset, littleEndian) & 0xFFFFFFFFL;
     }
 }

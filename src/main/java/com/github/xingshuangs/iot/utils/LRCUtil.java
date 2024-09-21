@@ -25,7 +25,8 @@ package com.github.xingshuangs.iot.utils;
 
 
 /**
- * LRC校验
+ * LRC tool.
+ * LRC校验工具
  *
  * @author xingshuang
  */
@@ -36,10 +37,11 @@ public class LRCUtil {
     }
 
     /**
-     * lrc校验值
+     * Get LRC code.
+     * (获取lrc码)
      *
-     * @param src 字节数组
-     * @return byte校验值
+     * @param src byte array
+     * @return byte
      */
     public static byte lrc(byte[] src) {
         if (src == null || src.length == 0) {
@@ -56,11 +58,12 @@ public class LRCUtil {
     }
 
     /**
-     * lrc校验
+     * Check LRC.
+     * (lrc校验)
      *
-     * @param src    字节数组
-     * @param target 目标比较值
-     * @return true：一致，false：不一致
+     * @param src    byte array
+     * @param target target result
+     * @return true：equality，false：inequality
      */
     public static boolean lrc(byte[] src, byte target) {
         byte des = lrc(src);

@@ -30,7 +30,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * 时间工具
+ * Time tool.
+ * (时间工具)
  *
  * @author xingshuang
  */
@@ -43,10 +44,11 @@ public class TimesUtil {
     //region NTP
 
     /**
-     * 获取NTP所有的秒时间
+     * Get NTP total second.
+     * (获取NTP所有的秒时间)
      *
-     * @param dateTime 日期时间
-     * @return 秒
+     * @param dateTime dateTime
+     * @return second
      */
     public static long getNTPTotalSecond(LocalDateTime dateTime) {
         Duration between = Duration.between(getNTPOriginDateTime(), dateTime);
@@ -54,9 +56,10 @@ public class TimesUtil {
     }
 
     /**
-     * 获取NTP日期
+     * Get NTP Date.
+     * (获取NTP日期)
      *
-     * @param day 天
+     * @param day long data
      * @return Date
      */
     public static LocalDate getNTPDate(long day) {
@@ -64,9 +67,10 @@ public class TimesUtil {
     }
 
     /**
-     * 获取NTP时间
+     * Get NTP DateTime.
+     * (获取NTP时间)
      *
-     * @param second 秒
+     * @param second second
      * @return DateTime
      */
     public static LocalDateTime getNTPDateTime(long second) {
@@ -74,18 +78,20 @@ public class TimesUtil {
     }
 
     /**
-     * 获取NTP起始时间
+     * Get NTP start time.
+     * (获取NTP起始时间)
      *
-     * @return 起始时间
+     * @return start time
      */
     public static LocalDate getNTPOriginDate() {
         return getNTPOriginDateTime().toLocalDate();
     }
 
     /**
-     * 获取NTP起始时间
+     * Get NTP start time.
+     * (获取NTP起始时间)
      *
-     * @return 起始时间
+     * @return start time
      */
     public static LocalDateTime getNTPOriginDateTime() {
         return LocalDateTime.of(1900, 1, 1, 0, 0, 0);
@@ -97,10 +103,11 @@ public class TimesUtil {
     //region UTC
 
     /**
-     * 获取UTC所有的秒时间
+     * Get UTC total second.
+     * (获取UTC所有的秒时间)
      *
-     * @param dateTime 日期时间
-     * @return 秒
+     * @param dateTime dateTime
+     * @return second
      */
     public static long getUTCTotalSecond(LocalDateTime dateTime) {
         Duration between = Duration.between(getUTCOriginDateTime(), dateTime);
@@ -108,9 +115,10 @@ public class TimesUtil {
     }
 
     /**
-     * 获取UTC日期
+     * Get UTC date.
+     * (获取UTC日期)
      *
-     * @param day 天
+     * @param day long data
      * @return Date
      */
     public static LocalDate getUTCDate(long day) {
@@ -118,9 +126,10 @@ public class TimesUtil {
     }
 
     /**
-     * 获取UTC时间
+     * Get UTC dateTime.
+     * (获取UTC时间)
      *
-     * @param second 秒
+     * @param second second
      * @return DateTime
      */
     public static LocalDateTime getUTCDateTime(long second) {
@@ -128,18 +137,20 @@ public class TimesUtil {
     }
 
     /**
-     * 获取UTC起始时间
+     * Get UTC start Date.
+     * (获取UTC起始时间)
      *
-     * @return 起始时间
+     * @return start time
      */
     public static LocalDate getUTCOriginDate() {
         return getUTCOriginDateTime().toLocalDate();
     }
 
     /**
-     * 获取UTC起始时间
+     * Get UTC start Date.
+     * (获取UTC起始时间)
      *
-     * @return 起始时间
+     * @return start time
      */
     public static LocalDateTime getUTCOriginDateTime() {
         return LocalDateTime.of(1970, 1, 1, 0, 0, 0);

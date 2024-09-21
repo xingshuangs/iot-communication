@@ -35,21 +35,23 @@ public class LongUtil {
     }
 
     /**
-     * 将long转换为字节数组
+     * Convert long to a 8-byte array.
+     * (将long转换为字节数组)
      *
-     * @param data long数据
-     * @return 字节数组
+     * @param data long data
+     * @return byte array
      */
     public static byte[] toByteArray(long data) {
         return toByteArray(data, false);
     }
 
     /**
-     * 将long转换为字节数组
+     * Convert long to a 8-byte array.
+     * (将long转换为字节数组)
      *
-     * @param data         long数据
-     * @param littleEndian true:小端，false：大端
-     * @return 字节数组
+     * @param data         long data
+     * @param littleEndian true: little endian，false：big endian
+     * @return byte array
      */
     public static byte[] toByteArray(long data, boolean littleEndian) {
         byte[] bytes = new byte[8];

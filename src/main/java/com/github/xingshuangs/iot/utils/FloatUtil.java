@@ -26,6 +26,8 @@ package com.github.xingshuangs.iot.utils;
 
 
 /**
+ * Float tool
+ *
  * @author xingshuang
  */
 public class FloatUtil {
@@ -35,75 +37,82 @@ public class FloatUtil {
     }
 
     /**
-     * 将float转换为字节数组，默认采用大端模式
+     * Convert double to 8-byte array, in big-endian mode by default.
+     * (将double转换为字节数组，默认采用大端模式)
      *
-     * @param data float数据
-     * @return 字节数组
+     * @param data double data
+     * @return byte array
      */
     public static byte[] toByteArray(double data) {
         return LongUtil.toByteArray(Double.doubleToLongBits(data), false);
     }
 
     /**
-     * 将float转换为字节数组，默认采用大端模式
+     * Convert double to 8-byte array.
+     * (将double转换为字节数组)
      *
-     * @param data         float数据
-     * @param littleEndian 是否小端模式
-     * @return 字节数组
+     * @param data         double data
+     * @param littleEndian is little endian
+     * @return byte array
      */
     public static byte[] toByteArray(double data, boolean littleEndian) {
         return LongUtil.toByteArray(Double.doubleToLongBits(data), littleEndian);
     }
 
     /**
-     * 将float转换为字节数组，默认采用大端模式
+     * Convert float to 4-byte array, in big-endian mode by default.
+     * (将float转换为字节数组，默认采用大端模式)
      *
-     * @param data float数据
-     * @return 字节数组
+     * @param data float data.
+     * @return byte array
      */
     public static byte[] toByteArray(float data) {
         return IntegerUtil.toByteArray(Float.floatToIntBits(data), false);
     }
 
     /**
-     * 将float转换为字节数组，默认采用大端模式
+     * Convert float to 4-byte array.
+     * (将float转换为字节数组)
      *
-     * @param data         float数据
-     * @param littleEndian 是否小端模式
-     * @return 字节数组
+     * @param data         float data
+     * @param littleEndian true：little endian，false：big endian
+     * @return byte array
      */
     public static byte[] toByteArray(float data, boolean littleEndian) {
         return IntegerUtil.toByteArray(Float.floatToIntBits(data), littleEndian);
     }
 
     /**
-     * 将字节数组转换为float32
+     * Converts a byte array to float32.
+     * （将字节数组转换为float32）
      *
-     * @param data 字节数组
-     * @return float32数据
+     * @param data byte array
+     * @return float32 data
      */
     public static float toFloat32(byte[] data) {
         return toFloat32(data, 0, false);
     }
 
     /**
-     * 将字节数组转换为float32
+     * Converts a byte array to float32.
+     * (将字节数组转换为float32)
      *
-     * @param data   字节数组
+     * @param data   byte array
      * @param offset index offset
-     * @return float32数据
+     * @return float32 data
      */
     public static float toFloat32(byte[] data, int offset) {
         return toFloat32(data, offset, false);
     }
 
     /**
-     * 将字节数组转换为float32
+     * Converts a byte array to float32.
+     * (将字节数组转换为float32)
      *
-     * @param data         字节数组
-     * @param offset       偏移量
-     * @param littleEndian true：小端模式，false：大端模式
-     * @return float32数据
+     * @param data         byte array
+     * @param offset       offset
+     * @param littleEndian true：little endian，false：big endian
+     * @return float32 data
      */
     public static float toFloat32(byte[] data, int offset, boolean littleEndian) {
         if (data.length < 4) {
@@ -122,33 +131,36 @@ public class FloatUtil {
     }
 
     /**
-     * 将字节数组转换为float64
+     * Converts a byte array to float64.
+     * (将字节数组转换为float64)
      *
-     * @param data 字节数组
-     * @return float64数据
+     * @param data byte array
+     * @return float64 data
      */
     public static double toFloat64(byte[] data) {
         return toFloat64(data, 0, false);
     }
 
     /**
-     * 将字节数组转换为float64
+     * Converts a byte array to float64.
+     * (将字节数组转换为float64)
      *
-     * @param data   字节数组
+     * @param data   byte array
      * @param offset index offset
-     * @return float64数据
+     * @return float64 data
      */
     public static double toFloat64(byte[] data, int offset) {
         return toFloat64(data, offset, false);
     }
 
     /**
-     * 将字节数组转换为float64
+     * Converts a byte array to float64.
+     * (将字节数组转换为float64)
      *
-     * @param data         字节数组
-     * @param offset       偏移量
-     * @param littleEndian true：小端模式，false：大端模式
-     * @return float64数据
+     * @param data         byte array
+     * @param offset       offset
+     * @param littleEndian true：little endian，false：big endian
+     * @return float64 data
      */
     public static double toFloat64(byte[] data, int offset, boolean littleEndian) {
         if (data.length < 8) {

@@ -31,7 +31,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * MD5工具
+ * MD5 tool.
+ * (MD5工具)
  *
  * @author xingshuang
  */
@@ -41,15 +42,37 @@ public class MD5Util {
         // NOOP
     }
 
+    /**
+     * Encode string
+     *
+     * @param src string
+     * @return result
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+     */
     public static String encode(String src) throws NoSuchAlgorithmException {
         return encode(src, StandardCharsets.US_ASCII);
     }
 
+    /**
+     * Encode string.
+     *
+     * @param src      source string
+     * @param charsets charset
+     * @return result
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+     */
     public static String encode(String src, Charset charsets) throws NoSuchAlgorithmException {
         byte[] bytes = src.getBytes(charsets);
         return encode(bytes);
     }
 
+    /**
+     * Encode string.
+     *
+     * @param src byte array
+     * @return result
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+     */
     public static String encode(byte[] src) throws NoSuchAlgorithmException {
         MessageDigest md5 = MessageDigest.getInstance("MD5");
         byte[] bytes = md5.digest(src);

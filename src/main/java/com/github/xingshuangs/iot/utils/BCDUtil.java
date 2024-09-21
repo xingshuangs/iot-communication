@@ -26,7 +26,8 @@ package com.github.xingshuangs.iot.utils;
 
 
 /**
- * BCD码转换工具
+ * BCD code conversion tool.
+ * (BCD码转换工具)
  *
  * @author xingshuang
  */
@@ -36,10 +37,23 @@ public class BCDUtil {
         // NOOP
     }
 
+    /**
+     * Byte to int by BCD.
+     * 转换为int
+     *
+     * @param data byte data
+     * @return int result
+     */
     public static int toInt(byte data) {
         return ((data >> 4) * 10) + (data & 0x0F);
     }
 
+    /**
+     * Byte array to int by BCD.
+     *
+     * @param data byte array
+     * @return int result
+     */
     public static int toInt(byte[] data) {
         int result = 0;
         for (int i = data.length - 1; i >= 0; i--) {
@@ -48,6 +62,12 @@ public class BCDUtil {
         return result;
     }
 
+    /**
+     * Int to byte by BCD.
+     *
+     * @param data int data
+     * @return byte
+     */
     public static byte toByte(int data) {
         if (data > 99 || data < 0) {
             throw new IllegalArgumentException("data > 99 || data < 0");

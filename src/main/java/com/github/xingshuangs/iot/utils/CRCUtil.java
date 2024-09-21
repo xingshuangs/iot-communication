@@ -26,7 +26,7 @@ package com.github.xingshuangs.iot.utils;
 
 
 /**
- * CRC校验
+ * CRC tool.
  *
  * @author xingshuang
  */
@@ -37,7 +37,8 @@ public class CRCUtil {
     }
 
     /**
-     * CRC高位字节值表
+     * Table of CRC high byte values.
+     * (CRC高位字节值表)
      */
     private static final byte[] HIGH_BYTES = {
             (byte) 0x00, (byte) 0xC1, (byte) 0x81, (byte) 0x40, (byte) 0x01, (byte) 0xC0, (byte) 0x80, (byte) 0x41, (byte) 0x01, (byte) 0xC0,
@@ -69,7 +70,8 @@ public class CRCUtil {
     };
 
     /**
-     * CRC低位字节值表
+     * Table of CRC low byte values.
+     * (CRC低位字节值表)
      */
     private static final byte[] LOW_BYTES = {
             (byte) 0x00, (byte) 0xC0, (byte) 0xC1, (byte) 0x01, (byte) 0xC3, (byte) 0x03, (byte) 0x02, (byte) 0xC2, (byte) 0xC6, (byte) 0x06,
@@ -101,10 +103,11 @@ public class CRCUtil {
     };
 
     /**
-     * 计算crc16，结果为2字节数组
+     * Evaluates crc16, resulting in a 2-byte array.
+     * (计算crc16，结果为2字节数组)
      *
-     * @param data 数据源，字节数组
-     * @return 2字节数组
+     * @param data byte array
+     * @return 2-byte array
      */
     public static byte[] crc16ToByteArray(byte[] data) {
         byte high = (byte) 0xFF;
@@ -118,11 +121,12 @@ public class CRCUtil {
     }
 
     /**
-     * 校验crc16
+     * Check CRC16
+     * (校验crc16)
      *
-     * @param data   数据源，字节数组
-     * @param target 2字节数组
-     * @return true：一致，false：不一致
+     * @param data   source, byte array
+     * @param target target 2-byte array
+     * @return true：equality，false：inequality.
      */
     public static boolean crc16(byte[] data, byte[] target) {
         if (target == null || target.length != 2) {
@@ -133,10 +137,11 @@ public class CRCUtil {
     }
 
     /**
-     * 计算crc16，结果为大端模式的int
+     * Calculate crc16.
+     * (计算crc16，结果为大端模式的int)
      *
-     * @param data 数据源，字节数组
-     * @return 大端模式的int
+     * @param data source data
+     * @return crc16 result
      */
     public static int crc16ToInt(byte[] data) {
         byte[] bytes = crc16ToByteArray(data);
@@ -144,11 +149,12 @@ public class CRCUtil {
     }
 
     /**
-     * 校验crc16
+     * Check CRC16.
+     * (校验crc16)
      *
-     * @param data   数据源，字节数组
-     * @param target int目标数据
-     * @return true：一致，false：不一致
+     * @param data   source data
+     * @param target target int data
+     * @return true：equality，false：inequality.
      */
     public static boolean crc16(byte[] data, int target) {
         byte[] bytes = crc16ToByteArray(data);
