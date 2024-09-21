@@ -120,6 +120,13 @@ public class ByteReadBuffTest {
     }
 
     @Test
+    public void getInt64() {
+        ByteReadBuff buff = new ByteReadBuff(new byte[]{(byte) 0x15, (byte) 0x55, (byte) 0x56, (byte) 0x89, (byte) 0x8A, (byte) 0x9B, (byte) 0x56, (byte) 0x58});
+        long actual = buff.getInt64();
+        assertEquals(1537229996552836696L, actual);
+    }
+
+    @Test
     public void getFloat32() {
         ByteReadBuff buff = new ByteReadBuff(new byte[]{(byte) 0x42, (byte) 0x04, (byte) 0xA3, (byte) 0xD7});
         float actual = buff.getFloat32();

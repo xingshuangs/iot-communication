@@ -256,6 +256,18 @@ public class ByteReadBuff {
     }
 
     /**
+     * Get one int64 data.
+     * (获取int32数据)
+     *
+     * @return int64 data
+     */
+    public long getInt64() {
+        long res = this.getInt64(this.offset);
+        this.offset += 4;
+        return res;
+    }
+
+    /**
      * Get one float32 data.
      * (获取float32数据)
      *
@@ -429,6 +441,18 @@ public class ByteReadBuff {
     public long getUInt32(int index) {
         this.checkCondition(index);
         return IntegerUtil.toUInt32(this.format.formatIn4Bytes(this.data, index), 0, this.littleEndian);
+    }
+
+    /**
+     * Get int64 data by byte index.
+     * (获取int64数据)
+     *
+     * @param index byte index
+     * @return int64 data
+     */
+    public long getInt64(int index) {
+        this.checkCondition(index);
+        return LongUtil.toInt64(this.format.formatIn8Bytes(this.data, index), 0, this.littleEndian);
     }
 
     /**
