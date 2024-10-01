@@ -32,14 +32,20 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Mp4的头
+ * Mp4 header
  *
  * @author xingshuang
  */
 public class Mp4Header implements IObjectByteArray {
 
+    /**
+     * Ftyp box
+     */
     private final Mp4FtypBox ftypBox;
 
+    /**
+     * Moov box
+     */
     private final Mp4MoovBox moovBox;
 
     public Mp4Header(Mp4TrackInfo trackInfo) {

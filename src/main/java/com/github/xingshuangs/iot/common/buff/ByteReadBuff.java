@@ -26,6 +26,7 @@ package com.github.xingshuangs.iot.common.buff;
 
 
 import com.github.xingshuangs.iot.utils.*;
+import lombok.Getter;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -37,6 +38,7 @@ import java.util.Arrays;
  *
  * @author xingshuang
  */
+@Getter
 public class ByteReadBuff {
 
     /**

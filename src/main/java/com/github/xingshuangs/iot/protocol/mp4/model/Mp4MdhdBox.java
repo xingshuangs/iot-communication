@@ -32,6 +32,7 @@ import com.github.xingshuangs.iot.utils.TimesUtil;
 import java.time.LocalDateTime;
 
 /**
+ * Media Header Box: Stores the video stream creation time and length.
  * Media Header Box,存放视频流创建时间，长度等信息
  *
  * @author xingshuang
@@ -39,42 +40,42 @@ import java.time.LocalDateTime;
 public class Mp4MdhdBox extends Mp4Box {
 
     /**
-     * 1字节，版本
+     * 1-bytes, version
      */
     private final int version;
 
     /**
-     * 3字节为flags
+     * 3-bytes flags
      */
     private final byte[] flags;
 
     /**
-     * 4字节创建时间
+     * 4-bytes creation time.
      */
     private final LocalDateTime creationTime;
 
     /**
-     * 4字节修改时间
+     * 4-bytes modification time
      */
     private final LocalDateTime modificationTime;
 
     /**
-     * 4字节timescale
+     * 4-byte stimescale
      */
     private final int timescale;
 
     /**
-     * 4字节duration
+     * 4-bytes duration
      */
     private final int duration;
 
     /**
-     * 2字节 language，支持的语言，ISO-639-2/T 语言代码
+     * 2-bytes language，supported languages, ISO-639-2/T language code.支持的语言，ISO-639-2/T 语言代码
      */
     private final byte[] language;
 
     /**
-     * 2字节pre_defined
+     * 2-bytes pre_defined
      */
     private final byte[] preDefined;
 

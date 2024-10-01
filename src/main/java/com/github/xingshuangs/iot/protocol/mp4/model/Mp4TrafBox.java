@@ -29,6 +29,9 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
+ * Movie Fragment Box(moof) is a box added to data in fmp4. moof and mdat appear in pairs.
+ * This box is the description information of video fragments.moof is a top-level box that is also a container box,
+ * followed by a mfhd, with no content of its own.
  * Movie Fragment Box(moof),是 fmp4中数据追加的box,moof 和mdat是成对出现的,这个box是视频分片的描述信息，每个Fragment中包含moof
  * 和mdat，这样的结构符合渐进式播放需求。moof是一个顶级box,同时是一个容器box,下面紧跟一个mfhd,自身无内容。
  *

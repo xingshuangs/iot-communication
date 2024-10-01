@@ -29,23 +29,24 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
+ * chunk Offset Box(stbl-stco) specifies the position of each Chunk in a file. Fmp4 mode.
  * Chunk Offset Box(stbl-stco),Chunk的偏移量表，指定了每个chunk在文件中的位置。fmp4方式，此box不必赋值
  *
  * @author xingshuang
  */
 public class Mp4StcoBox extends Mp4Box {
     /**
-     * 1字节，版本
+     * 1-bytes, version
      */
     protected int version;
 
     /**
-     * 3字节为flags
+     * 3-bytes, flags
      */
     protected byte[] flags;
 
     /**
-     * 4字节
+     * 4-bytes
      */
     protected int entryCount;
 

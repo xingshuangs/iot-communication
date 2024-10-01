@@ -28,7 +28,11 @@ package com.github.xingshuangs.iot.protocol.mp4.model;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
- * Sample To Chunk Box(stbl-stsc),用chunk组织sample可以方便优化数据获取，一个chunk包含一个或多个sample。“stsc”中用一个表描述了
+ * Sample To Chunk Box(stbl-stsc),
+ * Using chunk to organize samples facilitates data acquisition. A chunk contains one or more samples."stsc" is described in a table,
+ * Mapping between sample and chunk. By viewing the table, you can find the thunk that contains the specified sample and find the sample.
+ * Of course, each table entry may contain one or more chunks
+ * 用chunk组织sample可以方便优化数据获取，一个chunk包含一个或多个sample。“stsc”中用一个表描述了
  * sample与chunk的映射关系，查看这张表就可以找到包含指定sample的thunk，从而找到这个sample，当然每个table entry可能包含一个或者多个chunk。fmp4方式，此box不必赋值，简单封装一个box即可
  *
  * @author xingshuang

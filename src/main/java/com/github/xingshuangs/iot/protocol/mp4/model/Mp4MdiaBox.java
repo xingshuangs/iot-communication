@@ -29,6 +29,8 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
+ * mdia box contains the container box of track media data information, and its sub-boxes mainly
+ * contain video stream length/creation time/media playback process/offset of sample/decoding format, etc.
  * mdia box包含 track 媒体数据信息的 container box,其子box主要包含视频流长度/创建时间/媒体播放过程/sample的偏移量/解码格式等
  *
  * @author xingshuang

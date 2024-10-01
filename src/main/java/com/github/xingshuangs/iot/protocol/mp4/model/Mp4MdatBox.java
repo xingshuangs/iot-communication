@@ -29,14 +29,16 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
- * mdat盒子
+ * mdat box
  *
  * @author xingshuang
  */
 public class Mp4MdatBox extends Mp4Box {
 
     /**
-     * 流媒体数据包，H264，采用avc1封装格式，即是去掉起始头后，就是nalu
+     * The streaming media packet, H264, adopts the avc1 package format, that is, after removing the starting header,
+     * it is nalu length + nalu
+     * 流媒体数据包，H264，采用avc1封装格式，即是去掉起始头后，就是nalu长度+nalu
      */
     private byte[] dataPackage = new byte[0];
 

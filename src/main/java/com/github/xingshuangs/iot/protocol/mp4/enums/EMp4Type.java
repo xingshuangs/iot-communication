@@ -30,7 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 数据包的类型
+ * MP4 Type.
+ * (数据包的类型)
  *
  * @author xingshuang
  */

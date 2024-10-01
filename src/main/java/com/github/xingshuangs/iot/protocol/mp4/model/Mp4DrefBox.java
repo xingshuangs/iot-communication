@@ -29,6 +29,8 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
+ * Each track type has a different media header (corresponding to media handler-type),
+ * which contains only the version and flags, version assigned to 0 in fmp4, VMHD flags=1, and SMHD flags=0.
  * 每种音轨类型都有不同的媒体信息头（对应media handler-type）,其只包含版本和flags，fmp4中版本赋值为0，VMHD的flags=1，SMHD的flags=0
  *
  * @author xingshuang
@@ -36,38 +38,38 @@ import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 public class Mp4DrefBox extends Mp4Box {
 
     /**
-     * 1字节，版本
+     * 1-bytes, version
      */
     private final int version;
 
     /**
-     * 3字节为flags
+     * 3-bytes, flags
      */
     private final byte[] flags;
 
     /**
-     * 4字节
+     * 4-bytes
      */
     private final int entryCount;
 
 
     /**
-     * 4字节
+     * 4-bytes
      */
     private final int entrySize;
 
     /**
-     * 4字节
+     * 4-bytes
      */
     private final byte[] entryType;
 
     /**
-     * 1字节
+     * 1-bytes
      */
     private final int entryVersion;
 
     /**
-     * 3字节
+     * 3-bytes
      */
     private final byte[] entryFlag;
 

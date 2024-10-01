@@ -29,39 +29,39 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
- * ftyp盒子
+ * HDLR box
  *
  * @author xingshuang
  */
 public class Mp4HdlrBox extends Mp4Box {
 
     /**
-     * 1字节，版本
+     * 1-bytes, version
      */
     private final int version;
 
     /**
-     * 3字节为flags
+     * 3-bytes flags
      */
     private final byte[] flags;
 
     /**
-     * 4字节pre_defined
+     * 4-bytespre_defined
      */
     private final byte[] preDefined;
 
     /**
-     * 4字节
+     * 4-bytes
      */
     private final String handlerType;
 
     /**
-     * 12字节 保留
+     * 12-bytes reserved
      */
     private final byte[] reserved;
 
     /**
-     * 5字节 名称
+     * 5-bytes name
      */
     private final String name;
 

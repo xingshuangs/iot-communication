@@ -29,28 +29,29 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
- * Sample Size Boxes (stbl-stsz),指定了每个sample的size,针对fmp4这里无需赋值
+ * Sample Size Boxes (stbl-stsz), the size of each sample is specified.
+ * 指定了每个sample的size,针对fmp4这里无需赋值
  *
  * @author xingshuang
  */
 public class Mp4StszBox extends Mp4Box {
     /**
-     * 1字节，版本
+     * 1-bytes, version
      */
     private final int version;
 
     /**
-     * 3字节为flags
+     * 3-bytes flags
      */
     private final byte[] flags;
 
     /**
-     * 4字节
+     * 4-bytes
      */
     private final int sampleSize;
 
     /**
-     * 4字节
+     * 4-bytes
      */
     private final int sampleCount;
 

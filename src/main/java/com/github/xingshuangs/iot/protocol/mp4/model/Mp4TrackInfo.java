@@ -45,7 +45,7 @@ public class Mp4TrackInfo {
 
     private String codec = "avc1.64002a";
 
-    // region 视频
+    // region video
     private int timescale;
 
     private int duration;
@@ -59,7 +59,7 @@ public class Mp4TrackInfo {
     private byte[] pps;
     // endregion
 
-    // region 音频
+    // region audio
 
     private int volume;
 

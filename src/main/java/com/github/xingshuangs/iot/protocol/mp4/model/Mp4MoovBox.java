@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * The Movie box contains the macro description information of all media data in this file and the specific information of each media track.
+ * The fmp4 format needs to follow closely after the ftyp box. The moov top-level box has no specific information, and its information is recorded in its sub-box.
  * Movie box包含本文件中所有媒体数据的宏观描述信息以及每路媒体轨道的具体信息,
  * fmp4格式需要紧跟在ftyp box之后，moov顶层box中没有具体信息，其信息都记录在其子box中
  *

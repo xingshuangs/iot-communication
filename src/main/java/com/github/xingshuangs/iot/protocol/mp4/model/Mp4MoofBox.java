@@ -29,7 +29,7 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
- * mdat盒子
+ * mdat box
  *
  * @author xingshuang
  */

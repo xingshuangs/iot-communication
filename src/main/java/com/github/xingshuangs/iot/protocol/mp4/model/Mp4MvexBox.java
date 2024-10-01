@@ -32,14 +32,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * Trac kExtends Box (trex) is a subbox of mvex that is used to set a default value for fMP4's sample.
  * Trac kExtends Box (trex) 是 mvex 的子box,用来给fMP4的sample设置默认值。
  *
  * @author xingshuang
  */
 public class Mp4MvexBox extends Mp4Box {
-    /**
-     * 1字节，版本
-     */
+
     private final List<Mp4Box> boxes;
 
     public Mp4MvexBox(List<Mp4TrackInfo> trackInfos) {

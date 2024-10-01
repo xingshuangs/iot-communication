@@ -29,24 +29,26 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
- * Track Fragment Header box(tfhd),对制定的track进行相关的默认配置，包含trackid、sample时长、大小、偏移量等信息
+ * Track Fragment Header box(tfhd), carry out related default configuration of the developed track, including trackid,
+ * sample duration, size, offset and other information.
+ * 对制定的track进行相关的默认配置，包含trackid、sample时长、大小、偏移量等信息
  *
  * @author xingshuang
  */
 public class Mp4TfhdBox extends Mp4Box {
 
     /**
-     * 1字节，版本
+     * 1-bytes, version
      */
     private final int version;
 
     /**
-     * 3字节为flags
+     * 3-bytes flags
      */
     private final byte[] flags;
 
     /**
-     * 4字节trackid，trackid赋值为1，视频track
+     * 4-bytes trackid，trackid赋值为1，视频track
      */
     private final int trackId;
 

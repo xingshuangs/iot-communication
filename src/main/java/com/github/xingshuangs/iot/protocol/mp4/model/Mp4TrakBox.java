@@ -29,6 +29,9 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
+ * One or more tracks can exist in a moov, usually consisting of two trak boxes, a video index, and an audio index,
+ * which are independent of each other.Each track contains tkhd and mdia sub-boxes,
+ * trak is the top-level box with no specific meaning, and its Data is the sub-box.
  * moov中可以存在一个或多个 track，通常包含两个trak box，一个视频索引，一个音频索引，它们之间是相互独立的。
  * 每个 track 包含tkhd和mdia子box，trak为顶层box无具体含义，其Data为其子box
  *

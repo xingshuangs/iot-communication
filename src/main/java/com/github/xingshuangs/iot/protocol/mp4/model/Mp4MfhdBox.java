@@ -29,6 +29,7 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
+ * The Movie Fragment header Box(mfhd), which contains fragment sequence information, identifies the fragment sequence for each track.
  * Movie Fragment header Box(mfhd),包含分片序列信息，标识每个track的分片序列
  *
  * @author xingshuang
@@ -36,17 +37,19 @@ import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 public class Mp4MfhdBox extends Mp4Box {
 
     /**
-     * 1字节，版本
+     * 1-bytes, version
      */
     private final int version;
 
     /**
-     * 3字节为flags
+     * 3-bytes flags
      */
     private final byte[] flags;
 
     /**
-     * 4字节媒体流序列号，每个trunk一个序列号，序列号从1开始递增，就是每个moof的序列号，相比前一个要加1
+     * 4-bytes media stream serial number: a serial number for each trunk.
+     * The serial number increases from 1, that is, the serial number of each moof, which is 1 more than the previous one.
+     * 媒体流序列号，每个trunk一个序列号，序列号从1开始递增，就是每个moof的序列号，相比前一个要加1
      */
     private final long sequenceNumber;
 

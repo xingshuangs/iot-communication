@@ -29,6 +29,7 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
+ * The Data Reference Box contains the dref box, and fmp4 can assign the default value.
  * Data Reference Box 其包含dref box,fmp4给默认赋值即可
  *
  * @author xingshuang

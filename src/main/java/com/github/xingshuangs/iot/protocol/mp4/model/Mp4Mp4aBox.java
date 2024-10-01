@@ -29,6 +29,7 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
+ * Sample Description box (stbl-stsd), which stores the description information necessary for decoding, is also a container box. For H264 streams, it contains avc1 subboxes.
  * Sample Description Box(stbl-stsd)，存放解码必须的描述信息,其也是一个container box，对于H264码流来说其包含avc1子box
  *
  * @author xingshuang
@@ -36,47 +37,47 @@ import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 public class Mp4Mp4aBox extends Mp4Box {
 
     /**
-     * 6个字节
+     * 6-bytes
      */
     private final byte[] reserved1;
 
     /**
-     * 2字节
+     * 2-bytes
      */
     private final int dataReferenceIndex;
 
     /**
-     * 8个字节
+     * 8-bytes
      */
     private final byte[] reserved2;
 
     /**
-     * 2字节通道数
+     * 2-bytes channel count.
      */
     private final int channelCount;
 
     /**
-     * 2字节
+     * 2-bytes
      */
     private final int sampleSize;
 
     /**
-     * 2字节
+     * 2-bytes
      */
     private final byte[] preDefined;
 
     /**
-     * 2个字节
+     * 2-bytes
      */
     private final byte[] reserved3;
 
     /**
-     * 2个字节
+     * 2-bytes
      */
     private final int audioSampleRate;
 
     /**
-     * 2个字节
+     * 2-bytes
      */
     private final byte[] reserved4;
 

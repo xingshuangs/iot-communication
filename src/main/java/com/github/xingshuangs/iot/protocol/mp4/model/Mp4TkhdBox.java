@@ -32,84 +32,90 @@ import com.github.xingshuangs.iot.utils.TimesUtil;
 import java.time.LocalDateTime;
 
 /**
- * tkhd(Track Header) box包含关于媒体流的头信息，如trackid，视频分辨率等信息
+ * tkhd(Track Header) box, contains header information about the media stream, such as trackid, video resolution, and more.
+ * 包含关于媒体流的头信息，如trackid，视频分辨率等信息
  *
  * @author xingshuang
  */
 public class Mp4TkhdBox extends Mp4Box {
 
     /**
-     * 1字节，版本
+     * 1-bytes, version
      */
     private final int version;
 
     /**
-     * 3字节为flags
+     * 3-bytes flags
      */
     private final byte[] flags;
 
     /**
-     * 4字节创建时间
+     * 4-bytes creation time
      */
     private final LocalDateTime creationTime;
 
     /**
-     * 4字节修改时间
+     * 4-bytes modification time
      */
     private final LocalDateTime modificationTime;
 
     /**
-     * 4字节timescale
+     * 4-bytes timescale
      */
     private final int trackId;
 
     /**
-     * 4个字节预留
+     * 4个-bytes
      */
     private final byte[] reserve1;
 
     /**
-     * 4字节duration
+     * 4-bytes duration
      */
     private final int duration;
 
     /**
-     * 8个字节预留
+     * 8个-bytes
      */
     private final byte[] reserve2;
 
     /**
-     * 2字节 视频layer，相当于前后排序，这里就一路视频，设置为0
+     * 2-bytes the video layer, which is sort before and after, here is all the videos, set it to 0.
+     * 视频layer，相当于前后排序，这里就一路视频，设置为0
      */
     private final int layer;
 
     /**
-     * 2个字节预留
+     * 2个-bytes
      */
     private final byte[] reserve3;
 
     /**
-     * 2个字节 音量设置
+     * 2个-bytes volume setting
+     * 音量设置
      */
     private final int volume;
 
     /**
-     * 2个字节预留
+     * 2个-bytes
      */
     private final byte[] reserve4;
 
     /**
-     * 36字节 变换矩阵
+     * 36-bytes transformation matrix
+     * 变换矩阵
      */
     private final byte[] unityMatrix;
 
     /**
-     * 4字节视频宽
+     * 4-bytes video width
+     * 视频宽
      */
     private final int width;
 
     /**
-     * 4字节视频高
+     * 4-bytes video height
+     * 视频高
      */
     private final int height;
 

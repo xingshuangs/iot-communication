@@ -32,69 +32,69 @@ import com.github.xingshuangs.iot.utils.TimesUtil;
 import java.time.LocalDateTime;
 
 /**
- * ftyp盒子
+ * mvhd box
  *
  * @author xingshuang
  */
 public class Mp4MvhdBox extends Mp4Box {
 
     /**
-     * 1字节，版本
+     * 1-bytes, version
      */
     private final int version;
 
     /**
-     * 3字节为flags
+     * 3-bytes flags
      */
     private final byte[] flags;
 
     /**
-     * 4字节创建时间
+     * 4-bytes creation time.
      */
     private final LocalDateTime creationTime;
 
     /**
-     * 4字节修改时间
+     * 4-bytes modification time
      */
     private final LocalDateTime modificationTime;
 
     /**
-     * 4字节timescale
+     * 4-bytes timescale
      */
     private final int timescale;
 
     /**
-     * 4字节duration
+     * 4-bytes duration
      */
     private final int duration;
 
     /**
-     * 4字节播放速率
+     * 4-bytes playback rate
      */
     private final int rate;
 
     /**
-     * 2字节音量
+     * 2-bytes volume
      */
     private final int volume;
 
     /**
-     * 10字节预留
+     * 10-bytes
      */
     private final byte[] reserved;
 
     /**
-     * 36字节 unity matrix
+     * 36-bytes unity matrix
      */
     private final byte[] videoTransformationMatrix;
 
     /**
-     * 24字节pre_defined
+     * 24-bytes pre_defined
      */
     private final byte[] preDefined;
 
     /**
-     * 4字节next_track_ID
+     * 4-bytes next_track_ID
      */
     private final int nextTrackId;
 

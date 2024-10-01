@@ -29,79 +29,82 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
- * Sample Description Box(stbl-stsd)，存放解码必须的描述信息,其也是一个container box，对于H264码流来说其包含avc1子box
+ * Sample Description box (stbl-stsd), which stores the description information necessary for decoding,
+ * is also a container box. For H264 streams, it contains avc1 subboxes.
+ * (Sample Description Box(stbl-stsd)，存放解码必须的描述信息,其也是一个container box，对于H264码流来说其包含avc1子box)
  *
  * @author xingshuang
  */
 public class Mp4Avc1Box extends Mp4Box {
 
     /**
-     * 6个字节
+     * 6-bytes.
      */
     private final byte[] reserved1;
 
     /**
-     * 2字节
+     * 2-bytes
      */
     private final int dataReferenceIndex;
 
     /**
-     * 2字节
+     * 2-bytes
      */
     private final byte[] preDefined1;
 
     /**
-     * 2个字节
+     * 2-bytes
      */
     private final byte[] reserved2;
 
     /**
-     * 12字节
+     * 12-bytes
      */
     private final byte[] preDefined2;
 
     /**
-     * 2个字节，宽
+     * 2-bytes, width
      */
     private final int width;
 
     /**
-     * 2个字节，高
+     * 2-bytes, height
      */
     private final int height;
 
     /**
-     * 4个字节，水平分辨率，默认值即可
+     * 4-bytes, horizontal resolution, default value.
      */
     private final int horizResolution;
 
     /**
-     * 4字节垂直分辨率，默认值即可
+     * 4-bytes, vertical resolution, default value
      */
     private final int vertResolution;
 
     /**
-     * 4字节
+     * 4-bytes
      */
     private final byte[] reserved3;
 
     /**
-     * 2字节帧数量，fmp4封装赋值为1
+     * 2-bytes, frame count, the fmp4 package is set to 1
      */
     private final int frameCount;
 
     /**
-     * 压缩名称，名称+长度=总共32个字节
+     * Compress name, name + length = 32 bytes total.
+     * (压缩名称，名称+长度=总共32个字节)
      */
     private final byte[] compressNameInfo;
 
     /**
-     * 2字节，深度，赋值为24
+     * 2-bytes，depth，set to 24
      */
     private final int depth;
 
     /**
-     * 2字节
+     * 2-bytes
      */
     private final byte[] preDefined3;
 

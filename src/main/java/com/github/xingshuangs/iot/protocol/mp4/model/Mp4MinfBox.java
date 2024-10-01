@@ -29,6 +29,7 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
+ * Media Information Box, which explains handler-specific information about track media data.minf is also a container box, Media Information Box.
  * Media Information Box，解释 track 媒体数据的 handler-specific 信息。minf 同样是个 container box，Media Information Box，
  * 解释 track 媒体数据的 handler-specific 信息。minf 同样是个 container box，其内部需要关注的内容是 stbl，这也是 moov 中最复杂的部分。
  *

@@ -29,43 +29,44 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
+ * Trac kExtends Box (trex) is a subbox of mvex that is used to set a default value for fMP4's sample.
  * Trac kExtends Box (trex) 是 mvex 的子box,用来给fMP4的sample设置默认值。
  *
  * @author xingshuang
  */
 public class Mp4TrexBox extends Mp4Box {
     /**
-     * 1字节，版本
+     * 1-bytes, version
      */
     private final int version;
 
     /**
-     * 3字节为flags
+     * 3-bytes flags
      */
     private final byte[] flags;
 
     /**
-     * 4字节
+     * 4-bytes
      */
     private final int trackId;
 
     /**
-     * 4字节
+     * 4-bytes
      */
     private final int defaultSampleDescriptionIndex;
 
     /**
-     * 4字节
+     * 4-bytes
      */
     private final int defaultSampleDuration;
 
     /**
-     * 4字节
+     * 4-bytes
      */
     private final int defaultSampleSize;
 
     /**
-     * 4字节
+     * 4-bytes
      */
     private final int defaultSampleFlags;
 

@@ -29,29 +29,31 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
- * Sample Description Box(stbl-stsd)，存放解码必须的描述信息,其也是一个container box，对于H264码流来说其包含avc1子box
+ * Sample Description Box(stbl-stsd)，
+ * Storing the description information necessary for decoding, it is also a container box, which contains avc1 subboxes for H264 streams.
+ * 存放解码必须的描述信息,其也是一个container box，对于H264码流来说其包含avc1子box
  *
  * @author xingshuang
  */
 public class Mp4StsdBox extends Mp4Box {
 
     /**
-     * 1字节，版本
+     * 1-byte, version
      */
     private final int version;
 
     /**
-     * 3字节为flags
+     * 3-bytes flags
      */
     private final byte[] flags;
 
     /**
-     * 4字节
+     * 4-bytes
      */
     private final int entryCount;
 
     /**
-     * 待定
+     * entryBox
      */
     private Mp4Box entryBox;
 

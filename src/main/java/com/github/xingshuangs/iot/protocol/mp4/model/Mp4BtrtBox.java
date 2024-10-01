@@ -29,6 +29,7 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 /**
+ * stsd-avc1-btrt bitrate box Indicates the bitrate information, including the maximum bitrate and average bitrate.
  * stsd-avc1-btrt bitrate box描述码率信息，其包含最大码率，平均码率等信息
  *
  * @author xingshuang
@@ -36,17 +37,17 @@ import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 public class Mp4BtrtBox extends Mp4Box {
 
     /**
-     * 4字节，缓存大小
+     * 4-bytes，cache size.
      */
     private final int bufferSizeDB;
 
     /**
-     * 4字节为最大码率
+     * 4-bytes, max bit rate.
      */
     private final int maxBitRate;
 
     /**
-     * 4字节为平均码率
+     * 4-bytes, average bit rate.
      */
     private final int avgBitRate;
 
