@@ -77,7 +77,7 @@ public class H264NaluMtap16Single extends H264NaluSingle {
     }
 
     /**
-     * 字节数组数据解析
+     * Parses byte array and converts it to object.
      *
      * @param data byte array
      * @return RtcpHeader
@@ -87,7 +87,7 @@ public class H264NaluMtap16Single extends H264NaluSingle {
     }
 
     /**
-     * 字节数组数据解析
+     * Parses byte array and converts it to object.
      *
      * @param data   byte array
      * @param offset index offset

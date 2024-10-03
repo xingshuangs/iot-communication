@@ -28,13 +28,14 @@ package com.github.xingshuangs.iot.protocol.rtcp.model;
 import com.github.xingshuangs.iot.common.IObjectByteArray;
 
 /**
- * 基础包
+ * Base package.
+ * (基础包)
  *
  * @author xingshuang
  */
 public class RtcpBasePackage implements IObjectByteArray {
     /**
-     * 头
+     * header.
      */
     protected RtcpHeader header;
 

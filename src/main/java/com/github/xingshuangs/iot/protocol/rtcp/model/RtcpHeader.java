@@ -33,7 +33,7 @@ import com.github.xingshuangs.iot.utils.BooleanUtil;
 import lombok.Data;
 
 /**
- * 头
+ * Header
  *
  * @author xingshuang
  */
@@ -41,27 +41,32 @@ import lombok.Data;
 public class RtcpHeader implements IObjectByteArray {
 
     /**
-     * 版本（V）：2比特
+     * Version.
+     * (版本（V）：2比特)
      */
     protected int version;
 
     /**
-     * 填充（P）：1比特，如果该位置为1，则该RTCP包的尾部就包含附加的填充字节。
+     * Padding.
+     * (填充（P）：1比特，如果该位置为1，则该RTCP包的尾部就包含附加的填充字节。)
      */
     protected boolean padding;
 
     /**
-     * 接收报告计数器（RC）：5比特，该SR包中的接收报告块的数目，可以为零。
+     * Receive report counter
+     * (接收报告计数器（RC）：5比特，该SR包中的接收报告块的数目，可以为零。)
      */
     protected int receptionCount;
 
     /**
-     * 包类型（PT）：8比特，SR包是200。
+     * Package type.
+     * (包类型（PT）：8比特，SR包是200。)
      */
     protected ERtcpPackageType packageType;
 
     /**
-     * 长度域（Length）：16比特，RTCP包的长度, 其中存放的是该SR包以32比特为单位的总长度减一, 包括填充的内容。长度代表整个数据包的大小（协议头+荷载+填充）
+     * Length.
+     * (长度域（Length）：16比特，RTCP包的长度, 其中存放的是该SR包以32比特为单位的总长度减一, 包括填充的内容。长度代表整个数据包的大小（协议头+荷载+填充）)
      * length = 32/4-1=7
      */
     protected int length;
@@ -84,7 +89,7 @@ public class RtcpHeader implements IObjectByteArray {
     }
 
     /**
-     * 字节数组数据解析
+     * Parses byte array and converts it to object.
      *
      * @param data byte array
      * @return RtcpHeader
@@ -94,7 +99,7 @@ public class RtcpHeader implements IObjectByteArray {
     }
 
     /**
-     * 字节数组数据解析
+     * Parses byte array and converts it to object.
      *
      * @param data   byte array
      * @param offset index offset

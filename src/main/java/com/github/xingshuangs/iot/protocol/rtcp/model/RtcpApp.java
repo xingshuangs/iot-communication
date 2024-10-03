@@ -53,12 +53,14 @@ import java.nio.charset.StandardCharsets;
 public final class RtcpApp extends RtcpBasePackage {
 
     /**
-     * 同步源（SSRC of sender）：32比特，SR包发送者的同步源标识符。与对应RTP包中的SSRC一样。
+     * Source id.
+     * (同步源（SSRC of sender）：32比特，SR包发送者的同步源标识符。与对应RTP包中的SSRC一样。)
      */
     private long sourceId;
 
     /**
-     * 名称
+     * Name.
+     * (名称)
      */
     private String name;
 
@@ -80,7 +82,7 @@ public final class RtcpApp extends RtcpBasePackage {
     }
 
     /**
-     * 字节数组数据解析
+     * Parses byte array and converts it to object.
      *
      * @param data byte array
      * @return RtcpHeader
@@ -90,7 +92,7 @@ public final class RtcpApp extends RtcpBasePackage {
     }
 
     /**
-     * 字节数组数据解析
+     * Parses byte array and converts it to object.
      *
      * @param data   byte array
      * @param offset index offset

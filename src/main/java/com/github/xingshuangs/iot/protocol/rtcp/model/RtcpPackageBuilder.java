@@ -32,7 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 数据包构建器
+ * Data package builder.
+ * (数据包构建器)
  *
  * @author xingshuang
  */

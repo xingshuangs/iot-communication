@@ -35,7 +35,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * RTP接收数据统计
+ * RTCP data statistics.
+ * RTCP接收数据统计
  *
  * @author xingshuang
  */
@@ -44,62 +45,74 @@ import java.util.function.Consumer;
 public class RtcpDataStatistics {
 
     /**
-     * 同步源（SSRC of sender）：32比特，SR包发送者的同步源标识符。与对应RTP包中的SSRC一样。
+     * Source id.
+     * (同步源（SSRC of sender）：32比特，SR包发送者的同步源标识符。与对应RTP包中的SSRC一样。)
      */
     private long sourceId;
 
     /**
-     * 接收的最大序号
+     * Highest sequence number
+     * (接收的最大序号)
      */
     private int highestSequenceNumber = 0;
 
     /**
-     * 从上一次重置之后的包接收数量
+     * Packets received since last reset
+     * (从上一次重置之后的包接收数量)
      */
     private int packetsReceivedSinceLastReset = 0;
 
     /**
-     * 从上一次重置之后的丢包数量
+     * Packets lost since last reset.
+     * (从上一次重置之后的丢包数量)
      */
     private int packetsLostSinceLastReset = 0;
 
     /**
-     * 累计丢包数量
+     * Cumulative packet lost.
+     * (累计丢包数量)
      */
     private int cumulativePacketLost = 0;
 
     /**
-     * 序列号循环被使用次数
+     * Sequence number cycles.
+     * (序列号循环被使用次数)
      */
     private int sequenceNumberCycles = 0;
 
     /**
-     * 采样总时间
+     * Sample timestamp sum.
+     * (采样总时间)
      */
     private long sampleTimestampSum = 0;
 
     /**
-     * 上一次的RTP时间戳
+     * Last rtp timestamp.
+     * （上一次的RTP时间戳）
      */
     private long lastRtpTimestamp = 0;
 
     /**
-     * 上一次RTP的SSRC
+     * Last rtp ssrc.
+     * （上一次RTP的SSRC）
      */
     private long lastRtpSsrc = 0;
 
     /**
-     * 上一次RTCP发送SR的NTP时间
+     * Last ntp time sender report received.
+     * （上一次RTCP发送SR的NTP时间）
      */
     private long lastNtpTimeSenderReportReceived = 0;
 
     /**
-     * 上一次接收到的SR的时间
+     * Last time rtcp report received.
+     * （上一次接收到的SR的时间）
      */
     private long lastTimeRtcpReportReceived = 0;
 
     /**
-     * 上一次接收到RTP的时间，本地当前的时间戳
+     * Last local time receive rtp.
+     * (上一次接收到RTP的时间，本地当前的时间戳）
      */
     private long lastLocalTimeReceiveRtp = 0;
 
@@ -108,10 +121,11 @@ public class RtcpDataStatistics {
     }
 
     /**
-     * 处理RTP数据包
+     * Process rtp package.
+     * (处理RTP数据包)
      *
-     * @param rtp RTP数据包
-     * @param send 回调发送字节数据
+     * @param rtp rtp package
+     * @param send send callback by bytes
      */
     public void processRtpPackage(RtpPackage rtp, Consumer<byte[]> send) {
         if (this.lastRtpSsrc > 0) {
@@ -149,7 +163,8 @@ public class RtcpDataStatistics {
     }
 
     /**
-     * 重置状态
+     * Reset state.
+     * (重置状态)
      */
     public void resetState() {
         this.packetsLostSinceLastReset = 0;
@@ -157,7 +172,8 @@ public class RtcpDataStatistics {
     }
 
     /**
-     * 处理RTCP数据包
+     * Process rtcp package.
+     * (处理RTCP数据包)
      *
      * @param basePackages rtcp数据包列表
      */
@@ -172,7 +188,8 @@ public class RtcpDataStatistics {
     }
 
     /**
-     * 创建接收报告
+     * Create receiver report.
+     * (创建接收报告)
      *
      * @return RtcpReceiverReport
      */
@@ -203,7 +220,8 @@ public class RtcpDataStatistics {
     }
 
     /**
-     * 创建SDES报告
+     * Create sdes report.
+     * (创建SDES报告)
      *
      * @return RtcpSdesReport
      */
@@ -220,6 +238,7 @@ public class RtcpDataStatistics {
     }
 
     /**
+     * Create bye.
      * 创建Byte
      *
      * @return RtcpBye
@@ -229,9 +248,10 @@ public class RtcpDataStatistics {
     }
 
     /**
-     * 创建RR内容的报告字节数组
+     * Create receiver and sdes content.
+     * (创建RR内容的报告字节数组)
      *
-     * @return 字节数组
+     * @return byte array
      */
     public byte[] createReceiverAndSdesContent() {
         RtcpReceiverReport receiverReport = this.createReceiverReport();
@@ -244,9 +264,10 @@ public class RtcpDataStatistics {
     }
 
     /**
-     * 创建byte的报告字节数组
+     * Create receiver and byte content.
+     * (创建byte的报告字节数组)
      *
-     * @return 字节数组
+     * @return byte array
      */
     public byte[] createReceiverAndByteContent() {
         RtcpReceiverReport receiverReport = this.createReceiverReport();

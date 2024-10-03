@@ -71,7 +71,7 @@ public class UploadAckParameter extends Parameter implements IObjectByteArray {
     }
 
     /**
-     * 字节数组数据解析
+     * Parses byte array and converts it to object.
      *
      * @param data byte array
      * @return DownloadAckParameter
@@ -81,7 +81,7 @@ public class UploadAckParameter extends Parameter implements IObjectByteArray {
     }
 
     /**
-     * 字节数组数据解析
+     * Parses byte array and converts it to object.
      *
      * @param data   byte array
      * @param offset index offset

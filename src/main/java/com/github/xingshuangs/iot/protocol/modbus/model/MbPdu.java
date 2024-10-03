@@ -71,7 +71,7 @@ public class MbPdu implements IObjectByteArray {
     }
 
     /**
-     * 字节数组数据解析
+     * Parses byte array and converts it to object.
      *
      * @param data   byte array
      * @param offset index offset
@@ -117,7 +117,7 @@ public class MbPdu implements IObjectByteArray {
     }
 
     /**
-     * 解析字节数组数据，转换为请求对象
+     * Parses byte array and converts it to object, convert to request object.
      *
      * @param data byte array
      * @return MbPdu
@@ -127,7 +127,7 @@ public class MbPdu implements IObjectByteArray {
     }
 
     /**
-     * 字节数组数据解析，转换为请求对象
+     * Parses byte array and converts it to object, convert to request object.
      *
      * @param data   byte array
      * @param offset index offset

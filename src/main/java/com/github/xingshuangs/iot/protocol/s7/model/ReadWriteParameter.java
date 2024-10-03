@@ -97,7 +97,7 @@ public class ReadWriteParameter extends Parameter implements IObjectByteArray {
     }
 
     /**
-     * 字节数组数据解析
+     * Parses byte array and converts it to object.
      *
      * @param data byte array
      * @return ReadWriteParameter

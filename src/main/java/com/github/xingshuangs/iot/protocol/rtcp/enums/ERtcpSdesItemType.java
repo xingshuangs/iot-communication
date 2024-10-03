@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * SDES item type.
  * 资源项的类型
  *
  * @author xingshuang

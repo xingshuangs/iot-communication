@@ -39,7 +39,8 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 /**
- * RTCP协议的UDP客户端
+ * Rtcp udp client.
+ * (RTCP协议的UDP客户端)
  *
  * @author xingshuang
  */
@@ -47,27 +48,32 @@ import java.util.function.Consumer;
 public class RtcpUdpClient extends UdpClientBasic implements IRtspDataStream {
 
     /**
-     * 是否终止线程
+     * Is thread terminal.
+     * (是否终止线程)
      */
     private boolean terminal = false;
 
     /**
-     * RTP和RTCP的数据统计
+     * Rtcp data statistics object.
+     * (RTP和RTCP的数据统计)
      */
     private final RtcpDataStatistics statistics = new RtcpDataStatistics();
 
     /**
-     * 数据收发前自定义处理接口
+     * Communicate callback by bytes.
+     * (数据收发前自定义处理接口)
      */
     private Consumer<byte[]> commCallback;
 
     /**
-     * 异步执行对象
+     * Completable future object.
+     * (异步执行对象)
      */
     private CompletableFuture<Void> future;
 
     /**
-     * 线程池执行服务，单线程
+     * Executor service.
+     * (线程池执行服务，单线程)
      */
     private final ExecutorService executorService;
 
@@ -103,7 +109,8 @@ public class RtcpUdpClient extends UdpClientBasic implements IRtspDataStream {
     }
 
     /**
-     * 触发接收
+     * Trigger receive handler.
+     * (触发接收)
      */
     @Override
     public void triggerReceive() {
@@ -145,9 +152,10 @@ public class RtcpUdpClient extends UdpClientBasic implements IRtspDataStream {
     }
 
     /**
-     * 处理RTP的数据包
+     * Process rtp package.
+     * (处理RTP的数据包)
      *
-     * @param rtpPackage RTP数据包
+     * @param rtpPackage RTP package
      */
     public void processRtpPackage(RtpPackage rtpPackage) {
         this.statistics.processRtpPackage(rtpPackage, this::sendData);

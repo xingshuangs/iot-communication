@@ -42,32 +42,38 @@ import java.time.LocalDateTime;
 public class RtcpSenderInfo implements IObjectByteArray {
 
     /**
+     * High timestamp.
      * NTP时间包括两部分组成，高位32bit表示秒钟：从1970开始计算
      */
     private long mswTimestamp;
 
     /**
+     * Low timestamp.
      * 低位表示剩余时间精度，一般按照1代表232皮秒来计算。
      */
     private long lswTimestamp;
 
     /**
+     * NTP timestamp.
      * NTP时间（64bit）：NTP时间包括两部分组成，高位32bit表示秒钟：从1970开始计算；低位表示剩余时间精度，一般按照1代表232皮秒来计算。
      */
     private LocalDateTime ntpTimestamp;
 
     /**
+     * Rtp timestamp.
      * RTP时间戳（32bit）：与RTP时间戳计算方式一致，是根据采样率进行递增，由于与RTP时间戳一致同时又知道当前的NTP时间，因此可以用于音视频时间同步使用。
      */
     private LocalDateTime rtpTimestamp;
 
     /**
+     * Sender packet count.
      * 发送包数量（32bit）：计算已经发送的包的数量
      * 从开始发送包到产生这个SR包这段时间里，发送者发送的RTP数据包的总数. SSRC改变时，这个域清零。
      */
     private long senderPacketCount;
 
     /**
+     * Sender octet count.
      * 发送字节数（32bit）：计算已经发送的字节数量
      * 从开始发送包到产生这个SR包这段时间里，发送者发送的净荷数据的总字节数（不包括头部和填充）。发送者改变其SSRC时，这个域要清零。
      */
@@ -90,7 +96,7 @@ public class RtcpSenderInfo implements IObjectByteArray {
     }
 
     /**
-     * 字节数组数据解析
+     * Parses byte array and converts it to object.
      *
      * @param data byte array
      * @return RtcpHeader
@@ -100,7 +106,7 @@ public class RtcpSenderInfo implements IObjectByteArray {
     }
 
     /**
-     * 字节数组数据解析
+     * Parses byte array and converts it to object.
      *
      * @param data   byte array
      * @param offset index offset
