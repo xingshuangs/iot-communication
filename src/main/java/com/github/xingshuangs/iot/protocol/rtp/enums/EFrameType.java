@@ -29,23 +29,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 帧的类别
+ * Frame type.
+ * (帧的类别)
  *
  * @author xingshuang
  */
 public enum EFrameType {
     /**
-     * 问题
+     * Problem.
+     * (问题)
      */
     PROBLEM((byte) 0x00),
 
     /**
-     * 视频
+     * Video.
+     * (视频)
      */
     VIDEO((byte) 0x01),
 
     /**
-     * 音频
+     * Audio.
+     * (音频)
      */
     AUDIO((byte) 0x02),
 

@@ -45,17 +45,21 @@ import lombok.Data;
 public class H264NaluHeader implements IObjectByteArray {
 
     /**
-     * H264 规范要求该位为 0
+     * Forbidden zero bit.
+     * (H264 规范要求该位为 0)
      */
     private boolean forbiddenZeroBit;
 
     /**
+     * The value ranges from 0 to 3, indicating the importance of the NALU. For the NALU decoder with NRI=0,
+     * it can be discarded without affecting the playback of the image. The larger the value, the more important the NALU is.
      * 取值 0~3，指示该 NALU 重要性，对于 NRI=0 的 NALU 解码器可以丢弃它而不影响图像的回放，该值越大说明该 NALU 越重要，
      * 需要受到保护。如果当前 NALU 属于参考帧的数据，或者是序列参数集，图像参数集等重要信息，则该值必须大于 0
      */
     private int nri;
 
     /**
+     * Nalu type.
      * 表示 NALU 数据类型，该字段占 5 位，取值 0 ~ 31
      */
     private EH264NaluType type;

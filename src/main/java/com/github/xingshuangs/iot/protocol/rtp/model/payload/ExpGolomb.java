@@ -29,24 +29,29 @@ import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import lombok.Getter;
 
 /**
- * 指数哥伦布编码
+ * Exp golomb encode class.
+ * (指数哥伦布编码)
  *
  * @author xingshuang
  */
 @Getter
 public class ExpGolomb {
+
     /**
-     * 数据源
+     * Data source.
+     * (数据源)
      */
     private final ByteReadBuff readBuff;
 
     /**
-     * 位索引
+     * Bit index.
+     * (位索引)
      */
     private int bitIndex;
 
     /**
-     * 当前的字节数据
+     * Current byte.
+     * (当前的字节数据)
      */
     private byte currentByte;
 
@@ -60,7 +65,8 @@ public class ExpGolomb {
     }
 
     /**
-     * 更新下一个字节，若没有则直接抛异常
+     * Update next byte.
+     * (更新下一个字节，若没有则直接抛异常)
      */
     private void updateNext() {
         this.bitIndex = 0;
@@ -68,9 +74,10 @@ public class ExpGolomb {
     }
 
     /**
-     * 读取1位
+     * Read 1 bit.
+     * (读取1位)
      *
-     * @return 位结果
+     * @return bit result
      */
     public int read1Bit() {
         if (this.bitIndex == 8) {
@@ -82,10 +89,11 @@ public class ExpGolomb {
     }
 
     /**
-     * 读取指定位数
+     * Read N bit.
+     * (读取指定位数)
      *
-     * @param size 位数量
-     * @return 结果
+     * @param size bit size
+     * @return result
      */
     public long readNBit(int size) {
         if (size > 32) {
@@ -101,7 +109,8 @@ public class ExpGolomb {
     }
 
     /**
-     * 跳过指定size的bit数量
+     * Skip size bit.
+     * (跳过指定size的bit数量)
      *
      * @param size bit数量
      */
@@ -110,7 +119,8 @@ public class ExpGolomb {
     }
 
     /**
-     * 前导零计数
+     * Skip leading zero.
+     * (前导零计数)
      *
      * @return 零的个数
      */
@@ -123,23 +133,26 @@ public class ExpGolomb {
     }
 
     /**
-     * 跳过一个无符号指数哥伦布编码数值
+     * Skip an unsigned exponential golomb coded value.
+     * (跳过一个无符号指数哥伦布编码数值)
      */
     public void skipUE() {
         this.readUE();
     }
 
     /**
-     * 跳过一个有符号指数哥伦布编码数值
+     * Skip a signed exponential golomb coded value
+     * (跳过一个有符号指数哥伦布编码数值)
      */
     public void skipSE() {
         this.readSE();
     }
 
     /**
-     * 跳过多个缩放列表
+     * Skip multiple zoom lists.
+     * (跳过多个缩放列表)
      *
-     * @param count 个数
+     * @param count count
      */
     public void skipScalingList(int count) {
         int lastScale = 8;
@@ -154,7 +167,8 @@ public class ExpGolomb {
     }
 
     /**
-     * 读取一个boolean值
+     * Read a boolean.
+     * (读取一个boolean值)
      *
      * @return true，false
      */
@@ -163,9 +177,10 @@ public class ExpGolomb {
     }
 
     /**
-     * 读取一个无符号指数哥伦布编码数值
+     * Reads an unsigned exponential golomb coded value.
+     * (读取一个无符号指数哥伦布编码数值)
      *
-     * @return 无符号指数哥伦布编码数值
+     * @return an unsigned value
      */
     public int readUE() {
         int count = this.skipLZ();
@@ -173,15 +188,14 @@ public class ExpGolomb {
     }
 
     /**
-     * 读取一个有符号指数哥伦布编码数值
+     * Read a signed exponential golomb coded valuel
+     * (读取一个有符号指数哥伦布编码数值)
      *
-     * @return 有符号指数哥伦布编码数值
+     * @return a signed value
      */
     public int readSE() {
         int value = this.readUE();
         int sign = ((value & 0x01) << 1) - 1;
         return ((value >> 1) + (value & 0x01)) * sign;
     }
-
-
 }

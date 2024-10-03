@@ -51,12 +51,12 @@ import lombok.EqualsAndHashCode;
 public class H264NaluFuA extends H264NaluBase {
 
     /**
-     * Fu的头
+     * Fu header.
      */
     private H264NaluFuHeader fuHeader = new H264NaluFuHeader();
 
     /**
-     * 负载
+     * Payload.
      */
     protected byte[] payload = new byte[0];
 

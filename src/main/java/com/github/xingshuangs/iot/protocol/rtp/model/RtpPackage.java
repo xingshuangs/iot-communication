@@ -31,7 +31,8 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import lombok.Data;
 
 /**
- * RTP数据包
+ * Rtp package class.
+ * (RTP数据包)
  *
  * @author xingshuang
  */
@@ -39,17 +40,20 @@ import lombok.Data;
 public class RtpPackage implements IObjectByteArray {
 
     /**
-     * 头
+     * Header.
+     * (头)
      */
     private RtpHeader header;
 
     /**
-     * 负载
+     * Payload.
+     * (负载)
      */
     private byte[] payload;
 
     /**
-     * 需要忽略的长度
+     * Ignore length.
+     * (需要忽略的长度)
      */
     private int ignoreLength;
 

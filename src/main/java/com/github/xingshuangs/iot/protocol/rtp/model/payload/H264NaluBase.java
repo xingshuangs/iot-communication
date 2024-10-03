@@ -30,7 +30,8 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import lombok.Data;
 
 /**
- * 基类数据包
+ * H264 nalu base class.
+ * (基类数据包)
  *
  * @author xingshuang
  */
@@ -38,7 +39,7 @@ import lombok.Data;
 public class H264NaluBase implements IObjectByteArray {
 
     /**
-     * 头
+     * Header.
      */
     protected H264NaluHeader header = new H264NaluHeader();
 

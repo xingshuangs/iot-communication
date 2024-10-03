@@ -31,7 +31,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 帧的基础类
+ * Raw frame.
+ * (帧的基础类)
  *
  * @author xingshuang
  */
@@ -40,17 +41,20 @@ import lombok.Setter;
 public class RawFrame implements IObjectByteArray {
 
     /**
-     * 帧类别
+     * Frame type.
+     * (帧类别)
      */
     protected EFrameType frameType;
 
     /**
-     * 时间戳
+     * Timestamp.
+     * (时间戳)
      */
     protected long timestamp;
 
     /**
-     * 帧内容
+     * Frame segment.
+     * (帧内容)
      */
     protected byte[] frameSegment = new byte[0];
 

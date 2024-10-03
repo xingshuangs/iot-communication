@@ -157,16 +157,19 @@ public class RtpHeader implements IObjectByteArray {
     private List<Long> csrcList = new ArrayList<>();
 
     /**
+     * Extension header id.
      * 扩展头Id，2个字节
      */
     private int extensionHeaderId;
 
     /**
+     * Extension header length.
      * 扩展头长度，2个字节
      */
     private int extensionHeaderLength;
 
     /**
+     * Extension header content.
      * 扩展头的内容
      */
     private byte[] extensionHeaderContent = new byte[0];

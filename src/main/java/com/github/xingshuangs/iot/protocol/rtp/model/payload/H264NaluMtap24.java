@@ -62,11 +62,12 @@ import java.util.List;
 public class H264NaluMtap24 extends H264NaluBase {
 
     /**
-     * 解码顺序编号
+     * Decoding order number.
+     * (解码顺序编号)
      */
     private int decodingOrderNumber;
 
-    private List<H264NaluMtap24Single> naluSingles = new ArrayList<>();
+    private final List<H264NaluMtap24Single> naluSingles = new ArrayList<>();
 
     @Override
     public int byteArrayLength() {

@@ -37,7 +37,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 普通帧
+ * H264 video frame.
  *
  * @author xingshuang
  */
@@ -46,7 +46,8 @@ import lombok.EqualsAndHashCode;
 public class H264VideoFrame extends RawFrame {
 
     /**
-     * 起始分割符
+     * Start marker.
+     * (起始分割符)
      */
     public static final byte[] START_MARKER = new byte[]{0x00, 0x00, 0x00, 0x01};
 

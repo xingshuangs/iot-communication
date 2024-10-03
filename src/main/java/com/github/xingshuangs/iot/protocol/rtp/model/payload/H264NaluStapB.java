@@ -57,7 +57,8 @@ import java.util.List;
 public class H264NaluStapB extends H264NaluBase {
 
     /**
-     * 解码顺序编号
+     * Decoding order number.
+     * (解码顺序编号)
      */
     private int decodingOrderNumber;
 

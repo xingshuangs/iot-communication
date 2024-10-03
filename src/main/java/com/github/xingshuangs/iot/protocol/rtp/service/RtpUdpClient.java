@@ -38,7 +38,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 /**
- * 简单UDP示例
+ * RTP UDP Client.
  *
  * @author xingshuang
  */
@@ -46,32 +46,38 @@ import java.util.function.Consumer;
 public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
 
     /**
-     * 是否终止线程
+     * Is thread terminal.
+     * (是否终止线程)
      */
     private boolean terminal = false;
 
     /**
-     * 数据收发前自定义处理接口
+     * Byte data callback.
+     * (数据收发前自定义处理接口)
      */
     private Consumer<byte[]> commCallback;
 
     /**
-     * 负载解析器
+     * Payload parser.
+     * (负载解析器)
      */
     private IPayloadParser iPayloadParser;
 
     /**
-     * 异步执行对象
+     * Completable future.
+     * (异步执行对象)
      */
     private CompletableFuture<Void> future;
 
     /**
-     * rtcp的客户端
+     * Rtcp client.
+     * (rtcp的客户端)
      */
     private RtcpUdpClient rtcpUdpClient;
 
     /**
-     * 线程池执行服务，单线程
+     * Executor service.
+     * (线程池执行服务，单线程)
      */
     private final ExecutorService executorService;
 
@@ -119,7 +125,8 @@ public class RtpUdpClient extends UdpClientBasic implements IRtspDataStream {
     }
 
     /**
-     * 接收数据的线程
+     * Wait for receive data.
+     * (接收数据的线程)
      */
     private void waitForReceiveData() {
         log.debug("[RTSP + UDP] RTP enable asynchronous data receiving thread, remote IP[/{}:{}]",

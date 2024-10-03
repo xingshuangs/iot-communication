@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * H264 slice type.
  * H264的Slice类型
  *
  * @author xingshuang

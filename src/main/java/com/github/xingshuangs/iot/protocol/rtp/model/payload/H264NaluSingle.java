@@ -51,7 +51,8 @@ import lombok.EqualsAndHashCode;
 public class H264NaluSingle extends H264NaluBase {
 
     /**
-     * 负载
+     * Payload.
+     * (负载)
      */
     protected byte[] payload;
 

@@ -40,7 +40,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * H264的视频数据解析器
+ * H264 video parser.
+ * (H264的视频数据解析器)
  *
  * @author xingshuang
  */
@@ -48,12 +49,14 @@ import java.util.function.Consumer;
 public class H264VideoParser implements IPayloadParser {
 
     /**
-     * 负载编号
+     * Payload number.
+     * (负载编号)
      */
     private final Integer payloadNumber;
 
     /**
-     * 基准时间戳
+     * Base timestamp.
+     * (基准时间戳)
      */
     private long baseTimestamp = 0;
 
@@ -65,7 +68,7 @@ public class H264VideoParser implements IPayloadParser {
 
     /**
      * Cache list of H264 video frame.
-     * 缓存帧列表
+     * (缓存帧列表)
      */
     private final List<H264VideoFrame> cacheFrameList = new ArrayList<>();
 
@@ -81,7 +84,8 @@ public class H264VideoParser implements IPayloadParser {
     private final List<RtpPackage> rtpPackageList = new ArrayList<>();
 
     /**
-     * 单Nalu的缓存
+     * Nalu buffer.
+     * (单Nalu的缓存)
      */
     private final List<RtpPackage> naluBuffers = new ArrayList<>();
 
@@ -140,7 +144,7 @@ public class H264VideoParser implements IPayloadParser {
 
     /**
      * Query nalu type.
-     * 查询Nalu类型
+     * (查询Nalu类型)
      *
      * @return EH264NaluType
      */
@@ -159,7 +163,7 @@ public class H264VideoParser implements IPayloadParser {
 
     /**
      * Extract the byte data list of NALU.
-     * 提取NALU的字节数据列表
+     * (提取NALU的字节数据列表)
      *
      * @return byte array list
      */
@@ -194,7 +198,7 @@ public class H264VideoParser implements IPayloadParser {
 
     /**
      * Processing of data packet loss.
-     * 对数据丢包的处理
+     * (对数据丢包的处理)
      *
      * @return true；match，false：not match
      */
@@ -232,9 +236,10 @@ public class H264VideoParser implements IPayloadParser {
     }
 
     /**
-     * 处理RTP包
+     * Process rtp package.
+     * (处理RTP包)
      *
-     * @param rtpPackage rtp数据包
+     * @param rtpPackage rtp package
      */
     @Override
     public void processPackage(RtpPackage rtpPackage) {
@@ -283,7 +288,7 @@ public class H264VideoParser implements IPayloadParser {
 
     /**
      * Caching RTP packets, mainly for cases where UDP is received out of order.
-     * 缓存RTP数据包，主要针对UDP接收不按顺序的情况
+     * (缓存RTP数据包，主要针对UDP接收不按顺序的情况)
      *
      * @param rtp rtp package
      * @return RtpPackage

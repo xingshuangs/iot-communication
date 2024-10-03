@@ -67,7 +67,8 @@ public class SeqParameterSet {
     private double sarScale = 1;
 
     /**
-     * 视频宽度
+     * Video width.
+     * (视频宽度)
      *
      * @return 宽度
      */
@@ -76,7 +77,8 @@ public class SeqParameterSet {
     }
 
     /**
-     * 视频高度
+     * Video height.
+     * (视频高度)
      *
      * @return 高度
      */
@@ -86,7 +88,8 @@ public class SeqParameterSet {
     }
 
     /**
-     * 根据字节数组构建sps
+     * Create sps by byte array.
+     * (根据字节数组构建sps)
      *
      * @param data 字节数组
      * @return sps
@@ -147,7 +150,8 @@ public class SeqParameterSet {
     }
 
     /**
-     * 特殊profiles的处理
+     * Handling of special profiles.
+     * (特殊profiles的处理)
      *
      * @param sps       sps
      * @param expGolomb 编码
@@ -185,9 +189,10 @@ public class SeqParameterSet {
     }
 
     /**
-     * 计算sarRatio
+     * Calculate sar ratio.
+     * (计算sarRatio)
      *
-     * @param expGolomb 编码
+     * @param expGolomb  ex golomb encode.
      * @return sarRatio
      */
     private static double calculateSarRatio(ExpGolomb expGolomb) {
