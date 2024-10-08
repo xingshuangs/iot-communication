@@ -31,6 +31,7 @@ import lombok.Data;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.EQUAL;
 
 /**
+ * SDP media attr control.
  * 附加信息：控制部分
  * control:rtsp://10.3.8.202:554/trackID=1
  *
@@ -40,12 +41,14 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.EQ
 public class RtspSdpMediaAttrControl {
 
     /**
-     * 地址
+     * Uri
+     * (地址)
      */
     private String uri = "";
 
     /**
-     * 轨道ID
+     * Track id.
+     * (轨道ID)
      */
     private Integer trackID = 0;
 

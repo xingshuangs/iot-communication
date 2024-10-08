@@ -37,11 +37,13 @@ import lombok.Data;
 public class RtspSessionInfo {
 
     /**
+     * Session id.
      * 会话Id
      */
     private String sessionId;
 
     /**
+     * Timeout millisecond.
      * 毫秒级的超时时间，实际是秒级，最终转换成毫秒级
      */
     private int timeout = 6000;

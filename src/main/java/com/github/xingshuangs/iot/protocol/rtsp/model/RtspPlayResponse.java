@@ -41,7 +41,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SE
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspResponseHeaderFields.RTP_INFO;
 
 /**
- * Setup响应
+ * Setup response
  *
  * @author xingshuang
  */
@@ -49,13 +49,14 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspResponseHead
 public final class RtspPlayResponse extends RtspMessageResponse {
 
     /**
-     * RTP相关信息
+     * RTP info.
      * url=rtsp://192.17.1.63:554/trackID=1;seq=3658;rtptime=1710363406,url=rtsp://192.17.1.63:554/trackID=2;seq=6598;rtptime=4065225152
      */
     private List<RtspRtpInfo> rtpInfo = new ArrayList<>();
 
     /**
-     * 特殊的会话信息
+     * Session info.
+     * (特殊的会话信息)
      */
     private RtspSessionInfo sessionInfo;
 

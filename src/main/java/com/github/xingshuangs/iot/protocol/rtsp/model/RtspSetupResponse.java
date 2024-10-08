@@ -35,7 +35,7 @@ import java.util.Map;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 
 /**
- * Setup响应
+ * Setup response
  *
  * @author xingshuang
  */
@@ -43,12 +43,14 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 public final class RtspSetupResponse extends RtspMessageResponse {
 
     /**
-     * 通道
+     * Transport.
+     * (通道)
      */
     private RtspTransport transport;
 
     /**
-     * 特殊的会话信息
+     * Session info.
+     * (特殊的会话信息)
      */
     private RtspSessionInfo sessionInfo;
 

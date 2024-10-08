@@ -31,6 +31,7 @@ import lombok.Data;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SP;
 
 /**
+ * Media description.
  * 媒体描述
  * video 0 RTP/AVP 96
  *
@@ -38,22 +39,27 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SP
  */
 @Data
 public class RtspSdpMediaDesc {
+
     /**
+     * Media type.
      * 媒体类型（必选）video
      */
     private String type;
 
     /**
+     * Port.
      * 端口（必选）0，为什么是0？因为上面在SETUP过程会告知端口号，所以这里就不需要了
      */
     private Integer port;
 
     /**
+     * Protocol (Mandatory) RTP/AVP: RTP OVER UDP. If it is RTP/AVP/TCP: RTP OVER TCP.
      * 协议（必选）RTP/AVP，表示RTP OVER UDP，如果是RTP/AVP/TCP，表示RTP OVER TCP
      */
     private String protocol;
 
     /**
+     * Format type (Mandatory) Indicates the payload type. 96 indicates H.264.
      * 格式类型（必选）表示负载类型(payload type)，一般使用96表示H.264
      */
     private Integer payloadFormatNumber;

@@ -40,7 +40,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspEntityHeader
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspEntityHeaderFields.CONTENT_TYPE;
 
 /**
- * GetParameter请求
+ * GetParameter request
  *
  * @author xingshuang
  */

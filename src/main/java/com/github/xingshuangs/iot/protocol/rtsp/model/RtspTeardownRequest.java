@@ -32,7 +32,7 @@ import lombok.Getter;
 import java.net.URI;
 
 /**
- * Teardown请求
+ * Teardown request
  *
  * @author xingshuang
  */

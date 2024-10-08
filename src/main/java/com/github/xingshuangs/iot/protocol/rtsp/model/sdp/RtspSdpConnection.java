@@ -31,6 +31,7 @@ import lombok.Data;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SP;
 
 /**
+ * SDP Connection
  * 连接信息
  * IN IP4 0.0.0.0
  *
@@ -38,18 +39,22 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SP
  */
 @Data
 public class RtspSdpConnection {
+
     /**
-     * 网络类型，IN，表示internet
+     * Network type. IN: internet.
+     * (网络类型，IN，表示internet)
      */
     private String networkType;
 
     /**
-     * 地址类型，IP4，表示ipv4
+     * Address type, IP4.
+     * (地址类型，IP4，表示ipv4)
      */
     private String addressType;
 
     /**
-     * 连接地址，192.168.31.115，表示服务器的地址
+     * Connection address.
+     * (连接地址，192.168.31.115，表示服务器的地址)
      */
     private String connectionAddress;
 

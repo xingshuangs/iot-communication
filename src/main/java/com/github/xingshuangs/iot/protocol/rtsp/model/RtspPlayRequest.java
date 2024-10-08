@@ -36,14 +36,16 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspRequestHeaderFields.RANGE;
 
 /**
- * Play请求
+ * Play request
  *
  * @author xingshuang
  */
 @Getter
 public final class RtspPlayRequest extends RtspMessageRequest {
+
     /**
-     * 时间范围
+     * Range of time.
+     * (时间范围)
      */
     private final RtspRange range;
 

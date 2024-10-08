@@ -29,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
+ * Basic authenticator.
  * Basic64加密方式
  *
  * @author xingshuang

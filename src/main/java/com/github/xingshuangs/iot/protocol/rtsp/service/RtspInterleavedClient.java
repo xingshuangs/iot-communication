@@ -46,7 +46,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 /**
- * 简单TCP示例
+ * Interleaved client for tcp.
  *
  * @author xingshuang
  */
@@ -56,47 +56,55 @@ public class RtspInterleavedClient implements IRtspDataStream {
     public static final Integer BUFFER_SIZE = 4096;
 
     /**
-     * 是否终止线程
+     * Is thread terminal.
      */
     private boolean terminal = false;
 
     /**
-     * 数据收发前自定义处理接口
+     * Communication callback.
+     * (数据收发前自定义处理接口)
      */
     private Consumer<byte[]> commCallback;
 
     /**
-     * 负载解析器
+     * Payload parser.
+     * (负载解析器)
      */
     private final IPayloadParser iPayloadParser;
 
     /**
-     * RTP和RTCP的数据统计
+     * Data statistics of rtp and rtcp.
+     * (RTP和RTCP的数据统计)
      */
     private final RtcpDataStatistics statistics = new RtcpDataStatistics();
 
     /**
-     * 视频rtp的通道编号
+     * Rtp video channel number.
+     * (视频rtp的通道编号)
      */
     private int rtpVideoChannelNumber = 0;
 
     /**
-     * 视频rtcp的通道编号
+     * Rtcp video channel number.
+     * (视频rtcp的通道编号)
      */
     private int rtcpVideoChannelNumber = 1;
 
     /**
-     * 连接对象
+     * Rtsp client.
+     * (连接对象)
      */
     private final TcpClientBasic rtspClient;
 
     /**
-     * 异步执行对象
+     * Completable future.
+     * (异步执行对象)
      */
     private CompletableFuture<Void> future;
 
     /**
-     * 线程池执行服务，单线程
+     * Executor service, single thread.
+     * (线程池执行服务，单线程)
      */
     private final ExecutorService executorService;
 
@@ -157,7 +165,8 @@ public class RtspInterleavedClient implements IRtspDataStream {
     }
 
     /**
-     * 接收数据线程
+     * Receive data thread handler.
+     * (接收数据线程)
      */
     private void waitForReceiveData() {
         InetSocketAddress socketAddress = this.rtspClient.getSocketAddress();
@@ -194,9 +203,10 @@ public class RtspInterleavedClient implements IRtspDataStream {
     }
 
     /**
-     * 获取接收的数据
+     * Read data from server.
+     * (获取接收的数据)
      *
-     * @return 字节数组
+     * @return byte array
      */
     private byte[] readFromServer() {
         byte[] header = new byte[4];
@@ -221,9 +231,10 @@ public class RtspInterleavedClient implements IRtspDataStream {
     }
 
     /**
-     * 处理视频的RTCP
+     * Rtcp video data handle.
+     * (处理视频的RTCP)
      *
-     * @param interleaved 数据包
+     * @param interleaved data
      */
     private void rtcpVideoHandle(RtspInterleaved interleaved) {
         List<RtcpBasePackage> basePackages = RtcpPackageBuilder.fromBytes(interleaved.getPayload());
@@ -231,9 +242,10 @@ public class RtspInterleavedClient implements IRtspDataStream {
     }
 
     /**
-     * 处理视频RTP
+     * Rtp video data handle.
+     * (处理视频RTP)
      *
-     * @param interleaved 数据包
+     * @param interleaved data
      */
     private void rtpVideoHandle(RtspInterleaved interleaved) {
         RtpPackage rtp = RtpPackage.fromBytes(interleaved.getPayload());

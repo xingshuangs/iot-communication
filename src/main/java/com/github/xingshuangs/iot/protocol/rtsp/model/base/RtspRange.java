@@ -26,6 +26,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model.base;
 
 
 /**
+ * Range.
  * 范围
  *
  * @author xingshuang
@@ -33,6 +34,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model.base;
 public class RtspRange {
 
     /**
+     * Type.
      * 类别
      */
     protected String type;

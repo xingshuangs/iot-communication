@@ -34,6 +34,7 @@ import java.util.Map;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 
 /**
+ * Session info.
  * 会话
  *
  * @author xingshuang
@@ -42,61 +43,73 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 public class RtspSdpSession {
 
     /**
+     * Version
      * 版本 v（必选） 0
      */
     private Integer version;
 
     /**
+     * Origin.
      * 源 o（必选） - 1517245007527432 1517245007527432 IN IP4 10.3.8.202
      */
     private RtspSdpOrigin origin;
 
     /**
+     * Session name.
      * 会话名称 s（必选） Media Presentation
      */
     private String sessionName;
 
     /**
+     * Time
      * 时间（必选）0 0
      */
     private RtspSdpTime time;
 
     /**
+     * Session info.
      * 会话信息(可选)
      */
     private String sessionInfo;
 
     /**
+     * Uri
      * 统一资源描述(可选)
      */
     private String uri;
 
     /**
+     * Email.
      * 电子邮件(可选)
      */
     private String email;
 
     /**
+     * Phone.
      * 电话号码(可选)
      */
     private String phone;
 
     /**
+     * Connection.
      * 连接信息(可选) IN IP4 0.0.0.0
      */
     private RtspSdpConnection connection;
 
     /**
+     * Bandwidth.
      * 带宽(可选) AS:5050
      */
     private RtspSdpBandwidth bandwidth;
 
     /**
+     * Echo time.
      * 重复时间(可选)
      */
     private RtspSdpEchoTime echoTime;
 
     /**
+     * Attributes.
      * 附加信息(可选)
      */
     private Map<String, String> attributes = new HashMap<>();

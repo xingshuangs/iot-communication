@@ -56,11 +56,13 @@ public class RtspSdpMediaAttrFmtp {
     private String spropParameterSets;
 
     /**
+     * SPS
      * 视频中比较重要的SPS
      */
     private byte[] sps;
 
     /**
+     * PPS
      * 视频中比较重要的PPS
      */
     private byte[] pps;

@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 
 /**
- * RTSP基础消息
+ * RTSP basic message.
  *
  * @author xingshuang
  */
@@ -57,22 +57,26 @@ public class RtspMessage implements IObjectString {
     }
 
     /**
-     * 版本号
+     * Version.
+     * (版本号)
      */
     protected String version;
 
     /**
-     * 序列号
+     * Sequence.
+     * (序列号)
      */
     protected int cSeq;
 
     /**
-     * 会话ID
+     * Session id.
+     * (会话ID)
      */
     protected String session = "";
 
     /**
-     * 请求头
+     * Request headers.
+     * (请求头)
      */
     protected Map<String, String> headers;
 
@@ -88,19 +92,21 @@ public class RtspMessage implements IObjectString {
     }
 
     /**
-     * 获取2字节大小的最新序号，0-65536
+     * Get new uint16 number.
+     * (获取2字节大小的最新序号，0-65536)
      *
-     * @return 序号
+     * @return number
      */
     public static int getUint16Number() {
         return getNumber(65536);
     }
 
     /**
-     * 自定义最大值的最新序号
+     * Create new number.
+     * (自定义最大值的最新序号)
      *
-     * @param max 最大值
-     * @return 序号
+     * @param max max value
+     * @return number
      */
     public static int getNumber(int max) {
         int res = index.getAndIncrement();

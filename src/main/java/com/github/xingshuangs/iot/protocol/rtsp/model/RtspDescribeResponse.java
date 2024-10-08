@@ -30,7 +30,7 @@ import com.github.xingshuangs.iot.protocol.rtsp.model.sdp.RtspSdp;
 import lombok.Getter;
 
 /**
- * Describe响应
+ * Describe response.
  *
  * @author xingshuang
  */
@@ -38,7 +38,7 @@ import lombok.Getter;
 public final class RtspDescribeResponse extends RtspMessageResponse {
 
     /**
-     * SDP描述部分
+     * SDP media info.
      */
     private RtspSdp sdp;
 
@@ -53,9 +53,10 @@ public final class RtspDescribeResponse extends RtspMessageResponse {
     }
 
     /**
-     * 通过字符串添加body内容
+     * Add body info from string.
+     * (通过字符串添加body内容)
      *
-     * @param src 字符串
+     * @param src string.
      */
     @Override
     public void addBodyFromString(String src) {

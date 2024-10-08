@@ -42,11 +42,13 @@ import java.util.Map;
 public class RtspTransport {
 
     /**
+     * Protocol.
      * 协议RTP/AVP，RTP/AVP：表示RTP通过UDP发送，如果是RTP/AVP/TCP则表示RTP通过TCP发送
      */
     protected String protocol = "";
 
     /**
+     * Cast mode.
      * unicast连接方式，单播，如果是multicast则表示多播
      */
     protected String castMode = "";
@@ -57,7 +59,7 @@ public class RtspTransport {
     protected String ssrc = "";
 
     /**
-     * 模式
+     * mode.
      */
     protected String mode = "";
 

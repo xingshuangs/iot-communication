@@ -55,77 +55,79 @@ public class RtspFMp4Proxy {
     private final Object objLock = new Object();
 
     /**
-     * RTSP客户端
+     * RTSP client.
      */
     private final RtspClient client;
 
     /**
-     * 轨道信息
+     * Track info.
+     * (轨道信息)
      */
     private RtspTrackInfo trackInfo;
 
     /**
-     * 接收帧数据的序列号
+     * Sequence number of Fmp4.
+     * (接收帧数据的序列号)
      */
     private long sequenceNumber = 1;
 
     /**
-     * 数据缓存
+     * Fmp4 data buffer.
+     * (数据缓存)
      */
     private final ConcurrentLinkedQueue<IObjectByteArray> buffers = new ConcurrentLinkedQueue<>();
 
     /**
-     * FMp4数据事件
+     * Fmp4 data handle.
+     * (FMp4数据事件)
      */
     private Consumer<byte[]> fmp4DataHandle;
 
     /**
-     * codec的处理事件
+     * Codec data handle.
+     * (codec的处理事件)
      */
     private Consumer<String> codecHandle;
 
     /**
-     * 销毁的处理事件
+     * Destroy handle.
+     * (销毁的处理事件)
      */
     private Runnable destroyHandle;
 
     /**
-     * 是否终止
+     * Is thread terminal.
+     * (是否终止)
      */
     private boolean terminal = false;
 
     /**
+     * Mp4 header.
      * MP4的头
      */
     private Mp4Header mp4Header;
 
     /**
-     * 轨道信息
+     * Mp4 track info.
+     * (轨道信息)
      */
     private Mp4TrackInfo mp4TrackInfo;
 
     /**
-     * 是否异步步发送
+     * Is send async.
+     * (是否异步步发送)
      */
     private boolean asyncSend = false;
 
     /**
-     * 上一次的H264的视频帧
-     */
-    private H264VideoFrame lastFrame;
-
-    /**
-     * 缓存视频帧数据，主要用于重新排序
-     */
-    private final List<H264VideoFrame> gop = new ArrayList<>();
-
-    /**
-     * 异步执行的对象
+     * Completable future.
+     * (异步执行的对象)
      */
     private CompletableFuture<Void> future;
 
     /**
-     * 线程池执行服务，单线程
+     * Executor service, single thread.
+     * (线程池执行服务，单线程)
      */
     private ExecutorService executorService;
 
@@ -172,9 +174,10 @@ public class RtspFMp4Proxy {
     }
 
     /**
-     * 处理SPS，只处理一次
+     * SPS handle, do only once.
+     * (处理SPS，只处理一次)
      *
-     * @param frame 帧数据
+     * @param frame video frame
      */
     private void handleSPS(H264VideoFrame frame) {
         if (this.trackInfo != null && this.trackInfo.getSps() != null) {
@@ -199,9 +202,10 @@ public class RtspFMp4Proxy {
     }
 
     /**
-     * 处理PPS，只处理一次
+     * PPS handle, do only once.
+     * (处理PPS，只处理一次)
      *
-     * @param frame 帧数据
+     * @param frame video frame
      */
     private void handlePPS(H264VideoFrame frame) {
         if (this.trackInfo != null && this.trackInfo.getPps() != null) {
@@ -213,7 +217,8 @@ public class RtspFMp4Proxy {
     }
 
     /**
-     * 处理Mp4，只处理一次
+     * Mp4 header handle, do only once.
+     * (处理Mp4，只处理一次)
      */
     private void handleMp4Header() {
         if (this.mp4Header != null) {
@@ -233,9 +238,10 @@ public class RtspFMp4Proxy {
     }
 
     /**
-     * 帧处理事件
+     * Frame handle.
+     * (帧处理事件)
      *
-     * @param frame 数据帧
+     * @param frame video frame
      */
     private void frameHandle(H264VideoFrame frame) {
         if (frame.getFrameType() == EFrameType.AUDIO) {
@@ -257,9 +263,10 @@ public class RtspFMp4Proxy {
     }
 
     /**
-     * 执行处理
+     * Do video frame handle.
+     * (执行处理)
      *
-     * @param videoFrame 视频帧
+     * @param videoFrame video frame
      */
     private void doVideoFrameHandle(H264VideoFrame videoFrame) {
         if (videoFrame.getNaluType() == EH264NaluType.IDR_SLICE
@@ -298,9 +305,10 @@ public class RtspFMp4Proxy {
     }
 
     /**
-     * 数据转换，包装成Mp4需要的轨道信息
+     * Transfer to Mp4 track info.
+     * (数据转换，包装成Mp4需要的轨道信息)
      *
-     * @param track 轨道信息
+     * @param track track info
      * @return Mp4TrackInfo
      */
     private Mp4TrackInfo toMp4TrackInfo(RtspTrackInfo track) {
@@ -318,9 +326,10 @@ public class RtspFMp4Proxy {
     }
 
     /**
-     * 添加FMp4数据
+     * Add fmp4 data.
+     * (添加FMp4数据)
      *
-     * @param iObjectByteArray 数据
+     * @param iObjectByteArray data
      */
     private void addFMp4Data(IObjectByteArray iObjectByteArray) {
         if (this.asyncSend) {
@@ -336,7 +345,8 @@ public class RtspFMp4Proxy {
     }
 
     /**
-     * 事件执行
+     * Execute handle for sending data.
+     * (事件执行)
      */
     private void executeHandle() {
         // 开启代理服务端发送FMp4字节数据的异步线程
@@ -370,9 +380,10 @@ public class RtspFMp4Proxy {
     }
 
     /**
-     * 开始
+     * Start
+     * (开始)
      *
-     * @return 异步结果
+     * @return result
      */
     public CompletableFuture<Void> start() {
         // 开启FMp4代理服务端，模式[{}]，地址[{}]
@@ -381,7 +392,7 @@ public class RtspFMp4Proxy {
     }
 
     /**
-     * 结束
+     * Stop
      */
     public void stop() {
         if (this.executorService != null) {

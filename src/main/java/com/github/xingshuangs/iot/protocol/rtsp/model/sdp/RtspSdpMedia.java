@@ -36,7 +36,8 @@ import java.util.Map;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 
 /**
- * 媒体描述
+ * SDP media.
+ * (媒体描述)
  *
  * @author xingshuang
  */
@@ -44,26 +45,31 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 public class RtspSdpMedia {
 
     /**
-     * 媒体描述
+     * Media description.
+     * (媒体描述)
      */
     private RtspSdpMediaDesc mediaDesc;
 
     /**
+     * Connection.
      * 连接信息(可选)
      */
     private RtspSdpConnection connection;
 
     /**
+     * Bandwidth.
      * 带宽(可选)
      */
     private RtspSdpBandwidth bandwidth;
 
     /**
+     * Encrypt key.
      * 加密秘钥(可选)
      */
     private RtspSdpEncryptKey encryptKey;
 
     /**
+     * Attributes.
      * 附加信息(可选)
      */
     private Map<String, String> attributes = new HashMap<>();

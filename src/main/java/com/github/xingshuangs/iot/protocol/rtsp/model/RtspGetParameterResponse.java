@@ -37,7 +37,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SESSION;
 
 /**
- * Setup响应
+ * Setup response
  *
  * @author xingshuang
  */
@@ -47,7 +47,8 @@ public final class RtspGetParameterResponse extends RtspMessageResponse {
     private final Map<String, String> parameters = new LinkedHashMap<>();
 
     /**
-     * 特殊的会话信息
+     * Session info.
+     * (特殊的会话信息)
      */
     private RtspSessionInfo sessionInfo;
 
@@ -67,9 +68,10 @@ public final class RtspGetParameterResponse extends RtspMessageResponse {
     }
 
     /**
-     * 通过字符串添加body内容
+     * Add body info from string.
+     * (通过字符串添加body内容)
      *
-     * @param src 字符串
+     * @param src string
      */
     @Override
     public void addBodyFromString(String src) {

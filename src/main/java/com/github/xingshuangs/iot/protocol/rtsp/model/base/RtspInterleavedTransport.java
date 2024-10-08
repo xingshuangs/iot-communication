@@ -44,11 +44,13 @@ import java.util.Map;
 public class RtspInterleavedTransport extends RtspTransport {
 
     /**
+     * interleaved
      * 交错编号1
      */
     private Integer interleaved1 = 0;
 
     /**
+     * interleaved
      * 交错编号2
      */
     private Integer interleaved2 = 1;

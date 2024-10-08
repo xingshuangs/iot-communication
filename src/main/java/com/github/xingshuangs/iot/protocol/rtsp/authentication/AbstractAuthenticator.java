@@ -26,7 +26,8 @@ package com.github.xingshuangs.iot.protocol.rtsp.authentication;
 
 
 /**
- * 认证器
+ * Authenticator.
+ * (认证器)
  *
  * @author xingshuang
  */

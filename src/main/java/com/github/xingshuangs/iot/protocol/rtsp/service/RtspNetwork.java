@@ -28,7 +28,6 @@ package com.github.xingshuangs.iot.protocol.rtsp.service;
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
 import com.github.xingshuangs.iot.net.client.TcpClientBasic;
 import com.github.xingshuangs.iot.protocol.rtcp.service.RtcpUdpClient;
-import com.github.xingshuangs.iot.protocol.rtp.model.frame.H264VideoFrame;
 import com.github.xingshuangs.iot.protocol.rtp.model.frame.RawFrame;
 import com.github.xingshuangs.iot.protocol.rtp.service.H264VideoParser;
 import com.github.xingshuangs.iot.protocol.rtp.service.IPayloadParser;
@@ -61,78 +60,93 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CR
 @Slf4j
 @Getter
 public class RtspNetwork extends TcpClientBasic {
+
     /**
-     * 锁
+     * locker
      */
     private final Object objLock = new Object();
 
     /**
-     * 是否需要授权认证
+     * If need authorization.
+     * (是否需要授权认证)
      */
     private boolean needAuthorization = false;
 
     /**
-     * socket客户端列表
+     * Socket clients.
+     * (socket客户端列表)
      */
     private final Map<Integer, IRtspDataStream> socketClients = new HashMap<>();
 
     /**
-     * 地址
+     * Uri
+     * (地址)
      */
     protected final URI uri;
 
     /**
-     * 认证器
+     * Authenticator.
+     * (认证器)
      */
     protected DigestAuthenticator authenticator;
 
     /**
-     * 支持的方法
+     * Supported methods.
+     * (支持的方法)
      */
     protected List<ERtspMethod> methods = new ArrayList<>();
 
     /**
-     * 会话描述协议
+     * SDP
+     * (会话描述协议)
      */
     protected RtspSdp sdp;
 
     /**
-     * 通道
+     * Transport.
+     * (通道)
      */
     protected RtspTransport transport;
 
     /**
-     * RTP的信息
+     * RTP infos.
+     * (RTP的信息)
      */
     protected List<RtspRtpInfo> rtpInfos = new ArrayList<>();
 
     /**
-     * session信息
+     * Session info.
+     * (session信息)
      */
     protected RtspSessionInfo sessionInfo;
 
     /**
-     * 轨道信息
+     * Track info.
+     * (轨道信息)
      */
     protected RtspTrackInfo trackInfo;
 
     /**
-     * 数据收发前自定义处理接口
+     * Communication callback.
+     * (数据收发前自定义处理接口)
      */
     private Consumer<String> commCallback;
 
     /**
-     * 数据帧处理
+     * Frame handle.
+     * (数据帧处理)
      */
     private Consumer<RawFrame> frameHandle;
 
     /**
-     * 销毁的处理事件
+     * Destroy handle.
+     * (销毁的处理事件)
      */
     private Runnable destroyHandle;
 
     /**
-     * 通信协议，TCP、UDP
+     * Transport protocol.
+     * (通信协议，TCP、UDP)
      */
     protected ERtspTransportProtocol transportProtocol;
 
@@ -185,10 +199,11 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * 从服务器读取数据
+     * Read form server.
+     * (从服务器读取数据)
      *
-     * @param req 请求
-     * @return 响应
+     * @param req request
+     * @return response
      */
     public RtspMessageResponse readFromServer(RtspMessageRequest req) {
         String reqString = req.toObjectString();
@@ -236,9 +251,10 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * 发送数据给服务器，但不返回
+     * Send data to server without return.
+     * (发送数据给服务器，但不返回)
      *
-     * @param req 请求数据
+     * @param req request
      */
     public void sendWithoutReturn(RtspMessageRequest req) {
         if (this.needAuthorization && this.authenticator != null) {
@@ -254,10 +270,11 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * 通信后置校验
+     * Check after communicate.
+     * (通信后置校验)
      *
-     * @param req 请求
-     * @param ack 响应
+     * @param req request
+     * @param ack response
      */
     private void checkPostedCom(RtspMessageRequest req, RtspMessageResponse ack) {
         if (!req.getVersion().equals(ack.getVersion())) {
@@ -271,10 +288,11 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * 发送对应请求
+     * Send request.
+     * (发送对应请求)
      *
-     * @param request 请求
-     * @return 响应
+     * @param request request
+     * @return response
      */
     private RtspMessageResponse sendRequest(RtspMessageRequest request) {
         if (this.needAuthorization && this.authenticator != null) {
@@ -300,7 +318,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * 选项
+     * Option
      */
     protected void option() {
         RtspOptionRequest request = new RtspOptionRequest(this.uri);
@@ -311,7 +329,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * 描述
+     * Describe
      */
     protected void describe() {
         this.checkBeforeRequest(ERtspMethod.DESCRIBE);
@@ -332,7 +350,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * 设置
+     * Setup
      */
     protected void setup() {
         if (this.transportProtocol == ERtspTransportProtocol.UDP) {
@@ -343,7 +361,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * UDP设置
+     * UDP setup
      */
     private void setupUdp() {
         for (RtspSdpMedia media : this.sdp.getMedias()) {
@@ -375,7 +393,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * TCP设置
+     * TCP setup
      */
     private void setupTcp() {
         int interleavedCount = 0;
@@ -403,11 +421,11 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * 正在执行设置
+     * Do setup.
      *
-     * @param actualUri    实际URI
+     * @param actualUri    actual URI
      * @param reqTransport transport
-     * @param media        媒体信息
+     * @param media        media info
      */
     private void doSetup(URI actualUri, RtspTransport reqTransport, RtspSdpMedia media) {
         this.checkBeforeRequest(ERtspMethod.SETUP);
@@ -428,7 +446,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * 播放
+     * Play
      */
     protected void play() {
         this.checkBeforeRequest(ERtspMethod.PLAY);
@@ -444,7 +462,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * 关闭
+     * Teardown
      */
     protected void teardown() {
         this.clearSocketConnection();
@@ -466,7 +484,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * 获取参数
+     * Get parameter
      */
     protected void getParameter() {
         this.checkBeforeRequest(ERtspMethod.GET_PARAMETER);
@@ -482,7 +500,8 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * 清空socket连接对象
+     * Clear socket connection.
+     * (清空socket连接对象)
      */
     private void clearSocketConnection() {
         if (this.socketClients.isEmpty()) {
@@ -494,9 +513,10 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * 请求前数据校验
+     * Check before request.
+     * (请求前数据校验)
      *
-     * @param method 方法
+     * @param method method
      */
     private void checkBeforeRequest(ERtspMethod method) {
         if (!methods.contains(method)) {
@@ -508,9 +528,10 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * 处理帧数据
+     * Do frame handle
+     * (处理帧数据)
      *
-     * @param frame 帧数据
+     * @param frame frame data
      */
     private void doFrameHandle(RawFrame frame) {
         if (this.frameHandle != null) {
@@ -519,7 +540,8 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * 等待所有socket客户端结束
+     * Wait for all socket close.
+     * (等待所有socket客户端结束)
      */
     protected void socketClientJoinForFinished() {
         CompletableFuture<?>[] futures = this.socketClients.values().stream()
@@ -534,9 +556,10 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * socket客户端线程是否都已经结束
+     * Is socket clients all closed.
+     * (socket客户端线程是否都已经结束)
      *
-     * @return true：结束，false：未结束
+     * @return true：finished，false：not finished.
      */
     protected boolean socketClientIsAllDone() {
         return this.socketClients.values().stream()

@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * RTSP interleaved.
  * 交错帧
  *
  * @author xingshuang
@@ -44,21 +45,25 @@ public class RtspInterleaved implements IObjectByteArray {
     public static final byte VERSION = (byte) 0x24;
 
     /**
+     * Fixed header.
      * 固定头，1个字节，表示Interleave Frame层的开始
      */
     private byte dollarSign = VERSION;
 
     /**
+     * Channel id.
      * 通道Id，1个字节，协议类型，一般 0：Video RTP，1：Video RTCP，2: Audio RTP，3：Audio RTCP
      */
     private int channelId = 0;
 
     /**
+     * Length.
      * 数据长度，2个字节, RTP包的大小
      */
     private int length = 0;
 
     /**
+     * Payload.
      * 剩下的就是负载
      */
     private byte[] payload = new byte[0];

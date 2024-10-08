@@ -26,7 +26,8 @@ package com.github.xingshuangs.iot.protocol.rtsp.constant;
 
 
 /**
- * 请求头字段
+ * Request header fields.
+ * (请求头字段)
  *
  * @author xingshuang
  */

@@ -38,33 +38,38 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SP
  */
 @Data
 public class RtspSdpOrigin {
+
     /**
-     * 会话ID
+     * Username.
      */
     private String username;
 
     /**
-     *
+     * Session id.
      */
     private String sessionId;
 
     /**
-     * 会话版本
+     * Session version.
+     * (会话版本)
      */
     private String sessionVersion;
 
     /**
-     * 网络类型
+     * Network type.
+     * (网络类型)
      */
     private String networkType;
 
     /**
-     * 地址类型
+     * Address type.
+     * (地址类型)
      */
     private String addressType;
 
     /**
-     * 单播地址
+     * Unicast address.
+     * (单播地址)
      */
     private String unicastAddress;
 

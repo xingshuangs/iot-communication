@@ -29,6 +29,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Range npt.
  * 范围
  *
  * @author xingshuang
@@ -38,11 +39,13 @@ import lombok.EqualsAndHashCode;
 public class RtspRangeNpt extends RtspRange {
 
     /**
+     * Start time.
      * 起始时间
      */
     private String startTime;
 
     /**
+     * End time.
      * 结束时间
      */
     private String endTime;

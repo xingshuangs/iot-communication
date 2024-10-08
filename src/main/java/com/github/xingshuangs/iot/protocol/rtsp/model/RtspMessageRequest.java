@@ -40,25 +40,29 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspRequestHeade
 
 
 /**
- * RTSP消息请求
+ * RTSP message request.
  *
  * @author xingshuang
  */
 @Getter
 @Setter
 public class RtspMessageRequest extends RtspMessage {
+
     /**
-     * 方法
+     * Method
+     * (方法)
      */
     protected final ERtspMethod method;
 
     /**
-     * 代理用户
+     * Agent name.
+     * (代理用户)
      */
     public static final String USER_AGENT_VALUE = "IOT-COMMUNICATION";
 
     /**
-     * 资源地址
+     * Uri
+     * (资源地址)
      */
     protected final URI uri;
 

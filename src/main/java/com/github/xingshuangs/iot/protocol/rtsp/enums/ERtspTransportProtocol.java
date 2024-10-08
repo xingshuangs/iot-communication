@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * RTSP transport protocol.
  * 传输协议，TCP/UDP
  *
  * @author xingshuang

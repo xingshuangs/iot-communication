@@ -38,7 +38,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspResponseHead
 
 
 /**
- * RTSP消息请求
+ * RTSP message response.
  *
  * @author xingshuang
  */
@@ -46,7 +46,8 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspResponseHead
 public class RtspMessageResponse extends RtspMessage {
 
     /**
-     * 状态码
+     * Status code.
+     * (状态码)
      */
     protected ERtspStatusCode statusCode = ERtspStatusCode.OK;
 
@@ -56,22 +57,26 @@ public class RtspMessageResponse extends RtspMessage {
     protected String wwwAuthenticate = "";
 
     /**
-     * 内容类型
+     * Content type.
+     * (内容类型)
      */
     protected ERtspContentType contentType;
 
     /**
-     * 内容基础
+     * base content.
+     * (内容基础)
      */
     protected String contentBase;
 
     /**
-     * 内容长度
+     * Content length.
+     * (内容长度)
      */
     protected Integer contentLength = -1;
 
     /**
-     * 缓存控制
+     * Cache control.
+     * (缓存控制)
      */
     protected String cacheControl;
 

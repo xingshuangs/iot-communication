@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
+ * Digest authenticator.
  * Digest认证
  *
  * @author xingshuang
@@ -45,45 +46,53 @@ public class DigestAuthenticator extends AbstractAuthenticator {
     private static final String DIGEST_NAME = "Digest";
 
     /**
+     * Represents a security domain for protected documents in a Web server.
      * 表示Web服务器中受保护文档的安全域（比如公司财务信息域和公司员工信息域），用来指示需要哪个域的用户名和密码
      */
     private String realm = "";
 
     /**
+     * Protective quality.
      * 保护质量，包含auth（默认的）和auth-int（增加了报文完整性检测）两种策略，（可以为空，但是）不推荐为空值
      */
     private String qop = "";
 
     /**
+     * A random number attached when a server sends a challenge to a client.
      * 服务端向客户端发送质询时附带的一个随机数，这个数会经常发生变化。客户端计算密码摘要时将其附加上去，
      * 使得多次生成同一用户的密码摘要各不相同，用来防止重放攻击
      */
     private String nonce = "";
 
     /**
+     * Nonce counter.
      * nonce计数器，是一个16进制的数值，表示同一nonce下客户端发送出请求的数量。例如，在响应的第一个请求中，客户端将发送“nc=00000001”。
      * 这个指示值的目的是让服务器保持这个计数器的一个副本，以便检测重复的请求
      */
     private int nc = 0;
 
     /**
+     * Client random number.
      * 客户端随机数，这是一个不透明的字符串值，由客户端提供，并且客户端和服务器都会使用，以避免用明文文本。
      * 这使得双方都可以查验对方的身份，并对消息的完整性提供一些保护
      */
     private String cnonce = "";
 
     /**
+     * When the random number used in the password digest expires, the server can return a 401 response with a new random number.
      * 当密码摘要使用的随机数过期时，服务器可以返回一个附带有新随机数的401响应，
      * 并指定stale=true，表示服务器在告知客户端用新的随机数来重试，而不再要求用户重新输入用户名和密码了
      */
     private boolean stale = false;
 
     /**
+     * Uri address.
      * 访问地址
      */
     private String uri = "";
 
     /**
+     * Method name.
      * 对应方法
      */
     private String method = "";
@@ -135,6 +144,7 @@ public class DigestAuthenticator extends AbstractAuthenticator {
     }
 
     /**
+     * Calculate response string.
      * 1）nonce 由后台生成传给浏览器的，浏览器会在 Authorization 请求头中带回；
      * 2）Authorization 请求头中nc的含义：nonce计数器，是一个16进制的数值，表示同一nonce下客户端发送出请求的数量，用来防重复攻击；
      * 3）生成response的算法：response = MD5(MD5(username:realm:password):nonce:nc:cnonce:qop:MD5(<request-method>:url))
@@ -185,6 +195,7 @@ public class DigestAuthenticator extends AbstractAuthenticator {
     }
 
     /**
+     * Add server info.
      * 添加服务端的信息
      *
      * @param realm 表示Web服务器中受保护文档的安全域（比如公司财务信息域和公司员工信息域），用来指示需要哪个域的用户名和密码
@@ -201,6 +212,7 @@ public class DigestAuthenticator extends AbstractAuthenticator {
     }
 
     /**
+     * Add server feedback based on a string.
      * 根据字符串添加服务端反馈的信息
      *
      * @param src 服务端反馈的信息
@@ -231,10 +243,11 @@ public class DigestAuthenticator extends AbstractAuthenticator {
     }
 
     /**
+     * Add client info.
      * 添加客户端信息
      *
-     * @param uri    地址
-     * @param method 方法
+     * @param uri    uri address
+     * @param method method name
      */
     public void addClientInfo(String uri, String method) {
         String randomStr = UUID.randomUUID().toString().replace("-", "");
@@ -242,23 +255,25 @@ public class DigestAuthenticator extends AbstractAuthenticator {
     }
 
     /**
+     * Add client info.
      * 添加客户端信息
      *
-     * @param uri    地址
-     * @param method 方法
-     * @param cnonce 客户端的随机数
+     * @param uri    uri address
+     * @param method method name
+     * @param cnonce random number of the client
      */
     public void addClientInfo(String uri, String method, String cnonce) {
         this.addClientInfo(uri, method, cnonce, new byte[0]);
     }
 
     /**
+     * Add client info
      * 添加客户端信息
      *
-     * @param uri        地址
-     * @param method     方法
-     * @param cnonce     客户端的随机数
-     * @param entityBody 实体内容
+     * @param uri        uri address
+     * @param method     method name
+     * @param cnonce     random number of the client
+     * @param entityBody entity body
      */
     public void addClientInfo(String uri, String method, String cnonce, byte[] entityBody) {
         this.uri = uri;
@@ -266,6 +281,4 @@ public class DigestAuthenticator extends AbstractAuthenticator {
         this.method = method;
         this.entityBody = entityBody;
     }
-
-
 }

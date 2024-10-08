@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * RTSP method.
  * ERtspMethod方法
  *
  * @author xingshuang

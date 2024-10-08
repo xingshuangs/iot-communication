@@ -29,7 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 接收内容类型
+ * Accept content type.
+ * (接收内容类型)
  *
  * @author xingshuang
  */

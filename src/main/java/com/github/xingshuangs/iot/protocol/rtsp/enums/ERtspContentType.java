@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * RTSP content type.
  * 接收内容类型
  *
  * @author xingshuang

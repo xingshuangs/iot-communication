@@ -30,6 +30,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * Username password credential.
  * 用户密码凭证
  *
  * @author xingshuang
@@ -40,12 +41,12 @@ import lombok.NoArgsConstructor;
 public class UsernamePasswordCredential {
 
     /**
-     * 用户名
+     * username.
      */
     private String username;
 
     /**
-     * 密码
+     * password.
      */
     private String password;
 

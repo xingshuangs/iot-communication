@@ -28,7 +28,7 @@ package com.github.xingshuangs.iot.protocol.rtsp.model;
 import com.github.xingshuangs.iot.exceptions.RtspCommException;
 
 /**
- * RTSP响应构建器
+ * RTSP response builder.
  *
  * @author xingshuang
  */

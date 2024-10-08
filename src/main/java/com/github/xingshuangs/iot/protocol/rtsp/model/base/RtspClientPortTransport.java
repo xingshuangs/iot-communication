@@ -46,21 +46,25 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SE
 public class RtspClientPortTransport extends RtspTransport {
 
     /**
+     * RTP client port.
      * RTP客户端端口号
      */
     private Integer rtpClientPort;
 
     /**
+     * RTCP client port.
      * RTCP客户端端口号
      */
     private Integer rtcpClientPort;
 
     /**
+     * RTP server port.
      * RTP服务端端口号
      */
     private Integer rtpServerPort;
 
     /**
+     * RTCP server port.
      * RTCP服务端端口号
      */
     private Integer rtcpServerPort;

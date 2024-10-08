@@ -40,7 +40,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspEntityHeader
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspEntityHeaderFields.CONTENT_TYPE;
 
 /**
- * GetParameter请求
+ * GetParameter request
  *
  * @author xingshuang
  */
@@ -48,7 +48,8 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspEntityHeader
 public final class RtspGetParameterRequest extends RtspMessageRequest {
 
     /**
-     * 有序set集合，参数名
+     * Parameter names.
+     * (有序set集合，参数名)
      */
     private final Set<String> parameterNames = new LinkedHashSet<>();
 

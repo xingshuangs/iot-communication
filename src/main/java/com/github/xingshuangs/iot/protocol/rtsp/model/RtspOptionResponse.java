@@ -39,14 +39,16 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspResponseHeaderFields.PUBLIC;
 
 /**
- * Option响应
+ * Option response
  *
  * @author xingshuang
  */
 @Getter
 public final class RtspOptionResponse extends RtspMessageResponse {
+
     /**
-     * 可用的方法
+     * Public methods
+     * (可用的方法)
      */
     private List<ERtspMethod> publicMethods = new ArrayList<>();
 

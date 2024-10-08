@@ -31,6 +31,7 @@ import lombok.Data;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.COLON;
 
 /**
+ * SDP bandwidth
  * 带宽
  * AS:5050
  *
@@ -40,6 +41,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CO
 public class RtspSdpBandwidth {
 
     /**
+     * Type
      * 带宽类型
      * i）CT（Conference Total）表示多会话广播中会话或者媒体使用的最大带宽建议值，CT值相当于所有会话带宽值。
      * ii）AS(Application-Specific)是指具体某个应用程序所占用的总带宽建议值，相当于最大应用程序带宽值，它仅值单媒体在单点所占用的带宽。
@@ -47,6 +49,7 @@ public class RtspSdpBandwidth {
     private String type;
 
     /**
+     * Value
      * 带宽值
      */
     private Integer value;

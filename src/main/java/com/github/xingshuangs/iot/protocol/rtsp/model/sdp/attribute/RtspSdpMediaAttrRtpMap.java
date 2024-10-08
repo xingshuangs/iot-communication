@@ -31,6 +31,7 @@ import lombok.Data;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SP;
 
 /**
+ * RTP MAP
  * 附加信息：媒体负载属性
  * rtpmap:96 H264/90000
  *
@@ -40,22 +41,26 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SP
 public class RtspSdpMediaAttrRtpMap {
 
     /**
-     * 负载编号
+     * Payload number.
+     * (负载编号)
      */
     private Integer payloadNumber;
 
     /**
-     * 负载格式
+     * Payload format.
+     * (负载格式)
      */
     private String payloadFormat;
 
     /**
-     * 时钟频率
+     * Clock frequency.
+     * (时钟频率)
      */
     private Integer clockFrequency;
 
     /**
-     * 声道数量
+     * Sound track number.
+     * (声道数量)
      */
     private Integer soundTrackNumber;
 

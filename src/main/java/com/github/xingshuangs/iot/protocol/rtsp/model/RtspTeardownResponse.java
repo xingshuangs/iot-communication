@@ -34,7 +34,7 @@ import java.util.Map;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SESSION;
 
 /**
- * Teardown响应
+ * Teardown response
  *
  * @author xingshuang
  */
@@ -42,7 +42,8 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SE
 public final class RtspTeardownResponse extends RtspMessageResponse {
 
     /**
-     * 特殊的会话信息
+     * Session info.
+     * (特殊的会话信息)
      */
     private RtspSessionInfo sessionInfo;
 

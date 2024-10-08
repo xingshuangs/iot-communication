@@ -26,7 +26,8 @@ package com.github.xingshuangs.iot.protocol.rtsp.constant;
 
 
 /**
- * 实体头字段
+ * Entity header fields.
+ * (实体头字段)
  *
  * @author xingshuang
  */

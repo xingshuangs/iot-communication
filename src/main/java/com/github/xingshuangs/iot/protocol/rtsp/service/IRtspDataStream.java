@@ -28,33 +28,33 @@ package com.github.xingshuangs.iot.protocol.rtsp.service;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * RTSP的数据流
+ * RTSP data stream
  *
  * @author xingshuang
  */
 public interface IRtspDataStream {
 
     /**
-     * 异步执行线程的future
+     * Get completable future.
      *
      * @return CompletableFuture
      */
     CompletableFuture<Void> getFuture();
 
     /**
-     * 关闭
+     * Close
      */
     void close();
 
     /**
-     * 触发接收数据
+     * Trigger receive.
      */
     void triggerReceive();
 
     /**
-     * 发送数据
+     * Send data.
      *
-     * @param data 字节数组
+     * @param data byte array
      */
     void sendData(byte[] data);
 }

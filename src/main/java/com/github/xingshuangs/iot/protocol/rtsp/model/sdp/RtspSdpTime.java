@@ -31,6 +31,7 @@ import lombok.Data;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SP;
 
 /**
+ * Time.
  * 时间
  * 0 0
  *
@@ -40,11 +41,13 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SP
 public class RtspSdpTime {
 
     /**
+     * Start time.
      * 起始时间
      */
     private Integer startTime;
 
     /**
+     * End time.
      * 结束时间
      */
     private Integer endTime;

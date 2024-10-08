@@ -39,7 +39,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.*;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspRequestHeaderFields.ACCEPT;
 
 /**
- * Describe请求
+ * Describe request
  *
  * @author xingshuang
  */

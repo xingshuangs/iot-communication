@@ -31,6 +31,7 @@ import lombok.Data;
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.COMMA;
 
 /**
+ * SDP media dimension.
  * 附加信息：维度
  * x-dimensions:2048,1536
  *
@@ -40,12 +41,14 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.CO
 public class RtspSdpMediaAttrDimension {
 
     /**
-     * 宽度
+     * Width.
+     * (宽度)
      */
     private Integer width;
 
     /**
-     * 高度
+     * Height
+     * (高度)
      */
     private Integer height;
 

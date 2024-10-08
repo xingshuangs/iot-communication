@@ -31,7 +31,7 @@ import com.github.xingshuangs.iot.protocol.rtsp.enums.ERtspMethod;
 import java.net.URI;
 
 /**
- * Option请求
+ * Option request
  *
  * @author xingshuang
  */

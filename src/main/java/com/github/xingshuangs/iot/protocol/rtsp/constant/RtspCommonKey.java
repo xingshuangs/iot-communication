@@ -26,7 +26,8 @@ package com.github.xingshuangs.iot.protocol.rtsp.constant;
 
 
 /**
- * key名
+ * Key name.
+ * (key名)
  *
  * @author xingshuang
  */
@@ -37,54 +38,63 @@ public class RtspCommonKey {
     }
 
     /**
+     * New line.
      * 换行
      */
 //    public static final String CRLF = System.getProperty("line.separator");
     public static final String CRLF = "\r\n";
 
     /**
+     * Colon.
      * 冒号
      */
     public static final String COLON = ":";
 
     /**
+     * Comma.
      * 逗号
      */
     public static final String COMMA = ",";
 
     /**
+     * Space.
      * 空格
      */
     public static final String SP = " ";
 
     /**
+     * Semicolon.
      * 分号
      */
     public static final String SEMICOLON = ";";
 
     /**
+     * Equal.
      * 等号
      */
     public static final String EQUAL = "=";
 
     /**
+     * Sequence.
      * 序列号
      */
     public static final String C_SEQ = "CSeq";
 
     /**
+     * Sequence.
      * 序列号
      */
     public static final String C_SEQ1 = "Cseq";
 
     /**
+     * Session.
      * 会话
      */
     public static final String SESSION = "Session";
 
     /**
+     * Transport.
      * 通道
      */
     public static final String TRANSPORT = "Transport";
-
 }

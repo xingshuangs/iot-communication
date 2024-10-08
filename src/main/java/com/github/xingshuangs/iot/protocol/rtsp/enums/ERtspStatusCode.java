@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * RTSP status code.
  * 状态码
  *
  * @author xingshuang

@@ -32,7 +32,7 @@ import lombok.Getter;
 import java.net.URI;
 
 /**
- * Play请求
+ * Play request
  *
  * @author xingshuang
  */

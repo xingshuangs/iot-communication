@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 会话描述协议
+ * SDP
  *
  * @author xingshuang
  */
@@ -41,12 +41,14 @@ import java.util.stream.Collectors;
 public class RtspSdp {
 
     /**
-     * 会话描述
+     * Session
+     * (会话描述)
      */
     private RtspSdpSession session;
 
     /**
-     * 媒体描述
+     * Medias
+     * (媒体描述)
      */
     private List<RtspSdpMedia> medias = new ArrayList<>();
 

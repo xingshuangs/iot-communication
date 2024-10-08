@@ -32,6 +32,7 @@ import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.EQ
 import static com.github.xingshuangs.iot.protocol.rtsp.constant.RtspCommonKey.SEMICOLON;
 
 /**
+ * SDP media attr header.
  * 头
  *
  * @author xingshuang
