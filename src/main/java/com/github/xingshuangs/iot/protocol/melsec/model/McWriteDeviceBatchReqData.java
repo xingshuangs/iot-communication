@@ -27,11 +27,11 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
-import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Device access request data, batch write.
  * 软元件访问批量写请求数据
  *
  * @author xingshuang

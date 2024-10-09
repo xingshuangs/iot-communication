@@ -37,7 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 软元件访问随机读请求数据，字单位
+ * Device access request data, random in word.
+ * (软元件访问随机读请求数据，字单位)
  *
  * @author xingshuang
  */
@@ -46,12 +47,14 @@ import java.util.List;
 public class McReadDeviceRandomInWordReqData extends McReqData {
 
     /**
-     * 软元件设备地址，字访问地址列表
+     * Word address list.
+     * (软元件设备地址，字访问地址列表)
      */
     private List<McDeviceAddress> wordAddresses;
 
     /**
-     * 软元件设备地址，双字访问地址列表
+     * Dword address list.
+     * (软元件设备地址，双字访问地址列表)
      */
     private List<McDeviceAddress> dwordAddresses;
 

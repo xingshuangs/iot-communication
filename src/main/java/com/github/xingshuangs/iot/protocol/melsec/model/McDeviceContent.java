@@ -32,7 +32,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 软元件设备地址+内容
+ * Device address + content.
+ * (软元件设备地址+内容)
  *
  * @author xingshuang
  */
@@ -41,7 +42,8 @@ import lombok.EqualsAndHashCode;
 public class McDeviceContent extends McDeviceAddress {
 
     /**
-     * 数据内容
+     * Data content.
+     * (数据内容)
      */
     private byte[] data;
 

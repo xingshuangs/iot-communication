@@ -31,6 +31,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Req header of 4E.
  * 请求头
  *
  * @author xingshuang
@@ -40,12 +41,14 @@ import lombok.EqualsAndHashCode;
 public class McHeader4EReq extends McHeader3EReq {
 
     /**
-     * 序列号，2字节
+     * Serial number, 2-bytes.
+     * (序列号，2字节)
      */
     protected int serialNumber = 0;
 
     /**
-     * 固定值编号，2字节
+     * Fixed number, 2-bytes.
+     * (固定值编号，2字节)
      */
     protected int fixedNumber = 0;
 

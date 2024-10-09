@@ -31,6 +31,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Error data for 1E.
  * 协议体数据：错误信息
  *
  * @author xingshuang
@@ -40,6 +41,7 @@ import lombok.EqualsAndHashCode;
 public class McError1EData extends McData {
 
     /**
+     * Error info, 1-byte.
      * 错误信息，1个字节
      */
     private int error = 0x0000;
@@ -59,6 +61,7 @@ public class McError1EData extends McData {
     /**
      * Parses byte array and converts it to object.
      * 解析字节数组数据
+     *
      * @param data byte array
      * @return McErrorInformationData
      */
@@ -69,6 +72,7 @@ public class McError1EData extends McData {
     /**
      * Parses byte array and converts it to object.
      * 解析字节数组数据
+     *
      * @param data   byte array
      * @param offset index offset
      * @return McErrorInformationData

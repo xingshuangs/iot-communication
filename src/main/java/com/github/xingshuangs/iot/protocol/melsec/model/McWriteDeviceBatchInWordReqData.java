@@ -31,6 +31,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Device access request data, batch write in word.
  * 软元件访问批量写请求数据，字单位
  *
  * @author xingshuang

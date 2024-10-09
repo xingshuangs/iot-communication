@@ -31,6 +31,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Access route of 4E and 3E.
  * 4E，3E帧访问路径
  *
  * @author xingshuang
@@ -40,22 +41,26 @@ import lombok.EqualsAndHashCode;
 public class McFrame4E3EAccessRoute extends McAccessRoute {
 
     /**
-     * 网络编号，1个字节
+     * Network number.
+     * (网络编号，1个字节)
      */
     private int networkNumber = 0x00;
 
     /**
-     * 可编程控制器编号，1个字节
+     * PC number.
+     * (可编程控制器编号，1个字节)
      */
     private int pcNumber = 0xFF;
 
     /**
-     * 请求目标模块I/O编号
+     * Request destination module io number.
+     * (请求目标模块I/O编号)
      */
     private int requestDestModuleIoNumber = 0x03FF;
 
     /**
-     * 请求目标模块站号，1个字节
+     * Request destination module station number.
+     * (请求目标模块站号，1个字节)
      */
     private int requestDestModuleStationNumber = 0x00;
 
@@ -113,7 +118,7 @@ public class McFrame4E3EAccessRoute extends McAccessRoute {
      * @return Mc4E3EFrameAccessRoute
      */
     public static McFrame4E3EAccessRoute fromBytes(final byte[] data, final int offset) {
-        ByteReadBuff buff = new ByteReadBuff(data, offset,true);
+        ByteReadBuff buff = new ByteReadBuff(data, offset, true);
         McFrame4E3EAccessRoute res = new McFrame4E3EAccessRoute();
         res.networkNumber = buff.getByteToInt();
         res.pcNumber = buff.getByteToInt();

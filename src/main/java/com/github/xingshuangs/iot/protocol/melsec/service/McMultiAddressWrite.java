@@ -34,7 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 多地址写
+ * Multi address write.
+ * 多address string写
  *
  * @author xingshuang
  */
@@ -42,21 +43,21 @@ import java.util.List;
 public class McMultiAddressWrite {
 
     /**
-     * word列表
+     * word list.
      */
     private final List<McDeviceContent> words = new ArrayList<>();
 
     /**
-     * dword列表
+     * dword list.
      */
     private final List<McDeviceContent> dwords = new ArrayList<>();
 
 //    /**
-//     * 添加字节数据
+//     * 添加字节data
 //     *
-//     * @param address 地址
-//     * @param data    数据
-//     * @return 对象本身
+//     * @param address address string
+//     * @param data    data
+//     * @return this object
 //     */
 //    public McMultiAddressWrite addByte(String address, byte data) {
 //        this.addByte(address, new byte[]{data});
@@ -66,9 +67,9 @@ public class McMultiAddressWrite {
 //    /**
 //     * 添加字节数组
 //     *
-//     * @param address 地址
-//     * @param data    字节数组数据
-//     * @return 对象本身
+//     * @param address address string
+//     * @param data    字节数组data
+//     * @return this object
 //     */
 //    public McMultiAddressWrite addByte(String address, byte[] data) {
 //        // 三菱1个字占2个字节
@@ -83,11 +84,11 @@ public class McMultiAddressWrite {
 //    }
 
     /**
-     * 添加uint16数据
+     * Add uint16 data.
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    data
+     * @return this object
      */
     public McMultiAddressWrite addUInt16(String address, int data) {
         byte[] bytes = ByteWriteBuff.newInstance(2, true).putShort(data).getData();
@@ -96,11 +97,11 @@ public class McMultiAddressWrite {
     }
 
     /**
-     * 添加int16数据
+     * Add int16 data
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    data
+     * @return this object
      */
     public McMultiAddressWrite addInt16(String address, short data) {
         byte[] bytes = ByteWriteBuff.newInstance(2, true).putShort(data).getData();
@@ -109,11 +110,11 @@ public class McMultiAddressWrite {
     }
 
     /**
-     * 添加int16数据
+     * Add int16 data
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    data
+     * @return this object
      */
     public McMultiAddressWrite addInt16(String address, int data) {
         byte[] bytes = ByteWriteBuff.newInstance(2, true).putShort(data).getData();
@@ -122,11 +123,11 @@ public class McMultiAddressWrite {
     }
 
     /**
-     * 添加uint32数据
+     * Add uint32 data
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    data
+     * @return this object
      */
     public McMultiAddressWrite addUInt32(String address, long data) {
         byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.AB_CD).putInteger(data).getData();
@@ -135,11 +136,11 @@ public class McMultiAddressWrite {
     }
 
     /**
-     * 添加int32数据
+     * Add int32 data
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    data
+     * @return this object
      */
     public McMultiAddressWrite addInt32(String address, int data) {
         byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.AB_CD).putInteger(data).getData();
@@ -148,11 +149,11 @@ public class McMultiAddressWrite {
     }
 
     /**
-     * 添加float32数据
+     * Add float32 data
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    data
+     * @return this object
      */
     public McMultiAddressWrite addFloat32(String address, float data) {
         byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.AB_CD).putFloat(data).getData();
@@ -161,11 +162,11 @@ public class McMultiAddressWrite {
     }
 
 //    /**
-//     * 添加double数据
+//     * Add double data
 //     *
-//     * @param address 地址
-//     * @param data    数据
-//     * @return 对象本身
+//     * @param address address string
+//     * @param data    data
+//     * @return this object
 //     */
 //    public McMultiAddressWrite addFloat64(String address, double data) {
 //        byte[] bytes = ByteWriteBuff.newInstance(8, EByteBuffFormat.AB_CD).putDouble(data).getData();
@@ -174,11 +175,11 @@ public class McMultiAddressWrite {
 //    }
 //
 //    /**
-//     * 添加字符串
+//     * Add string
 //     *
-//     * @param address 地址
-//     * @param data    字符串数据
-//     * @return 对象本身
+//     * @param address address string
+//     * @param data    字符串data
+//     * @return this object
 //     */
 //    public McMultiAddressWrite addString(String address, String data) {
 //        byte[] bytes = ByteWriteBuff.newInstance(data.length(), true).putString(data).getData();

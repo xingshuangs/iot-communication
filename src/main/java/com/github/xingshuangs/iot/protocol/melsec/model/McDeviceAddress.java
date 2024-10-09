@@ -36,7 +36,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 软元件设备地址
+ * Device address
+ * (软元件设备地址)
  *
  * @author xingshuang
  */
@@ -44,17 +45,20 @@ import java.util.regex.Pattern;
 public class McDeviceAddress {
 
     /**
-     * 起始软元件编号，Q/L系列是3个字节，iQ-R系列是4个字节
+     * Head device number, Q/L series: 3-bytes, iQ-R series: 4-bytes.
+     * (起始软元件编号，Q/L系列是3个字节，iQ-R系列是4个字节)
      */
     protected int headDeviceNumber = 0;
 
     /**
-     * 软元件代码，Q/L系列是1个字节，iQ-R系列是2个字节
+     * Device code, Q/L series: 1-bytes, iQ-R series: 2-bytes.
+     * (软元件代码，Q/L系列是1个字节，iQ-R系列是2个字节)
      */
     protected EMcDeviceCode deviceCode = EMcDeviceCode.D;
 
     /**
-     * 软元件点数，2个字节，注意：该字段不统计在字节计算中，给外部统计使用
+     * Device points count, 2-bytes.
+     * (软元件点数，2个字节，注意：该字段不统计在字节计算中，给外部统计使用)
      */
     protected int devicePointsCount = 1;
 
@@ -72,30 +76,33 @@ public class McDeviceAddress {
     }
 
     /**
-     * 不包含软元件点数的字节数组长度
+     * The length of a byte array that does not contain the number of device points
+     * (不包含软元件点数的字节数组长度)
      *
-     * @param series PLC的类型系列
-     * @return 字节数组长度
+     * @param series PLC series
+     * @return byte length
      */
     public int byteArrayLengthWithoutPointsCount(EMcSeries series) {
         return series.getDeviceCodeByteLength() + series.getHeadDeviceNumberByteLength();
     }
 
     /**
-     * 包含软元件点数的字节数组长度
+     * The length of a byte array that contains the number of device points
+     * (包含软元件点数的字节数组长度)
      *
-     * @param series PLC的类型系列
-     * @return 字节数组长度
+     * @param series PLC series
+     * @return byte length
      */
     public int byteArrayLengthWithPointsCount(EMcSeries series) {
         return 2 + series.getDeviceCodeByteLength() + series.getHeadDeviceNumberByteLength();
     }
 
     /**
-     * 不包含软元件点数的字节内容
+     * Byte content that does not contain the number of device points
+     * (不包含软元件点数的字节内容)
      *
-     * @param series PLC的类型系列
-     * @return 字节数组
+     * @param series PLC series
+     * @return byte array
      */
     public byte[] toByteArrayWithoutPointsCount(EMcSeries series) {
         int length = series.getDeviceCodeByteLength() + series.getHeadDeviceNumberByteLength();
@@ -104,10 +111,11 @@ public class McDeviceAddress {
     }
 
     /**
-     * 包含软元件点数的字节内容
+     * Byte content that contains the number of software component points
+     * (包含软元件点数的字节内容)
      *
-     * @param series PLC的类型系列
-     * @return 字节数组
+     * @param series PLC series
+     * @return byte array
      */
     public byte[] toByteArrayWithPointsCount(EMcSeries series) {
         int length = 2 + series.getDeviceCodeByteLength() + series.getHeadDeviceNumberByteLength();
@@ -117,10 +125,11 @@ public class McDeviceAddress {
     }
 
     /**
-     * 更加条件添加基础数据
+     * Add base data.
+     * (添加基础数据)
      *
-     * @param series PLC系列
-     * @param length 字节数组长度
+     * @param series PLC series
+     * @param length byte length
      * @return ByteWriteBuff
      */
     private ByteWriteBuff addBaseData(EMcSeries series, int length) {
@@ -139,21 +148,21 @@ public class McDeviceAddress {
     }
 
     /**
-     * 构建McDeviceAddress
+     * Create McDeviceAddress
      *
-     * @param address 地址
-     * @return McDeviceAddress对象
+     * @param address address string
+     * @return McDeviceAddress object
      */
     public static McDeviceAddress createBy(String address) {
         return createBy(address, 1);
     }
 
     /**
-     * 构建McDeviceAddress
+     * Create McDeviceAddress
      *
-     * @param address 地址
-     * @param count   个数
-     * @return McDeviceAddress对象
+     * @param address address string
+     * @param count   count
+     * @return McDeviceAddress object
      */
     public static McDeviceAddress createBy(String address, int count) {
         if (address == null || address.length() == 0) {

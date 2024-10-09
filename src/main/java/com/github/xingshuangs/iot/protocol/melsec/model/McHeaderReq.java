@@ -31,29 +31,35 @@ import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import lombok.Data;
 
 /**
- * 请求头
+ * Req header.
+ * (请求头)
  *
  * @author xingshuang
  */
 @Data
 public class McHeaderReq implements IObjectByteArray {
+
     /**
-     * 帧类型
+     * Frame type.
+     * (帧类型)
      */
     protected EMcFrameType frameType = EMcFrameType.FRAME_3E;
 
     /**
+     * Sub header, 2-bytes.
      * 副帧头，2字节，根据报文的类型定义设置的值。
      * 1E帧，1个字节
      */
     protected int subHeader = 0;
 
     /**
+     * Access route.
      * 访问路径，存在多种访问路径
      */
     protected McAccessRoute accessRoute;
 
     /**
+     * Monitoring timer.
      * 监视定时器，2字节，设置读取及写入的处理完成之前的等待时间。设置连接站E71向访问目标发出处理请求之后到返回响应为止的等待时间。
      * 0000H(0): 无限等待(处理完成之前继续等待。)<br>
      * 0001H～FFFFH(1～65535): 等待时间(单位: 250ms)<br>
@@ -64,12 +70,12 @@ public class McHeaderReq implements IObjectByteArray {
 
     @Override
     public int byteArrayLength() {
-        throw new UnsupportedOperationException("未实现");
+        throw new UnsupportedOperationException("not implement");
     }
 
     @Override
     public byte[] toByteArray() {
-        throw new UnsupportedOperationException("未实现");
+        throw new UnsupportedOperationException("not implement");
     }
 
     public static McHeaderReq createByFrameType(EMcFrameType frameType, McAccessRoute accessRoute, int timer) {

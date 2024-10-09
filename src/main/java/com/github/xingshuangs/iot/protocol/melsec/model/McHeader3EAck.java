@@ -32,6 +32,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Ack header of 3E.
  * 响应头
  *
  * @author xingshuang
@@ -41,11 +42,13 @@ import lombok.EqualsAndHashCode;
 public class McHeader3EAck extends McHeaderAck {
 
     /**
-     * 访问路径，存在多种访问路径
+     * Access route.
+     * (访问路径，存在多种访问路径)
      */
     protected McAccessRoute accessRoute;
 
     /**
+     * Data length.
      * 数据长度，2字节，响应数据长，存储从结束代码到响应数据(正常结束时)或出错信息(异常结束时)为止的数据长。
      */
     protected int dataLength = 0;

@@ -31,7 +31,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 请求头
+ * Req header of 1E.
+ * (请求头)
  *
  * @author xingshuang
  */

@@ -32,7 +32,8 @@ import com.github.xingshuangs.iot.protocol.melsec.enums.EMcSeries;
 import java.util.List;
 
 /**
- * MC请求构建器
+ * Req builder class.
+ * (MC请求构建器)
  *
  * @author xingshuang
  */
@@ -48,10 +49,11 @@ public class McReqBuilder {
     private static final int MONITORING_TIMER_DEFAULT = 3000;
 
     /**
-     * 创建软元件按字批量读取请求
+     * Create request of read device batch in word.
+     * (创建软元件按字批量读取请求)
      *
-     * @param deviceAddress 访问地址
-     * @return 请求对象
+     * @param deviceAddress device address
+     * @return request message
      */
     public static McMessageReq createReadDeviceBatchInWordReq(McDeviceAddress deviceAddress) {
         McHeaderReq header = McHeaderReq.createByFrameType(EMcFrameType.FRAME_3E, McFrame4E3EAccessRoute.createDefault(),
@@ -60,12 +62,13 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件按字批量读取请求
+     * Create request of read device batch in word.
+     * (创建软元件按字批量读取请求)
      *
-     * @param series        PLC系列
-     * @param header        请求头
-     * @param deviceAddress 访问地址
-     * @return 请求对象
+     * @param series        PLC series
+     * @param header        request header
+     * @param deviceAddress device address
+     * @return request message
      */
     public static McMessageReq createReadDeviceBatchInWordReq(EMcSeries series,
                                                               McHeaderReq header,
@@ -80,10 +83,11 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件按位批量读取请求
+     * Create request of read device batch in bit.
+     * (创建软元件按位批量读取请求)
      *
-     * @param deviceAddress 访问地址
-     * @return 请求对象
+     * @param deviceAddress device address
+     * @return request message
      */
     public static McMessageReq createReadDeviceBatchInBitReq(McDeviceAddress deviceAddress) {
         McHeaderReq header = McHeaderReq.createByFrameType(EMcFrameType.FRAME_3E, McFrame4E3EAccessRoute.createDefault(),
@@ -92,12 +96,13 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件按位批量读取请求
+     * Create request of read device batch in bit.
+     * (创建软元件按位批量读取请求)
      *
-     * @param series        PLC系列
-     * @param header        请求头
-     * @param deviceAddress 访问地址
-     * @return 请求对象
+     * @param series        PLC series
+     * @param header        request header
+     * @param deviceAddress device address
+     * @return request message
      */
     public static McMessageReq createReadDeviceBatchInBitReq(EMcSeries series,
                                                              McHeaderReq header,
@@ -112,10 +117,11 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件按字批量写入请求
+     * Create request of write device batch in word.
+     * (创建软元件按字批量写入请求)
      *
-     * @param deviceContent 待写入的数据内容
-     * @return 请求对象
+     * @param deviceContent device content
+     * @return request message
      */
     public static McMessageReq createWriteDeviceBatchInWordReq(McDeviceContent deviceContent) {
         McHeaderReq header = McHeaderReq.createByFrameType(EMcFrameType.FRAME_3E, McFrame4E3EAccessRoute.createDefault(),
@@ -124,12 +130,13 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件按字批量写入请求
+     * Create request of write device batch in word.
+     * (创建软元件按字批量写入请求)
      *
-     * @param series        PLC系列
-     * @param header        请求头
-     * @param deviceContent 待写入的数据内容
-     * @return 请求对象
+     * @param series        PLC series
+     * @param header        request header
+     * @param deviceContent device content
+     * @return request message
      */
     public static McMessageReq createWriteDeviceBatchInWordReq(EMcSeries series,
                                                                McHeaderReq header,
@@ -144,10 +151,11 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件按位批量写入请求
+     * Create request of write device batch in bit.
+     * (创建软元件按位批量写入请求)
      *
-     * @param deviceContent 待写入的数据内容
-     * @return 请求对象
+     * @param deviceContent device content
+     * @return request message
      */
     public static McMessageReq createWriteDeviceBatchInBitReq(McDeviceContent deviceContent) {
         McHeaderReq header = McHeaderReq.createByFrameType(EMcFrameType.FRAME_3E, McFrame4E3EAccessRoute.createDefault(),
@@ -156,12 +164,13 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件按位批量写入请求
+     * Create request of write device batch in word.
+     * (创建软元件按位批量写入请求)
      *
-     * @param series        PLC系列
-     * @param header        请求头
-     * @param deviceContent 待写入的数据内容
-     * @return 请求对象
+     * @param series        PLC series
+     * @param header        request header
+     * @param deviceContent device content
+     * @return request message
      */
     public static McMessageReq createWriteDeviceBatchInBitReq(EMcSeries series,
                                                               McHeaderReq header,
@@ -176,11 +185,12 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件按字随机读取请求
+     * Create request of write device random in word.
+     * (创建软元件按字随机读取请求)
      *
-     * @param wordAddresses  字地址
-     * @param dwordAddresses 双字地址
-     * @return 请求对象
+     * @param wordAddresses  word data address
+     * @param dwordAddresses dword data address
+     * @return request message
      */
     public static McMessageReq createReadDeviceRandomInWordReq(List<McDeviceAddress> wordAddresses,
                                                                List<McDeviceAddress> dwordAddresses) {
@@ -190,13 +200,14 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件按字随机读取请求
+     * Create request of write device random in word.
+     * (创建软元件按字随机读取请求)
      *
-     * @param series         PLC系列
-     * @param header         请求头
-     * @param wordAddresses  字地址
-     * @param dwordAddresses 双字地址
-     * @return 请求对象
+     * @param series         PLC series
+     * @param header         request header
+     * @param wordAddresses  word data address
+     * @param dwordAddresses dword data address
+     * @return request message
      */
     public static McMessageReq createReadDeviceRandomInWordReq(EMcSeries series,
                                                                McHeaderReq header,
@@ -212,11 +223,12 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件按字随机写入请求
+     * Create request of write device random in word.
+     * (创建软元件按字随机写入请求)
      *
-     * @param wordContents  待写入的字数据内容
-     * @param dwordContents 待写入的双字数据内容
-     * @return 请求对象
+     * @param wordContents  word data content
+     * @param dwordContents dword data content
+     * @return request message
      */
     public static McMessageReq createWriteDeviceRandomInWordReq(List<McDeviceContent> wordContents,
                                                                 List<McDeviceContent> dwordContents) {
@@ -226,13 +238,14 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件按字随机写入请求
+     * Create request of write device random in word.
+     * (创建软元件按字随机写入请求)
      *
-     * @param series        PLC系列
-     * @param header        请求头
-     * @param wordContents  待写入的字数据内容
-     * @param dwordContents 待写入的双字数据内容
-     * @return 请求对象
+     * @param series        PLC series
+     * @param header        request header
+     * @param wordContents  word data content
+     * @param dwordContents dword data content
+     * @return request message
      */
     public static McMessageReq createWriteDeviceRandomInWordReq(EMcSeries series,
                                                                 McHeaderReq header,
@@ -248,10 +261,11 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件按位随机写入请求
+     * Create request of write device random in bit.
+     * (创建软元件按位随机写入请求)
      *
-     * @param bitContents 待写入的位数据内容
-     * @return 请求对象
+     * @param bitContents bit data content
+     * @return request message
      */
     public static McMessageReq createWriteDeviceRandomInBitReq(List<McDeviceContent> bitContents) {
         McHeaderReq header = McHeaderReq.createByFrameType(EMcFrameType.FRAME_3E, McFrame4E3EAccessRoute.createDefault(),
@@ -260,12 +274,13 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件按位随机写入请求
+     * Create request of write device random in bit.
+     * (创建软元件按位随机写入请求)
      *
-     * @param series      PLC系列
-     * @param header      请求头
-     * @param bitContents 待写入的位数据内容
-     * @return 请求对象
+     * @param series      PLC series
+     * @param header      request header
+     * @param bitContents bit data content
+     * @return request message
      */
     public static McMessageReq createWriteDeviceRandomInBitReq(EMcSeries series,
                                                                McHeaderReq header,
@@ -280,11 +295,12 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件多块读取请求
+     * Create request of read device batch multi blocks.
+     * (创建软元件多块读取请求)
      *
-     * @param wordAddresses 字地址
-     * @param bitAddresses  位地址
-     * @return 请求对象
+     * @param wordAddresses word data address
+     * @param bitAddresses  bit data address
+     * @return request message
      */
     public static McMessageReq createReadDeviceBatchMultiBlocksReq(List<McDeviceAddress> wordAddresses,
                                                                    List<McDeviceAddress> bitAddresses) {
@@ -294,13 +310,14 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件多块读取请求
+     * Create request of read device batch multi blocks.
+     * (创建软元件多块读取请求)
      *
-     * @param series        PLC系列
-     * @param header        请求头
-     * @param wordAddresses 字地址
-     * @param bitAddresses  位地址
-     * @return 请求对象
+     * @param series        PLC series
+     * @param header        request header
+     * @param wordAddresses word data address
+     * @param bitAddresses  bit data address
+     * @return request message
      */
     public static McMessageReq createReadDeviceBatchMultiBlocksReq(EMcSeries series,
                                                                    McHeaderReq header,
@@ -313,11 +330,12 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件多块批量写入请求
+     * Create request of write device batch multi blocks.
+     * (创建软元件多块批量写入请求)
      *
-     * @param wordContents 字数据
-     * @param bitContents  位数据
-     * @return 请求对象
+     * @param wordContents word data content
+     * @param bitContents  bit data content
+     * @return request message
      */
     public static McMessageReq createWriteDeviceBatchMultiBlocksReq(List<McDeviceContent> wordContents,
                                                                     List<McDeviceContent> bitContents) {
@@ -327,13 +345,14 @@ public class McReqBuilder {
     }
 
     /**
-     * 创建软元件多块批量写入请求
+     * Create request of write device batch multi blocks.
+     * (创建软元件多块批量写入请求)
      *
-     * @param series       PLC系列
-     * @param header       请求头
-     * @param wordContents 字数据
-     * @param bitContents  位数据
-     * @return 请求对象
+     * @param series       PLC series
+     * @param header       request header
+     * @param wordContents word data content
+     * @param bitContents  bit data content
+     * @return request message
      */
     public static McMessageReq createWriteDeviceBatchMultiBlocksReq(EMcSeries series,
                                                                     McHeaderReq header,

@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Device access request data, batch write multi blocks.
  * 软元件访问多块读请求数据
  *
  * @author xingshuang
@@ -46,12 +47,14 @@ import java.util.List;
 public class McWriteDeviceBatchMultiBlocksReqData extends McReqData {
 
     /**
-     * 软元件设备地址，字访问地址列表
+     * Word content list.
+     * (软元件设备地址，字访问地址列表)
      */
     private List<McDeviceContent> wordContents;
 
     /**
-     * 软元件设备地址，位访问地址列表
+     * Bit content list.
+     * (软元件设备地址，位访问地址列表）
      */
     private List<McDeviceContent> bitContents;
 

@@ -47,7 +47,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 
 /**
- * plc的网络通信
+ * plc network
  *
  * @author xingshuang
  */
@@ -57,37 +57,43 @@ import java.util.function.BiPredicate;
 public class McNetwork extends TcpClientBasic {
 
     /**
-     * 锁
+     * locker
      */
     private final Object objLock = new Object();
 
     /**
-     * 通信回调，第一个参数是tag标签，指示该报文含义；第二个参数是具体报文内容
+     * Communicate callback.
+     * (通信回调，第一个参数是tag标签，指示该报文含义；第二个参数是具体报文内容)
      */
     private BiConsumer<String, byte[]> comCallback;
 
     /**
-     * 是否持久化，默认是持久化，对应长连接，true：长连接，false：短连接
+     * Persistence, true: long connection, false: short connection.
+     * (是否持久化，默认是持久化，对应长连接，true：长连接，false：短连接)
      */
     private boolean persistence = true;
 
     /**
-     * 帧类型
+     * Frame type
+     * (帧类型)
      */
     protected EMcFrameType frameType = EMcFrameType.FRAME_3E;
 
     /**
-     * 访问路径，默认4E，3E帧访问路径
+     * Access route, 4E, 3E by default.
+     * (访问路径，默认4E，3E帧访问路径)
      */
     protected McAccessRoute accessRoute = McFrame4E3EAccessRoute.createDefault();
 
     /**
-     * 监视定时器，默认：3000ms，设置读取及写入的处理完成之前的等待时间。设置连接站E71向访问目标发出处理请求之后到返回响应为止的等待时间。
+     * Monitoring timer.
+     * (监视定时器，默认：3000ms，设置读取及写入的处理完成之前的等待时间。设置连接站E71向访问目标发出处理请求之后到返回响应为止的等待时间。)
      */
     protected int monitoringTimer = 3000;
 
     /**
-     * PLC的类型系列
+     * PLC series.
+     * (PLC的类型系列)
      */
     protected EMcSeries series = EMcSeries.QnA;
 
@@ -113,10 +119,11 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 从服务器读取数据
+     * Read data from server.
+     * (从服务器读取数据)
      *
-     * @param req McMessageReq请求
-     * @return McMessageAck响应
+     * @param req McMessageReq
+     * @return McMessageAck
      */
     protected McMessageAck readFromServer(McMessageReq req) {
         byte[] reqBytes = req.toByteArray();
@@ -138,10 +145,11 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 1E帧的通信交互
+     * Read data from server of 1E.
+     * (1E帧的通信交互)
      *
-     * @param req 请求报文
-     * @return 响应报文
+     * @param req req
+     * @return ack
      */
     protected byte[] readFromServer1E(byte[] req) {
         int len;
@@ -160,10 +168,11 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 3E帧和4E帧的通信交互
+     * Read data from server of 4E and 3E.
+     * (3E帧和4E帧的通信交互)
      *
-     * @param req 请求报文
-     * @return 响应报文
+     * @param req req
+     * @return ack
      */
     protected byte[] readFromServer4E3E(byte[] req) {
         int remainLength;
@@ -193,10 +202,11 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 校验请求数据和响应数据
+     * Check req data and ack data.
+     * (校验请求数据和响应数据)
      *
-     * @param req 请求数据
-     * @param ack 响应数据
+     * @param req req data
+     * @param ack ack data
      */
     protected void checkResult(McMessageReq req, McMessageAck ack) {
         if (this.frameType == EMcFrameType.FRAME_4E && ack.getHeader().getSubHeader() != EMcFrameType.FRAME_4E.getAckSubHeader()) {
@@ -223,10 +233,11 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 提取错误信息
+     * Extract error
+     * (提取错误信息)
      *
-     * @param errorCode 错误码
-     * @return 错误信息字符串
+     * @param errorCode error code
+     * @return error string
      */
     private String extractError(int errorCode) {
         switch (errorCode) {
@@ -280,14 +291,15 @@ public class McNetwork extends TcpClientBasic {
     //region 软元件批量读取和写入
 
     /**
-     * 软元件最原始的批量读取，不支持A系列
+     * Read device batch by raw way, not support A series.
+     * (软元件最原始的批量读取，不支持A系列)
      *
-     * @param command           指令
-     * @param subCommand        子指令
-     * @param deviceCode        软元件代码
-     * @param headDeviceNumber  起始软元件编号
-     * @param devicePointsCount 软元件点数
-     * @return 字节数组数据
+     * @param command           command
+     * @param subCommand        sub command
+     * @param deviceCode        device code
+     * @param headDeviceNumber  head device number
+     * @param devicePointsCount device point count
+     * @return byte array
      */
     public byte[] readDeviceBatchRaw(EMcCommand command, int subCommand, EMcDeviceCode deviceCode,
                                      int headDeviceNumber, int devicePointsCount) {
@@ -312,14 +324,15 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 软元件最原始的批量写入，不支持A系列
+     * Write device batch by raw way, not support A series.
+     * (软元件最原始的批量写入，不支持A系列)
      *
-     * @param command           指令
-     * @param subCommand        子指令
-     * @param deviceCode        软元件代码
-     * @param headDeviceNumber  起始软元件编号
-     * @param devicePointsCount 软元件点数
-     * @param dataBytes         待写入的字节数组数据
+     * @param command           command
+     * @param subCommand        sub command
+     * @param deviceCode        device code
+     * @param headDeviceNumber  head device number
+     * @param devicePointsCount device point count
+     * @param dataBytes         data byte array
      */
     public void writeDeviceBatchRaw(EMcCommand command, int subCommand, EMcDeviceCode deviceCode,
                                     int headDeviceNumber, int devicePointsCount, byte[] dataBytes) {
@@ -342,6 +355,7 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
+     * Device access, batch read in word units
      * 软元件按字批量读取；<br>
      * 软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节<br>
      * 不可以指定下述软元件。<br>
@@ -349,8 +363,8 @@ public class McNetwork extends TcpClientBasic {
      * • 长累计定时器(触点: LSTS、线圈: LSTC)<br>
      * • 长变址寄存器(LZ)<br>
      *
-     * @param deviceAddress 数据地址
-     * @return 数据内容
+     * @param deviceAddress device address
+     * @return device content
      */
     public McDeviceContent readDeviceBatchInWord(McDeviceAddress deviceAddress) {
         if (deviceAddress == null) {
@@ -390,6 +404,7 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
+     * Device access, batch write in word units
      * 软元件按字批量写入；<br>
      * 软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节<br>
      * 不可以指定下述软元件。<br>
@@ -397,7 +412,7 @@ public class McNetwork extends TcpClientBasic {
      * • 长累计定时器(触点: LSTS、线圈: LSTC、当前值: LSTN)<br>
      * • 长变址寄存器(LZ)
      *
-     * @param deviceContent 数据内容
+     * @param deviceContent device content
      */
     public void writeDeviceBatchInWord(McDeviceContent deviceContent) {
         if (deviceContent == null) {
@@ -439,6 +454,7 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
+     * Device access, batch read in bit units
      * 软元件按位批量读取；
      * 软元件点数 = 位的数量，而非字节数量，2个位 = 1个字节
      * 不可以指定下述软元件。<br>
@@ -446,8 +462,8 @@ public class McNetwork extends TcpClientBasic {
      * • 长累计定时器(触点: LSTS、线圈: LSTC)<br>
      * • 长变址寄存器(LZ)<br>
      *
-     * @param deviceAddress 数据地址
-     * @return 数据内容
+     * @param deviceAddress device address
+     * @return device content
      */
     public McDeviceContent readDeviceBatchInBit(McDeviceAddress deviceAddress) {
         if (deviceAddress == null) {
@@ -494,6 +510,7 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
+     * Device access, batch write in bit units
      * 软元件按位批量写入；<br>
      * 软元件点数 = 位的数量，而非字节数量，2个位 = 1个字节<br>
      * 不可以指定下述软元件。<br>
@@ -502,7 +519,7 @@ public class McNetwork extends TcpClientBasic {
      * • 长计数器(当前值: LCN)<br>
      * • 长变址寄存器(LZ)
      *
-     * @param deviceContent 数据内容
+     * @param deviceContent device content
      */
     public void writeDeviceBatchInBit(McDeviceContent deviceContent) {
         if (deviceContent == null) {
@@ -555,6 +572,7 @@ public class McNetwork extends TcpClientBasic {
     //region 软元件随机读取和写入
 
     /**
+     * Device access, random read in word units.
      * 软元件按字随机读取；<br>
      * 地址中软元件点数可以忽略，默认1，就算写入也自动忽略<br>
      * 不可以指定下述软元件。<br>
@@ -562,9 +580,9 @@ public class McNetwork extends TcpClientBasic {
      * • 长累计定时器(触点: LSTS、线圈: LSTC)<br>
      * • 长计数器(触点: LCS、线圈: LCC)<br>
      *
-     * @param wordAddresses  字地址
-     * @param dwordAddresses 双字地址
-     * @return 读取的内容
+     * @param wordAddresses  word device address
+     * @param dwordAddresses dword device address
+     * @return device content list.
      */
     public List<McDeviceContent> readDeviceRandomInWord(List<McDeviceAddress> wordAddresses, List<McDeviceAddress> dwordAddresses) {
         if (wordAddresses == null || dwordAddresses == null) {
@@ -614,10 +632,11 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 批量随机读写软元件约束
+     * Check device random code.
+     * (批量随机读写软元件约束)
      *
-     * @param addresses 软元件信息
-     * @return true：符合，false：不符合
+     * @param addresses device address list
+     * @return true：match，false：mismatch
      */
     private boolean checkDeviceRandomCode(List<? extends McDeviceAddress> addresses) {
         return addresses.stream().allMatch(x -> x.getDeviceCode() != EMcDeviceCode.LTS
@@ -629,11 +648,12 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
+     * Device access, random write in word units.
      * 软元件按字随机写入；
      * 地址中软元件点数可以忽略，默认1，就算写入也自动忽略
      *
-     * @param wordContents  字内容
-     * @param dwordContents 双字内容
+     * @param wordContents  word device address + content
+     * @param dwordContents dword device address + content
      */
     public void writeDeviceRandomInWord(List<McDeviceContent> wordContents, List<McDeviceContent> dwordContents) {
         if (wordContents == null || dwordContents == null) {
@@ -670,10 +690,11 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
+     * Device access, random write in bit units.
      * 软元件按位随机写入；应指定位软元件。
      * 软元件点数可以忽略，默认1，就算写入也自动忽略
      *
-     * @param bitAddresses 位地址
+     * @param bitAddresses bit device address list
      */
     public void writeDeviceRandomInBit(List<McDeviceContent> bitAddresses) {
         if (bitAddresses == null || bitAddresses.isEmpty()) {
@@ -705,6 +726,7 @@ public class McNetwork extends TcpClientBasic {
     //region 软元件多个块批量读取和写入
 
     /**
+     * Device access, batch read multi blocks.
      * 软元件多块批量读取；<br>
      * 字访问软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节；<br>
      * 位访问软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节；<br>
@@ -714,9 +736,9 @@ public class McNetwork extends TcpClientBasic {
      * • 长计数器(触点: LCS、线圈: LCC、当前值: LCN)<br>
      * • 长变址寄存器(LZ)
      *
-     * @param wordAddresses 字地址
-     * @param bitAddresses  位地址
-     * @return 读取的数据内容
+     * @param wordAddresses word address list
+     * @param bitAddresses  bit address list
+     * @return device content list
      */
     public List<McDeviceContent> readDeviceBatchMultiBlocks(List<McDeviceAddress> wordAddresses, List<McDeviceAddress> bitAddresses) {
         this.checkDeviceBatchMultiBlocksCondition(wordAddresses, bitAddresses);
@@ -757,10 +779,11 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 批量块读写软元件前置校验
+     * Check device batch multi blocks condition.
+     * (批量块读写软元件前置校验)
      *
-     * @param words words软元件信息
-     * @param bits  bits软元件信息
+     * @param words words device address list
+     * @param bits  bits device address list
      */
     private void checkDeviceBatchMultiBlocksCondition(List<? extends McDeviceAddress> words,
                                                       List<? extends McDeviceAddress> bits) {
@@ -796,10 +819,11 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 批量块读写软元件约束
+     * Check device batch multi blocks code.
+     * (批量块读写软元件约束)
      *
-     * @param addresses 软元件信息
-     * @return true：符合，false：不符合
+     * @param addresses device address
+     * @return true：match，false：mismatch
      */
     private boolean checkDeviceBatchMultiBlocksCode(List<? extends McDeviceAddress> addresses) {
         return addresses.stream().allMatch(x -> x.getDeviceCode() != EMcDeviceCode.LTS
@@ -815,12 +839,13 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
+     * Device access, batch write multi blocks.
      * 软元件多块批量写入
      * 字访问软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节；
      * 位访问软元件点数 = 字的数量，而非字节数量，1个字 = 2个字节；
      *
-     * @param wordContents 带写入字地址+数据
-     * @param bitContents  带写入位地址+数据
+     * @param wordContents word address + content
+     * @param bitContents  bit address + content
      */
     public void writeDeviceBatchMultiBlocks(List<McDeviceContent> wordContents, List<McDeviceContent> bitContents) {
         this.checkDeviceBatchMultiBlocksCondition(wordContents, bitContents);
@@ -859,10 +884,11 @@ public class McNetwork extends TcpClientBasic {
     //region 软元件boolean列表和字节数组之间数据转换
 
     /**
-     * 將字节数组转换为boolean列表
+     * Get boolean list by byte array.
+     * (將字节数组转换为boolean列表)
      *
-     * @param bytes 字节数组
-     * @return boolean列表
+     * @param bytes byte array
+     * @return boolean list
      */
     public List<Boolean> getBooleansBy(byte[] bytes) {
         List<Boolean> res = new ArrayList<>();
@@ -874,10 +900,11 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * 将boolean列表转换为字节数组
+     * Get byte array by boolean list.
+     * (将boolean列表转换为字节数组)
      *
-     * @param booleans boolean列表
-     * @return 字节数组
+     * @param booleans boolean list
+     * @return byte array
      */
     public byte[] getBytesBy(List<Boolean> booleans) {
         int len = booleans.size() % 2 == 0 ? (booleans.size() / 2) : ((booleans.size() + 1) / 2);

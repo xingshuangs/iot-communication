@@ -56,6 +56,7 @@ import lombok.Getter;
 public enum EMcSeries {
 
     /**
+     * A series.
      * A系列，批量读：位单位256点，字单位32个；批量写：位单位160点，字单位10个
      */
     A(EMcFrameType.FRAME_1E, 2, 4, 10, 160,
@@ -63,21 +64,21 @@ public enum EMcSeries {
             0, 0, 0),
 
     /**
-     * QnA系列
+     * QnA series
      */
     QnA(EMcFrameType.FRAME_3E, 1, 3, 480, 3584,
             96, 960, 94,
             120, 4, 960),
 
     /**
-     * MELSEC-Q/L系列
+     * MELSEC-Q/L series
      */
     Q_L(EMcFrameType.FRAME_3E, 1, 3, 960, 7168,
             192, 1920, 188,
             120, 4, 960),
 
     /**
-     * MELSEC iQ-R系列
+     * MELSEC iQ-R series
      * TODO: 不是很确定IQ-R是否为3E帧类型
      */
     IQ_R(EMcFrameType.FRAME_3E, 2, 4, 960, 7168,
@@ -110,57 +111,68 @@ public enum EMcSeries {
     }
 
     /**
-     * 对应帧类型
+     * Frame type.
+     * (对应帧类型)
      */
     private final EMcFrameType frameType;
 
     /**
-     * 软元件代码字节长度
+     * Device code byte length.
+     * (软元件代码字节长度)
      */
     private final int deviceCodeByteLength;
 
     /**
-     * 起始软元件编号字节长度
+     * head device number byte length.
+     * (起始软元件编号字节长度)
      */
     private final int headDeviceNumberByteLength;
 
     /**
-     * 软元件按字批量读写的点数
+     * device batch in word points count.
+     * (软元件按字批量读写的点数)
      */
     private final int deviceBatchInWordPointsCount;
 
     /**
-     * 软元件按位批量读写的点数
+     * Device batch in bit points count.
+     * (软元件按位批量读写的点数)
      */
     private final int deviceBatchInBitPointsCount;
 
     /**
-     * 软元件按字随机读的点数
+     * Device random read in word points count.
+     * (软元件按字随机读的点数)
      */
     private final int deviceRandomReadInWordPointsCount;
 
     /**
-     * 软元件按字随机写的点数
+     * Device random write in word points count.
+     * (软元件按字随机写的点数)
      */
     private final int deviceRandomWriteInWordPointsCount;
 
     /**
-     * 软元件按位随机写的点数
+     * Device random write in bit points count.
+     * (软元件按位随机写的点数)
      */
     private final int deviceRandomWriteInBitPointsCount;
 
     /**
-     * 软元件按块批量读写的块数
+     * Device blocks count.
+     * (软元件按块批量读写的块数)
      */
     private final int deviceBlocksBlocksCount;
 
     /**
-     * 软元件按块批量写的点大小
+     * Device blocks write points size.
+     * (软元件按块批量写的点大小)
      */
     private final int deviceBlocksWritePointsSize;
 
     /**
-     * 软元件按块批量写的点数
+     * Device blocks write points count.
+     * (软元件按块批量写的点数)
      */
     private final int deviceBlocksWritePointsCount;
 }

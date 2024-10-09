@@ -26,25 +26,28 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 
 
 import com.github.xingshuangs.iot.common.IObjectByteArray;
-import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import lombok.Data;
 
 /**
+ * Ack message.
  * 响应消息
  *
  * @author xingshuang
  */
 @Data
 public class McMessageAck implements IObjectByteArray {
+
     /**
-     * 响应头
+     * Ack header
+     * (响应头)
      */
     private McHeaderAck header;
 
     /**
-     * 响应数据
+     * Ack data.
+     * (响应数据)
      */
     private McData data;
 
@@ -62,7 +65,8 @@ public class McMessageAck implements IObjectByteArray {
     }
 
     /**
-     * 自我校验，主要核对数据长度
+     * Self check for data length.
+     * (自我校验，主要核对数据长度)
      */
     public void selfCheck() {
         if (this.header.getFrameType() == EMcFrameType.FRAME_1E) {
@@ -76,8 +80,8 @@ public class McMessageAck implements IObjectByteArray {
      * Parses byte array and converts it to object.
      * (解析字节数组数据)
      *
-     * @param data      字节数组数据
-     * @param frameType 帧类型
+     * @param data      byte array
+     * @param frameType frame type
      * @return McMessageAck
      */
     public static McMessageAck fromBytes(final byte[] data, EMcFrameType frameType) {
@@ -88,9 +92,9 @@ public class McMessageAck implements IObjectByteArray {
      * Parses byte array and converts it to object.
      * (解析字节数组数据)
      *
-     * @param data      字节数组数据
-     * @param offset    偏移量
-     * @param frameType 帧类型
+     * @param data      byte array
+     * @param offset    index offset
+     * @param frameType frame type
      * @return McMessageAck
      */
     public static McMessageAck fromBytes(final byte[] data, final int offset, EMcFrameType frameType) {

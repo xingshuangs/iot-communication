@@ -38,191 +38,229 @@ import java.util.Map;
 public enum EMcDeviceCode {
 
     /**
+     * Special relay
      * 特殊继电器
      */
     SM("SM", GeneralConst.TYPE_BIT, 10, "SM", (byte) 0x9, "SM**", 0x0091),
 
     /**
+     * Special register
      * 特殊寄存器
      */
     SD("SD", GeneralConst.TYPE_WORD, 10, "SD", (byte) 0xA, "SD**", 0x00A9),
 
     /**
+     * Input
      * 输入
      */
     X("X", GeneralConst.TYPE_BIT, 16, "X*", (byte) 0x9C, "X***", 0x009C, 0x5820),
 
     /**
+     * Output
      * 输出
      */
     Y("Y", GeneralConst.TYPE_BIT, 16, "Y*", (byte) 0x9D, "Y***", 0x009D, 0x5920),
 
     /**
+     * Internal relay
      * 内部继电器
      */
     M("M", GeneralConst.TYPE_BIT, 10, "M*", (byte) 0x90, "M***", 0x0090, 0x4D20),
 
     /**
+     * Latch relay
      * 锁存继电器
      */
     L("L", GeneralConst.TYPE_BIT, 10, "L*", (byte) 0x92, "L***", 0x0092, 0x4D20),
 
     /**
+     * Annunciator
      * 报警器
      */
     F("F", GeneralConst.TYPE_BIT, 10, "F*", (byte) 0x93, "F***", 0x0093, 0x4620),
 
     /**
+     * Edge relay
      * 变址继电器
      */
     V("V", GeneralConst.TYPE_BIT, 10, "V*", (byte) 0x94, "V***", 0x0094),
 
     /**
+     * Link relay
      * 链接继电器
      */
     B("B", GeneralConst.TYPE_BIT, 16, "B*", (byte) 0xA0, "B***", 0x00A0, 0x4220),
 
     /**
+     * Data register
      * 数据寄存器
      */
     D("D", GeneralConst.TYPE_WORD, 10, "D*", (byte) 0xA8, "D***", 0x00A8, 0x4420),
 
     /**
+     * Link register
      * 链接寄存器
      */
     W("W", GeneralConst.TYPE_WORD, 16, "W*", (byte) 0xB4, "W***", 0x00B4, 0x5720),
 
     /**
+     * Timer contact
      * 定时器触点
      */
     TS("TS", GeneralConst.TYPE_BIT, 10, "TS", (byte) 0xC1, "TS**", 0x00C1, 0x5453),
 
     /**
+     * Time coil
      * 定时器线圈
      */
     TC("TC", GeneralConst.TYPE_BIT, 10, "TC", (byte) 0xC0, "TC**", 0x00C0, 0x5443),
 
     /**
+     * Timer current value
      * 定时器当前值
      */
     TN("TN", GeneralConst.TYPE_WORD, 10, "TN", (byte) 0xC2, "TN**", 0x00C2, 0x544E),
 
     /**
+     * Long time contact
      * 长定时器触点
      */
     LTS("LTS", GeneralConst.TYPE_BIT, 10, "", (byte) 0x00, "LTS*", 0x0051),
 
     /**
+     * Long time coil
      * 长定时器线圈
      */
     LTC("LTC", GeneralConst.TYPE_BIT, 10, "", (byte) 0x00, "LTC*", 0x0050),
 
     /**
+     * Long time current value
      * 长定时器当前值
      */
     LTN("LTN", GeneralConst.TYPE_DWORD, 10, "", (byte) 0x00, "LTN*", 0x0052),
 
     /**
+     * Retentive timer contact
      * 累计定时器触点
      */
     STS("STS", GeneralConst.TYPE_BIT, 10, "SS", (byte) 0xC7, "STS*", 0x00C7),
 
     /**
+     * Retentive timer coil
      * 累计定时器线圈
      */
     STC("STC", GeneralConst.TYPE_BIT, 10, "SC", (byte) 0xC6, "STC*", 0x00C6),
 
     /**
+     * Retentive timer current value
      * 累计定时器当前值
      */
     STN("STN", GeneralConst.TYPE_WORD, 10, "SN", (byte) 0xC8, "STN*", 0x00C8),
 
     /**
+     * Long retentive timer contact
      * 长累计定时器触点
      */
     LSTS("LSTS", GeneralConst.TYPE_BIT, 10, "", (byte) 0x00, "LSTS", 0x0059),
 
     /**
+     * Long retentive timer coil
      * 长累计定时器线圈
      */
     LSTC("LSTC", GeneralConst.TYPE_BIT, 10, "", (byte) 0x00, "LSTC", 0x0058),
 
     /**
+     * Long retentive timer current value
      * 长累计定时器当前值
      */
     LSTN("LSTN", GeneralConst.TYPE_DWORD, 10, "", (byte) 0x00, "LSTN", 0x005A),
 
     /**
+     * Counter contact
      * 计数器触点
      */
     CS("CS", GeneralConst.TYPE_BIT, 10, "CS", (byte) 0xC4, "CS**", 0x00C4, 0x4353),
 
     /**
+     * Counter coil
      * 计数器线圈
      */
     CC("CC", GeneralConst.TYPE_BIT, 10, "CC", (byte) 0xC3, "CC**", 0x00C3, 0x4343),
 
     /**
+     * Counter current value
      * 计数器当前值
      */
     CN("CN", GeneralConst.TYPE_WORD, 10, "CN", (byte) 0xC5, "CN**", 0x00C5, 0x434E),
 
     /**
+     * Long counter contact
      * 长计数器触点
      */
     LCS("LCS", GeneralConst.TYPE_BIT, 10, "", (byte) 0x00, "LCS*", 0x0055),
 
     /**
+     * Long counter coil
      * 长计数器线圈
      */
     LCC("LCC", GeneralConst.TYPE_BIT, 10, "", (byte) 0x00, "LCC*", 0x0054),
 
     /**
+     * Long counter current value
      * 长计数器当前值
      */
     LCN("LCN", GeneralConst.TYPE_DWORD, 10, "", (byte) 0x00, "LCN*", 0x0056),
 
     /**
+     * Link special relay
      * 链接特殊继电器
      */
     SB("SB", GeneralConst.TYPE_BIT, 16, "SB", (byte) 0xA1, "SB**", 0x00A1),
 
     /**
+     * Link special register
      * 链接特殊寄存器
      */
     SW("SW", GeneralConst.TYPE_WORD, 16, "SW", (byte) 0xB5, "SW**", 0x00B5),
 
     /**
+     * Direct access input
      * 直接访问输入
      */
     DX("DX", GeneralConst.TYPE_BIT, 16, "DX", (byte) 0xA2, "DX**", 0x00A2),
 
     /**
+     * Direct access output
      * 直接访问输出
      */
     DY("DY", GeneralConst.TYPE_BIT, 16, "DY", (byte) 0xA3, "DY**", 0x00A3),
 
     /**
+     * Index register, index register
      * 变址寄存器
      */
     Z("Z", GeneralConst.TYPE_WORD, 10, "Z*", (byte) 0xCC, "Z***", 0x00CC),
 
     /**
+     * Index register, long index register
      * 变址寄存器长变址寄存器
      */
     LZ("LZ", GeneralConst.TYPE_DWORD, 10, "", (byte) 0x00, "LZ**", 0x0062),
 
     /**
+     * File register, block switching method
      * 文件寄存器 块切换方式
      */
     R("R", GeneralConst.TYPE_WORD, 10, "R*", (byte) 0xAF, "R***", 0x00AF, 0x5220),
 
     /**
+     * File register, serial number access method
      * 文件寄存器 连号访问方式
      */
     ZR("ZR", GeneralConst.TYPE_WORD, 16, "ZR", (byte) 0xB0, "ZR**", 0x00B0),
 
     /**
+     * Refresh data register
      * 刷新数据寄存器
      */
     RD("RD", GeneralConst.TYPE_WORD, 10, "", (byte) 0x00, "RD**", 0x002C),

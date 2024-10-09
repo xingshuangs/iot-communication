@@ -318,7 +318,7 @@ public class S7Serializer implements IPLCSerializable {
                 item.getField().set(result, dateTime);
                 break;
             default:
-                throw new S7CommException("Data type not recognized");
+                throw new S7CommException("Data type can not be recognized");
         }
     }
 
@@ -494,7 +494,7 @@ public class S7Serializer implements IPLCSerializable {
                 break;
             default:
                 // 无法识别数据类型
-                throw new S7CommException("Data type not recognized");
+                throw new S7CommException("Data type can not be recognized");
         }
     }
     // endregion

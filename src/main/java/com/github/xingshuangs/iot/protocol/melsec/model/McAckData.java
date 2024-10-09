@@ -30,6 +30,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Ack data.
  * 协议体数据：响应数据
  *
  * @author xingshuang
@@ -39,7 +40,8 @@ import lombok.EqualsAndHashCode;
 public class McAckData extends McData {
 
     /**
-     * 数据内容
+     * Data content.
+     * (数据内容)
      */
     private byte[] data = new byte[0];
 

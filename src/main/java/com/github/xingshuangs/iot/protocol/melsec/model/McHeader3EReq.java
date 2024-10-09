@@ -31,6 +31,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Req header of 3E.
  * 请求头
  *
  * @author xingshuang
@@ -40,6 +41,7 @@ import lombok.EqualsAndHashCode;
 public class McHeader3EReq extends McHeaderReq {
 
     /**
+     * Data length.
      * 数据长度，2字节，请求数据长，指定从监视定时器到请求数据为止的数据长；
      */
     protected int dataLength = 0;

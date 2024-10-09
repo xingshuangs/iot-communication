@@ -28,6 +28,7 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 import com.github.xingshuangs.iot.common.IObjectByteArray;
 
 /**
+ * Data class.
  * 协议体数据：无数据
  *
  * @author xingshuang

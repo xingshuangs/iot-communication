@@ -225,7 +225,7 @@ public class ByteArraySerializer implements IByteArraySerializable {
                 break;
             default:
                 // 提取数据的时候无法识别数据类型
-                throw new ByteArrayParseException("The data type is not recognized when extracting the data");
+                throw new ByteArrayParseException("The data type can not be recognized when extracting the data");
         }
     }
 
@@ -293,7 +293,7 @@ public class ByteArraySerializer implements IByteArraySerializable {
                 break;
             default:
                 // 填充数据的时候无法识别数据类型
-                throw new ByteArrayParseException("The data type is not recognized when populating the data");
+                throw new ByteArrayParseException("The data type can not be recognized when populating the data");
         }
     }
 

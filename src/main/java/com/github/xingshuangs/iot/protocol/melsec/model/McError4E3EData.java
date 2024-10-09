@@ -32,6 +32,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Error data for 4E and 3E
  * 协议体数据：错误信息
  *
  * @author xingshuang
@@ -41,16 +42,19 @@ import lombok.EqualsAndHashCode;
 public class McError4E3EData extends McData {
 
     /**
+     * Access route.
      * 访问路径，存在多种访问路径
      */
     private McAccessRoute accessRoute;
 
     /**
+     * Command type.
      * 指令，2个字节
      */
     private EMcCommand command;
 
     /**
+     * Sub command.
      * 子指令，2个字节
      */
     private int subcommand = 0x0000;

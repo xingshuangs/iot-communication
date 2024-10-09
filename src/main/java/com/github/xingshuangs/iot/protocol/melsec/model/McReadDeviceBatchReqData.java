@@ -31,7 +31,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 软元件访问批量读请求数据
+ * Device access request data, batch read.
+ * (软元件访问批量读请求数据)
  *
  * @author xingshuang
  */
@@ -40,7 +41,8 @@ import lombok.EqualsAndHashCode;
 public class McReadDeviceBatchReqData extends McReqData {
 
     /**
-     * 软元件设备地址
+     * Device address.
+     * (软元件设备地址)
      */
     protected McDeviceAddress deviceAddress;
 

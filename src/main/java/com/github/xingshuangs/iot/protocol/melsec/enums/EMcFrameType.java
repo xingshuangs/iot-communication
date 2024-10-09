@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Frame type class.
  * 帧类型
  *
  * @author xingshuang
@@ -72,12 +73,14 @@ public enum EMcFrameType {
     private final String code;
 
     /**
-     * 请求副帧头
+     * Request sub header.
+     * (请求副帧头)
      */
     private final int reqSubHeader;
 
     /**
-     * 响应副帧头
+     * Ack sub header.
+     * (响应副帧头)
      */
     private final int ackSubHeader;
 

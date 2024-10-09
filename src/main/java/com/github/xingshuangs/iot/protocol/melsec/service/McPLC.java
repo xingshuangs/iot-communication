@@ -47,25 +47,25 @@ import static com.github.xingshuangs.iot.common.constant.GeneralConst.MELSEC_POR
 /**
  * 三菱的PLC
  * 通信帧命名规格<br>
- *  通信帧命名格式如下：<br>
- *  xxx 兼容 n m 帧(示例: QnA 兼容 3C 帧、QnA 兼容 3E 帧)<br>
- *  1、xxx 用于表示与以前产品模块的指令兼容性的对象可编程控制器 CPU<br>
- *   A : A 系列可编程控制器 CPU<br>
- *   QnA : QnA 系列可编程控制器 CPU<br>
- *  2、n对应的以前产品模块的帧<br>
- *   1 : 兼容 A 系列的计算机链接模块、以太网接口模块支持的指令的通信帧<br>
- *   2 : 兼容 QnA 系列串行通信模块支持的 QnA 简易帧<br>
- *   3 : QnA 系列串行通信模块支持的 QnA 帧及兼容 QnA 系列以太网接口模块支持的通信帧<br>
- *   4 : 兼容 QnA 系列串行通信模块支持的 QnA 扩展帧<br>
- *  3、m是指相应帧进行数据通信的对象模块<br>
- *   C : C24<br>
- *   E : E71<br>
+ * 通信帧命名格式如下：<br>
+ * xxx 兼容 n m 帧(示例: QnA 兼容 3C 帧、QnA 兼容 3E 帧)<br>
+ * 1、xxx 用于表示与以前产品模块的指令兼容性的对象可编程控制器 CPU<br>
+ * A : A 系列可编程控制器 CPU<br>
+ * QnA : QnA 系列可编程控制器 CPU<br>
+ * 2、n对应的以前产品模块的帧<br>
+ * 1 : 兼容 A 系列的计算机链接模块、以太网接口模块支持的指令的通信帧<br>
+ * 2 : 兼容 QnA 系列串行通信模块支持的 QnA 简易帧<br>
+ * 3 : QnA 系列串行通信模块支持的 QnA 帧及兼容 QnA 系列以太网接口模块支持的通信帧<br>
+ * 4 : 兼容 QnA 系列串行通信模块支持的 QnA 扩展帧<br>
+ * 3、m是指相应帧进行数据通信的对象模块<br>
+ * C : C24<br>
+ * E : E71<br>
  * <p>
  * 通信方式<br>
- *  一般我们使用比较多的是以太网通信，<br>
- *  对于FX5U系列/Q系列/Qna系列/L系列的PLC，通常会使用QnA兼容3E帧，<br>
- *  对于FX3U系列，我们需要加以太网模块，采用A兼容1E帧。<br>
- *  对于串口设备，一般会使用QnA兼容2C帧和QnA兼容4C帧。<br>
+ * 一般我们使用比较多的是以太网通信，<br>
+ * 对于FX5U系列/Q系列/Qna系列/L系列的PLC，通常会使用QnA兼容3E帧，<br>
+ * 对于FX3U系列，我们需要加以太网模块，采用A兼容1E帧。<br>
+ * 对于串口设备，一般会使用QnA兼容2C帧和QnA兼容4C帧。<br>
  *
  * @author xingshuang
  */
@@ -94,21 +94,23 @@ public class McPLC extends McNetwork {
     //region 软元件读取
 
     /**
-     * 读多地址
+     * Read multi address
+     * (读多地址)
      *
-     * @param multiAddressRead 多地址
-     * @return 数据列表
+     * @param multiAddressRead multi address
+     * @return device content list
      */
     public List<McDeviceContent> readMultiAddress(McMultiAddressRead multiAddressRead) {
         return this.readDeviceRandomInWord(multiAddressRead.getWords(), multiAddressRead.getDwords());
     }
 
     /**
-     * 读取booleans数据
+     * Read boolean.
+     * (读取booleans数据)
      *
-     * @param address 地址
-     * @param count   boolean个数
-     * @return boolean列表
+     * @param address address
+     * @param count   boolean count
+     * @return boolean list
      */
     public List<Boolean> readBoolean(String address, int count) {
         // 三菱1个字节对应两个boolean
@@ -119,11 +121,12 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 读取字节数组数据
+     * Read bytes.
+     * (读取字节数组数据)
      *
-     * @param address 地址
-     * @param count   字节个数
-     * @return 字节数组
+     * @param address address string
+     * @param count   byte count
+     * @return byte array
      */
     public byte[] readBytes(String address, int count) {
         // 三菱1个字占2个字节
@@ -134,10 +137,11 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 读取1个boolean数据
+     * Read boolean.
+     * (读取1个boolean数据)
      *
-     * @param address 地址
-     * @return boolean
+     * @param address address string
+     * @return boolean data
      */
     public boolean readBoolean(String address) {
         List<Boolean> booleans = this.readBoolean(address, 1);
@@ -145,10 +149,11 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 读取1个字节数据
+     * Read byte.
+     * (读取1个字节数据)
      *
-     * @param address 地址
-     * @return 字节
+     * @param address address string
+     * @return byte data
      */
     public byte readByte(String address) {
         byte[] bytes = this.readBytes(address, 1);
@@ -156,10 +161,11 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 读取1个Int16数据
+     * Read int16.
+     * (读取1个Int16数据)
      *
-     * @param address 地址
-     * @return short数据
+     * @param address address string
+     * @return short data
      */
     public short readInt16(String address) {
         byte[] bytes = this.readBytes(address, 2);
@@ -167,20 +173,22 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 读取多个Int16数据
+     * Read int16.
+     * (读取多个Int16数据)
      *
-     * @param addresses 多地址
-     * @return short列表
+     * @param addresses address string
+     * @return short list
      */
     public List<Short> readInt16(String... addresses) {
         return this.readInt16(Arrays.asList(addresses));
     }
 
     /**
-     * 读取多个Int16数据
+     * Read int16.
+     * (读取多个Int16数据)
      *
-     * @param addresses 多地址
-     * @return short列表
+     * @param addresses address string
+     * @return short list
      */
     public List<Short> readInt16(List<String> addresses) {
         List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
@@ -193,10 +201,11 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 读取1个UInt16数据
+     * Read uint16.
+     * (读取1个UInt16数据)
      *
-     * @param address 地址
-     * @return int数据
+     * @param address address string
+     * @return UInt16
      */
     public int readUInt16(String address) {
         byte[] bytes = this.readBytes(address, 2);
@@ -204,20 +213,22 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 读取多个UInt16数据
+     * Read uint16.
+     * (读取多个UInt16数据)
      *
-     * @param addresses 多地址
-     * @return integer列表
+     * @param addresses addresses string
+     * @return integer list
      */
     public List<Integer> readUInt16(String... addresses) {
         return this.readUInt16(Arrays.asList(addresses));
     }
 
     /**
-     * 读取多个UInt16数据
+     * Read uint16.
+     * (读取多个UInt16数据)
      *
-     * @param addresses 多地址
-     * @return integer列表
+     * @param addresses addresses string
+     * @return integer list
      */
     public List<Integer> readUInt16(List<String> addresses) {
         List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
@@ -231,10 +242,11 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 读取1个Int32数据
+     * Read int32.
+     * (读取1个Int32数据)
      *
-     * @param address 地址
-     * @return int数据
+     * @param address address string
+     * @return int data
      */
     public int readInt32(String address) {
         byte[] bytes = this.readBytes(address, 4);
@@ -242,20 +254,22 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 读取多个Int32数据
+     * Read int32.
+     * (读取多个Int32数据)
      *
-     * @param addresses 多地址
-     * @return integer列表
+     * @param addresses addresses string
+     * @return integer list
      */
     public List<Integer> readInt32(String... addresses) {
         return this.readInt32(Arrays.asList(addresses));
     }
 
     /**
-     * 读取多个Int32数据
+     * Read int32.
+     * (读取多个Int32数据)
      *
-     * @param addresses 多地址
-     * @return integer列表
+     * @param addresses addresses string
+     * @return integer list
      */
     public List<Integer> readInt32(List<String> addresses) {
         List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
@@ -269,10 +283,11 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 读取1个UInt32数据
+     * Read uint32.
+     * (读取1个UInt32数据)
      *
-     * @param address 地址
-     * @return long数据
+     * @param address address string
+     * @return long data
      */
     public long readUInt32(String address) {
         byte[] bytes = this.readBytes(address, 4);
@@ -280,20 +295,22 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 读取多个UInt32数据
+     * Read uint32.
+     * (读取多个UInt32数据)
      *
-     * @param addresses 多地址
-     * @return long列表
+     * @param addresses addresses string
+     * @return long list
      */
     public List<Long> readUInt32(String... addresses) {
         return this.readUInt32(Arrays.asList(addresses));
     }
 
     /**
-     * 读取多个UInt32数据
+     * Read uint32.
+     * (读取多个UInt32数据)
      *
-     * @param addresses 多地址
-     * @return long列表
+     * @param addresses addresses string
+     * @return long list
      */
     public List<Long> readUInt32(List<String> addresses) {
         List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
@@ -307,10 +324,11 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 读取1个Float32数据
+     * Read float32.
+     * (读取1个Float32数据)
      *
-     * @param address 地址
-     * @return float数据
+     * @param address address string
+     * @return float list
      */
     public float readFloat32(String address) {
         byte[] bytes = this.readBytes(address, 4);
@@ -318,20 +336,22 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 读取多个Float32数据
+     * Read float32.
+     * (读取多个Float32数据)
      *
-     * @param addresses 多地址
-     * @return Float列表
+     * @param addresses addresses string
+     * @return Float list
      */
     public List<Float> readFloat32(String... addresses) {
         return this.readFloat32(Arrays.asList(addresses));
     }
 
     /**
-     * 读取多个Float32数据
+     * Read float32.
+     * (读取多个Float32数据)
      *
-     * @param addresses 多地址
-     * @return Float列表
+     * @param addresses addresses string
+     * @return Float list
      */
     public List<Float> readFloat32(List<String> addresses) {
         List<McDeviceAddress> deviceAddresses = addresses.stream().map(McDeviceAddress::createBy)
@@ -345,10 +365,11 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 读取1个Float64数据
+     * Read float64.
+     * (读取1个Float64数据)
      *
-     * @param address 地址
-     * @return double数据
+     * @param address address string
+     * @return double data
      */
     public double readFloat64(String address) {
         byte[] bytes = this.readBytes(address, 8);
@@ -358,7 +379,7 @@ public class McPLC extends McNetwork {
 //    /**
 //     * 读取多个Float64数据
 //     *
-//     * @param addresses 多地址
+//     * @param addresses addresses
 //     * @return Double列表
 //     */
 //    public List<Double> readFloat64(String... addresses) {
@@ -368,7 +389,7 @@ public class McPLC extends McNetwork {
 //    /**
 //     * 读取多个Float64数据
 //     *
-//     * @param addresses 多地址
+//     * @param addresses addresses
 //     * @return Double列表
 //     */
 //    public List<Double> readFloat64(List<String> addresses) {
@@ -383,11 +404,12 @@ public class McPLC extends McNetwork {
 //    }
 
     /**
-     * 读取字符串数据
+     * Read string.
+     * (读取字符串数据)
      *
-     * @param address 地址
-     * @param length  字符串长度
-     * @return 字符串
+     * @param address address string
+     * @param length  string length
+     * @return string
      */
     public String readString(String address, int length) {
         byte[] bytes = this.readBytes(address, length);
@@ -399,29 +421,32 @@ public class McPLC extends McNetwork {
     //region 软元件写入
 
     /**
-     * 写多地址
+     * Write multi address.
+     * (写多地址)
      *
-     * @param multiAddressWrite 多地址
+     * @param multiAddressWrite addresses
      */
     public void writeMultiAddress(McMultiAddressWrite multiAddressWrite) {
         this.writeDeviceRandomInWord(multiAddressWrite.getWords(), multiAddressWrite.getDwords());
     }
 
     /**
-     * 写入多个boolean
+     * Write boolean.
+     * (写入多个boolean)
      *
-     * @param address  地址
-     * @param booleans boolean值
+     * @param address  address string
+     * @param booleans boolean data
      */
     public void writeBoolean(String address, Boolean... booleans) {
         this.writeBoolean(address, Arrays.asList(booleans));
     }
 
     /**
-     * 写入boolean数据列表
+     * Write boolean.
+     * (写入boolean数据列表)
      *
-     * @param address  地址
-     * @param booleans boolean列表
+     * @param address  address string
+     * @param booleans boolean list
      */
     public void writeBoolean(String address, List<Boolean> booleans) {
         byte[] bytes = this.getBytesBy(booleans);
@@ -430,10 +455,11 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 写入字节数组
+     * Write bytes.
+     * (写入字节数组)
      *
-     * @param address 地址
-     * @param data    字节数组
+     * @param address address string
+     * @param data    byte array data
      */
     public void writeBytes(String address, byte[] data) {
         // 三菱1个字占2个字节
@@ -447,30 +473,33 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 写入1个boolean数据
+     * Write boolean.
+     * (写入1个boolean数据)
      *
-     * @param address 地址
-     * @param data    boolean数据
+     * @param address address string
+     * @param data    boolean data
      */
     public void writeBoolean(String address, boolean data) {
         this.writeBoolean(address, Collections.singletonList(data));
     }
 
     /**
-     * 写入1个字节数据
+     * Write byte.
+     * (写入1个字节数据)
      *
-     * @param address 地址
-     * @param data    字节数据
+     * @param address address string
+     * @param data    byte data
      */
     public void writeByte(String address, byte data) {
         this.writeBytes(address, new byte[]{data});
     }
 
     /**
-     * 写入1个Int16数据
+     * Write int16.
+     * (写入1个Int16数据)
      *
-     * @param address 地址
-     * @param data    short数据
+     * @param address address string
+     * @param data    short data
      */
     public void writeInt16(String address, short data) {
         byte[] bytes = ByteWriteBuff.newInstance(2, true).putShort(data).getData();
@@ -478,20 +507,22 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 写入多个Int16数据
+     * Write int16.
+     * (写入多个Int16数据)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address address string
+     * @param data    short data
      */
     public void writeInt16(String address, Short... data) {
         this.writeInt16(address, Arrays.asList(data));
     }
 
     /**
-     * 写入多个Int16数据
+     * Write int16.
+     * (写入多个Int16数据)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address address string
+     * @param data    short data list
      */
     public void writeInt16(String address, List<Short> data) {
         if (data.isEmpty()) {
@@ -503,10 +534,11 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 写入1个UInt16数据
+     * Write uint16.
+     * (写入1个UInt16数据)
      *
-     * @param address 地址
-     * @param data    int数据
+     * @param address address string
+     * @param data    int data
      */
     public void writeUInt16(String address, int data) {
         byte[] bytes = ByteWriteBuff.newInstance(2, true).putShort(data).getData();
@@ -514,20 +546,22 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 写入多个UInt16数据
+     * Write uint16.
+     * (写入多个UInt16数据)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address address string
+     * @param data    int data
      */
     public void writeUInt16(String address, Integer... data) {
         this.writeUInt16(address, Arrays.asList(data));
     }
 
     /**
-     * 写入多个UInt16数据
+     * Write uint16.
+     * (写入多个UInt16数据)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address address string
+     * @param data    int data list
      */
     public void writeUInt16(String address, List<Integer> data) {
         if (data.isEmpty()) {
@@ -539,10 +573,11 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 写入1个Int32数据
+     * Write int32.
+     * (写入1个Int32数据)
      *
-     * @param address 地址
-     * @param data    int数据
+     * @param address address string
+     * @param data    int data
      */
     public void writeInt32(String address, int data) {
         byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.AB_CD).putInteger(data).getData();
@@ -550,20 +585,22 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 写入多个Int32数据
+     * Write int32.
+     * (写入多个Int32数据)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address address string
+     * @param data    int data
      */
     public void writeInt32(String address, Integer... data) {
         this.writeInt32(address, Arrays.asList(data));
     }
 
     /**
-     * 写入多个Int32数据
+     * Write int32.
+     * (写入多个Int32数据)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address address string
+     * @param data    int data
      */
     public void writeInt32(String address, List<Integer> data) {
         if (data.isEmpty()) {
@@ -575,10 +612,11 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 写入1个UInt32数据
+     * Write uint32.
+     * (写入1个UInt32数据)
      *
-     * @param address 地址
-     * @param data    long数据
+     * @param address address string
+     * @param data    long data
      */
     public void writeUInt32(String address, long data) {
         byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.AB_CD).putInteger(data).getData();
@@ -586,20 +624,22 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 写入多个UInt32数据
+     * Write uint32.
+     * (写入多个UInt32数据)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address address string
+     * @param data    long data
      */
     public void writeUInt32(String address, Long... data) {
         this.writeUInt32(address, Arrays.asList(data));
     }
 
     /**
-     * 写入多个UInt32数据
+     * Write uint32.
+     * (写入多个UInt32数据)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address address string
+     * @param data    long data list
      */
     public void writeUInt32(String address, List<Long> data) {
         if (data.isEmpty()) {
@@ -611,10 +651,11 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 写入1个Float32数据
+     * Write float32.
+     * (写入1个Float32数据)
      *
-     * @param address 地址
-     * @param data    float数据
+     * @param address address string
+     * @param data    float data
      */
     public void writeFloat32(String address, float data) {
         byte[] bytes = ByteWriteBuff.newInstance(4, EByteBuffFormat.AB_CD).putFloat(data).getData();
@@ -622,20 +663,22 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 写入多个Float32数据
+     * Write float32.
+     * (写入多个Float32数据)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address address string
+     * @param data    float data
      */
     public void writeFloat32(String address, Float... data) {
         this.writeFloat32(address, Arrays.asList(data));
     }
 
     /**
-     * 写入多个Float32数据
+     * Write float32.
+     * (写入多个Float32数据)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address address string
+     * @param data    float data list
      */
     public void writeFloat32(String address, List<Float> data) {
         if (data.isEmpty()) {
@@ -647,10 +690,11 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 写入1个Float64数据
+     * Write float64.
+     * (写入1个Float64数据)
      *
-     * @param address 地址
-     * @param data    double数据
+     * @param address address string
+     * @param data    double data
      */
     public void writeFloat64(String address, double data) {
         byte[] bytes = ByteWriteBuff.newInstance(8, EByteBuffFormat.AB_CD).putDouble(data).getData();
@@ -658,20 +702,22 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 写入多个Float64数据
+     * Write float64.
+     * (写入多个Float64数据)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address address string
+     * @param data    double data
      */
     public void writeFloat64(String address, Double... data) {
         this.writeFloat64(address, Arrays.asList(data));
     }
 
     /**
-     * 写入多个Float64数据
+     * Write float64.
+     * (写入多个Float64数据)
      *
-     * @param address 地址
-     * @param data    数据
+     * @param address address string
+     * @param data    double list
      */
     public void writeFloat64(String address, List<Double> data) {
         if (data.isEmpty()) {
@@ -683,10 +729,11 @@ public class McPLC extends McNetwork {
     }
 
     /**
-     * 写入字符串数据
+     * Write string.
+     * (写入字符串数据)
      *
-     * @param address 地址
-     * @param data    字符串数据
+     * @param address address string
+     * @param data    string data
      */
     public void writeString(String address, String data) {
         byte[] bytes = ByteWriteBuff.newInstance(data.length(), true).putString(data).getData();

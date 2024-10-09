@@ -28,6 +28,7 @@ package com.github.xingshuangs.iot.protocol.melsec.model;
 import com.github.xingshuangs.iot.common.IObjectByteArray;
 
 /**
+ * Access route.
  * 访问路径
  *
  * @author xingshuang

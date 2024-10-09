@@ -31,7 +31,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 1E帧访问路径
+ * Access route of 1E frame
+ * (1E帧访问路径)
  *
  * @author xingshuang
  */
@@ -40,7 +41,8 @@ import lombok.EqualsAndHashCode;
 public class McFrame1EAccessRoute extends McAccessRoute {
 
     /**
-     * 可编程控制器编号，1个字节
+     * Pc number, 1-byte.
+     * (可编程控制器编号，1个字节)
      */
     private int pcNumber = 0xFF;
 

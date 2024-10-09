@@ -67,7 +67,7 @@ public class Datum implements IObjectByteArray {
             case UPLOAD:
                 return UpDownloadDatum.fromBytes(data, messageType);
             default:
-                throw new S7CommException("function code not recognized");
+                throw new S7CommException("function code can not be recognized");
         }
     }
 }

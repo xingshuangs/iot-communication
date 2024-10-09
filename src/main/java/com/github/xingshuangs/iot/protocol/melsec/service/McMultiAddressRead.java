@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Multi address read.
  * 多地址读
  *
  * @author xingshuang
@@ -40,19 +41,22 @@ import java.util.List;
 public class McMultiAddressRead {
 
     /**
+     * Word list.
      * word列表
      */
     private final List<McDeviceAddress> words = new ArrayList<>();
 
     /**
+     * Dword list.
      * dword列表
      */
     private final List<McDeviceAddress> dwords = new ArrayList<>();
 
     /**
-     * 添加获取word的地址
+     * Add word data.
+     * (添加获取word的地址)
      *
-     * @param address 地址
+     * @param address address string
      * @return McMultiAddressRead
      */
     public McMultiAddressRead addWordData(String address) {
@@ -61,9 +65,10 @@ public class McMultiAddressRead {
     }
 
     /**
-     * 添加获取word的地址
+     * Add dword data.
+     * (添加获取word的地址)
      *
-     * @param address 地址
+     * @param address address string
      * @return McMultiAddressRead
      */
     public McMultiAddressRead addDWordData(String address) {

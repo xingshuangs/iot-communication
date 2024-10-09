@@ -31,6 +31,7 @@ import com.github.xingshuangs.iot.protocol.melsec.enums.EMcFrameType;
 import lombok.Data;
 
 /**
+ * Ack header.
  * 响应头
  *
  * @author xingshuang
@@ -39,17 +40,20 @@ import lombok.Data;
 public class McHeaderAck implements IObjectByteArray {
 
     /**
-     * 帧类型
+     * Frame type.
+     * (帧类型)
      */
     protected EMcFrameType frameType = EMcFrameType.FRAME_3E;
 
     /**
+     * Sub header, 2-bytes.
      * 副帧头，2字节，根据报文的类型定义设置的值。
      * 1E帧，1个字节
      */
     protected int subHeader = 0;
 
     /**
+     * End code, 2-bytes.
      * 结束代码，2字节， 1E帧只有1个字节
      * 存储指令处理结果。
      * 正常结束时将存储0。
@@ -73,8 +77,8 @@ public class McHeaderAck implements IObjectByteArray {
      * Parses byte array and converts it to object.
      * (解析字节数组数据)
      *
-     * @param data      字节数组数据
-     * @param frameType 帧类型
+     * @param data      byte array
+     * @param frameType frame type
      * @return McHeaderAck
      */
     public static McHeaderAck fromBytes(final byte[] data, EMcFrameType frameType) {
@@ -85,9 +89,9 @@ public class McHeaderAck implements IObjectByteArray {
      * Parses byte array and converts it to object.
      * (解析字节数组数据)
      *
-     * @param data      字节数组数据
-     * @param offset    偏移量
-     * @param frameType 帧类型
+     * @param data      byte array
+     * @param offset    index offset
+     * @param frameType frame type
      * @return McHeaderAck
      */
     public static McHeaderAck fromBytes(final byte[] data, final int offset, EMcFrameType frameType) {
