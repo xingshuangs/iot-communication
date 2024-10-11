@@ -310,6 +310,39 @@ public class S7PLC extends PLCNetwork {
     }
 
     /**
+     * 读取一个Int64 8字节数据
+     *
+     * @param address 地址
+     * @return 一个Int64 8字节数据
+     */
+    public long readInt64(String address) {
+        DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 8));
+        return LongUtil.toInt64(dataItem.getData());
+    }
+
+    /**
+     * 读取Int64 8字节数据列表
+     *
+     * @param address 地址
+     * @return Int64 8字节数据列表
+     */
+    public List<Long> readInt64(String... address) {
+        return this.readInt64(Arrays.asList(address));
+    }
+
+    /**
+     * 读取Int64 8字节数据列表
+     *
+     * @param addresses 地址列表
+     * @return Int64 8字节数据列表
+     */
+    public List<Long> readInt64(List<String> addresses) {
+        List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 8)).collect(Collectors.toList());
+        List<DataItem> dataItems = this.readS7Data(requestItems);
+        return dataItems.stream().map(x -> LongUtil.toInt64(x.getData())).collect(Collectors.toList());
+    }
+
+    /**
      * 读取一个Float32的数据
      *
      * @param address 地址
@@ -588,6 +621,16 @@ public class S7PLC extends PLCNetwork {
      */
     public void writeInt32(String address, int data) {
         this.writeByte(address, IntegerUtil.toByteArray(data));
+    }
+
+    /**
+     * 写入Int64数据
+     *
+     * @param address 地址
+     * @param data    Int64数据
+     */
+    public void writeInt64(String address, long data) {
+        this.writeByte(address, LongUtil.toByteArray(data));
     }
 
     /**

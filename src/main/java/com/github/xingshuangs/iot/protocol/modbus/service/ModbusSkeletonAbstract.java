@@ -629,8 +629,22 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
      * @return Int32 data, 4 bytes
      */
     public int readInt32(int unitId, int address, EByteBuffFormat format) {
+        return this.readInt32(unitId, address, false, format);
+    }
+
+    /**
+     * Read Int32 from hold register.
+     * (读取一个Int32 4字节数据)
+     *
+     * @param unitId       unit id or slave id
+     * @param address      modbus address
+     * @param littleEndian is little endian, true: yes, false: no.
+     * @param format       format of 4 bytes
+     * @return Int32 data, 4 bytes
+     */
+    public int readInt32(int unitId, int address, boolean littleEndian, EByteBuffFormat format) {
         byte[] res = this.readHoldRegister(unitId, address, 2);
-        return ByteReadBuff.newInstance(res, format).getInt32();
+        return ByteReadBuff.newInstance(res, 0, littleEndian, format).getInt32();
     }
 
     /**
@@ -678,8 +692,85 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
      * @return UInt32 data, 4 bytes
      */
     public long readUInt32(int unitId, int address, EByteBuffFormat format) {
+        return this.readUInt32(unitId, address, false, format);
+    }
+
+    /**
+     * Read UInt32 from hold register.
+     * (读取一个UInt32 4字节数据)
+     *
+     * @param unitId       unit id or slave id
+     * @param address      modbus address
+     * @param littleEndian is little endian, true: yes, false: no.
+     * @param format       format of 4 bytes
+     * @return UInt32 data, 4 bytes
+     */
+    public long readUInt32(int unitId, int address, boolean littleEndian, EByteBuffFormat format) {
         byte[] res = this.readHoldRegister(unitId, address, 2);
-        return ByteReadBuff.newInstance(res, format).getUInt32();
+        return ByteReadBuff.newInstance(res, 0, littleEndian, format).getUInt32();
+    }
+
+    /**
+     * Read Int64 from hold register.
+     * (读取一个Int64 8字节数据)
+     *
+     * @param address modbus address
+     * @return Int64 data, 8 bytes
+     */
+    public long readInt64(int address) {
+        return this.readInt64(this.unitId, address, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * Read Int64 from hold register.
+     * (读取一个Int64 8字节数据)
+     *
+     * @param address modbus address
+     * @param format  format of 4 bytes
+     * @return Int64 data, 8 bytes
+     */
+    public long readInt64(int address, EByteBuffFormat format) {
+        return this.readInt64(this.unitId, address, format);
+    }
+
+    /**
+     * Read Int64 from hold register.
+     * (读取一个Int64 8字节数据)
+     *
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @return Int64 data, 8 bytes
+     */
+    public long readInt64(int unitId, int address) {
+        return this.readInt64(unitId, address, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * Read Int64 from hold register.
+     * (读取一个Int64 8字节数据)
+     *
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param format  format of 4 bytes
+     * @return Int64 data, 8 bytes
+     */
+    public long readInt64(int unitId, int address, EByteBuffFormat format) {
+        return this.readInt64(unitId, address, false, format);
+    }
+
+    /**
+     * Read Int64 from hold register.
+     * (读取一个Int64 8字节数据)
+     *
+     * @param unitId       unit id or slave id
+     * @param address      modbus address
+     * @param littleEndian is little endian, true: yes, false: no.
+     * @param format       format of 4 bytes
+     * @return Int64 data, 8 bytes
+     */
+    public long readInt64(int unitId, int address, boolean littleEndian, EByteBuffFormat format) {
+        byte[] res = this.readHoldRegister(unitId, address, 4);
+        return ByteReadBuff.newInstance(res, 0, littleEndian, format).getInt64();
     }
 
     /**
@@ -727,8 +818,22 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
      * @return Float32 data, 4 bytes
      */
     public float readFloat32(int unitId, int address, EByteBuffFormat format) {
+        return this.readFloat32(unitId, address, false, format);
+    }
+
+    /**
+     * Read Float32 from hold register.
+     * (读取一个Float32的数据)
+     *
+     * @param unitId       unit id or slave id
+     * @param address      modbus address
+     * @param littleEndian is little endian, true: yes, false: no.
+     * @param format       format of 4 bytes
+     * @return Float32 data, 4 bytes
+     */
+    public float readFloat32(int unitId, int address, boolean littleEndian, EByteBuffFormat format) {
         byte[] res = this.readHoldRegister(unitId, address, 2);
-        return ByteReadBuff.newInstance(res, format).getFloat32();
+        return ByteReadBuff.newInstance(res, 0, littleEndian, format).getFloat32();
     }
 
     /**
@@ -776,8 +881,22 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
      * @return Float64 data, 8 bytes
      */
     public double readFloat64(int unitId, int address, EByteBuffFormat format) {
+        return this.readFloat64(unitId, address, false, format);
+    }
+
+    /**
+     * Read Float64 from hold register.
+     * (读取一个Float64的数据)
+     *
+     * @param unitId       unit id or slave id
+     * @param address      modbus address
+     * @param littleEndian is little endian, true: yes, false: no.
+     * @param format       format of 8 bytes
+     * @return Float64 data, 8 bytes
+     */
+    public double readFloat64(int unitId, int address, boolean littleEndian, EByteBuffFormat format) {
         byte[] res = this.readHoldRegister(unitId, address, 4);
-        return ByteReadBuff.newInstance(res, format).getFloat64();
+        return ByteReadBuff.newInstance(res, 0, littleEndian, format).getFloat64();
     }
 
     /**
@@ -983,7 +1102,21 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
      * @param format  format of 4 bytes
      */
     public void writeInt32(int unitId, int address, int data, EByteBuffFormat format) {
-        byte[] bytes = ByteWriteBuff.newInstance(4, format)
+        this.writeInt32(unitId, address, data, false, format);
+    }
+
+    /**
+     * Write Int32 to hold register. BA_DC format default.
+     * (写入一个Int32 4字节数据，默认BA_DC格式)
+     *
+     * @param unitId       unit id or slave id
+     * @param address      modbus address
+     * @param data         data
+     * @param littleEndian is little endian, true: yes, false: no.
+     * @param format       format of 4 bytes
+     */
+    public void writeInt32(int unitId, int address, int data, boolean littleEndian, EByteBuffFormat format) {
+        byte[] bytes = ByteWriteBuff.newInstance(4, littleEndian, format)
                 .putInteger(data)
                 .getData();
         this.writeHoldRegister(unitId, address, bytes);
@@ -1034,8 +1167,87 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
      * @param format  format of 4 bytes
      */
     public void writeUInt32(int unitId, int address, long data, EByteBuffFormat format) {
-        byte[] bytes = ByteWriteBuff.newInstance(4, format)
+        this.writeUInt32(unitId, address, data, false, format);
+    }
+
+    /**
+     * Write UInt32 to hold register. BA_DC format default.
+     * (写入一个UInt32 4字节数据，默认BA_DC格式)
+     *
+     * @param unitId       unit id or slave id
+     * @param address      modbus address
+     * @param data         data
+     * @param littleEndian is little endian, true: yes, false: no.
+     * @param format       format of 4 bytes
+     */
+    public void writeUInt32(int unitId, int address, long data, boolean littleEndian, EByteBuffFormat format) {
+        byte[] bytes = ByteWriteBuff.newInstance(4, littleEndian, format)
                 .putInteger(data)
+                .getData();
+        this.writeHoldRegister(unitId, address, bytes);
+    }
+
+    /**
+     * Write Int64 to hold register. BA_DC format default.
+     * (写入一个Int64 8字节数据，默认BA_DC格式)
+     *
+     * @param address modbus address
+     * @param data    data
+     */
+    public void writeInt64(int address, long data) {
+        this.writeInt64(this.unitId, address, data, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * Write Int64 to hold register. BA_DC format default.
+     * (写入一个Int64 8字节数据，默认BA_DC格式)
+     *
+     * @param address modbus address
+     * @param data    data
+     * @param format  format of 8 bytes
+     */
+    public void writeInt64(int address, long data, EByteBuffFormat format) {
+        this.writeInt64(this.unitId, address, data, format);
+    }
+
+    /**
+     * Write Int64 to hold register. BA_DC format default.
+     * (写入一个Int64 8字节数据，默认BA_DC格式)
+     *
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param data    data
+     */
+    public void writeInt64(int unitId, int address, long data) {
+        this.writeInt64(unitId, address, data, false, EByteBuffFormat.BA_DC);
+    }
+
+    /**
+     * Write Int64 to hold register. BA_DC format default.
+     * (写入一个Int64 8字节数据，默认BA_DC格式)
+     *
+     * @param unitId  unit id or slave id
+     * @param address modbus address
+     * @param data    data
+     * @param format  format of 8 bytes
+     */
+    public void writeInt64(int unitId, int address, long data, EByteBuffFormat format) {
+        this.writeInt64(unitId, address, data, false, format);
+    }
+
+    /**
+     * Write Int64 to hold register. BA_DC format default.
+     * (写入一个Int64 8字节数据，默认BA_DC格式)
+     *
+     * @param unitId       unit id or slave id
+     * @param address      modbus address
+     * @param data         data
+     * @param littleEndian is little endian, true: yes, false: no.
+     * @param format       format of 8 bytes
+     */
+    public void writeInt64(int unitId, int address, long data, boolean littleEndian, EByteBuffFormat format) {
+        byte[] bytes = ByteWriteBuff.newInstance(8, littleEndian, format)
+                .putLong(data)
                 .getData();
         this.writeHoldRegister(unitId, address, bytes);
     }
@@ -1085,7 +1297,21 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
      * @param format  format of 4 bytes
      */
     public void writeFloat32(int unitId, int address, float data, EByteBuffFormat format) {
-        byte[] bytes = ByteWriteBuff.newInstance(4, format)
+        this.writeFloat32(unitId, address, data, false, format);
+    }
+
+    /**
+     * Write float32 to hold register.
+     * (写入一个Float32 4字节数据)
+     *
+     * @param unitId       unit id or slave id
+     * @param address      modbus address
+     * @param data         data
+     * @param littleEndian is little endian, true: yes, false: no.
+     * @param format       format of 4 bytes
+     */
+    public void writeFloat32(int unitId, int address, float data, boolean littleEndian, EByteBuffFormat format) {
+        byte[] bytes = ByteWriteBuff.newInstance(4, littleEndian, format)
                 .putFloat(data)
                 .getData();
         this.writeHoldRegister(unitId, address, bytes);
@@ -1136,7 +1362,21 @@ public abstract class ModbusSkeletonAbstract<T, R> extends TcpClientBasic {
      * @param format  format of 8 bytes
      */
     public void writeFloat64(int unitId, int address, double data, EByteBuffFormat format) {
-        byte[] bytes = ByteWriteBuff.newInstance(8, format)
+        this.writeFloat64(unitId, address, data, false, format);
+    }
+
+    /**
+     * Write float64 to hold register.
+     * (写入一个Float64 8字节数据)
+     *
+     * @param unitId       unit id or slave id
+     * @param address      modbus address
+     * @param data         data
+     * @param littleEndian is little endian, true: yes, false: no.
+     * @param format       format of 8 bytes
+     */
+    public void writeFloat64(int unitId, int address, double data, boolean littleEndian, EByteBuffFormat format) {
+        byte[] bytes = ByteWriteBuff.newInstance(8, littleEndian, format)
                 .putDouble(data)
                 .getData();
         this.writeHoldRegister(unitId, address, bytes);

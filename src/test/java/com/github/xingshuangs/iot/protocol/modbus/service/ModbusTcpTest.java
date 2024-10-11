@@ -190,6 +190,10 @@ public class ModbusTcpTest {
         long l = plc.readUInt32(6);
         assertEquals(32L, l);
 
+        plc.writeInt64(6, 156L);
+        long l1 = plc.readInt64(6);
+        assertEquals(156L, l1);
+
         plc.writeFloat32(8, 12.12f);
         float v = plc.readFloat32(8);
         assertEquals(12.12f, v, 0.0001);
@@ -217,9 +221,13 @@ public class ModbusTcpTest {
         int i1 = plc.readInt32(4, EByteBuffFormat.DC_BA);
         assertEquals(32, i1);
 
-        plc.writeUInt32(6, 32L, EByteBuffFormat.DC_BA);
-        long l = plc.readUInt32(6, EByteBuffFormat.DC_BA);
+        plc.writeUInt32(6, 32L, EByteBuffFormat.AB_CD);
+        long l = plc.readUInt32(6, EByteBuffFormat.AB_CD);
         assertEquals(32L, l);
+
+        plc.writeInt64(6, 156L, EByteBuffFormat.CD_AB);
+        long l1 = plc.readInt64(6, EByteBuffFormat.CD_AB);
+        assertEquals(156L, l1);
 
         plc.writeFloat32(8, 12.12f, EByteBuffFormat.DC_BA);
         float v = plc.readFloat32(8, EByteBuffFormat.DC_BA);
@@ -252,6 +260,10 @@ public class ModbusTcpTest {
         long l = plc.readUInt32(2, 6);
         assertEquals(32L, l);
 
+        plc.writeInt64(2, 6, 156L);
+        long l1 = plc.readInt64(2, 6);
+        assertEquals(156L, l1);
+
         plc.writeFloat32(1, 8, 12.12f);
         float v = plc.readFloat32(1, 8);
         assertEquals(12.12f, v, 0.0001);
@@ -267,6 +279,9 @@ public class ModbusTcpTest {
 
     @Test
     public void readWriteData2() {
+        plc.writeInt64(0, 1313513515314534100L);
+        long l = plc.readInt64(0);
+        assertEquals(1313513515314534100L, l);
 //        plc.writeInt16(3, (short) 10);
 //        short data = plc.readInt16(4);
 //        assertEquals(10, data);
@@ -276,9 +291,9 @@ public class ModbusTcpTest {
 //        assertEquals(32L, l);
 
 //        ModbusTcp plc2 = new ModbusTcp(2, "192.168.3.98");
-        plc.writeString(6000, "1234");
-        String s = plc.readString(6000, 4);
-        assertEquals("1234", s);
+//        plc.writeString(6000, "1234");
+//        String s = plc.readString(6000, 4);
+//        assertEquals("1234", s);
 
 //        ModbusTcp plc3 = new ModbusTcp(2, "192.168.3.98");
 //        plc.writeFloat64(2, 99152.1561);

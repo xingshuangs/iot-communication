@@ -55,28 +55,31 @@ public class DemoBean {
     @S7Variable(address = "DB1.12", type = EDataType.INT32)
     private Integer int32Data;
 
-    @S7Variable(address = "DB1.16", type = EDataType.FLOAT32)
+    @S7Variable(address = "DB1.16", type = EDataType.INT64)
+    private Long int64Data;
+
+    @S7Variable(address = "DB1.24", type = EDataType.FLOAT32)
     private Float float32Data;
 
-    @S7Variable(address = "DB1.20", type = EDataType.FLOAT64)
+    @S7Variable(address = "DB1.28", type = EDataType.FLOAT64)
     private Double float64Data;
 
-    @S7Variable(address = "DB1.28", type = EDataType.BYTE, count = 3)
+    @S7Variable(address = "DB1.36", type = EDataType.BYTE, count = 3)
     private byte[] byteData;
 
     // 注意：实际总长度为12，如果字符串后面还有其他字段，需要多预留2个字节数据
-    @S7Variable(address = "DB1.31", type = EDataType.STRING, count = 10)
+    @S7Variable(address = "DB1.39", type = EDataType.STRING, count = 10)
     private String stringData;
 
-    @S7Variable(address = "DB1.43", type = EDataType.TIME)
+    @S7Variable(address = "DB1.51", type = EDataType.TIME)
     private Long timeData;
 
-    @S7Variable(address = "DB1.47", type = EDataType.DATE)
+    @S7Variable(address = "DB1.55", type = EDataType.DATE)
     private LocalDate dateData;
 
-    @S7Variable(address = "DB1.49", type = EDataType.TIME_OF_DAY)
+    @S7Variable(address = "DB1.57", type = EDataType.TIME_OF_DAY)
     private LocalTime timeOfDayData;
 
-    @S7Variable(address = "DB1.53", type = EDataType.DTL)
+    @S7Variable(address = "DB1.61", type = EDataType.DTL)
     private LocalDateTime dateTimeData;
 }

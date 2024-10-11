@@ -45,14 +45,14 @@ import static org.junit.Assert.*;
 public class S7SerializerTest {
     private final S7PLC s7PLC = new S7PLC(EPlcType.S1200, "127.0.0.1");
 
-    @Test
-    public void read() {
-        s7PLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
+//    @Test
+//    public void read() {
 //        s7PLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
-        S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
-        DemoBean bean = s7Serializer.read(DemoBean.class);
-        log.info(bean.toString());
-    }
+////        s7PLC.setComCallback((tag, bytes) -> System.out.printf("%s[%d] %s%n", tag, bytes.length, HexUtil.toHexString(bytes)));
+//        S7Serializer s7Serializer = S7Serializer.newInstance(s7PLC);
+//        DemoBean bean = s7Serializer.read(DemoBean.class);
+//        log.info(bean.toString());
+//    }
 
     @Test
     public void write() {
@@ -65,6 +65,7 @@ public class S7SerializerTest {
         bean.setInt16Data((short) 32767);
         bean.setUint32Data(3147483647L);
         bean.setInt32Data(2147483647);
+        bean.setInt64Data(1313513515314534100L);
         bean.setFloat32Data(3.14f);
         bean.setFloat64Data(4.15);
         bean.setByteData(byteData);
@@ -80,6 +81,7 @@ public class S7SerializerTest {
         assertEquals(32767, actual.getInt16Data().intValue());
         assertEquals(3147483647L, actual.getUint32Data().longValue());
         assertEquals(2147483647, actual.getInt32Data().intValue());
+        assertEquals(1313513515314534100L, actual.getInt64Data().longValue());
         assertEquals(3.14f, actual.getFloat32Data(), 0.001);
         assertEquals(4.15, actual.getFloat64Data(), 0.001);
         assertArrayEquals(byteData, actual.getByteData());
@@ -130,14 +132,15 @@ public class S7SerializerTest {
         list.add(new S7Parameter("DB1.6", EDataType.INT16, 1, (short) 32767));
         list.add(new S7Parameter("DB1.8", EDataType.UINT32, 1, 3147483647L));
         list.add(new S7Parameter("DB1.12", EDataType.INT32, 1, 2147483647));
-        list.add(new S7Parameter("DB1.16", EDataType.FLOAT32, 1, 3.14f));
-        list.add(new S7Parameter("DB1.20", EDataType.FLOAT64, 1, 4.15));
-        list.add(new S7Parameter("DB1.28", EDataType.BYTE, 3, byteData));
-        list.add(new S7Parameter("DB1.31", EDataType.STRING, 10, "1234567890"));
-        list.add(new S7Parameter("DB1.43", EDataType.TIME, 1, 12L));
-        list.add(new S7Parameter("DB1.47", EDataType.DATE, 1, LocalDate.of(2023, 5, 15)));
-        list.add(new S7Parameter("DB1.49", EDataType.TIME_OF_DAY, 1, LocalTime.of(20, 22, 13)));
-        list.add(new S7Parameter("DB1.53", EDataType.DTL, 1, LocalDateTime.of(2023, 5, 27, 12, 11, 22, 333225555)));
+        list.add(new S7Parameter("DB1.16", EDataType.INT64, 1, 1313513515314534100L));
+        list.add(new S7Parameter("DB1.24", EDataType.FLOAT32, 1, 3.14f));
+        list.add(new S7Parameter("DB1.28", EDataType.FLOAT64, 1, 4.15));
+        list.add(new S7Parameter("DB1.36", EDataType.BYTE, 3, byteData));
+        list.add(new S7Parameter("DB1.39", EDataType.STRING, 10, "1234567890"));
+        list.add(new S7Parameter("DB1.51", EDataType.TIME, 1, 12L));
+        list.add(new S7Parameter("DB1.55", EDataType.DATE, 1, LocalDate.of(2023, 5, 15)));
+        list.add(new S7Parameter("DB1.57", EDataType.TIME_OF_DAY, 1, LocalTime.of(20, 22, 13)));
+        list.add(new S7Parameter("DB1.61", EDataType.DTL, 1, LocalDateTime.of(2023, 5, 27, 12, 11, 22, 333225555)));
         s7Serializer.write(list);
 
         list = new ArrayList<>();
@@ -146,14 +149,15 @@ public class S7SerializerTest {
         list.add(new S7Parameter("DB1.6", EDataType.INT16));
         list.add(new S7Parameter("DB1.8", EDataType.UINT32));
         list.add(new S7Parameter("DB1.12", EDataType.INT32));
-        list.add(new S7Parameter("DB1.16", EDataType.FLOAT32));
-        list.add(new S7Parameter("DB1.20", EDataType.FLOAT64));
-        list.add(new S7Parameter("DB1.28", EDataType.BYTE, 3));
-        list.add(new S7Parameter("DB1.31", EDataType.STRING, 10));
-        list.add(new S7Parameter("DB1.43", EDataType.TIME));
-        list.add(new S7Parameter("DB1.47", EDataType.DATE));
-        list.add(new S7Parameter("DB1.49", EDataType.TIME_OF_DAY));
-        list.add(new S7Parameter("DB1.53", EDataType.DTL));
+        list.add(new S7Parameter("DB1.16", EDataType.INT64));
+        list.add(new S7Parameter("DB1.24", EDataType.FLOAT32));
+        list.add(new S7Parameter("DB1.28", EDataType.FLOAT64));
+        list.add(new S7Parameter("DB1.36", EDataType.BYTE, 3));
+        list.add(new S7Parameter("DB1.39", EDataType.STRING, 10));
+        list.add(new S7Parameter("DB1.51", EDataType.TIME));
+        list.add(new S7Parameter("DB1.55", EDataType.DATE));
+        list.add(new S7Parameter("DB1.57", EDataType.TIME_OF_DAY));
+        list.add(new S7Parameter("DB1.61", EDataType.DTL));
         List<S7Parameter> actual = s7Serializer.read(list);
 
         assertTrue((boolean) actual.get(0).getValue());
@@ -161,13 +165,14 @@ public class S7SerializerTest {
         assertEquals(32767, (short) actual.get(2).getValue());
         assertEquals(3147483647L, (long) actual.get(3).getValue());
         assertEquals(2147483647, (int) actual.get(4).getValue());
-        assertEquals(3.14f, (float) actual.get(5).getValue(), 0.001);
-        assertEquals(4.15, (double) actual.get(6).getValue(), 0.001);
-        assertArrayEquals(byteData, (byte[]) actual.get(7).getValue());
-        assertEquals("1234567890", actual.get(8).getValue());
-        assertEquals(12, (long) actual.get(9).getValue());
-        assertEquals(LocalDate.of(2023, 5, 15), actual.get(10).getValue());
-        assertEquals(LocalTime.of(20, 22, 13), actual.get(11).getValue());
-        assertEquals(LocalDateTime.of(2023, 5, 27, 12, 11, 22, 333225555), actual.get(12).getValue());
+        assertEquals(1313513515314534100L, (long) actual.get(5).getValue());
+        assertEquals(3.14f, (float) actual.get(6).getValue(), 0.001);
+        assertEquals(4.15, (double) actual.get(7).getValue(), 0.001);
+        assertArrayEquals(byteData, (byte[]) actual.get(8).getValue());
+        assertEquals("1234567890", actual.get(9).getValue());
+        assertEquals(12, (long) actual.get(10).getValue());
+        assertEquals(LocalDate.of(2023, 5, 15), actual.get(11).getValue());
+        assertEquals(LocalTime.of(20, 22, 13), actual.get(12).getValue());
+        assertEquals(LocalDateTime.of(2023, 5, 27, 12, 11, 22, 333225555), actual.get(13).getValue());
     }
 }

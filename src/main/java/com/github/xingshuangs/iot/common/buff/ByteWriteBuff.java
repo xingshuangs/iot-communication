@@ -41,7 +41,7 @@ import java.nio.charset.StandardCharsets;
 public class ByteWriteBuff {
 
     /**
-     * 4 - or 8-byte encoding format.
+     * 4 - or 8-bytes encoding format.
      * (4字节或8字节的编码格式)
      */
     private final EByteBuffFormat format;
@@ -216,7 +216,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a short data.
+     * Add a short data, 2-bytes.
      * (添加 short 类型数据)
      *
      * @param src a short data
@@ -227,7 +227,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a short data by destination index.
+     * Add a short data by destination index, 2-bytes.
      * (添加 short 类型数据)
      *
      * @param src      a short data
@@ -239,7 +239,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a short data from int data.
+     * Add a short data from int data, 2-bytes.
      * (添加 short 类型数据)
      *
      * @param src a int data
@@ -250,7 +250,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a short data from int data by destination index.
+     * Add a short data from int data by destination index, 2-bytes.
      * (添加short数据)
      *
      * @param src      a int data
@@ -262,7 +262,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a int data.
+     * Add a int data, 4-bytes.
      * (添加integer数据)
      *
      * @param src a int data
@@ -273,7 +273,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a int data by destination index.
+     * Add a int data by destination index, 4-bytes.
      * 添加Integer数据
      *
      * @param src      a int data
@@ -285,7 +285,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a int data from a long data.
+     * Add a int data from a long data, 4-bytes.
      * (添加integer数据)
      *
      * @param src a long data
@@ -296,7 +296,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a int data from a long data by destination index.
+     * Add a int data from a long data by destination index, 4-bytes.
      * (添加Integer数据)
      *
      * @param src      a long data
@@ -308,7 +308,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a long data.
+     * Add a long data, 8-bytes.
      * (添加long数据)
      *
      * @param src a long data
@@ -319,7 +319,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a long data by destination index.
+     * Add a long data by destination index, 8-bytes.
      * (添加long数据)
      *
      * @param src      a long data
@@ -331,7 +331,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a float data.
+     * Add a float data, 4-bytes.
      * (添加float数据)
      *
      * @param src a float data
@@ -342,7 +342,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a float data by destination index.
+     * Add a float data by destination index, 4-bytes.
      * (添加float数据)
      *
      * @param src      a float data
@@ -354,7 +354,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a double data.
+     * Add a double data, 8-bytes.
      * (添加double数据)
      *
      * @param src a double data
@@ -365,7 +365,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a double data by destination index.
+     * Add a double data by destination index, 8-bytes.
      * (添加double数据)
      *
      * @param src      a double data
@@ -400,7 +400,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a short data by destination index and endian.
+     * Add a short data by destination index and endian, 2-bytes.
      * (添加short数据)
      *
      * @param src          a short data
@@ -413,7 +413,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a short data from a int data by destination index and endian.
+     * Add a short data from a int data by destination index and endian, 2-bytes.
      * (添加short数据)
      *
      * @param src          a int data
@@ -426,7 +426,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a int data by destination index and endian.
+     * Add a int data by destination index and endian, 4-bytes.
      * (添加integer数据)
      *
      * @param src          a int data
@@ -439,7 +439,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a int data from a long data by destination index and endian.
+     * Add a int data from a long data by destination index and endian, 4-bytes.
      * (添加integer数据)
      *
      * @param src          a long data
@@ -452,7 +452,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a int data from a long data by destination index, endian and format.
+     * Add a int data from a long data by destination index, endian and format, 4-bytes.
      * (添加integer数据，针对特殊EByteBuffFormat的处理)
      *
      * @param src          a long data
@@ -466,7 +466,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a long data by destination index and endian.
+     * Add a long data by destination index and endian, 8-bytes.
      * (添加long数据)
      *
      * @param src          a long data
@@ -479,7 +479,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a long data by destination index, endian and format.
+     * Add a long data by destination index, endian and format, 8-bytes.
      * (添加long数据，针对特殊EByteBuffFormat的处理)
      *
      * @param src          a long data
@@ -493,7 +493,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a float data by destination index and endian.
+     * Add a float data by destination index and endian, 4-bytes.
      * (添加float数据)
      *
      * @param src          a float data
@@ -506,7 +506,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a float data by destination index, endian and format.
+     * Add a float data by destination index, endian and format, 4-bytes.
      * (添加float数据，针对特殊EByteBuffFormat的处理)
      *
      * @param src          a float data
@@ -520,7 +520,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a double data by destination index and endian.
+     * Add a double data by destination index and endian, 8-bytes.
      * (添加double数据)
      *
      * @param src          a long data
@@ -533,7 +533,7 @@ public class ByteWriteBuff {
     }
 
     /**
-     * Add a double data by destination index, endian and format.
+     * Add a double data by destination index, endian and format, 8-bytes.
      * (添加double数据，针对特殊EByteBuffFormat的处理)
      *
      * @param src          a long data

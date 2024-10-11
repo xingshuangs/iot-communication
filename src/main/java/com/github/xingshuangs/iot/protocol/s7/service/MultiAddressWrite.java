@@ -28,10 +28,7 @@ package com.github.xingshuangs.iot.protocol.s7.service;
 import com.github.xingshuangs.iot.protocol.s7.model.DataItem;
 import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
 import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
-import com.github.xingshuangs.iot.utils.ByteUtil;
-import com.github.xingshuangs.iot.utils.FloatUtil;
-import com.github.xingshuangs.iot.utils.IntegerUtil;
-import com.github.xingshuangs.iot.utils.ShortUtil;
+import com.github.xingshuangs.iot.utils.*;
 import lombok.Data;
 
 import java.nio.charset.Charset;
@@ -159,6 +156,20 @@ public class MultiAddressWrite {
         this.addByte(address, bytes);
         return this;
     }
+
+    /**
+     * 添加int64数据
+     *
+     * @param address 地址
+     * @param data    数据
+     * @return 对象本身
+     */
+    public MultiAddressWrite addInt64(String address, long data) {
+        byte[] bytes = LongUtil.toByteArray(data);
+        this.addByte(address, bytes);
+        return this;
+    }
+
 
     /**
      * 添加float32数据

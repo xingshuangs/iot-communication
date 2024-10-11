@@ -151,6 +151,13 @@ public class S7PLCTest {
     }
 
     @Test
+    public void writeInt64Test() {
+        this.s7PLC.writeInt64("DB1.0", 1313513515314534100L);
+        long b = this.s7PLC.readInt64("DB1.0");
+        assertEquals(1313513515314534100L, b);
+    }
+
+    @Test
     public void writeFloat32() {
         s7PLC.writeFloat32("DB1.2", 12);
         float actual = s7PLC.readFloat32("DB1.2");

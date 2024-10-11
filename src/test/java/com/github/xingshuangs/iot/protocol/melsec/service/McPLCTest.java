@@ -292,6 +292,13 @@ public class McPLCTest {
     }
 
     @Test
+    public void readWriteInt64() {
+        this.mcPLC.writeInt64("D100", 799864);
+        long data = this.mcPLC.readInt64("D100");
+        assertEquals(799864, data);
+    }
+
+    @Test
     public void readWriteFloat32() {
         this.mcPLC.writeFloat32("D114", 33.66f);
         float data = this.mcPLC.readFloat32("D114");
@@ -331,6 +338,10 @@ public class McPLCTest {
         this.mcPLC.writeUInt32("D100", 99);
         long uint32 = this.mcPLC.readUInt32("D100");
         assertEquals(99, uint32);
+
+        this.mcPLC.writeInt64("D100", 799864);
+        long data = this.mcPLC.readInt64("D100");
+        assertEquals(799864, data);
 
         this.mcPLC.writeFloat32("D100", 99.33f);
         float float32 = this.mcPLC.readFloat32("D100");

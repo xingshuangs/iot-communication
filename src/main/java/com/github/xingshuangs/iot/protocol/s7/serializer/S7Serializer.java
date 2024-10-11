@@ -287,6 +287,9 @@ public class S7Serializer implements IPLCSerializable {
             case INT32:
                 item.getField().set(result, buff.getInt32());
                 break;
+            case INT64:
+                item.getField().set(result, buff.getInt64());
+                break;
             case FLOAT32:
                 item.getField().set(result, buff.getFloat32());
                 break;
@@ -447,6 +450,10 @@ public class S7Serializer implements IPLCSerializable {
             case INT32:
                 item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)
                         .putInteger((Integer) data).getData()));
+                break;
+            case INT64:
+                item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(8)
+                        .putLong((Long) data).getData()));
                 break;
             case FLOAT32:
                 item.setDataItem(DataItem.createReqByByte(ByteWriteBuff.newInstance(4)

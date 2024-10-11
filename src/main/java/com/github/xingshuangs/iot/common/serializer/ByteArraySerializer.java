@@ -208,6 +208,12 @@ public class ByteArraySerializer implements IByteArraySerializable {
                         .collect(Collectors.toList());
                 field.set(bean, variable.getCount() == 1 ? int32s.get(0) : int32s);
                 break;
+            case INT64:
+                List<Long> int64s = IntStream.range(0, variable.getCount())
+                        .mapToObj(x -> buff.getInt64(variable.getByteOffset() + x * variable.getType().getByteLength()))
+                        .collect(Collectors.toList());
+                field.set(bean, variable.getCount() == 1 ? int64s.get(0) : int64s);
+                break;
             case FLOAT32:
                 List<Float> float32s = IntStream.range(0, variable.getCount())
                         .mapToObj(x -> buff.getFloat32(variable.getByteOffset() + x * variable.getType().getByteLength()))
@@ -281,6 +287,9 @@ public class ByteArraySerializer implements IByteArraySerializable {
                 break;
             case INT32:
                 buff.putInteger((Integer) data, variable.byteOffset() + index * variable.type().getByteLength(), variable.littleEndian(), variable.format());
+                break;
+            case INT64:
+                buff.putLong((Long) data, variable.byteOffset() + index * variable.type().getByteLength(), variable.littleEndian(), variable.format());
                 break;
             case FLOAT32:
                 buff.putFloat((Float) data, variable.byteOffset() + index * variable.type().getByteLength(), variable.littleEndian(), variable.format());

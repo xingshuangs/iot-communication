@@ -318,7 +318,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * Option
+     * Option method operation.
      */
     protected void option() {
         RtspOptionRequest request = new RtspOptionRequest(this.uri);
@@ -329,7 +329,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * Describe
+     * Describe method operation.
      */
     protected void describe() {
         this.checkBeforeRequest(ERtspMethod.DESCRIBE);
@@ -350,7 +350,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * Setup
+     * Setup method operation.
      */
     protected void setup() {
         if (this.transportProtocol == ERtspTransportProtocol.UDP) {
@@ -361,7 +361,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * UDP setup
+     * UDP setup method operation.
      */
     private void setupUdp() {
         for (RtspSdpMedia media : this.sdp.getMedias()) {
@@ -393,7 +393,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * TCP setup
+     * TCP setup method operation.
      */
     private void setupTcp() {
         int interleavedCount = 0;
@@ -446,7 +446,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * Play
+     * Play method operation.
      */
     protected void play() {
         this.checkBeforeRequest(ERtspMethod.PLAY);
@@ -462,7 +462,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * Teardown
+     * Teardown method operation.
      */
     protected void teardown() {
         this.clearSocketConnection();
@@ -484,7 +484,7 @@ public class RtspNetwork extends TcpClientBasic {
     }
 
     /**
-     * Get parameter
+     * Get parameter method operation.
      */
     protected void getParameter() {
         this.checkBeforeRequest(ERtspMethod.GET_PARAMETER);

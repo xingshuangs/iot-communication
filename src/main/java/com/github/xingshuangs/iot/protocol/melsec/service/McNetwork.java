@@ -62,7 +62,7 @@ public class McNetwork extends TcpClientBasic {
     private final Object objLock = new Object();
 
     /**
-     * Communicate callback.
+     * Communication callback, first parameter is tag, second is package content.
      * (通信回调，第一个参数是tag标签，指示该报文含义；第二个参数是具体报文内容)
      */
     private BiConsumer<String, byte[]> comCallback;
@@ -86,7 +86,7 @@ public class McNetwork extends TcpClientBasic {
     protected McAccessRoute accessRoute = McFrame4E3EAccessRoute.createDefault();
 
     /**
-     * Monitoring timer.
+     * Monitoring timer, default 30000ms.
      * (监视定时器，默认：3000ms，设置读取及写入的处理完成之前的等待时间。设置连接站E71向访问目标发出处理请求之后到返回响应为止的等待时间。)
      */
     protected int monitoringTimer = 3000;
@@ -119,7 +119,7 @@ public class McNetwork extends TcpClientBasic {
     }
 
     /**
-     * Read data from server.
+     * Read data from server, core interaction.
      * (从服务器读取数据)
      *
      * @param req McMessageReq

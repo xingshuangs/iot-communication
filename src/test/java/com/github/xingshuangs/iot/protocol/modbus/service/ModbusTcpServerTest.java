@@ -24,12 +24,14 @@
 
 package com.github.xingshuangs.iot.protocol.modbus.service;
 
+import com.github.xingshuangs.iot.common.buff.EByteBuffFormat;
 import com.github.xingshuangs.iot.exceptions.ModbusCommException;
 import com.github.xingshuangs.iot.utils.HexUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -141,6 +143,10 @@ public class ModbusTcpServerTest {
         long l = this.modbusTcp.readUInt32(6);
         assertEquals(32L, l);
 
+        this.modbusTcp.writeInt64(6, 1313513515314534100L);
+        long l1 = this.modbusTcp.readInt64(6);
+        assertEquals(1313513515314534100L, l1);
+
         this.modbusTcp.writeFloat32(8, 12.12f);
         float v = this.modbusTcp.readFloat32(8);
         assertEquals(12.12f, v, 0.0001);
@@ -172,6 +178,10 @@ public class ModbusTcpServerTest {
         long l = this.modbusTcp.readUInt32(2, 6);
         assertEquals(32L, l);
 
+        this.modbusTcp.writeInt64(2,6, 1313513515314534100L);
+        long l1 = this.modbusTcp.readInt64(2,6);
+        assertEquals(1313513515314534100L, l1);
+
         this.modbusTcp.writeFloat32(1, 8, 12.12f);
         float v = this.modbusTcp.readFloat32(1, 8);
         assertEquals(12.12f, v, 0.0001);
@@ -182,6 +192,41 @@ public class ModbusTcpServerTest {
 
         this.modbusTcp.writeString(1, 14, "pppp");
         String s = this.modbusTcp.readString(1, 14, 4);
+        assertEquals("pppp", s);
+    }
+
+    @Test
+    public void readWriteData1() {
+        this.modbusTcp.writeInt16(2, (short) 10, true);
+        short data = this.modbusTcp.readInt16(2, true);
+        assertEquals(10, data);
+
+        this.modbusTcp.writeUInt16(3, 20, true);
+        int i = this.modbusTcp.readUInt16(3, true);
+        assertEquals(20, i);
+
+        this.modbusTcp.writeInt32(4, 32, EByteBuffFormat.DC_BA);
+        int i1 = this.modbusTcp.readInt32(4, EByteBuffFormat.DC_BA);
+        assertEquals(32, i1);
+
+        this.modbusTcp.writeUInt32(6, 32L, EByteBuffFormat.AB_CD);
+        long l = this.modbusTcp.readUInt32(6, EByteBuffFormat.AB_CD);
+        assertEquals(32L, l);
+
+        this.modbusTcp.writeInt64(6, 1313513515314534100L, EByteBuffFormat.CD_AB);
+        long l1 = this.modbusTcp.readInt64(6, EByteBuffFormat.CD_AB);
+        assertEquals(1313513515314534100L, l1);
+
+        this.modbusTcp.writeFloat32(8, 12.12f, EByteBuffFormat.DC_BA);
+        float v = this.modbusTcp.readFloat32(8, EByteBuffFormat.DC_BA);
+        assertEquals(12.12f, v, 0.0001);
+
+        this.modbusTcp.writeFloat64(10, 33.21, EByteBuffFormat.DC_BA);
+        double v1 = this.modbusTcp.readFloat64(10, EByteBuffFormat.DC_BA);
+        assertEquals(33.21, v1, 0.0001);
+
+        this.modbusTcp.writeString(14, "pppp", StandardCharsets.UTF_8);
+        String s = this.modbusTcp.readString(14, 4, StandardCharsets.UTF_8);
         assertEquals("pppp", s);
     }
 }

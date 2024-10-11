@@ -324,6 +324,18 @@ public class McPLC extends McNetwork {
     }
 
     /**
+     * Read int64.
+     * (读取多个Int64数据)
+     *
+     * @param address address string
+     * @return long
+     */
+    public long readInt64(String address) {
+        byte[] bytes = this.readBytes(address, 8);
+        return ByteReadBuff.newInstance(bytes, EByteBuffFormat.AB_CD).getInt64();
+    }
+
+    /**
      * Read float32.
      * (读取1个Float32数据)
      *
@@ -647,6 +659,45 @@ public class McPLC extends McNetwork {
         }
         ByteWriteBuff buff = ByteWriteBuff.newInstance(data.size() * 4, EByteBuffFormat.AB_CD);
         data.forEach(buff::putInteger);
+        this.writeBytes(address, buff.getData());
+    }
+
+    /**
+     * Write int64.
+     * (写入多个Int64数据)
+     *
+     * @param address address string
+     * @param data    long data
+     */
+    public void writeInt64(String address, long data) {
+        byte[] bytes = ByteWriteBuff.newInstance(8, EByteBuffFormat.AB_CD).putLong(data).getData();
+        this.writeBytes(address, bytes);
+    }
+
+    /**
+     * Write int64.
+     * (写入多个Int64数据)
+     *
+     * @param address address string
+     * @param data    long data
+     */
+    public void writeInt64(String address, Long... data) {
+        this.writeInt64(address, Arrays.asList(data));
+    }
+
+    /**
+     * Write int64.
+     * (写入多个Int64数据)
+     *
+     * @param address address string
+     * @param data    long data list
+     */
+    public void writeInt64(String address, List<Long> data) {
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException("data list is empty");
+        }
+        ByteWriteBuff buff = ByteWriteBuff.newInstance(data.size() * 8, EByteBuffFormat.AB_CD);
+        data.forEach(buff::putLong);
         this.writeBytes(address, buff.getData());
     }
 

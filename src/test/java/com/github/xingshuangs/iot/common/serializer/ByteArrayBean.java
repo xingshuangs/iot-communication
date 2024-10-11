@@ -52,12 +52,15 @@ public class ByteArrayBean {
     @ByteArrayVariable(byteOffset = 9, count = 1, type = EDataType.INT32)
     Integer int32Data;
 
-    @ByteArrayVariable(byteOffset = 13, count = 1, type = EDataType.FLOAT32)
+    @ByteArrayVariable(byteOffset = 13, count = 1, type = EDataType.INT64)
+    Long int64Data;
+
+    @ByteArrayVariable(byteOffset = 29, count = 1, type = EDataType.FLOAT32)
     Float float32Data;
 
-    @ByteArrayVariable(byteOffset = 21, count = 1, type = EDataType.FLOAT64)
+    @ByteArrayVariable(byteOffset = 37, count = 1, type = EDataType.FLOAT64)
     Double float64Data;
 
-    @ByteArrayVariable(byteOffset = 37, count = 3, type = EDataType.STRING)
+    @ByteArrayVariable(byteOffset = 53, count = 3, type = EDataType.STRING)
     String stringData;
 }

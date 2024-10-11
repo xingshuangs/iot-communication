@@ -48,6 +48,8 @@ public enum EDataType {
 
     INT32("int32", 4),
 
+    INT64("int64", 8),
+
     FLOAT32("float32", 4),
 
     FLOAT64("float64", 8),

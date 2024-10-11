@@ -85,6 +85,13 @@ public class S7PLCServerTest {
     }
 
     @Test
+    public void readWriteInt64Test() {
+        this.s7PLC.writeInt64("DB1.0", 1313513515314534100L);
+        long b = this.s7PLC.readInt64("DB1.0");
+        assertEquals(1313513515314534100L, b);
+    }
+
+    @Test
     public void multiReadWriteByteTest() {
         this.s7PLC.writeInt16("DB1.0", (short) 22);
         this.s7PLC.writeInt16("DB1.2", (short) 33);
@@ -103,6 +110,7 @@ public class S7PLCServerTest {
         bean.setInt16Data((short) 32767);
         bean.setUint32Data(3147483647L);
         bean.setInt32Data(2147483647);
+        bean.setInt64Data(1313513515314534100L);
         bean.setFloat32Data(3.14f);
         bean.setFloat64Data(4.15);
         bean.setByteData(bytes);
@@ -118,6 +126,7 @@ public class S7PLCServerTest {
         assertEquals((short) 32767, bean.getInt16Data().intValue());
         assertEquals(3147483647L, bean.getUint32Data().longValue());
         assertEquals(2147483647, bean.getInt32Data().intValue());
+        assertEquals(1313513515314534100L, bean.getInt64Data().longValue());
         assertEquals(3.14f, bean.getFloat32Data(), 0.001);
         assertEquals(4.15, bean.getFloat64Data(), 0.001);
         assertArrayEquals(bytes, bean.getByteData());
