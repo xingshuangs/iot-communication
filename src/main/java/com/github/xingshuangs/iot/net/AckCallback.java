@@ -51,7 +51,7 @@ public class AckCallback<T> {
     protected final IAckListener<T> listener;
 
     /**
-     *  Flag, is completed.
+     * Flag, is completed.
      * (是否完成)
      */
     protected boolean completed;

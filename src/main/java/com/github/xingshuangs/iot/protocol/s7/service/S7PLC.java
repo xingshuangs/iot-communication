@@ -333,7 +333,7 @@ public class S7PLC extends PLCNetwork {
      * (读取一个Int64 8字节数据)
      *
      * @param address address string
-     * @return Int64 
+     * @return Int64
      */
     public long readInt64(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 8));
@@ -369,7 +369,7 @@ public class S7PLC extends PLCNetwork {
      * (读取一个Float32的数据)
      *
      * @param address address string
-     * @return Float32 
+     * @return Float32
      */
     public float readFloat32(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 4));

@@ -105,6 +105,7 @@ public class TcpServerBasic {
     /**
      * Stop the server.
      * (停止)
+     *
      * @throws SocketRuntimeException Socket Runtime Exception
      */
     public void stop() {
@@ -288,8 +289,8 @@ public class TcpServerBasic {
      * Read data and store it in the position of the specified byte array.
      * （读取数据）
      *
-     * @param socket      socket object
-     * @param data        byte array
+     * @param socket socket object
+     * @param data   byte array
      * @return the total number of bytes read into the data
      * @throws SocketRuntimeException Socket Runtime Exception
      */
@@ -301,10 +302,10 @@ public class TcpServerBasic {
      * Read data and store it in the position of the specified byte array.
      * （读取数据）
      *
-     * @param socket      socket object
-     * @param data        byte array
-     * @param offset      the start offset in the data.
-     * @param length      the number of bytes to read.
+     * @param socket socket object
+     * @param data   byte array
+     * @param offset the start offset in the data.
+     * @param length the number of bytes to read.
      * @return the total number of bytes read into the data
      * @throws SocketRuntimeException Socket Runtime Exception
      */
@@ -316,11 +317,11 @@ public class TcpServerBasic {
      * Read data and store it in the position of the specified byte array.
      * （读取数据）
      *
-     * @param socket      socket object
-     * @param data        byte array
-     * @param offset      the start offset in the data.
-     * @param length      the number of bytes to read.
-     * @param maxLength   the maximum length allowed for a single communication,if litter than 0, then ignore. (单次通信允许的对最大长度，若小于等于0则不考虑)
+     * @param socket    socket object
+     * @param data      byte array
+     * @param offset    the start offset in the data.
+     * @param length    the number of bytes to read.
+     * @param maxLength the maximum length allowed for a single communication,if litter than 0, then ignore. (单次通信允许的对最大长度，若小于等于0则不考虑)
      * @return the total number of bytes read into the data
      * @throws SocketRuntimeException Socket Runtime Exception
      */

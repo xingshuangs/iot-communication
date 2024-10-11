@@ -124,7 +124,7 @@ public class RtcpDataStatistics {
      * Process rtp package.
      * (处理RTP数据包)
      *
-     * @param rtp rtp package
+     * @param rtp  rtp package
      * @param send send callback by bytes
      */
     public void processRtpPackage(RtpPackage rtp, Consumer<byte[]> send) {
@@ -158,7 +158,7 @@ public class RtcpDataStatistics {
             send.accept(receiverAndByteContent);
             this.lastLocalTimeReceiveRtp = System.currentTimeMillis();
             int fractionLost = this.packetsLostSinceLastReset * 100 / this.packetsReceivedSinceLastReset;
-            log.debug("Data Statistics: package lost number[{}], totoal number[{}], fraction lost[{}%]", this.cumulativePacketLost,this.packetsReceivedSinceLastReset, fractionLost);
+            log.debug("Data Statistics: package lost number[{}], totoal number[{}], fraction lost[{}%]", this.cumulativePacketLost, this.packetsReceivedSinceLastReset, fractionLost);
         }
     }
 
@@ -179,7 +179,7 @@ public class RtcpDataStatistics {
      */
     public void processRtcpPackage(List<RtcpBasePackage> basePackages) {
         for (RtcpBasePackage rtcp : basePackages) {
-//            log.debug("RTCP receives [{}] data，{}", rtcp.getHeader().getPackageType(), rtcp);
+            log.debug("RTCP receives [{}] data，{}", rtcp.getHeader().getPackageType(), rtcp);
             if (rtcp instanceof RtcpSenderReport) {
                 this.lastNtpTimeSenderReportReceived = ((RtcpSenderReport) rtcp).getSenderInfo().getMswTimestamp();
                 this.lastTimeRtcpReportReceived = System.currentTimeMillis();

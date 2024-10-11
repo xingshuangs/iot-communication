@@ -37,7 +37,7 @@ public class H264NaluBuilder {
     }
 
     public static H264NaluBase parsePackage(final byte[] data) {
-        return parsePackage(data,0);
+        return parsePackage(data, 0);
     }
 
     public static H264NaluBase parsePackage(final byte[] data, final int offset) {

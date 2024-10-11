@@ -55,11 +55,11 @@ public class McHeader4EReq extends McHeader3EReq {
     public McHeader4EReq() {
     }
 
-    public McHeader4EReq( int timer) {
+    public McHeader4EReq(int timer) {
         this(McFrame4E3EAccessRoute.createDefault(), timer);
     }
 
-    public McHeader4EReq( McAccessRoute accessRoute, int timer) {
+    public McHeader4EReq(McAccessRoute accessRoute, int timer) {
         this.frameType = EMcFrameType.FRAME_4E;
         this.subHeader = this.frameType.getReqSubHeader();
         this.accessRoute = accessRoute;

@@ -216,7 +216,7 @@ public class S7Serializer implements IPLCSerializable {
      * (读取数据)
      *
      * @param parameters parameter list
-     * @return List<S7Parameter>
+     * @return S7Parameter list
      */
     public List<S7Parameter> read(List<S7Parameter> parameters) {
         List<S7ParseData> s7ParseDataList = this.parseBean(parameters);

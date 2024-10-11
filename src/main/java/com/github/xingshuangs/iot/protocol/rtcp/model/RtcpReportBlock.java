@@ -98,7 +98,7 @@ public class RtcpReportBlock implements IObjectByteArray {
         return ByteWriteBuff.newInstance(24)
                 .putInteger(this.sourceId)
                 .putByte(this.fractionLost)
-                .putBytes(IntegerUtil.toCustomByteArray(this.cumulativePacketLost,1,3))
+                .putBytes(IntegerUtil.toCustomByteArray(this.cumulativePacketLost, 1, 3))
                 .putInteger(this.extHighestSequenceNumberReceived)
                 .putInteger(this.jitter)
                 .putInteger(this.lastNtpTimeSenderReportReceived)
@@ -131,7 +131,7 @@ public class RtcpReportBlock implements IObjectByteArray {
         RtcpReportBlock res = new RtcpReportBlock();
         res.sourceId = buff.getUInt32();
         res.fractionLost = buff.getByteToInt();
-        res.cumulativePacketLost = IntegerUtil.toInt32In3Bytes(buff.getBytes(3),0);
+        res.cumulativePacketLost = IntegerUtil.toInt32In3Bytes(buff.getBytes(3), 0);
         res.extHighestSequenceNumberReceived = buff.getUInt32();
         res.jitter = buff.getUInt32();
         res.lastNtpTimeSenderReportReceived = buff.getUInt32();

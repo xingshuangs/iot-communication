@@ -93,7 +93,7 @@ public class COTPData extends COTP implements IObjectByteArray {
         cotpData.length = buff.getByteToInt();
         cotpData.pduType = EPduType.from(buff.getByte());
         cotpData.tpduNumber = buff.getByte() & 0x7F;
-        cotpData.lastDataUnit = buff.getBoolean(2,7);
+        cotpData.lastDataUnit = buff.getBoolean(2, 7);
         return cotpData;
     }
 

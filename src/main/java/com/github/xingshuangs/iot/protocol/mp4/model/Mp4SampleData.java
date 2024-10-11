@@ -30,6 +30,7 @@ import lombok.Data;
 
 /**
  * Mp4 sample data.
+ *
  * @author xingshuang
  */
 @Data

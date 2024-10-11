@@ -150,9 +150,9 @@ public class UdpServerBasic {
      * Read data into DatagramPacket object
      * (读取数据)
      *
-     * @param data    byte array
-     * @param offset  the start offset in the data.
-     * @param length  the number of bytes to read.
+     * @param data   byte array
+     * @param offset the start offset in the data.
+     * @param length the number of bytes to read.
      * @return DatagramPacket object
      * @throws SocketRuntimeException Socket Runtime Exception
      */

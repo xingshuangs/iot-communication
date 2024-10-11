@@ -98,7 +98,7 @@ public class Mp4MvhdBox extends Mp4Box {
      */
     private final int nextTrackId;
 
-    public  Mp4MvhdBox(Mp4TrackInfo trackInfo) {
+    public Mp4MvhdBox(Mp4TrackInfo trackInfo) {
         this.mp4Type = EMp4Type.MVHD;
         this.version = 0;
         this.flags = new byte[3];
@@ -141,8 +141,8 @@ public class Mp4MvhdBox extends Mp4Box {
                 .putInteger(TimesUtil.getUTCTotalSecond(this.modificationTime))
                 .putInteger(this.timescale)
                 .putInteger(this.duration)
-                .putInteger(this.rate<<16)
-                .putShort(this.volume<<8)
+                .putInteger(this.rate << 16)
+                .putShort(this.volume << 8)
                 .putBytes(this.reserved)
                 .putBytes(this.videoTransformationMatrix)
                 .putBytes(this.preDefined)

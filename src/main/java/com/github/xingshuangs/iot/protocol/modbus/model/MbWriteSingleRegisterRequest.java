@@ -87,7 +87,7 @@ public final class MbWriteSingleRegisterRequest extends MbPdu {
      * @return MbWriteSingleRegisterRequest
      */
     public static MbWriteSingleRegisterRequest fromBytes(final byte[] data) {
-        return fromBytes(data,0);
+        return fromBytes(data, 0);
     }
 
     /**

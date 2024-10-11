@@ -408,7 +408,7 @@ public class S7Data implements IObjectByteArray {
         s7Data.tpkt = new TPKT();
         s7Data.cotp = COTPData.createDefault();
         s7Data.header = Header.createDefault();
-        s7Data.parameter = PlcControlParameter.insert(blockType,blockNumber,destinationFileSystem);
+        s7Data.parameter = PlcControlParameter.insert(blockType, blockNumber, destinationFileSystem);
         s7Data.selfCheck();
         return s7Data;
     }

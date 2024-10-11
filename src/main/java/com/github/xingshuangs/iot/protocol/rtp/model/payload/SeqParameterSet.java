@@ -192,7 +192,7 @@ public class SeqParameterSet {
      * Calculate sar ratio.
      * (计算sarRatio)
      *
-     * @param expGolomb  ex golomb encode.
+     * @param expGolomb ex golomb encode.
      * @return sarRatio
      */
     private static double calculateSarRatio(ExpGolomb expGolomb) {

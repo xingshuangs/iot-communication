@@ -143,7 +143,7 @@ public class StartDownloadParameter extends DownloadParameter implements IObject
                                                        int blockNumber,
                                                        EDestinationFileSystem destinationFileSystem,
                                                        int loadMemoryLength,
-                                                       int mC7CodeLength){
+                                                       int mC7CodeLength) {
         StartDownloadParameter parameter = new StartDownloadParameter();
         parameter.blockType = blockType;
         parameter.blockNumber = blockNumber;

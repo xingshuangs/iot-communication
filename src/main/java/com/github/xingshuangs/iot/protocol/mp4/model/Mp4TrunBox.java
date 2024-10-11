@@ -30,7 +30,8 @@ import com.github.xingshuangs.iot.protocol.mp4.enums.EMp4Type;
 
 import java.util.List;
 
-/**Track Fragment Run Box(trun) records information about samples in moof,
+/**
+ * Track Fragment Run Box(trun) records information about samples in moof,
  * such as the size,duration,offset and other information of each sample.
  * Track Fragment Run Box(trun),记录moof中有关sample的相关信息，如每个sample的size,duration,offset等信息，
  *

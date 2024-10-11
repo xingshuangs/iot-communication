@@ -77,10 +77,10 @@ public class McMessageReq implements IObjectByteArray {
      * (自我校验，主要核对数据长度)
      */
     public void selfCheck() {
-        if(this.header.getFrameType()== EMcFrameType.FRAME_1E){
+        if (this.header.getFrameType() == EMcFrameType.FRAME_1E) {
             return;
         }
-        McHeader3EReq header3EReq = (McHeader3EReq)this.header;
+        McHeader3EReq header3EReq = (McHeader3EReq) this.header;
         header3EReq.dataLength = 2 + this.data.byteArrayLength();
     }
 }

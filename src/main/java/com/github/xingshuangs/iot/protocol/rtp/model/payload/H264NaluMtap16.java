@@ -57,7 +57,7 @@ import java.util.List;
  *
  * @author xingshuang
  */
-public class H264NaluMtap16 extends H264NaluBase{
+public class H264NaluMtap16 extends H264NaluBase {
 
     /**
      * Decoding order number.
