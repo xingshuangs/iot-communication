@@ -44,7 +44,9 @@ import lombok.EqualsAndHashCode;
 public class COTPData extends COTP implements IObjectByteArray {
 
     public static final int BYTE_LENGTH = 3;
+
     /**
+     * TPDU number.
      * TPDU编号 <br>
      * 字节大小：1，后面7位 <br>
      * 字节序数：2
@@ -52,6 +54,7 @@ public class COTPData extends COTP implements IObjectByteArray {
     private int tpduNumber = 0x00;
 
     /**
+     * Whether the last data unit.
      * 是否最后一个数据单元 <br>
      * 字节大小：1，最高位，7位 <br>
      * 字节序数：2
@@ -74,10 +77,11 @@ public class COTPData extends COTP implements IObjectByteArray {
     }
 
     /**
+     * Parses byte array and converts it to object.
      * 通过字节数组转换为COTPData对象
      *
-     * @param data 字节数组
-     * @return COTPData对象
+     * @param data byte array
+     * @return COTPData
      */
     public static COTPData fromBytes(final byte[] data) {
         if (data.length < BYTE_LENGTH) {
@@ -94,9 +98,9 @@ public class COTPData extends COTP implements IObjectByteArray {
     }
 
     /**
-     * DtData COTP 数据部分
+     * DtData COTP object
      *
-     * @return COTPData对象
+     * @return COTPData object
      */
     public static COTPData createDefault() {
         COTPData connection = new COTPData();

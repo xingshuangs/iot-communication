@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Data area.
  * 数据的区域
  *
  * @author xingshuang

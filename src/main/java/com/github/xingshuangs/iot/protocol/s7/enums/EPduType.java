@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * PDU type.
  * PDU类型（CRConnect Request 连接请求）
  *
  * @author xingshuang

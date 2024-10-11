@@ -37,7 +37,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 启动参数
+ * PLC control parameter.
  *
  * @author xingshuang
  */
@@ -48,6 +48,7 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
     public static final String P_PROGRAM = "P_PROGRAM";
 
     /**
+     * Unknown bytes.
      * 未知字节，固定参数 <br>
      * 字节大小：7 <br>
      * 字节序数：1-7
@@ -55,6 +56,7 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
     private byte[] unknownBytes = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xFD};
 
     /**
+     * Parameter block length.
      * 参数块长度 <br>
      * 字节大小：2 <br>
      * 字节序数：8-9
@@ -62,11 +64,13 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
     private int parameterBlockLength = 0;
 
     /**
+     * Parameter block.
      * 参数块内容
      */
     private PlcControlParamBlock parameterBlock;
 
     /**
+     * Service length, the length of subsequent bytes, excluding itself.
      * 服务名长度，后续字节长度，不包含自身 <br>
      * 字节大小：1 <br>
      * 字节序数：不定
@@ -74,6 +78,7 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
     private int lengthPart = 0;
 
     /**
+     * Service name.
      * 程序调用的服务名
      */
     private String piService = "";
@@ -133,6 +138,7 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
     }
 
     /**
+     * Hot restart.
      * 热重启
      *
      * @return startParameter
@@ -145,6 +151,7 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
     }
 
     /**
+     * Cold restart.
      * 冷启动
      *
      * @return startParameter
@@ -157,6 +164,7 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
     }
 
     /**
+     * Copy ram to rom.
      * 将ram复制到rom中
      *
      * @return startParameter
@@ -169,7 +177,7 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
     }
 
     /**
-     * 将ram复制到rom中
+     * Compress.
      *
      * @return startParameter
      */
@@ -181,11 +189,12 @@ public class PlcControlParameter extends Parameter implements IObjectByteArray {
     }
 
     /**
+     * Create insert command.
      * 创建插入文件指令
      *
-     * @param blockType             块类型
-     * @param blockNumber           块编号
-     * @param destinationFileSystem 目标文件系统
+     * @param blockType             block type 块类型
+     * @param blockNumber           block number 块编号
+     * @param destinationFileSystem destination file system 目标文件系统
      * @return PlcControlParameter
      */
     public static PlcControlParameter insert(EFileBlockType blockType, int blockNumber, EDestinationFileSystem destinationFileSystem) {

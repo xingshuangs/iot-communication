@@ -34,7 +34,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 启动参数
+ * PLC control, ack parameter.
  *
  * @author xingshuang
  */
@@ -43,7 +43,7 @@ import lombok.EqualsAndHashCode;
 public class PlcControlAckParameter extends Parameter implements IObjectByteArray {
 
     /**
-     * 未知字节
+     * unknown byte.
      */
     private byte unknownByte;
 

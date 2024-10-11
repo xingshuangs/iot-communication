@@ -31,6 +31,7 @@ import com.github.xingshuangs.iot.utils.HexUtil;
 import lombok.Data;
 
 /**
+ * MC7 file content class.
  * mc7文件内容
  *
  * @author xingshuang
@@ -39,38 +40,44 @@ import lombok.Data;
 public class Mc7File {
 
     /**
+     * Source data.
      * 源数据
      */
     private byte[] data = new byte[0];
 
     /**
+     * Block type.
      * 块类型
      */
     private EFileBlockType blockType;
 
     /**
+     * Block number.
      * 块编号
      */
     private int blockNumber;
 
     /**
+     * MC7 code length.
      * mc7代码长度
      */
     private int mC7CodeLength;
 
     /**
+     * Byte array total length.
      * 字节数组总长度
      *
-     * @return 长度
+     * @return length
      */
     public int getLoadMemoryLength() {
         return this.data.length;
     }
 
     /**
+     * Parses byte array and converts it to object.
      * 字节转换为对象
      *
-     * @param data 字节数组
+     * @param data byte array
      * @return Mc7File
      */
     public static Mc7File fromBytes(final byte[] data) {

@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Merge group Class
  * 合并组
  *
  * @author xingshuang
@@ -39,14 +40,16 @@ import java.util.List;
 public class S7ComGroup {
 
     /**
-     * 数据项列表
+     * Data item list.
+     * (数据项列表)
      */
     private List<S7ComItem> items = new ArrayList<>();
 
     /**
-     * 添加数据
+     * Add data item.
+     * (添加数据)
      *
-     * @param item 数据项
+     * @param item data item
      */
     public void add(S7ComItem item) {
         this.items.add(item);

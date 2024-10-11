@@ -31,6 +31,7 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import lombok.Data;
 
 /**
+ * Return item.
  * 返回项
  *
  * @author xingshuang
@@ -39,6 +40,7 @@ import lombok.Data;
 public class ReturnItem implements IObjectByteArray {
 
     /**
+     * Return code.
      * 返回码 <br>
      * 字节大小：1 <br>
      * 字节序数：0
@@ -70,10 +72,11 @@ public class ReturnItem implements IObjectByteArray {
     }
 
     /**
+     * Create default return item.
      * 获取默认数据返回
      *
-     * @param returnCode 返回码
-     * @return 返回数据
+     * @param returnCode return code
+     * @return return item
      */
     public static ReturnItem createDefault(EReturnCode returnCode) {
         ReturnItem item = new ReturnItem();

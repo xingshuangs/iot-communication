@@ -28,6 +28,7 @@ package com.github.xingshuangs.iot.protocol.s7.model;
 import com.github.xingshuangs.iot.common.IObjectByteArray;
 
 /**
+ * PLC Control, parameter block.
  * PLC控制参数块
  *
  * @author xingshuang

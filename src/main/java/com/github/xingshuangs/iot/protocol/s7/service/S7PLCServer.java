@@ -47,6 +47,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 /**
+ * S7 plc server class.
  * S7的PLC服务端
  *
  * @author xingshuang
@@ -55,17 +56,20 @@ import java.util.stream.Collectors;
 public class S7PLCServer extends TcpServerBasic {
 
     /**
-     * 数据Map操作锁
+     * Locker.
+     * (数据Map操作锁)
      */
     private final Object objLock = new Object();
 
     /**
-     * 读写锁
+     * Write and read lock.
+     * (读写锁)
      */
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
     /**
-     * 所有数据
+     * All data for operating.
+     * (所有数据)
      */
     protected final HashMap<String, byte[]> dataMap = new HashMap<>();
 
@@ -84,9 +88,10 @@ public class S7PLCServer extends TcpServerBasic {
     }
 
     /**
-     * 获取目前可用的区域
+     * Gets the currently available area.
+     * (获取目前可用的区域)
      *
-     * @return 数据区
+     * @return data areas
      */
     public Set<String> getAvailableAreas() {
         synchronized (this.objLock) {
@@ -95,9 +100,10 @@ public class S7PLCServer extends TcpServerBasic {
     }
 
     /**
-     * 添加所需的DB块
+     * Add DB area when needing.
+     * (添加所需的DB块)
      *
-     * @param dbNumbers db块编号
+     * @param dbNumbers db number
      */
     public void addDBArea(int... dbNumbers) {
         log.debug("Add DB{} to server data area", dbNumbers);
@@ -108,7 +114,6 @@ public class S7PLCServer extends TcpServerBasic {
             }
         }
     }
-
 
     @Override
     protected boolean checkHandshake(Socket socket) {
@@ -166,10 +171,11 @@ public class S7PLCServer extends TcpServerBasic {
     }
 
     /**
-     * 读数据处理
+     * Read data handler.
+     * (读数据处理)
      *
-     * @param socket socket对象
-     * @param req    请求数据
+     * @param socket socket object
+     * @param req    request data
      */
     private void readVariableHandle(Socket socket, S7Data req) {
         ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
@@ -211,10 +217,11 @@ public class S7PLCServer extends TcpServerBasic {
     }
 
     /**
-     * 写入数据处理
+     * Write data handler.
+     * (写入数据处理)
      *
-     * @param socket socket对象
-     * @param req    请求数据
+     * @param socket socket object
+     * @param req    request data
      */
     private void writeVariableHandle(Socket socket, S7Data req) {
         ReadWriteParameter parameter = (ReadWriteParameter) req.getParameter();
@@ -257,9 +264,10 @@ public class S7PLCServer extends TcpServerBasic {
     }
 
     /**
-     * 读取S7协议的数据
+     * Read S7 data from client.
+     * (读取S7协议的数据)
      *
-     * @param socket socket对象
+     * @param socket socket object
      * @return S7Data
      */
     private S7Data readS7DataFromClient(Socket socket) {
@@ -268,9 +276,11 @@ public class S7PLCServer extends TcpServerBasic {
     }
 
     /**
-     * 重写读取客户端数据，针对粘包粘包的数据处理
-     * @param socket 客户端socket对象
-     * @return 字节数据
+     * Rewrite read client data, sticky packet data processing
+     * (重写读取客户端数据，针对粘包的数据处理)
+     *
+     * @param socket client socket object
+     * @return byte array
      */
     @Override
     protected byte[] readClientData(Socket socket) {

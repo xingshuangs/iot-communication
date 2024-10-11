@@ -33,6 +33,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * End download parameter.
  * 结束下载参数
  *
  * @author xingshuang
@@ -46,11 +47,12 @@ public class EndDownloadParameter extends DownloadParameter implements IObjectBy
     }
 
     /**
+     * Create default end download parameter.
      * 创建默认的下载中参数
      *
-     * @param blockType             数据块类型
-     * @param blockNumber           数据块编号
-     * @param destinationFileSystem 目标文件系统
+     * @param blockType             block type 数据块类型
+     * @param blockNumber           block number 数据块编号
+     * @param destinationFileSystem destination file system 目标文件系统
      * @return EndDownloadParameter
      */
     public static EndDownloadParameter createDefault(EFileBlockType blockType,

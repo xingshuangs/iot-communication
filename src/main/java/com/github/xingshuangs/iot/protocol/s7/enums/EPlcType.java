@@ -26,7 +26,7 @@ package com.github.xingshuangs.iot.protocol.s7.enums;
 
 
 /**
- * PLC类型
+ * PLC type.
  *
  * @author xingshuang
  */
@@ -42,16 +42,19 @@ public enum EPlcType {
     ;
 
     /**
+     * Rack.
      * PLC机架号
      */
     private final int rack;
 
     /**
+     * Slot.
      * PLC槽号
      */
     private final int slot;
 
     /**
+     * PDU max length.
      * PDU最大允许长度
      */
     private final int pduLength;

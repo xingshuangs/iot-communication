@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Nck module.
  * NCK的模块
  *
  * @author xingshuang

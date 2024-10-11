@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * File block type.
  * 文件地址块类型
  *
  * @author xingshuang

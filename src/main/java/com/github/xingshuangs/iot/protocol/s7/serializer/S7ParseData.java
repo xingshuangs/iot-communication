@@ -33,6 +33,7 @@ import lombok.Data;
 import java.lang.reflect.Field;
 
 /**
+ * S7 parse data
  * S7解析数据
  *
  * @author xingshuang
@@ -41,27 +42,32 @@ import java.lang.reflect.Field;
 public class S7ParseData {
 
     /**
-     * 数据类型
+     * Data type.
+     * (数据类型)
      */
     private EDataType dataType;
 
     /**
-     * 数据个数
+     * Data count.
+     * (数据个数)
      */
     private int count;
 
     /**
-     * 字段参数
+     * Field.
+     * (字段参数)
      */
     private Field field;
 
     /**
-     * 请求项
+     * Request item.
+     * (请求项)
      */
     private RequestItem requestItem;
 
     /**
-     * 数据项
+     * Data item.
+     * (数据项)
      */
     private DataItem dataItem;
 }

@@ -29,11 +29,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 目标文件系统
+ * Destination file system.
+ * (目标文件系统)
  *
  * @author xingshuang
  */
 public enum EDestinationFileSystem {
+
     /**
      * 对应0x50，（Passive (copied, but not chained) module)：被动文件系统
      */

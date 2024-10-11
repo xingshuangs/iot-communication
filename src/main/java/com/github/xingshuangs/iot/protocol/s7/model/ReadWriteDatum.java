@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * Read write data.
  * 读写数据
  *
  * @author xingshuang
@@ -46,7 +47,8 @@ import java.util.List;
 public class ReadWriteDatum extends Datum {
 
     /**
-     * 数据项
+     * Return items.
+     * (数据项)
      */
     private final List<ReturnItem> returnItems = new ArrayList<>();
 
@@ -89,29 +91,32 @@ public class ReadWriteDatum extends Datum {
     }
 
     /**
-     * 添加数据项
+     * Add item.
+     * (添加数据项)
      *
-     * @param item 项
+     * @param item item
      */
     public void addItem(ReturnItem item) {
         this.returnItems.add(item);
     }
 
     /**
-     * 批量添加数据项
+     * Add items.
+     * (批量添加数据项)
      *
-     * @param items 数据项列表
+     * @param items item list
      */
     public void addItem(Collection<? extends ReturnItem> items) {
         this.returnItems.addAll(items);
     }
 
     /**
-     * 根据消息类型和功能码，对字节数组数据进行解析
+     * Parses byte array and converts it to object.
+     * (根据消息类型和功能码，对字节数组数据进行解析)
      *
-     * @param data         字节数组数据
-     * @param messageType  头部的消息类型
-     * @param functionCode 参数部分的功能码
+     * @param data         byte array 字节数组数据
+     * @param messageType  message type 头部的消息类型
+     * @param functionCode function code 参数部分的功能码
      * @return ReadWriteDatum
      */
     public static ReadWriteDatum fromBytes(final byte[] data, EMessageType messageType, EFunctionCode functionCode) {
@@ -146,10 +151,11 @@ public class ReadWriteDatum extends Datum {
     }
 
     /**
-     * 创建数据Datum
+     * Create read and write data.
+     * (创建数据Datum)
      *
-     * @param dataItems 数据项
-     * @return 数据对象Datum
+     * @param dataItems data items
+     * @return Datum
      */
     public static ReadWriteDatum createDatum(Collection<? extends ReturnItem> dataItems) {
         ReadWriteDatum datum = new ReadWriteDatum();

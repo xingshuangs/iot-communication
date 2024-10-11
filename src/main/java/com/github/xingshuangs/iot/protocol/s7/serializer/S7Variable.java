@@ -30,6 +30,7 @@ import com.github.xingshuangs.iot.common.enums.EDataType;
 import java.lang.annotation.*;
 
 /**
+ * S7 variable.
  * S7变量参数
  */
 @Target(value = {ElementType.FIELD})
@@ -38,6 +39,7 @@ import java.lang.annotation.*;
 public @interface S7Variable {
 
     /**
+     * Address.
      * 地址
      *
      * @return 地址
@@ -45,6 +47,7 @@ public @interface S7Variable {
     String address() default "";
 
     /**
+     * Data type.
      * 类型
      * 如果字节，对应是byte[]类型
      *
@@ -53,6 +56,7 @@ public @interface S7Variable {
     EDataType type() default EDataType.BYTE;
 
     /**
+     * Except for Byte and String, the count of other types must be 1.
      * 数量
      * 除字节Byte和String类型外，其他类型对应的count必须为1
      *

@@ -34,6 +34,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Start upload parameter.
  * 开始上传参数
  *
  * @author xingshuang

@@ -31,6 +31,7 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import lombok.Data;
 
 /**
+ * Parameter.
  * 参数
  *
  * @author xingshuang
@@ -39,6 +40,7 @@ import lombok.Data;
 public class Parameter implements IObjectByteArray {
 
     /**
+     * Function code.
      * 功能码 <br>
      * 字节大小：1 <br>
      * 字节序数：0

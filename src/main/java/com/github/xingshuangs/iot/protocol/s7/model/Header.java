@@ -34,6 +34,7 @@ import lombok.Data;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * S7 header.
  * 头部
  *
  * @author xingshuang
@@ -44,7 +45,9 @@ public class Header implements IObjectByteArray {
     private static final AtomicInteger index = new AtomicInteger();
 
     public static final int BYTE_LENGTH = 10;
+
     /**
+     * Protocol id.
      * 协议id <br>
      * 字节大小：1 <br>
      * 字节序数：0
@@ -52,6 +55,7 @@ public class Header implements IObjectByteArray {
     protected byte protocolId = (byte) 0x32;
 
     /**
+     * Message type.
      * pdu（协议数据单元（Protocol Data Unit））的类型 <br>
      * 字节大小：1 <br>
      * 字节序数：1
@@ -59,6 +63,7 @@ public class Header implements IObjectByteArray {
     protected EMessageType messageType = EMessageType.JOB;
 
     /**
+     * Reserved.
      * 保留 <br>
      * 字节大小：2 <br>
      * 字节序数：2-3
@@ -66,6 +71,7 @@ public class Header implements IObjectByteArray {
     protected int reserved = 0x0000;
 
     /**
+     * Pdu reference, incremental with each new transmission, big-endian.
      * pdu的参考–由主站生成，每次新传输递增，大端 <br>
      * 字节大小：2 <br>
      * 字节序数：4-5
@@ -73,6 +79,7 @@ public class Header implements IObjectByteArray {
     protected int pduReference = 0x0000;
 
     /**
+     * Parameter length.
      * 参数的长度（大端） <br>
      * 字节大小：2 <br>
      * 字节序数：6-7
@@ -80,6 +87,7 @@ public class Header implements IObjectByteArray {
     protected int parameterLength = 0x0000;
 
     /**
+     * Data length.
      * 数据的长度（大端） <br>
      * 字节大小：2 <br>
      * 字节序数：8-9
@@ -87,9 +95,10 @@ public class Header implements IObjectByteArray {
     protected int dataLength = 0x0000;
 
     /**
-     * 获取新的pduNumber
+     * Create new pdu number.
+     * (获取新的pduNumber)
      *
-     * @return 编号
+     * @return new number
      */
     public static int getNewPduNumber() {
         int res = index.getAndIncrement();
@@ -139,9 +148,10 @@ public class Header implements IObjectByteArray {
     }
 
     /**
-     * 创建默认的头header
+     * Create default header.
+     * (创建默认的头header)
      *
-     * @return Header对象
+     * @return Header
      */
     public static Header createDefault() {
         Header header = new Header();

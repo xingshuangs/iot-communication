@@ -46,7 +46,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * S7序列化工具
+ * S7 serializer tool class.
+ * (S7序列化工具)
  *
  * @author xingshuang
  */
@@ -59,20 +60,22 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
+     * Static method for creating instance object.
      * 静态方法实例对象
      *
-     * @param s7PLC plc对象
-     * @return 对象实例
+     * @param s7PLC plc object
+     * @return serializer object
      */
     public static S7Serializer newInstance(S7PLC s7PLC) {
         return new S7Serializer(s7PLC);
     }
 
     /**
+     * Convert to parsed data according to the S7Variable annotation.
      * 将类根据S7Variable注解转换为解析数据
      *
-     * @param targetClass 目标类型
-     * @return 解析数据列表
+     * @param targetClass target object class
+     * @return result data list
      */
     private List<S7ParseData> parseBean(final Class<?> targetClass) {
         List<S7ParseData> s7ParseDataList = new ArrayList<>();
@@ -93,10 +96,11 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
-     * 解析参数
+     * Create S7ParseData list by S7Parameter list.
+     * (解析参数)
      *
-     * @param parameters 参数列表
-     * @return 解析列表
+     * @param parameters parameter list
+     * @return List<S7ParseData>
      */
     private List<S7ParseData> parseBean(final List<S7Parameter> parameters) {
         try {
@@ -116,7 +120,8 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
-     * 校验S7Variable的数据是否满足规则要求
+     * Check that the data of the S7Variable meets the rule requirements.
+     * (校验S7Variable的数据是否满足规则要求)
      *
      * @param parameter parameter
      */
@@ -140,9 +145,10 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
-     * 根据条件读取数据
+     * Read the data according to the condition.
+     * (根据条件读取数据)
      *
-     * @param s7ParseDataList 条件
+     * @param s7ParseDataList condition
      */
     private void readDataByCondition(List<S7ParseData> s7ParseDataList) {
         if (s7ParseDataList.isEmpty()) {
@@ -166,11 +172,12 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
-     * 构建S7ParseData数据
+     * Build the S7ParseData data.
+     * (构建S7ParseData数据)
      *
-     * @param p     S7Parameter数据
-     * @param field 对应字段
-     * @return S7ParseData数据
+     * @param p     S7Parameter data
+     * @param field target field
+     * @return S7ParseData
      */
     private S7ParseData createS7ParseData(S7Parameter p, Field field) {
         this.checkS7Variable(p);
@@ -205,10 +212,11 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
-     * 读取数据
+     * Read data, fill value.
+     * (读取数据)
      *
-     * @param parameters 参数配置列表
-     * @return 结果列表
+     * @param parameters parameter list
+     * @return List<S7Parameter>
      */
     public List<S7Parameter> read(List<S7Parameter> parameters) {
         List<S7ParseData> s7ParseDataList = this.parseBean(parameters);
@@ -218,12 +226,13 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
-     * 提取数据
+     * Fill value of field.
+     * (提取数据)
      *
-     * @param targetClass     目标类型
-     * @param s7ParseDataList S7解析数据列表
-     * @param <T>             类型
-     * @return 目标类型的实体对象
+     * @param targetClass     target class
+     * @param s7ParseDataList S7ParseData list
+     * @param <T>             type
+     * @return target object.
      */
     private <T> T fillData(Class<T> targetClass, List<S7ParseData> s7ParseDataList) {
         try {
@@ -239,10 +248,11 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
-     * 填充数据
+     * Fill value of field.
+     * (填充数据)
      *
-     * @param parameters      参数列表
-     * @param s7ParseDataList 解析列表
+     * @param parameters      parameter list
+     * @param s7ParseDataList List<S7ParseData>
      */
     private void fillData(final List<S7Parameter> parameters, final List<S7ParseData> s7ParseDataList) {
         try {
@@ -257,12 +267,13 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
+     * Fill value of field.
      * 填充字段数据
      *
-     * @param result 参数对象
-     * @param item   数据对象
-     * @param <T>    泛型
-     * @throws IllegalAccessException 异常
+     * @param result target object
+     * @param item   S7ParseData
+     * @param <T>    type
+     * @throws IllegalAccessException IllegalAccessException
      */
     private <T> void fillField(T result, S7ParseData item) throws IllegalAccessException {
         ByteReadBuff buff = new ByteReadBuff(item.getDataItem().getData());
@@ -348,9 +359,10 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
-     * 写入数据
+     * Write data to plc by parameter list.
+     * (写入数据)
      *
-     * @param parameters 参数列表
+     * @param parameters parameter list
      */
     public void write(List<S7Parameter> parameters) {
         // 解析参数
@@ -371,12 +383,13 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
-     * 提取数据
+     * Extract data.
+     * (提取数据)
      *
-     * @param targetBean      目标对象
-     * @param s7ParseDataList 解析后的数据列表
-     * @param <T>             类型
-     * @return 有效的解析后的数据列表
+     * @param targetBean      target object
+     * @param s7ParseDataList List<S7ParseData>
+     * @param <T>             type
+     * @return List<S7ParseData>
      */
     private <T> List<S7ParseData> extractData(T targetBean, List<S7ParseData> s7ParseDataList) {
         try {
@@ -396,11 +409,12 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
-     * 提取数据
+     * Extract data.
+     * (提取数据)
      *
-     * @param parameters      参数数据列表
-     * @param s7ParseDataList 解析后的数据列表
-     * @return 有效的解析后的数据列表
+     * @param parameters      parameter list
+     * @param s7ParseDataList List<S7ParseData>
+     * @return List<S7ParseData>
      */
     private List<S7ParseData> extractData(List<S7Parameter> parameters, List<S7ParseData> s7ParseDataList) {
         try {
@@ -420,10 +434,11 @@ public class S7Serializer implements IPLCSerializable {
     }
 
     /**
-     * 提取字段数
+     * Extract value of data to S7ParseData
+     * (提取字段数)
      *
-     * @param item S7的解析数据
-     * @param data 数据源
+     * @param item S7ParseData
+     * @param data data source
      */
     private void extractField(S7ParseData item, Object data) {
         switch (item.getDataType()) {

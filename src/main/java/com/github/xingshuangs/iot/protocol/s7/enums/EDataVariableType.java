@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Data variable type of request data.
  * 数据返回Transport size in data Transport size (variable Type) 变量的类型和长度
  *
  * @author xingshuang

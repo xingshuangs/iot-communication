@@ -30,6 +30,7 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EFunctionCode;
 import com.github.xingshuangs.iot.utils.BooleanUtil;
 
 /**
+ * End upload parameter.
  * 上传参数
  *
  * @author xingshuang
@@ -40,7 +41,7 @@ public class EndUploadParameter extends UploadParameter {
         this.functionCode = EFunctionCode.END_UPLOAD;
     }
 
-    public static EndUploadParameter createDefault(long uploadId){
+    public static EndUploadParameter createDefault(long uploadId) {
         EndUploadParameter parameter = new EndUploadParameter();
         parameter.id = uploadId;
         return parameter;

@@ -30,7 +30,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 合并项
+ * Group item.
+ * (合并项)
  *
  * @author xingshuang
  */
@@ -40,45 +41,48 @@ import lombok.NoArgsConstructor;
 public class S7ComItem {
 
     /**
+     * Data index.
      * 数据索引
      */
     private int index;
 
     /**
-     * 原始数据大小
+     * Raw data size.
+     * (原始数据大小)
      */
     private int rawSize;
 
     /**
-     * 分割点，即数据偏移索引
+     * Split index offset.
+     * (分割点，即数据偏移索引)
      */
     private int splitOffset;
 
     /**
-     * 分割后的数据大小
+     * Ripe data size after split.
+     * (分割后的数据大小)
      */
     private int ripeSize;
 
     /**
-     * 额外需要的数据大小
+     * Extra data size.
+     * (额外需要的数据大小)
      */
     private int extraSize;
 
     /**
-     * 阀值
+     * Threshold.
+     * (阀值)
      */
     private int threshold = 0;
 
     /**
-     * 整个长度
+     * Get total length of item.
+     * (整个长度)
      *
-     * @return 整个长度
+     * @return total length
      */
     public int getTotalLength() {
-        if (this.ripeSize + this.extraSize > this.threshold) {
-            return this.ripeSize + this.extraSize;
-        } else {
-            return this.threshold;
-        }
+        return Math.max(this.ripeSize + this.extraSize, this.threshold);
     }
 }

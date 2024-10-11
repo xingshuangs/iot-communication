@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Nck area.
  * NCK的Area
  *
  * @author xingshuang

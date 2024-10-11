@@ -34,6 +34,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * COTP connection class.
  * COTP连接部分
  *
  * @author xingshuang
@@ -45,6 +46,7 @@ public class COTPConnection extends COTP implements IObjectByteArray {
     public static final int BYTE_LENGTH = 18;
 
     /**
+     * Destination reference, used to uniquely identify the target.
      * 目标引用，用来唯一标识目标 <br>
      * 字节大小：2 <br>
      * 字节序数：2-3
@@ -52,6 +54,7 @@ public class COTPConnection extends COTP implements IObjectByteArray {
     private int destinationReference = 0x0000;
 
     /**
+     * Source reference.
      * 源引用 <br>
      * 字节大小：2 <br>
      * 字节序数：4-5
@@ -59,6 +62,7 @@ public class COTPConnection extends COTP implements IObjectByteArray {
     private int sourceReference = 0x0001;
 
     /**
+     * Extended format/flow control.
      * 扩展格式/流控制  前四位标识Class，  倒数第二位Extended formats，  倒数第一位No explicit flow control <br>
      * 字节大小：1 <br>
      * 字节序数：6
@@ -66,6 +70,7 @@ public class COTPConnection extends COTP implements IObjectByteArray {
     private byte flags = (byte) 0x00;
 
     /**
+     * Parameter code tpdu size.
      * 参数代码TPDU-Size <br>
      * 字节大小：1 <br>
      * 字节序数：7
@@ -73,6 +78,7 @@ public class COTPConnection extends COTP implements IObjectByteArray {
     private byte parameterCodeTpduSize = (byte) 0xC0;
 
     /**
+     * Tpdu size byte length.
      * 参数长度 <br>
      * 字节大小：1 <br>
      * 字节序数：8
@@ -94,6 +100,7 @@ public class COTPConnection extends COTP implements IObjectByteArray {
     private byte parameterCodeSrcTsap = (byte) 0xC1;
 
     /**
+     * Source tsap byte length.
      * 参数长度 <br>
      * 字节大小：1 <br>
      * 字节序数：11
@@ -115,6 +122,7 @@ public class COTPConnection extends COTP implements IObjectByteArray {
     private byte parameterCodeDstTsap = (byte) 0xC2;
 
     /**
+     * Destination tsap byte length.
      * 参数长度 <br>
      * 字节大小：1 <br>
      * 字节序数：15
@@ -154,11 +162,11 @@ public class COTPConnection extends COTP implements IObjectByteArray {
     }
 
     /**
-     * CRConnect Request 连接请求
+     * CRConnect Request object.
      *
-     * @param local  本地参数
-     * @param remote 远程参数
-     * @return COTPConnection对象
+     * @param local  source tsap
+     * @param remote destination tsap
+     * @return COTPConnection
      */
     public static COTPConnection crConnectRequest(int local, int remote) {
         COTPConnection connection = new COTPConnection();
@@ -180,10 +188,10 @@ public class COTPConnection extends COTP implements IObjectByteArray {
     }
 
     /**
-     * CRConnect Request 连接请求
+     * CRConnect Request object.
      *
-     * @param request 请求数据
-     * @return COTPConnection对象
+     * @param request request data
+     * @return COTPConnection
      */
     public static COTPConnection crConnectConfirm(COTPConnection request) {
         COTPConnection connection = new COTPConnection();

@@ -29,6 +29,7 @@ import com.github.xingshuangs.iot.common.enums.EDataType;
 import lombok.Data;
 
 /**
+ * S7 parameter.
  * S7参数
  *
  * @author xingshuang
@@ -37,23 +38,26 @@ import lombok.Data;
 public class S7Parameter {
 
     /**
-     * 地址
+     * Address.
+     * (地址)
      */
     protected String address = "";
 
     /**
-     * 数据类型
+     * Data type.
+     * (数据类型)
      */
     protected EDataType dataType = EDataType.BYTE;
 
     /**
-     * 个数
-     * 除字节Byte和String类型外，其他类型对应的count必须为1
+     * Except for Byte and String, the count of other types must be 1
+     * (个数,除字节Byte和String类型外，其他类型对应的count必须为1)
      */
     protected Integer count = 1;
 
     /**
-     * 对应的值
+     * Value
+     * (对应的值)
      */
     protected Object value;
 

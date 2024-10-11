@@ -34,6 +34,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * PLC stop parameter.
  * 停止参数
  *
  * @author xingshuang
@@ -43,6 +44,7 @@ import lombok.EqualsAndHashCode;
 public class PlcStopParameter extends Parameter implements IObjectByteArray {
 
     /**
+     * Unknown bytes.
      * 未知字节，固定参数 <br>
      * 字节大小：5 <br>
      * 字节序数：1-5
@@ -50,6 +52,7 @@ public class PlcStopParameter extends Parameter implements IObjectByteArray {
     private byte[] unknownBytes = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
 
     /**
+     * Service name length.
      * 服务名长度，后续字节长度，不包含自身 <br>
      * 字节大小：1 <br>
      * 字节序数：6
@@ -57,6 +60,7 @@ public class PlcStopParameter extends Parameter implements IObjectByteArray {
     private int lengthPart = 0;
 
     /**
+     * Service name.
      * 程序调用的服务名
      */
     private String piService = "";
@@ -106,6 +110,7 @@ public class PlcStopParameter extends Parameter implements IObjectByteArray {
     }
 
     /**
+     * Create default stop parameter.
      * 创建默认对象
      *
      * @return PlcStopParameter

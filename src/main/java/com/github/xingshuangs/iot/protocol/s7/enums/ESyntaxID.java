@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * The format of the addressing mode and the rest of the item structure.
  * 寻址模式和项结构其余部分的格式，它具有任意类型寻址的常量值0x10
  *
  * @author xingshuang

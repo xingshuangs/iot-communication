@@ -29,6 +29,7 @@ import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
 
 /**
+ * Header builder.
  * Header构建器
  *
  * @author xingshuang

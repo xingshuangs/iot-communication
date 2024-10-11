@@ -35,6 +35,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Request item.
  * 标准数据读取请求项
  *
  * @author xingshuang
@@ -52,6 +53,7 @@ public class RequestItem extends RequestBaseItem {
     }
 
     /**
+     * Variable type.
      * 变量的类型和长度BIT，BYTE，WORD，DWORD，COUNTER <br>
      * 字节大小：1 <br>
      * 字节序数：3
@@ -59,6 +61,7 @@ public class RequestItem extends RequestBaseItem {
     private EParamVariableType variableType = EParamVariableType.BYTE;
 
     /**
+     * Data length.
      * 读取长度 <br>
      * 字节大小：2 <br>
      * 字节序数：4-5
@@ -66,6 +69,7 @@ public class RequestItem extends RequestBaseItem {
     private int count = 0x0000;
 
     /**
+     * DB number.
      * 即 DB 编号，如果访问的不是DB区域，此处为0x0000 <br>
      * 字节大小：2 <br>
      * 字节序数：6-7
@@ -73,6 +77,7 @@ public class RequestItem extends RequestBaseItem {
     private int dbNumber = 0x0000;
 
     /**
+     * Area.
      * 存储区类型DB存储区 <br>
      * 字节大小：1 <br>
      * 字节序数：8
@@ -80,6 +85,7 @@ public class RequestItem extends RequestBaseItem {
     private EArea area = EArea.INPUTS;
 
     /**
+     * Byte address.
      * 字节地址，位于开始字节地址address中3个字节，从第4位开始计数 <br>
      * 字节大小：3 <br>
      * 字节序数：9-11
@@ -87,6 +93,7 @@ public class RequestItem extends RequestBaseItem {
     private int byteAddress = 0;
 
     /**
+     * Bit address.
      * 位地址，位于开始字节地址address中3个字节的最后3位
      */
     private int bitAddress = 0;
@@ -112,6 +119,7 @@ public class RequestItem extends RequestBaseItem {
     }
 
     /**
+     * Copy.
      * 复制一个新对象
      *
      * @return requestItem
@@ -163,15 +171,16 @@ public class RequestItem extends RequestBaseItem {
     }
 
     /**
+     * Create request item.
      * 通过参数创建请求项
      *
-     * @param variableType 参数类型
-     * @param count        数据个数
-     * @param area         区域
-     * @param dbNumber     DB块编号
-     * @param byteAddress  字节地址
-     * @param bitAddress   位地址
-     * @return 请求项
+     * @param variableType variable type 参数类型
+     * @param count        data count 数据个数
+     * @param area         area 区域
+     * @param dbNumber     db number DB块编号
+     * @param byteAddress  byte address 字节地址
+     * @param bitAddress   bit address 位地址
+     * @return request item
      */
     public static RequestItem createByParams(EParamVariableType variableType, int count, EArea area, int dbNumber, int byteAddress, int bitAddress) {
         RequestItem requestItem = new RequestItem();

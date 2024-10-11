@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Wrapper address for reading.
  * 地址的包装类
  *
  * @author xingshuang
@@ -45,15 +46,17 @@ import java.util.List;
 public class MultiAddressRead {
 
     /**
+     * Request items.
      * 请求项列表
      */
     List<RequestItem> requestItems = new ArrayList<>();
 
     /**
+     * Add data by address and byte count.
      * 添加数据
      *
-     * @param address 地址
-     * @param count   字节数量
+     * @param address address string
+     * @param count   byte count
      * @return MultiAddressRead
      */
     public MultiAddressRead addData(String address, int count) {

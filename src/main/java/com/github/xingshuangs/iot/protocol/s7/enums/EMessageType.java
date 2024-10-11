@@ -36,21 +36,25 @@ import java.util.Map;
 public enum EMessageType {
 
     /**
+     * Start work.
      * 开工干活的意思，主设备通过job向从设备发出“干活”的命令，具体是读取数据还是写数据由parameter决定
      */
     JOB((byte) 0x01),
 
     /**
+     * Confirm Confirm that there are no data fields.
      * 确认 确认有没有数据字段
      */
     ACK((byte) 0x02),
 
     /**
+     * The slave device responds to the job of the master device.
      * 从设备回应主设备的job
      */
     ACK_DATA((byte) 0x03),
 
     /**
+     * An extension of the original protocol.
      * 原始协议的扩展，参数字段包含请求/响应id，（用于编程/调试，SZL读取，安全功能，时间设置，循环读取…）
      */
     USER_DATA((byte) 0x07),

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * Sequential grouping algorithm.
  * 顺序分组算法
  *
  * @author xingshuang
@@ -41,6 +42,7 @@ public class S7SequentialGroupAlg {
     }
 
     /**
+     * Write recombination function.
      * 重组，按照目标最大值进行顺序分组，超过最大值则进行分割
      * 示例：
      * 目标值：226 ，额外数据大小：5
@@ -48,10 +50,10 @@ public class S7SequentialGroupAlg {
      * |1,50,65,90|110,106|216|99,117|221|162,44|
      * 第一      第二      第三 第四   第五 第六
      *
-     * @param src        数据源
-     * @param targetSize 目标值
-     * @param extraSize  每个数据额外占用的数据大小
-     * @return 分组结果
+     * @param src        data source 数据源
+     * @param targetSize target size 目标值
+     * @param extraSize  extra size of every item 每个数据额外占用的数据大小
+     * @return group result
      */
     public static List<S7ComGroup> writeRecombination(List<Integer> src, int targetSize, int extraSize) {
         List<S7ComGroup> groupList = new LinkedList<>();
@@ -83,17 +85,18 @@ public class S7SequentialGroupAlg {
     }
 
     /**
+     * Read recombination function.
      * 重组，按照目标最大值进行顺序分组，超过最大值则进行分割
      * 示例：
      * 目标值：226 ，额外数据大小：5，阀值数据大小：12
      * 1, 9, 102, 33, 2, 4, 8, 326, 2, 2, 2, 2, 2,         400, 2, 2, 2, 2, 2, 2, 2, 2,        2, 2, 2, 99
      * 1, 9, 102, 33, 2, 4, 8, 13| 221| 92, 2, 2, 2, 2, 2, 64|221|115, 2, 2, 2, 2, 2, 2, 2, 2| 2, 2, 2, 99
      *
-     * @param src        数据源
-     * @param targetSize 目标值
-     * @param extraSize  每个数据额外占用的数据大小
-     * @param threshold  阀值
-     * @return 分组结果
+     * @param src        data source 数据源
+     * @param targetSize target size 目标值
+     * @param extraSize  extra size of every item 每个数据额外占用的数据大小
+     * @param threshold  data threshold 阀值
+     * @return group result
      */
     public static List<S7ComGroup> readRecombination(List<Integer> src, int targetSize, int extraSize, int threshold) {
         List<S7ComGroup> groupList = new LinkedList<>();

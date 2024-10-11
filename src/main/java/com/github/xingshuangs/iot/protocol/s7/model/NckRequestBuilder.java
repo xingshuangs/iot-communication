@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * NCK request builder.
  * NCK请求构建器
  *
  * @author xingshuang

@@ -34,6 +34,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * NCK request item.
  * NCK请求项
  *
  * @author xingshuang
@@ -64,6 +65,7 @@ public class RequestNckItem extends RequestBaseItem {
     }
 
     /**
+     * NCK area.
      * NCK区域 <br>
      * 字节大小：1 <br>
      * 字节序数：3
@@ -71,6 +73,7 @@ public class RequestNckItem extends RequestBaseItem {
     private ENckArea area = ENckArea.N_NCK;
 
     /**
+     * unit number.
      * 通道编号 <br>
      * 字节大小：1 <br>
      * 字节序数：4
@@ -78,6 +81,7 @@ public class RequestNckItem extends RequestBaseItem {
     private int unit = 0x0000;
 
     /**
+     * Column number.
      * 列编号 <br>
      * 字节大小：2 <br>
      * 字节序数：5
@@ -85,6 +89,7 @@ public class RequestNckItem extends RequestBaseItem {
     private int columnNumber = 0x0000;
 
     /**
+     * Line number.
      * 行编号 <br>
      * 字节大小：2 <br>
      * 字节序数：7
@@ -92,6 +97,7 @@ public class RequestNckItem extends RequestBaseItem {
     private int lineNumber = 0x0000;
 
     /**
+     * Module name.
      * 模块名 <br>
      * 字节大小：1 <br>
      * 字节序数：8
@@ -99,6 +105,7 @@ public class RequestNckItem extends RequestBaseItem {
     private ENckModule module = ENckModule.S;
 
     /**
+     * Line count.
      * 行个数 <br>
      * 字节大小：1 <br>
      * 字节序数：9
@@ -127,6 +134,7 @@ public class RequestNckItem extends RequestBaseItem {
     }
 
     /**
+     * Copy.
      * 复制一个新对象
      *
      * @return requestItem

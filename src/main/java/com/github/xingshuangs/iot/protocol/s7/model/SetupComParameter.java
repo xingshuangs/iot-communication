@@ -33,6 +33,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Setup communicate parameter.
  * 设置通信参数
  *
  * @author xingshuang
@@ -44,6 +45,7 @@ public class SetupComParameter extends Parameter implements IObjectByteArray {
     public static final int BYTE_LENGTH = 8;
 
     /**
+     * Reserved.
      * 预留 <br>
      * 字节大小：1 <br>
      * 字节序数：1
@@ -51,6 +53,7 @@ public class SetupComParameter extends Parameter implements IObjectByteArray {
     private byte reserved = (byte) 0x00;
 
     /**
+     * Max amq caller.
      * Ack队列的大小（主叫）（大端）<br>
      * 字节大小：2 <br>
      * 字节序数：2-3
@@ -58,6 +61,7 @@ public class SetupComParameter extends Parameter implements IObjectByteArray {
     private int maxAmqCaller = 0x0001;
 
     /**
+     * Max amq callee
      * Ack队列的大小（被叫）（大端）<br>
      * 字节大小：2 <br>
      * 字节序数：4-5
@@ -65,6 +69,7 @@ public class SetupComParameter extends Parameter implements IObjectByteArray {
     private int maxAmqCallee = 0x0001;
 
     /**
+     * PDU length.
      * PDU长度（大端）<br>
      * 字节大小：2 <br>
      * 字节序数：6-7
@@ -105,9 +110,10 @@ public class SetupComParameter extends Parameter implements IObjectByteArray {
     }
 
     /**
+     * Create default setup parameter.
      * 创建默认的设置通信参数，默认最大PDU长度240
      *
-     * @param pduLength PDU长度
+     * @param pduLength PDU length
      * @return SetupComParameter
      */
     public static SetupComParameter createDefault(int pduLength) {

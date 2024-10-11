@@ -31,7 +31,7 @@ import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
 import lombok.Data;
 
 /**
- * COTP结构
+ * COTP structure.
  *
  * @author xingshuang
  */
@@ -39,6 +39,7 @@ import lombok.Data;
 public class COTP implements IObjectByteArray {
 
     /**
+     * Length, exclude this length field.
      * 长度（但并不包含length这个字段）<br>
      * 字节大小：1 <br>
      * 字节序数：0
@@ -46,6 +47,7 @@ public class COTP implements IObjectByteArray {
     protected int length = 0x00;
 
     /**
+     * PDU type.
      * PDU类型（CRConnect Request 连接请求）<br>
      * 字节大小：1 <br>
      * 字节序数：1

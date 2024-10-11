@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Return code.
  * 操作的返回值，0xff信号成功。在“ 写入请求”消息中，此字段始终设置为零。
  *
  * @author xingshuang

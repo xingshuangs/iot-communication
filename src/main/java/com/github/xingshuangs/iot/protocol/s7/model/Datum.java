@@ -32,6 +32,7 @@ import com.github.xingshuangs.iot.protocol.s7.enums.EMessageType;
 import lombok.Data;
 
 /**
+ * S7 data.
  * 数据
  *
  * @author xingshuang
@@ -50,11 +51,12 @@ public class Datum implements IObjectByteArray {
     }
 
     /**
+     * Parse byte array data based on message type and function code
      * 根据消息类型和功能码，对字节数组数据进行解析
      *
-     * @param data         字节数组数据
-     * @param messageType  头部的消息类型
-     * @param functionCode 参数部分的功能码
+     * @param data         byte array
+     * @param messageType  message type
+     * @param functionCode function code
      * @return Datum
      */
     public static Datum fromBytes(final byte[] data, EMessageType messageType, EFunctionCode functionCode) {

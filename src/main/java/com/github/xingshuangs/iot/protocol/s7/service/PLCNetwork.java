@@ -64,37 +64,43 @@ import java.util.stream.Collectors;
 public class PLCNetwork extends TcpClientBasic {
 
     /**
-     * 锁
+     * locker.
      */
     private final Object objLock = new Object();
 
     /**
-     * PLC的类型
+     * PLC type.
+     * (PLC的类型)
      */
     protected EPlcType plcType = EPlcType.S1200;
 
     /**
-     * PLC机架号
+     * PLC rack.
+     * (PLC机架号)
      */
     protected int rack = 0;
 
     /**
-     * PLC槽号，S7-300 = 2
+     * PLC Slot.
+     * (PLC槽号，S7-300 = 2)
      */
     protected int slot = 1;
 
     /**
-     * 最大的PDU长度，不同PLC对应不同值，有240,480,960，目前默认240
+     * PDU length, different PLC corresponding to different values, there are 240,480,960.
+     * (最大的PDU长度，不同PLC对应不同值，有240,480,960，目前默认240)
      */
     protected int pduLength;
 
     /**
-     * 是否持久化，默认是持久化，对应长连接，true：长连接，false：短连接
+     * Persistence, true: long connection, false: short connection.
+     * (是否持久化，默认是持久化，对应长连接，true：长连接，false：短连接)
      */
     private boolean persistence = true;
 
     /**
-     * 通信回调，第一个参数是tag标签，指示该报文含义；第二个参数是具体报文内容
+     * Communication callback, first parameter is tag, second is package content.
+     * (通信回调，第一个参数是tag标签，指示该报文含义；第二个参数是具体报文内容)
      */
     private BiConsumer<String, byte[]> comCallback;
 
@@ -121,7 +127,8 @@ public class PLCNetwork extends TcpClientBasic {
     //region socket连接后握手操作
 
     /**
-     * 连接成功之后要做的动作
+     * Do after connected.
+     * (连接成功之后要做的动作)
      */
     @Override
     protected void doAfterConnected() {
@@ -132,7 +139,8 @@ public class PLCNetwork extends TcpClientBasic {
     }
 
     /**
-     * 连接请求
+     * Connection request.
+     * (连接请求)
      * <p>
      * TSAP包含两个字节，远程TSAP地址是连接的远程PC Access所设置的地址，
      * 第一个字节标识访问的资源，01是PG，02是OP，03是S7单边（服务器模式），10（16进制）及以上是S7双边通信；
@@ -182,7 +190,8 @@ public class PLCNetwork extends TcpClientBasic {
     }
 
     /**
-     * 连接setup
+     * Connection setup.
+     * (连接setup)
      *
      * @return pduLength pdu长度
      */
@@ -209,10 +218,11 @@ public class PLCNetwork extends TcpClientBasic {
     //region 底层数据通信部分
 
     /**
-     * 从服务器读取数据
+     * Read data from server, core interaction.
+     * (从服务器读取数据)
      *
-     * @param req S7协议数据
-     * @return S7协议数据
+     * @param req req data
+     * @return ack data
      */
     private S7Data readFromServer(S7Data req) {
         byte[] sendData = req.toByteArray();
@@ -223,10 +233,11 @@ public class PLCNetwork extends TcpClientBasic {
     }
 
     /**
-     * 以字节数组的方式和服务器进行数据交互
+     * Data interaction with the server as byte array
+     * (以字节数组的方式和服务器进行数据交互)
      *
-     * @param sendData 发送的字节数据
-     * @return 接收的字节数据
+     * @param sendData byte array of request
+     * @return byte array of response
      */
     private byte[] readFromServer(byte[] sendData) {
         if (this.comCallback != null) {
@@ -267,10 +278,11 @@ public class PLCNetwork extends TcpClientBasic {
     }
 
     /**
-     * 包含持久化的从服务器读取数据，外部继承使用该方法进行交互，内部不使用
+     * Contains persistent reads from the server, external inheritance uses this method for interaction, not internal use.
+     * (包含持久化的从服务器读取数据，外部继承使用该方法进行交互，内部不使用)
      *
-     * @param req 请求数据
-     * @return 响应数据
+     * @param req req data
+     * @return ack data
      */
     public S7Data readFromServerByPersistence(S7Data req) {
         try {
@@ -283,10 +295,11 @@ public class PLCNetwork extends TcpClientBasic {
     }
 
     /**
-     * 包含持久化的从服务器读取数据，外部继承使用该方法进行交互，内部不使用
+     * Contains persistent reads from the server, external inheritance uses this method for interaction, not internal use.
+     * (包含持久化的从服务器读取数据，外部继承使用该方法进行交互，内部不使用)
      *
-     * @param req 请求数据
-     * @return 响应数据
+     * @param req req data
+     * @return ack data
      */
     public byte[] readFromServerByPersistence(byte[] req) {
         try {
@@ -299,10 +312,11 @@ public class PLCNetwork extends TcpClientBasic {
     }
 
     /**
-     * 后置通信处理，对请求和响应数据进行一次校验
+     * Post-communication processing, once verifying the request and response data.
+     * (后置通信处理，对请求和响应数据进行一次校验)
      *
-     * @param req 请求数据
-     * @param ack 响应属于
+     * @param req req data
+     * @param ack ack data
      */
     private void checkPostedCom(S7Data req, S7Data ack) {
         if (ack.getHeader() == null) {
@@ -352,10 +366,11 @@ public class PLCNetwork extends TcpClientBasic {
     //region S7数据读写部分
 
     /**
-     * 读取S7协议数据
+     * Read S7 data.
+     * (读取S7协议数据)
      *
-     * @param requestItems 请求项列表
-     * @return 数据项列表
+     * @param requestItems request items
+     * @return ack data items
      */
     public List<DataItem> readS7Data(List<RequestItem> requestItems) {
         if (requestItems == null || requestItems.isEmpty()) {
@@ -407,30 +422,33 @@ public class PLCNetwork extends TcpClientBasic {
     }
 
     /**
-     * 读取S7协议数据
+     * Read S7 data.
+     * (读取S7协议数据)
      *
-     * @param requestItem 请求项
-     * @return 数据项
+     * @param requestItem request item
+     * @return ack data item
      */
     public DataItem readS7Data(RequestItem requestItem) {
         return this.readS7Data(Collections.singletonList(requestItem)).get(0);
     }
 
     /**
-     * 写S7协议数据
+     * Write S7 data.
+     * (写S7协议数据)
      *
-     * @param requestItem 请求项
-     * @param dataItem    数据项
+     * @param requestItem request item
+     * @param dataItem    data item
      */
     public void writeS7Data(RequestItem requestItem, DataItem dataItem) {
         this.writeS7Data(Collections.singletonList(requestItem), Collections.singletonList(dataItem));
     }
 
     /**
-     * 写S7协议
+     * Write S7 data.
+     * (写S7协议)
      *
-     * @param requestItems 请求项列表
-     * @param dataItems    数据项列表
+     * @param requestItems request items
+     * @param dataItems    data items
      */
     public void writeS7Data(List<RequestItem> requestItems, List<DataItem> dataItems) {
         if (requestItems.size() != dataItems.size()) {
@@ -479,20 +497,22 @@ public class PLCNetwork extends TcpClientBasic {
     //region 读取NCK数据
 
     /**
-     * 读取S7协议NCK数据
+     * Read S7 nck data.
+     * (读取S7协议NCK数据)
      *
-     * @param requestItem 请求项
-     * @return 数据项
+     * @param requestItem request item.
+     * @return ack data item
      */
     public DataItem readS7NckData(RequestNckItem requestItem) {
         return this.readS7NckData(Collections.singletonList(requestItem)).get(0);
     }
 
     /**
-     * 读取S7协议NCK数据，无法精确限制请求数量，因为响应的内容长度不定
+     * Read S7 nck data. It is not possible to limit the number of requests precisely because the content length of the response varies
+     * (读取S7协议NCK数据，无法精确限制请求数量，因为响应的内容长度不定)
      *
-     * @param requestItems 请求项列表
-     * @return 数据项
+     * @param requestItems request items
+     * @return data items
      */
     public List<DataItem> readS7NckData(List<RequestNckItem> requestItems) {
         try {
@@ -512,9 +532,10 @@ public class PLCNetwork extends TcpClientBasic {
     //region 上传下载
 
     /**
-     * 下载文件，已在s200smart中测试成功
+     * Downloading files has been successfully tested on the s200smart.
+     * (下载文件，已在s200smart中测试成功)
      *
-     * @param mc7 Mc7File文件对象
+     * @param mc7 Mc7File file object
      */
     public void downloadFile(Mc7File mc7) {
         try {
@@ -544,11 +565,12 @@ public class PLCNetwork extends TcpClientBasic {
     }
 
     /**
-     * 从PLC上传文件内容到PC，已在s200smart中测试成功
+     * Uploading file content from PLC to PC has been successfully tested in s200smart
+     * (从PLC上传文件内容到PC，已在s200smart中测试成功)
      *
-     * @param blockType   数据块类型
-     * @param blockNumber 数据块编号
-     * @return 字节数组数据
+     * @param blockType   block type 数据块类型
+     * @param blockNumber block number 数据块编号
+     * @return byte array
      */
     public byte[] uploadFile(EFileBlockType blockType, int blockNumber) {
         try {

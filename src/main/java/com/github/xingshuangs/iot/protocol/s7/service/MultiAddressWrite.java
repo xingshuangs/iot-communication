@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Wrapper address for writing.
  * 多地址写
  *
  * @author xingshuang
@@ -44,21 +45,24 @@ import java.util.List;
 public class MultiAddressWrite {
 
     /**
-     * 请求项列表
+     * Request items.
+     * (请求项列表)
      */
     List<RequestItem> requestItems = new ArrayList<>();
 
     /**
-     * 数据项列表
+     * Data items.
+     * (数据项列表)
      */
     List<DataItem> dataItems = new ArrayList<>();
 
     /**
-     * 添加boolean数据
+     * Add boolean.
+     * (添加boolean数据)
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    target data
+     * @return this object
      */
     public MultiAddressWrite addBoolean(String address, boolean data) {
         this.requestItems.add(AddressUtil.parseBit(address));
@@ -67,11 +71,12 @@ public class MultiAddressWrite {
     }
 
     /**
-     * 添加字节数据
+     * Add byte.
+     * (添加字节数据)
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    target data
+     * @return this object
      */
     public MultiAddressWrite addByte(String address, byte data) {
         this.requestItems.add(AddressUtil.parseByte(address, 1));
@@ -80,11 +85,12 @@ public class MultiAddressWrite {
     }
 
     /**
-     * 添加字节数组
+     * Add byte.
+     * (添加字节数组)
      *
-     * @param address 地址
+     * @param address address string
      * @param data    字节数组数据
-     * @return 对象本身
+     * @return this object
      */
     public MultiAddressWrite addByte(String address, byte[] data) {
         this.requestItems.add(AddressUtil.parseByte(address, data.length));
@@ -93,11 +99,12 @@ public class MultiAddressWrite {
     }
 
     /**
-     * 添加uint16数据
+     * Add uint16.
+     * (添加uint16数据)
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    target data
+     * @return this object
      */
     public MultiAddressWrite addUInt16(String address, int data) {
         byte[] bytes = ShortUtil.toByteArray(data);
@@ -106,11 +113,12 @@ public class MultiAddressWrite {
     }
 
     /**
-     * 添加int16数据
+     * Add int16.
+     * (添加int16数据)
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    target data
+     * @return this object
      */
     public MultiAddressWrite addInt16(String address, short data) {
         byte[] bytes = ShortUtil.toByteArray(data);
@@ -119,11 +127,12 @@ public class MultiAddressWrite {
     }
 
     /**
-     * 添加int16数据
+     * Add int16.
+     * (添加int16数据)
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    target data
+     * @return this object
      */
     public MultiAddressWrite addInt16(String address, int data) {
         byte[] bytes = ShortUtil.toByteArray(data);
@@ -132,11 +141,12 @@ public class MultiAddressWrite {
     }
 
     /**
-     * 添加uint32数据
+     * Add uint32.
+     * (添加uint32数据)
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    target data
+     * @return this object
      */
     public MultiAddressWrite addUInt32(String address, long data) {
         byte[] bytes = IntegerUtil.toByteArray(data);
@@ -145,11 +155,12 @@ public class MultiAddressWrite {
     }
 
     /**
-     * 添加int32数据
+     * Add int32.
+     * (添加int32数据)
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    target data
+     * @return this object
      */
     public MultiAddressWrite addInt32(String address, int data) {
         byte[] bytes = IntegerUtil.toByteArray(data);
@@ -158,11 +169,12 @@ public class MultiAddressWrite {
     }
 
     /**
-     * 添加int64数据
+     * Add int64.
+     * (添加int64数据)
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    target data
+     * @return this object
      */
     public MultiAddressWrite addInt64(String address, long data) {
         byte[] bytes = LongUtil.toByteArray(data);
@@ -172,11 +184,12 @@ public class MultiAddressWrite {
 
 
     /**
-     * 添加float32数据
+     * Add float32.
+     * (添加float32数据)
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    target data
+     * @return this object
      */
     public MultiAddressWrite addFloat32(String address, float data) {
         byte[] bytes = FloatUtil.toByteArray(data);
@@ -185,11 +198,12 @@ public class MultiAddressWrite {
     }
 
     /**
-     * 添加double数据
+     * Add float64.
+     * (添加double数据)
      *
-     * @param address 地址
-     * @param data    数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    target data
+     * @return this object
      */
     public MultiAddressWrite addFloat64(String address, double data) {
         byte[] bytes = FloatUtil.toByteArray(data);
@@ -198,11 +212,12 @@ public class MultiAddressWrite {
     }
 
     /**
-     * 添加字符串，针对非200smart的PLC
+     * Add string, for non-200SMART PLC
+     * (添加字符串，针对非200smart的PLC)
      *
-     * @param address 地址
-     * @param data    字符串数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    string data
+     * @return this object
      */
     public MultiAddressWrite addString(String address, String data) {
         this.addStringCustom(address, data, 1);
@@ -210,11 +225,12 @@ public class MultiAddressWrite {
     }
 
     /**
-     * 添加字符串，针对200smart的PLC
+     * Add string, for 200SMART PLC
+     * (添加字符串，针对200smart的PLC)
      *
-     * @param address 地址
-     * @param data    字符串数据
-     * @return 对象本身
+     * @param address address string
+     * @param data    string data
+     * @return this object
      */
     public MultiAddressWrite addStringIn200Smart(String address, String data) {
         this.addStringCustom(address, data, 0);
@@ -222,11 +238,12 @@ public class MultiAddressWrite {
     }
 
     /**
-     * 自定义添加字符串
+     * Add string by custom.
+     * (自定义添加字符串)
      *
-     * @param address 地址
-     * @param data    字符串数据
-     * @param offset  偏移量
+     * @param address address string
+     * @param data    string data
+     * @param offset  index offset
      */
     @SuppressWarnings("DuplicatedCode")
     private void addStringCustom(String address, String data, int offset) {

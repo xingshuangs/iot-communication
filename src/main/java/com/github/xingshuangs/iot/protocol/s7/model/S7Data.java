@@ -37,7 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * S7数据结构
+ * S7 data structure
  *
  * @author xingshuang
  */
@@ -55,17 +55,17 @@ public class S7Data implements IObjectByteArray {
     private COTP cotp;
 
     /**
-     * 头
+     * header
      */
     private Header header;
 
     /**
-     * 参数
+     * parameter
      */
     private Parameter parameter;
 
     /**
-     * 数据
+     * data
      */
     private Datum datum;
 
@@ -102,7 +102,8 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 自我数据校验
+     * Self check data length, parameter length and byte length.
+     * (自我数据校验)
      */
     public void selfCheck() {
         if (this.header != null) {
@@ -121,10 +122,11 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 根据字节数据解析S7协议数据
+     * Parses byte array and converts it to object.
+     * (根据字节数据解析S7协议数据)
      *
-     * @param data 数据字节
-     * @return s7数据
+     * @param data byte array
+     * @return s7 data
      */
     public static S7Data fromBytes(final byte[] data) {
         byte[] tpktBytes = Arrays.copyOfRange(data, 0, TPKT.BYTE_LENGTH);
@@ -134,11 +136,12 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 根据字节数据解析S7协议数据
+     * Parses byte array and converts it to object.
+     * (根据字节数据解析S7协议数据)
      *
      * @param tpkt   tpkt
-     * @param remain 剩余字节数据
-     * @return s7数据
+     * @param remain remain bytes
+     * @return s7 data
      */
     public static S7Data fromBytes(TPKT tpkt, final byte[] remain) {
         // tpkt
@@ -173,11 +176,12 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建连接请求
+     * Create connect request.
+     * (创建连接请求)
      *
-     * @param local  本地参数
-     * @param remote 远程参数
-     * @return s7data数据
+     * @param local  source tsap 本地参数
+     * @param remote destination tsap 远程参数
+     * @return s7data
      */
     public static S7Data createConnectRequest(int local, int remote) {
         S7Data s7Data = new S7Data();
@@ -188,10 +192,11 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建连接确认
+     * Create connect confirm request.
+     * (创建连接确认)
      *
-     * @param request 请求参数
-     * @return s7data数据
+     * @param request request s7 data
+     * @return s7data
      */
     public static S7Data createConnectConfirm(S7Data request) {
         S7Data s7Data = new S7Data();
@@ -202,10 +207,11 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建连接setup
+     * Create connect dt data request.
+     * (创建连接setup)
      *
-     * @param pduLength PDU长度
-     * @return s7data数据
+     * @param pduLength PDU length
+     * @return s7data
      */
     public static S7Data createConnectDtData(int pduLength) {
         S7Data s7Data = new S7Data();
@@ -218,10 +224,11 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建连接响应setup
+     * Create connect ack dt data request.
+     * (创建连接响应setup)
      *
-     * @param request 请求数据
-     * @return s7data数据
+     * @param request request s7 data
+     * @return s7data
      */
     public static S7Data createConnectAckDtData(S7Data request) {
         S7Data s7Data = new S7Data();
@@ -234,12 +241,13 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建错误响应
+     * Create error response
+     * (创建错误响应)
      *
-     * @param request    请求对象
-     * @param errorClass 错误类
-     * @param errorCode  错误码
-     * @return S7数据
+     * @param request    request s7 data
+     * @param errorClass error class
+     * @param errorCode  error code
+     * @return S7 data
      */
     public static S7Data createErrorResponse(S7Data request, EErrorClass errorClass, int errorCode) {
         S7Data s7Data = new S7Data();
@@ -252,9 +260,10 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建默认读对象
+     * Create read request.
+     * (创建默认读对象)
      *
-     * @param requestItems 请求项
+     * @param requestItems request items
      * @return S7Data
      */
     public static S7Data createReadRequest(List<RequestItem> requestItems) {
@@ -268,10 +277,11 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建默认写对象
+     * Create write request.
+     * (创建默认写对象)
      *
-     * @param requestItems 请求项
-     * @param dataItems    数据项
+     * @param requestItems request items
+     * @param dataItems    data items
      * @return S7Data
      */
     public static S7Data createWriteRequest(List<RequestItem> requestItems, List<DataItem> dataItems) {
@@ -286,11 +296,12 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建读写响应
+     * Create read and write response.
+     * (创建读写响应)
      *
-     * @param request     请求对象
-     * @param returnItems 返回数据内容
-     * @return 响应数据
+     * @param request     request s7 data
+     * @param returnItems return items
+     * @return S7 data
      */
     public static S7Data createReadWriteResponse(S7Data request, List<ReturnItem> returnItems) {
         S7Data s7Data = new S7Data();
@@ -304,7 +315,8 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建热启动
+     * Create hot restart request.
+     * (创建热启动)
      *
      * @return S7Data
      */
@@ -319,7 +331,8 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建冷启动命令
+     * Create cold restart request.
+     * (创建冷启动命令)
      *
      * @return S7Data
      */
@@ -334,7 +347,8 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建PLC停止命令
+     * Create plc stop request.
+     * (创建PLC停止命令)
      *
      * @return S7Data
      */
@@ -349,7 +363,8 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建复制Ram到Rom的命令
+     * Create copy ram to rom request.
+     * (创建复制Ram到Rom的命令)
      *
      * @return S7Data
      */
@@ -364,7 +379,8 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建压缩命令
+     * Create compress request.
+     * (创建压缩命令)
      *
      * @return S7Data
      */
@@ -379,11 +395,12 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建插入文件指令
+     * Create insert file command request
+     * (创建插入文件指令)
      *
-     * @param blockType             块类型
-     * @param blockNumber           块编号
-     * @param destinationFileSystem 目标文件系统
+     * @param blockType             block type 数据块类型
+     * @param blockNumber           block number 数据块编号
+     * @param destinationFileSystem destination file system 目标文件系统
      * @return PlcControlParameter
      */
     public static S7Data createInsert(EFileBlockType blockType, int blockNumber, EDestinationFileSystem destinationFileSystem) {
@@ -397,13 +414,14 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建开始下载
+     * Create start download request
+     * (创建开始下载)
      *
-     * @param blockType             数据块类型
-     * @param blockNumber           数据块编号
-     * @param destinationFileSystem 目标文件系统
-     * @param loadMemoryLength      载入长度
-     * @param mC7CodeLength         mc7文件内容长度
+     * @param blockType             block type 数据块类型
+     * @param blockNumber           block number 数据块编号
+     * @param destinationFileSystem destination file system 目标文件系统
+     * @param loadMemoryLength      load memory length 载入长度
+     * @param mC7CodeLength         mc7 code length 文件内容长度
      * @return S7Data
      */
     public static S7Data createStartDownload(EFileBlockType blockType,
@@ -421,13 +439,14 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建下载中
+     * Create download request.
+     * (创建下载中)
      *
-     * @param blockType             数据块类型
-     * @param blockNumber           数据块编号
-     * @param destinationFileSystem 目标文件系统
-     * @param moreDataFollowing     是否还有更多数据
-     * @param data                  字节数据
+     * @param blockType             block type 数据块类型
+     * @param blockNumber           block number 数据块编号
+     * @param destinationFileSystem destination file system 目标文件系统
+     * @param moreDataFollowing     more data following 是否还有更多数据
+     * @param data                  byte array 字节数据
      * @return S7Data
      */
     public static S7Data createDownload(EFileBlockType blockType,
@@ -446,11 +465,12 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建结束下载
+     * Create end download request.
+     * (创建结束下载)
      *
-     * @param blockType             数据块类型
-     * @param blockNumber           数据块编号
-     * @param destinationFileSystem 目标文件系统
+     * @param blockType             block type 数据块类型
+     * @param blockNumber           block number 数据块编号
+     * @param destinationFileSystem destination file system 目标文件系统
      * @return S7Data
      */
     public static S7Data createEndDownload(EFileBlockType blockType,
@@ -466,11 +486,12 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建开始上传
+     * Create start upload request.
+     * (创建开始上传)
      *
-     * @param blockType             数据块类型
-     * @param blockNumber           数据块编号
-     * @param destinationFileSystem 目标文件系统
+     * @param blockType             block type 数据块类型
+     * @param blockNumber           block number 数据块编号
+     * @param destinationFileSystem destination file system 目标文件系统
      * @return S7Data
      */
     public static S7Data createStartUpload(EFileBlockType blockType,
@@ -486,9 +507,10 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建上传中
+     * Create upload request.
+     * (创建上传中)
      *
-     * @param uploadId 上传Id
+     * @param uploadId upload Id
      * @return S7Data
      */
     public static S7Data createUpload(long uploadId) {
@@ -502,9 +524,10 @@ public class S7Data implements IObjectByteArray {
     }
 
     /**
-     * 创建结束上传
+     * Create end upload request.
+     * (创建结束上传)
      *
-     * @param uploadId 上传Id
+     * @param uploadId upload Id
      * @return S7Data
      */
     public static S7Data createEndUpload(long uploadId) {

@@ -36,6 +36,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Start download parameter
  * 开始下载参数
  *
  * @author xingshuang
@@ -45,21 +46,25 @@ import lombok.EqualsAndHashCode;
 public class StartDownloadParameter extends DownloadParameter implements IObjectByteArray {
 
     /**
+     * Part 2 length
      * 第二部分字符串长度，1个字节
      */
     private int part2Length = 13;
 
     /**
+     * Unknown char
      * 未知字符，1个字节
      */
     private String unknownChar = "1";
 
     /**
+     * Load memory length.
      * 装载长度，6个字节，范围000000-999999
      */
     private int loadMemoryLength = 0;
 
     /**
+     * MC7 code length.
      * MC代码长度，6个字节，范围000000-999999
      */
     private int mC7CodeLength = 0;

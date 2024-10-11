@@ -33,6 +33,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Upload parameter.
  * 上传参数
  *
  * @author xingshuang
@@ -42,11 +43,13 @@ import lombok.EqualsAndHashCode;
 public class UploadParameter extends UploadAckParameter {
 
     /**
+     * Unknown bytes.
      * 未知字节，2个字节
      */
     protected byte[] errorCode = new byte[]{0x00, 0x00};
 
     /**
+     * Download id.
      * 下载的Id，4个字节（没用）
      */
     protected long id = 0x00000000;
@@ -103,9 +106,10 @@ public class UploadParameter extends UploadAckParameter {
     }
 
     /**
+     * Create upload parameter.
      * 创建上传参数
      *
-     * @param uploadId 上传Id
+     * @param uploadId upload Id
      * @return UploadParameter
      */
     public static UploadParameter createDefault(long uploadId) {

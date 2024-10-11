@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Error code.
  * 错误码
  *
  * @author xingshuang

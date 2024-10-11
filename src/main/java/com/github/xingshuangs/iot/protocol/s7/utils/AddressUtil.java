@@ -32,6 +32,7 @@ import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
 import java.util.regex.Pattern;
 
 /**
+ * Address parser class.
  * S7协议地址解析工具
  * DB1.0.1、DB1.1、DB100.DBX0.0、DB100.DBB5、DB100.DBW6
  * M1.1、M1、MB1、MW1、MD1
@@ -48,33 +49,36 @@ public class AddressUtil {
     }
 
     /**
-     * 字节地址解析
+     * Parse byte.
+     * (字节地址解析)
      *
-     * @param address 地址
-     * @param count   个数
-     * @return 请求项
+     * @param address address string
+     * @param count   byte count
+     * @return RequestItem
      */
     public static RequestItem parseByte(String address, int count) {
         return parse(address, count, EParamVariableType.BYTE);
     }
 
     /**
-     * 位地址解析
+     * Parse bit.
+     * (位地址解析)
      *
-     * @param address 地址
-     * @return 请求项
+     * @param address address
+     * @return RequestItem
      */
     public static RequestItem parseBit(String address) {
         return parse(address, 1, EParamVariableType.BIT);
     }
 
     /**
-     * 解析请求内容
+     * Parse RequestItem from address.
+     * (解析请求内容)
      *
-     * @param address      地址
-     * @param count        个数
-     * @param variableType 参数类型
-     * @return RequestItem请求项
+     * @param address      address string
+     * @param count        byte count
+     * @param variableType parameter type
+     * @return RequestItem
      */
     public static RequestItem parse(String address, int count, EParamVariableType variableType) {
         if (address == null || address.length() == 0) {
@@ -102,10 +106,11 @@ public class AddressUtil {
     }
 
     /**
-     * 区域解析
+     * Parse area.
+     * (区域解析)
      *
-     * @param addList 地址信息
-     * @return 区域地址，枚举类型
+     * @param addList address content
+     * @return Area data
      */
     private static EArea parseArea(String[] addList) {
         switch (addList[0].substring(0, 1)) {
@@ -130,10 +135,11 @@ public class AddressUtil {
     }
 
     /**
-     * DB块索引解析
+     * Parse db number.
+     * (DB块索引解析)
      *
-     * @param addList 地址信息
-     * @return DB块索引
+     * @param addList address content
+     * @return DB index
      */
     private static int parseDbNumber(String[] addList) {
         switch (addList[0].substring(0, 1)) {
@@ -148,10 +154,11 @@ public class AddressUtil {
     }
 
     /**
-     * 字节索引解析
+     * Parse byte address.
+     * (字节索引解析)
      *
-     * @param addList 地址信息
-     * @return 字节索引
+     * @param addList address content
+     * @return byte index
      */
     private static int parseByteAddress(String[] addList) {
         switch (addList[0].substring(0, 1)) {
@@ -163,10 +170,11 @@ public class AddressUtil {
     }
 
     /**
-     * 位索引解析
+     * Parse bit index.
+     * (位索引解析)
      *
-     * @param addList 地址信息
-     * @return 位索引
+     * @param addList address content.
+     * @return bit index
      */
     private static int parseBitAddress(String[] addList, EParamVariableType variableType) {
         switch (addList[0].substring(0, 1)) {
@@ -180,10 +188,11 @@ public class AddressUtil {
     }
 
     /**
-     * 根据请求项解析对应的区域
+     * Parse area by request item.
+     * (根据请求项解析对应的区域)
      *
-     * @param item 请求项
-     * @return 区域
+     * @param item request item
+     * @return area string
      */
     public static String parseArea(RequestItem item) {
         switch (item.getArea()) {
@@ -205,10 +214,11 @@ public class AddressUtil {
     }
 
     /**
-     * 提取字符串中的数字
+     * Extract number from string.
+     * (提取字符串中的数字)
      *
-     * @param src 原来的字符串
-     * @return 处理之后的字符串
+     * @param src source string
+     * @return target number
      */
     public static int extractNumber(String src) {
         String number = Pattern.compile("\\D").matcher(src).replaceAll("").trim();

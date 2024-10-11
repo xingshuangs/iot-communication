@@ -36,6 +36,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Download parameter.
  * 下载参数
  *
  * @author xingshuang
@@ -45,36 +46,43 @@ import lombok.EqualsAndHashCode;
 public class DownloadParameter extends UploadAckParameter implements IObjectByteArray {
 
     /**
+     * Unknown bytes, 2-bytes
      * 未知字节，2个字节
      */
     protected byte[] errorCode = new byte[]{0x01, 0x00};
 
     /**
+     * Download id, 4-bytes.
      * 下载的Id，4个字节（没用）
      */
     protected long id = 0x00000000;
 
     /**
+     * File name length, 1-byte.
      * 文件名长度，1个字节
      */
     protected int fileNameLength = 9;
 
     /**
+     * File id, 1-byte.
      * 文件id，1个字节
      */
     protected String fileIdentifier = "_";
 
     /**
+     * File block type, 2-bytes.
      * 数据块类型，2个字节
      */
     protected EFileBlockType blockType = EFileBlockType.OB;
 
     /**
+     * Block number, 5-bytes.
      * 数据块编号，5个字节，范围00000-99999
      */
     protected int blockNumber = 0;
 
     /**
+     * Destination file system, 1-byte.
      * 目标文件系统，1个字节
      */
     protected EDestinationFileSystem destinationFileSystem = EDestinationFileSystem.P;
@@ -142,12 +150,13 @@ public class DownloadParameter extends UploadAckParameter implements IObjectByte
     }
 
     /**
-     * 创建默认的下载中参数
+     * Create default download parameter.
+     * (创建默认的下载中参数)
      *
-     * @param blockType             数据块类型
-     * @param blockNumber           数据块编号
-     * @param destinationFileSystem 目标文件系统
-     * @param moreDataFollowing     是否有更多数据
+     * @param blockType             block type 数据块类型
+     * @param blockNumber           block number 数据块编号
+     * @param destinationFileSystem destination file system 目标文件系统
+     * @param moreDataFollowing     more data following 是否有更多数据
      * @return DownloadParameter
      */
     public static DownloadParameter createDefault(EFileBlockType blockType,

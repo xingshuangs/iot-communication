@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Function code.
  * 功能码 Job request/Ack-Data function codes
  *
  * @author xingshuang
