@@ -12,7 +12,7 @@
 - The encoding format of **4 bytes** data = **BA_DC**. (big-endian mode = **DC_BA**，little-endian mode = **AB_CD**)
 - Support automatic reconnection.
 
-> protocol type
+> Protocol type
 
 | Modbus Protocol | Class                      | Remark             |
 |:---------------:|:---------------------------|:-------------------|
@@ -28,6 +28,17 @@
 |   1 area    | input coil     | read       |  10001-19999  | readDiscreteInput                    |
 |   3 area    | input register | read       |  30001-39999  | readInputRegister                    |
 |   4 area    | hold register  | read/write |  40001-49999  | readHoldRegister / writeHoldRegister |
+
+> Address
+
+According to the Modbus communication protocol, the Modbus data addresses are 0xxxx, 1xxxx, 3xxxx, and 4xxxx.
+
+| Case Address | Area           | Address Prefix | Address Remain | Method Address | Use Example              |
+|:------------:|:---------------|:---------------|:--------------:|----------------|:-------------------------|
+|    00001     | output coil    | 0              |      0001      | 0              | readCoil(0, 1)           |
+|    10003     | input coil     | 1              |      0003      | 2              | readDiscreteInput(2, 1)  |
+|    30020     | input register | 2              |      0020      | 19             | readInputRegister(19, 1) |
+|    40100     | hold register  | 3              |      0100      | 99             | readHoldRegister(99, 1)  |
 
 > Function Code
 
