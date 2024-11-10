@@ -34,11 +34,11 @@
 According to the Modbus communication protocol, the Modbus data addresses are 0xxxx, 1xxxx, 3xxxx, and 4xxxx.
 
 | Case Address | Area           | Address Prefix | Address Remain | Method Address | Use Example              |
-|:------------:|:---------------|:---------------|:--------------:|----------------|:-------------------------|
-|    00001     | output coil    | 0              |      0001      | 0              | readCoil(0, 1)           |
-|    10003     | input coil     | 1              |      0003      | 2              | readDiscreteInput(2, 1)  |
-|    30020     | input register | 2              |      0020      | 19             | readInputRegister(19, 1) |
-|    40100     | hold register  | 3              |      0100      | 99             | readHoldRegister(99, 1)  |
+|:------------:|:---------------|:--------------:|:--------------:|:--------------:|:-------------------------|
+|    00001     | output coil    |       0        |      0001      |       0        | readCoil(0, 1)           |
+|    10003     | input coil     |       1        |      0003      |       2        | readDiscreteInput(2, 1)  |
+|    30020     | input register |       3        |      0020      |       19       | readInputRegister(19, 1) |
+|    40100     | hold register  |       4        |      0100      |       99       | readHoldRegister(99, 1)  |
 
 > Function Code
 
