@@ -73,7 +73,9 @@
 
 ## 赞助
 
-一杯奶茶足矣<br>
-**微信** (请备注上你的姓名)<br>
+一杯奶茶足矣，请备注上你的姓名<br>
+#### 1. [PayPal](https://www.paypal.com/paypalme/xingshuang)
+[![PayPal Sponsor button](https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/paypalme/xingshuang)
+#### 2. 微信
 ![微信](https://i.postimg.cc/brBG5vx8/image.png)
 

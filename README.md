@@ -75,6 +75,10 @@ The dependencies used in this project are as follows:
 
 ## Sponsor
 
-Buy me a cup of coffee. <br>
-**WeChat** (Please note your name)<br>
+Buy me a cup of coffee, please note your name. <br>
+
+#### 1. [PayPal](https://www.paypal.com/paypalme/xingshuang)
+[![PayPal Sponsor button](https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/paypalme/xingshuang)
+<br>
+#### 2. WeChat
 ![wechat](https://i.postimg.cc/brBG5vx8/image.png)
