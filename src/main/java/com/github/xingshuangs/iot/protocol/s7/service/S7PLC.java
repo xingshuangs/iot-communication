@@ -80,6 +80,13 @@ public class S7PLC extends PLCNetwork {
         this.pduLength = pduLength;
     }
 
+    /**
+     * 谨慎调用！开启允许非安全模式的读取支持。
+     */
+    public void forceDisableStrictlySafeRead() {
+        this.setEnableStrictlySafeRead(false);
+    }
+
     //region 读取数据
 
     /**
@@ -181,7 +188,12 @@ public class S7PLC extends PLCNetwork {
     public List<Boolean> readBoolean(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(AddressUtil::parseBit).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
-        return dataItems.stream().map(x -> BooleanUtil.getValue(x.getData()[0], 0)).collect(Collectors.toList());
+        return dataItems.stream().map(x -> {
+            if (!this.isEnableStrictlySafeRead() && x.getData() == null) {
+                return null;
+            }
+            return BooleanUtil.getValue(x.getData()[0], 0);
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -191,8 +203,11 @@ public class S7PLC extends PLCNetwork {
      * @param address address string
      * @return Int16
      */
-    public short readInt16(String address) {
+    public Short readInt16(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 2));
+        if (!this.isEnableStrictlySafeRead() && dataItem.getData() == null) {
+            return null;
+        }
         return ShortUtil.toInt16(dataItem.getData());
     }
 
@@ -217,7 +232,12 @@ public class S7PLC extends PLCNetwork {
     public List<Short> readInt16(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 2)).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
-        return dataItems.stream().map(x -> ShortUtil.toInt16(x.getData())).collect(Collectors.toList());
+        return dataItems.stream().map(x -> {
+            if (!this.isEnableStrictlySafeRead() && x.getData() == null) {
+                return null;
+            }
+            return ShortUtil.toInt16(x.getData());
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -227,8 +247,11 @@ public class S7PLC extends PLCNetwork {
      * @param address address string
      * @return UInt16
      */
-    public int readUInt16(String address) {
+    public Integer readUInt16(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 2));
+        if (!this.isEnableStrictlySafeRead() && dataItem.getData() == null) {
+            return null;
+        }
         return ShortUtil.toUInt16(dataItem.getData());
     }
 
@@ -253,7 +276,12 @@ public class S7PLC extends PLCNetwork {
     public List<Integer> readUInt16(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 2)).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
-        return dataItems.stream().map(x -> ShortUtil.toUInt16(x.getData())).collect(Collectors.toList());
+        return dataItems.stream().map(x -> {
+            if (!this.isEnableStrictlySafeRead() && x.getData() == null) {
+                return null;
+            }
+            return ShortUtil.toUInt16(x.getData());
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -263,8 +291,11 @@ public class S7PLC extends PLCNetwork {
      * @param address address string
      * @return UInt32
      */
-    public int readInt32(String address) {
+    public Integer readInt32(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 4));
+        if (!this.isEnableStrictlySafeRead() && dataItem.getData() == null) {
+            return null;
+        }
         return IntegerUtil.toInt32(dataItem.getData());
     }
 
@@ -289,7 +320,12 @@ public class S7PLC extends PLCNetwork {
     public List<Integer> readInt32(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 4)).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
-        return dataItems.stream().map(x -> IntegerUtil.toInt32(x.getData())).collect(Collectors.toList());
+        return dataItems.stream().map(x -> {
+            if (!this.isEnableStrictlySafeRead() && x.getData() == null) {
+                return null;
+            }
+            return IntegerUtil.toInt32(x.getData());
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -299,8 +335,11 @@ public class S7PLC extends PLCNetwork {
      * @param address address string
      * @return UInt32
      */
-    public long readUInt32(String address) {
+    public Long readUInt32(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 4));
+        if (!this.isEnableStrictlySafeRead() && dataItem.getData() == null) {
+            return null;
+        }
         return IntegerUtil.toUInt32(dataItem.getData());
     }
 
@@ -325,7 +364,12 @@ public class S7PLC extends PLCNetwork {
     public List<Long> readUInt32(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 4)).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
-        return dataItems.stream().map(x -> IntegerUtil.toUInt32(x.getData())).collect(Collectors.toList());
+        return dataItems.stream().map(x -> {
+            if (!this.isEnableStrictlySafeRead() && x.getData() == null) {
+                return null;
+            }
+            return IntegerUtil.toUInt32(x.getData());
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -335,8 +379,11 @@ public class S7PLC extends PLCNetwork {
      * @param address address string
      * @return Int64
      */
-    public long readInt64(String address) {
+    public Long readInt64(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 8));
+        if (!this.isEnableStrictlySafeRead() && dataItem.getData() == null) {
+            return null;
+        }
         return LongUtil.toInt64(dataItem.getData());
     }
 
@@ -361,7 +408,12 @@ public class S7PLC extends PLCNetwork {
     public List<Long> readInt64(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 8)).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
-        return dataItems.stream().map(x -> LongUtil.toInt64(x.getData())).collect(Collectors.toList());
+        return dataItems.stream().map(x -> {
+            if (!this.isEnableStrictlySafeRead() && x.getData() == null) {
+                return null;
+            }
+            return LongUtil.toInt64(x.getData());
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -371,8 +423,11 @@ public class S7PLC extends PLCNetwork {
      * @param address address string
      * @return Float32
      */
-    public float readFloat32(String address) {
+    public Float readFloat32(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 4));
+        if (!this.isEnableStrictlySafeRead() && dataItem.getData() == null) {
+            return null;
+        }
         return FloatUtil.toFloat32(dataItem.getData());
     }
 
@@ -397,7 +452,12 @@ public class S7PLC extends PLCNetwork {
     public List<Float> readFloat32(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 4)).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
-        return dataItems.stream().map(x -> FloatUtil.toFloat32(x.getData())).collect(Collectors.toList());
+        return dataItems.stream().map(x -> {
+            if (!this.isEnableStrictlySafeRead() && x.getData() == null) {
+                return null;
+            }
+            return FloatUtil.toFloat32(x.getData());
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -407,8 +467,11 @@ public class S7PLC extends PLCNetwork {
      * @param address address string
      * @return Float64
      */
-    public double readFloat64(String address) {
+    public Double readFloat64(String address) {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 8));
+        if (!this.isEnableStrictlySafeRead() && dataItem.getData() == null) {
+            return null;
+        }
         return FloatUtil.toFloat64(dataItem.getData());
     }
 
@@ -433,7 +496,12 @@ public class S7PLC extends PLCNetwork {
     public List<Double> readFloat64(List<String> addresses) {
         List<RequestItem> requestItems = addresses.stream().map(x -> AddressUtil.parseByte(x, 8)).collect(Collectors.toList());
         List<DataItem> dataItems = this.readS7Data(requestItems);
-        return dataItems.stream().map(x -> FloatUtil.toFloat64(x.getData())).collect(Collectors.toList());
+        return dataItems.stream().map(x -> {
+            if (!this.isEnableStrictlySafeRead() && x.getData() == null) {
+                return null;
+            }
+            return FloatUtil.toFloat64(x.getData());
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -451,6 +519,9 @@ public class S7PLC extends PLCNetwork {
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, offset));
         int length = ByteUtil.toUInt8(dataItem.getData(), offset - 1);
         dataItem = this.readS7Data(AddressUtil.parseByte(address, offset + length));
+        if (!this.isEnableStrictlySafeRead() && dataItem.getData() == null) {
+            return null;
+        }
         return ByteUtil.toStr(dataItem.getData(), offset, length, Charset.forName("GB2312"));
     }
 
@@ -470,6 +541,9 @@ public class S7PLC extends PLCNetwork {
         }
         int offset = this.plcType == EPlcType.S200_SMART ? 1 : 2;
         DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, offset + length));
+        if (!this.isEnableStrictlySafeRead() && dataItem.getData() == null) {
+            return null;
+        }
         int actLength = ByteUtil.toUInt8(dataItem.getData(), offset - 1);
         return ByteUtil.toStr(dataItem.getData(), offset, Math.min(actLength, length), Charset.forName("GB2312"));
     }
@@ -500,7 +574,7 @@ public class S7PLC extends PLCNetwork {
      * @param address address string
      * @return time，ms
      */
-    public long readTime(String address) {
+    public Long readTime(String address) {
         return this.readUInt32(address);
     }
 
@@ -512,7 +586,10 @@ public class S7PLC extends PLCNetwork {
      * @return date
      */
     public LocalDate readDate(String address) {
-        int offset = this.readUInt16(address);
+        Integer offset = this.readUInt16(address);
+        if (!this.isEnableStrictlySafeRead() && offset == null) {
+            return null;
+        }
         return LocalDate.of(1990, 1, 1).plusDays(offset);
     }
 
@@ -524,7 +601,10 @@ public class S7PLC extends PLCNetwork {
      * @return localTime
      */
     public LocalTime readTimeOfDay(String address) {
-        long value = this.readUInt32(address);
+        Long value = this.readUInt32(address);
+        if (!this.isEnableStrictlySafeRead() && value == null) {
+            return null;
+        }
         return LocalTime.ofSecondOfDay(value / 1000);
     }
 
@@ -537,6 +617,9 @@ public class S7PLC extends PLCNetwork {
      */
     public LocalDateTime readDTL(String address) {
         byte[] bytes = this.readByte(address, 12);
+        if (!this.isEnableStrictlySafeRead() && bytes == null) {
+            return null;
+        }
         ByteReadBuff buff = ByteReadBuff.newInstance(bytes);
         int year = buff.getUInt16();
         int month = buff.getByteToInt();

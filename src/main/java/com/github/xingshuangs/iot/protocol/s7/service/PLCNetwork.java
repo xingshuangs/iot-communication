@@ -105,6 +105,12 @@ public class PLCNetwork extends TcpClientBasic {
      */
     private BiConsumer<String, byte[]> comCallback;
 
+    /**
+     * 默认开启强安全的读取检查，比如PDU引用编号一致性检查、批量读取多点位偏移量字节是否存在单点位偏移量不存在等异常等。
+     * 建议线上保持此项开关不变，除非业务场景上知道关闭安全检查的后果，并妥善处理。
+     */
+    private boolean enableStrictlySafeRead = true;
+
     public PLCNetwork() {
         super();
     }
@@ -338,9 +344,13 @@ public class PLCNetwork extends TcpClientBasic {
                     ackHeader.getErrorClass().getDescription(), ErrorCode.MAP.getOrDefault(ackHeader.getErrorCode(), "The error code does not exist")));
         }
         // 发送和接收的PDU编号一致
-        if (ackHeader.getPduReference() != req.getHeader().getPduReference()) {
-            // pdu引用编号不一致，数据有误
-            throw new S7CommException("The PDU references are inconsistent, causing incorrect data");
+        // 开启允许非安全数据接收后，允许PDU引用编号不一致（兼容HSL模拟器的S7协议实现不完善的问题）
+        if ((ackHeader.getPduReference() != req.getHeader().getPduReference())) {
+            if (this.enableStrictlySafeRead) {
+                // pdu引用编号不一致，数据有误
+                throw new S7CommException("The PDU references are inconsistent, causing incorrect data");
+            }
+            log.warn("The PDU references are inconsistent, causing incorrect data [{}, {}]", req.getHeader().getPduReference(), ackHeader.getPduReference());
         }
         if (ack.getDatum() == null) {
             return;
@@ -359,8 +369,11 @@ public class PLCNetwork extends TcpClientBasic {
         // 返回结果校验
         for (int i = 0; i < returnItems.size(); i++) {
             if (returnItems.get(i).getReturnCode() != EReturnCode.SUCCESS) {
-                // 返回第[%d]个结果异常，原因：%s
-                throw new S7CommException(String.format("Return [%d] result exception, cause: %s", i + 1, returnItems.get(i).getReturnCode().getDescription()));
+                if (this.enableStrictlySafeRead) {
+                    // 返回第[%d]个结果异常，原因：%s
+                    throw new S7CommException(String.format("Return [%d] result exception, cause: %s", i + 1, returnItems.get(i).getReturnCode().getDescription()));
+                }
+                log.warn("Return [{}] result exception, cause: [{}]", i+1, returnItems.get(i).getReturnCode().getDescription());
             }
         }
     }
@@ -412,6 +425,12 @@ public class PLCNetwork extends TcpClientBasic {
                 // 将获取的数据重装实际结果列表中
                 for (int i = 0; i < comItemList.size(); i++) {
                     S7ComItem comItem = comItemList.get(i);
+                    if (!this.enableStrictlySafeRead && !EReturnCode.SUCCESS.equals(dataItems.get(i).getReturnCode())) {
+                        // 在enableStrictlySafeRead为false时，允许返回错误数据，对应的data数据是null
+                        resultList.get(comItem.getIndex()).setReturnCode(dataItems.get(i).getReturnCode());
+                        resultList.get(comItem.getIndex()).setData(null);
+                        continue;
+                    }
                     byte[] src = dataItems.get(i).getData();
                     byte[] des = resultList.get(comItem.getIndex()).getData();
                     System.arraycopy(src, 0, des, comItem.getSplitOffset(), src.length);
