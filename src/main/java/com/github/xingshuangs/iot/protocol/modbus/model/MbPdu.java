@@ -82,7 +82,7 @@ public class MbPdu implements IObjectByteArray {
         byte aByte = buff.getByte();
         EMbFunctionCode functionCode = EMbFunctionCode.from(aByte);
         if (functionCode == null) {
-            throw new ModbusCommException("Function code can not be recognized, " + aByte);
+            throw new ModbusCommException("Function code can not be recognized, " + String.format("0x%02X", aByte));
         }
 
         switch (functionCode) {
