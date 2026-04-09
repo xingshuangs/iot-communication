@@ -27,6 +27,7 @@ package com.github.xingshuangs.iot.protocol.s7.service;
 
 import com.github.xingshuangs.iot.common.buff.ByteReadBuff;
 import com.github.xingshuangs.iot.common.buff.ByteWriteBuff;
+import com.github.xingshuangs.iot.exceptions.S7CommException;
 import com.github.xingshuangs.iot.protocol.s7.enums.*;
 import com.github.xingshuangs.iot.protocol.s7.model.DataItem;
 import com.github.xingshuangs.iot.protocol.s7.model.RequestItem;
@@ -36,6 +37,7 @@ import com.github.xingshuangs.iot.protocol.s7.utils.AddressUtil;
 import com.github.xingshuangs.iot.utils.*;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -474,24 +476,37 @@ public class S7PLC extends PLCNetwork {
         return ByteUtil.toStr(dataItem.getData(), offset, Math.min(actLength, length), Charset.forName("GB2312"));
     }
 
-//    /**
-//     * 读取字符串
-//     * Wsting数据类型与sting数据类型接近，支持单字值的较长字符串，
-//     * 第一个字包含最大总字符数，下一个字包含的是当前的总字符数，接下来的字符串可含最多65534个字
-//     *
-//     * @param address address string
-//     * @return 字符串
-//     */
-//    public String readWString(String address) {
-//        DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 4));
-//        int type = ShortUtil.toUInt16(dataItem.getData());
-//        if (type == 0 || type == 65535) {
-//            throw new S7CommException("该地址的值不是字符串WString类型");
-//        }
-//        int length = ShortUtil.toUInt16(dataItem.getData(), 2);
-//        dataItem = this.readS7Data(AddressUtil.parseByte(address, 4 + length * 2));
-//        return ByteUtil.toStr(dataItem.getData(), 4);
-//    }
+    /**
+     * 读取字符串
+     * Wsting数据类型与sting数据类型接近，支持单字值的较长字符串，
+     * 第一个字包含最大总字符数，下一个字包含的是当前的总字符数，接下来的字符串可含最多65534个字
+     *
+     * @param address address string
+     * @return 读取的字符串
+     */
+    public String readWString(String address) {
+        return this.readWString(address, StandardCharsets.UTF_16BE);
+    }
+
+    /**
+     * 读取字符串
+     * Wsting数据类型与sting数据类型接近，支持单字值的较长字符串，
+     * 第一个字包含最大总字符数，下一个字包含的是当前的总字符数，接下来的字符串可含最多65534个字
+     *
+     * @param address address string
+     * @param charsetName charset name 字符串编码
+     * @return 字符串
+     */
+    public String readWString(String address, Charset charsetName) {
+        DataItem dataItem = this.readS7Data(AddressUtil.parseByte(address, 4));
+        int type = ShortUtil.toUInt16(dataItem.getData());
+        if (type == 0 || type == 65535) {
+            throw new S7CommException("该地址的值不是字符串WString类型");
+        }
+        int length = ShortUtil.toUInt16(dataItem.getData(), 2);
+        dataItem = this.readS7Data(AddressUtil.parseByte(address, 4 + length * 2));
+        return ByteUtil.toStr(dataItem.getData(), 4, length * 2, charsetName);
+    }
 
     /**
      * Read time: milliseconds, ms, for example, 1000ms, 4-bytes.
