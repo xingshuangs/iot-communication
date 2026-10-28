@@ -804,10 +804,10 @@ public class McNetwork extends TcpClientBasic {
             throw new McCommException("Frame 1E not supported in writing device batch multi blocks");
         }
         // TODO: 待确认
-        if (this.frameType == EMcFrameType.FRAME_3E) {
-            // 3E暂不支持批量块读写
-            throw new McCommException("3E Currently does not support batch block read and write");
-        }
+//        if (this.frameType == EMcFrameType.FRAME_3E) {
+//            // 3E暂不支持批量块读写
+//            throw new McCommException("3E Currently does not support batch block read and write");
+//        }
         boolean b1 = words.stream().allMatch(x -> EMcDeviceCode.checkWordType(x.getDeviceCode()));
         if (!b1) {
             // 字软元件对应错误
